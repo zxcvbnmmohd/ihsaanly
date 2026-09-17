@@ -1,18 +1,21 @@
 import { Link, Stack } from 'expo-router';
-import { Text, View } from 'react-native';
+import { Text, useColorScheme, View } from 'react-native';
 
+import { strings } from '@/strings';
 import { colors } from '@/theme/colors';
 
 export default function NotFound() {
+  useColorScheme();
+
   return (
     <>
-      <Stack.Screen options={{ title: 'Not found' }} />
+      <Stack.Screen options={{ title: strings.notFound.title }} />
       <View className="flex-1 items-center justify-center gap-3 p-6">
         <Text className="text-xl font-semibold" style={{ color: colors.label }}>
-          This screen doesn’t exist.
+          {strings.notFound.body}
         </Text>
         <Link href="/" className="text-base" style={{ color: colors.tint }}>
-          Go to home
+          {strings.tabs.today}
         </Link>
       </View>
     </>

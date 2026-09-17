@@ -71,6 +71,16 @@ real content with its evidence attached.
   components driven entirely by exported props. `src/screens/fixtures.ts` supplies
   mock props for each, so a screen can be rendered without a device, a database or
   a navigator.
+- **Onboarding** — five steps, each with an answer already chosen.
+- **Library search** by name or situation, grouped by category.
+- **Contextual events** — one optional home geofence, honest about being
+  approximate, plus manual states for the moments no sensor can find.
+- **History** in More — reflective, never a score, never on Today.
+- **Export, import and a diagnostic bundle**, all user-initiated, all readable text.
+- **Memorisation** — listen, repeat, check; a known item leaves the reminder rotation.
+- **Language and right-to-left**, with a language offered only once its content is
+  complete and reviewed.
+- **Two widgets** reading a snapshot rather than the database.
 - **Notifications.** Two or three a day by default, derived from the plan rather
   than scheduled ad hoc. Reminders for the obligatory prayers are off unless
   asked for: an adhan app already does that, and a duplicate is what gets an app

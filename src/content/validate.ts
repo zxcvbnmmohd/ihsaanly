@@ -38,6 +38,28 @@ function releaseWarningsFor(document: ContentDocument): string[] {
     warnings.push(`no translation source named for: ${untranslated.join(', ')}`);
   }
 
+  const narrations = new Map<string, string>();
+  const inconsistent = new Set<string>();
+
+  document.items.forEach((item) =>
+    item.evidence.forEach((evidence) => {
+      if (evidence.type !== 'hadith') return;
+      const citation = `${evidence.collection} ${evidence.reference}`;
+      const narration = Object.values(evidence.text).join(' ');
+      const seen = narrations.get(citation);
+
+      if (seen === undefined) narrations.set(citation, narration);
+      else if (seen !== narration) inconsistent.add(citation);
+    }),
+  );
+
+  // Not an error: a long narration can legitimately be quoted in parts. It is
+  // still worth an author's eye, because it is equally how a wrong reference
+  // number shows up.
+  inconsistent.forEach((citation) =>
+    warnings.push(`${citation} is cited with different narrations — confirm both are correct`),
+  );
+
   if (document.items.some((item) => item.audio === null)) {
     warnings.push('some items have no recitation');
   }

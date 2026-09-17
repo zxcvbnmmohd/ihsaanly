@@ -39,7 +39,9 @@ const Trigger = z.discriminatedUnion('kind', [
   z.object({ kind: z.literal('window'), window: z.enum(['morning', 'evening']) }),
   z.object({
     kind: z.literal('prayer'),
-    prayer: Prayer,
+    // 'any' covers acts tied to every obligatory prayer rather than one of
+    // them, such as the dhikr after salah or the siwak before it.
+    prayer: z.union([Prayer, z.literal('any')]),
     when: z.enum(['before', 'after']),
   }),
   z.object({

@@ -4,6 +4,7 @@ import type { ItemDetail } from './item'
 import type { LibraryScreenProps } from './library'
 import type { LocationScreenProps } from './location'
 import type { MoreScreenProps } from './more'
+import type { TrackingScreenProps } from './tracking'
 import type { TodayScreenProps } from './today'
 
 const noop = (): void => {}
@@ -102,7 +103,8 @@ export const moreFixture: MoreScreenProps = {
   calculationHref: '/calculation',
   hijriLabel: 'No change',
   hijriHref: '/hijri',
-  diagnosticsHref: '/diagnostics',
+  trackingLabel: 'Tracking',
+  trackingHref: '/tracking',
 }
 
 export const hijriFixture: HijriScreenProps = {
@@ -139,5 +141,10 @@ export const locationDeclinedFixture: LocationScreenProps = {
 
 export const calculationFixture: CalculationScreenProps = {
   preferences: { method: 'MuslimWorldLeague', asr: 'shafi', highLatitudeRule: 'middleofthenight' },
+  onChange: noop,
+}
+
+export const trackingFixture: TrackingScreenProps = {
+  userState: { travelling: true, trackingPaused: false },
   onChange: noop,
 }

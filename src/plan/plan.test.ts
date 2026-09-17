@@ -200,6 +200,41 @@ describe('user state overrides selection', () => {
   })
 })
 
+describe('travelling', () => {
+  const fast = makeItem('fast-monday', { kind: 'day', day: 'monday' }, { category: 'fasting' })
+  const travelDua = makeItem('dua-travel', { kind: 'event', event: 'travel' })
+
+  const onJourney = (extra: Partial<Signals> = {}): Signals =>
+    makeSignals([fast, travelDua, rawatib], {
+      today: { ...dayContext(0, { month: 4, day: 6 }), weekday: 1 },
+      prayedToday: { dhuhr: anchor },
+      activeEvents: ['travel'],
+      userState: { travelling: true, trackingPaused: false },
+      ...extra,
+    })
+
+  it('offers fasting as optional rather than expected', () => {
+    const fasting = plan(onJourney()).today.comingUp.find((entry) => entry.itemId === 'fast-monday')
+    expect(fasting?.optional).toBe(true)
+  })
+
+  it('does not mark fasting optional when not travelling', () => {
+    const settled = plan(
+      makeSignals([fast], { today: { ...dayContext(0, { month: 4, day: 6 }), weekday: 1 } }),
+    )
+    expect(settled.today.comingUp[0]?.optional).toBe(false)
+  })
+
+  it('raises the travel items', () => {
+    expect(plan(onJourney()).today.rightNow?.itemId).toBe('dua-travel')
+  })
+
+  it('still suppresses the rawatib', () => {
+    const ids = plan(onJourney()).today.context.map((entry) => entry.itemId)
+    expect(ids).not.toContain('after-dhuhr')
+  })
+})
+
 describe('the calendar', () => {
   const cases: [string, Trigger, { month: number; day: number }, number][] = [
     ['white days', { kind: 'day', day: 'white-days' }, { month: 4, day: 14 }, 0],

@@ -694,6 +694,38 @@
       "note": null,
       "audio": null,
       "audioTranslation": null
+    },
+    {
+      "id": "qasr-while-travelling",
+      "category": "travel",
+      "title": {
+        "en": "Shortening the prayer"
+      },
+      "ruling": "sunnah",
+      "arabic": null,
+      "transliteration": null,
+      "translation": null,
+      "repeat": 1,
+      "evidence": [
+        {
+          "type": "quran",
+          "surah": 4,
+          "ayah": 101,
+          "text": {
+            "en": "And when you travel throughout the land, there is no blame upon you for shortening the prayer."
+          }
+        }
+      ],
+      "trigger": {
+        "kind": "event",
+        "event": "travel"
+      },
+      "defaultOn": true,
+      "note": {
+        "en": "Scholars differ on whether shortening on a journey is obligatory or a concession that may be taken or left."
+      },
+      "audio": null,
+      "audioTranslation": null
     }
   ]
 }

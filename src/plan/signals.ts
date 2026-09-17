@@ -3,6 +3,8 @@ import type { Item } from '@/content/schema'
 import type { HijriDate } from '@/hijri/calendar'
 import type { DailyPrayerTimes, WindowName } from '@/prayer/windows'
 
+import type { UserState } from './user-state'
+
 export type Prayer = 'fajr' | 'dhuhr' | 'asr' | 'maghrib' | 'isha'
 
 /** One calendar day, already converted, so the planner does no timezone maths. */
@@ -11,13 +13,6 @@ export interface DayContext {
   hijri: HijriDate
   /** 0 = Sunday, matching Date#getDay. */
   weekday: number
-}
-
-export interface UserState {
-  /** Manual. On a journey the rawatib drop and fasting becomes optional. */
-  travelling: boolean
-  /** Manual. No prayer items, no make-up; missed fasts are still owed. */
-  trackingPaused: boolean
 }
 
 export interface Preferences {
@@ -52,6 +47,8 @@ export type PlanReason =
 export interface PlannedItem {
   itemId: string
   reason: PlanReason
+  /** Recommended but not expected of you today, as fasting is on a journey. */
+  optional?: boolean
   /** Only set for 'upcoming', so the screen can say when without doing maths. */
   daysAway?: number
 }

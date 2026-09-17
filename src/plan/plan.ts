@@ -62,6 +62,14 @@ function isRawatib(trigger: Trigger): boolean {
   return trigger.kind === 'prayer' && trigger.prayer !== 'any'
 }
 
+/**
+ * On a journey fasting is a concession, not an expectation. It is still
+ * offered, but never as something owed.
+ */
+function isOptional(item: Item, signals: Signals): boolean {
+  return signals.userState.travelling && item.category === 'fasting'
+}
+
 function availableItems(signals: Signals): Item[] {
   const enabled = new Set(signals.preferences.enabledItemIds)
   const { travelling, trackingPaused } = signals.userState
@@ -126,11 +134,16 @@ function byRelevance(items: Item[]): (left: PlannedItem, right: PlannedItem) => 
     rulingOf(left.itemId) - rulingOf(right.itemId)
 }
 
-function lookAhead(items: Item[], upcoming: DayContext[]): PlannedItem[] {
+function lookAhead(items: Item[], upcoming: DayContext[], signals: Signals): PlannedItem[] {
   return upcoming.flatMap((day, index) =>
     items
       .filter((item) => item.trigger.kind === 'day' && matchesDay(item.trigger.day, day))
-      .map((item) => ({ itemId: item.id, reason: 'upcoming' as const, daysAway: index + 1 })),
+      .map((item) => ({
+        itemId: item.id,
+        reason: 'upcoming' as const,
+        daysAway: index + 1,
+        optional: isOptional(item, signals),
+      })),
   )
 }
 
@@ -186,7 +199,8 @@ export function plan(signals: Signals): Plan {
 
   const relevant: PlannedItem[] = items.flatMap((item) => {
     const reason = reasonFor(item, signals, window)
-    return reason ? [{ itemId: item.id, reason }] : []
+    if (!reason) return []
+    return [{ itemId: item.id, reason, optional: isOptional(item, signals) }]
   })
 
   const ranked = [...relevant].sort(byRelevance(items))
@@ -204,7 +218,7 @@ export function plan(signals: Signals): Plan {
       ),
       comingUp: [
         ...ranked.filter((entry) => entry.reason === 'today'),
-        ...lookAhead(items, signals.upcoming),
+        ...lookAhead(items, signals.upcoming, signals),
       ],
     },
     notifications: scheduleNotifications(signals, items),

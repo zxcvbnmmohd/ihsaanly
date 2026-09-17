@@ -18,6 +18,8 @@ export const strings = {
     inDays: (days: number) => `In ${days} days`,
     prayers: 'Prayers',
     optional: 'Optional',
+    expected: 'Expected',
+    confirmLocally: 'Confirm with your local authority',
     prayed: 'Prayed',
     makeUp: 'To make up',
     outstanding: (count: number) => `${count} to make up`,
@@ -36,6 +38,12 @@ export const strings = {
     asr: 'Evening',
     maghrib: 'After Maghrib',
     isha: 'Night',
+  },
+  moonSighting: {
+    title: 'Moon sighting',
+    explanation:
+      'Dates in this app are calculated. Communities differ over whether to follow calculation or local sighting, and the two often disagree by a day. Follow whoever your own community follows, and adjust the date in settings so the app agrees with them.',
+    disclaimer: 'These are listed so you can find yours. This app endorses none of them.',
   },
   tracking: {
     title: 'Tracking',

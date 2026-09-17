@@ -8,6 +8,7 @@ export default function MoreLayout() {
     <Stack screenOptions={useStackScreenOptions()}>
       <Stack.Screen name="index" options={{ title: strings.more.title }} />
       <Stack.Screen name="location" options={{ title: strings.location.title }} />
+      <Stack.Screen name="calculation" options={{ title: strings.calculation.title }} />
     </Stack>
   );
 }

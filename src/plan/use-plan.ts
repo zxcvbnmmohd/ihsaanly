@@ -11,6 +11,7 @@ import { prayerTimesAcross } from '@/prayer/times'
 import { useNotificationPreferences } from '@/notifications/store'
 import { useNow } from '@/time/use-now'
 
+import { useEnabledItems } from './enabled-store'
 import { plan } from './plan'
 import { useUserState } from './user-state-store'
 import type { DayContext, Plan, Signals } from './signals'
@@ -41,6 +42,7 @@ export function usePlan(): Plan | null {
   const now = useNow()
   const userState = useUserState()
   const notifications = useNotificationPreferences()
+  const enabledItemIds = useEnabledItems()
   const prayedToday = useTodayMarks(place?.timeZone ?? 'UTC', now)
 
   useEffect(() => {
@@ -59,12 +61,11 @@ export function usePlan(): Plan | null {
       dayContextFor(now, place.timeZone, index + 1, hijriOffset),
     ),
     prayedToday,
-    // Contextual events land in #15, the manual switches in #10 and the
-    // enabled set in #13.
+    // Contextual events land in #15.
     activeEvents: [],
     userState,
     preferences: {
-      enabledItemIds: items.filter((item) => item.defaultOn).map((item) => item.id),
+      enabledItemIds,
       knownItemIds: [],
       notifications,
     },

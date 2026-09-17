@@ -7,10 +7,15 @@ import { strings } from '@/strings'
 
 export interface TrackingScreenProps {
   userState: UserState
+  showPause: boolean
   onChange: (change: Partial<UserState>) => void
 }
 
-export function TrackingScreen({ userState, onChange }: TrackingScreenProps): ReactElement {
+export function TrackingScreen({
+  userState,
+  showPause,
+  onChange,
+}: TrackingScreenProps): ReactElement {
   return (
     <Screen className="gap-3 p-4">
       <Row
@@ -19,12 +24,14 @@ export function TrackingScreen({ userState, onChange }: TrackingScreenProps): Re
         selected={userState.travelling}
         onPress={() => onChange({ travelling: !userState.travelling })}
       />
-      <Row
-        title={strings.tracking.paused}
-        detail={strings.tracking.pausedDetail}
-        selected={userState.trackingPaused}
-        onPress={() => onChange({ trackingPaused: !userState.trackingPaused })}
-      />
+      {showPause ? (
+        <Row
+          title={strings.tracking.paused}
+          detail={strings.tracking.pausedDetail}
+          selected={userState.trackingPaused}
+          onPress={() => onChange({ trackingPaused: !userState.trackingPaused })}
+        />
+      ) : null}
     </Screen>
   )
 }

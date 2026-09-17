@@ -40,6 +40,18 @@ export const strings = {
     title: 'More',
     empty: 'History, settings and help will live here.',
   },
+  location: {
+    title: 'Location',
+    notSet: 'Not set',
+    currentLocation: 'Current location',
+    useDevice: 'Use my location',
+    search: 'Search for a city',
+    noResults: 'No cities match that.',
+    declined:
+      'Location access was declined. Search for your city instead \u2014 everything still works.',
+    explanation: 'Used on this device to work out prayer windows. It is never sent anywhere.',
+    attribution: 'City data from city-timezones (MIT).',
+  },
   error: {
     title: 'Something went wrong',
     retry: 'Try again',

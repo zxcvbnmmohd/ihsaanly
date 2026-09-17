@@ -3,7 +3,7 @@ import type { Item, Ruling, Trigger } from '@/content/schema'
 import { civilDateIn, isSameCivilDate, shiftDays } from '@/day/boundaries'
 import { buildWindows, windowAt, type PrayerWindow, type WindowName } from '@/prayer/windows'
 
-import { matchesDay } from './day-match'
+import { matchesDay, readingsDiverge } from './day-match'
 import type {
   DayContext,
   Plan,
@@ -66,6 +66,12 @@ function isRawatib(trigger: Trigger): boolean {
  * On a journey fasting is a concession, not an expectation. It is still
  * offered, but never as something owed.
  */
+/** Anything derived from a calculated calendar is offered, never asserted. */
+function caveatFor(item: Item, day: DayContext): PlannedItem['caveat'] {
+  if (item.trigger.kind !== 'day') return undefined
+  return readingsDiverge(day) ? 'confirm-locally' : 'expected'
+}
+
 function isOptional(item: Item, signals: Signals): boolean {
   return signals.userState.travelling && item.category === 'fasting'
 }
@@ -143,6 +149,7 @@ function lookAhead(items: Item[], upcoming: DayContext[], signals: Signals): Pla
         reason: 'upcoming' as const,
         daysAway: index + 1,
         optional: isOptional(item, signals),
+        caveat: caveatFor(item, day),
       })),
   )
 }
@@ -200,7 +207,14 @@ export function plan(signals: Signals): Plan {
   const relevant: PlannedItem[] = items.flatMap((item) => {
     const reason = reasonFor(item, signals, window)
     if (!reason) return []
-    return [{ itemId: item.id, reason, optional: isOptional(item, signals) }]
+    return [
+      {
+        itemId: item.id,
+        reason,
+        optional: isOptional(item, signals),
+        caveat: caveatFor(item, signals.today),
+      },
+    ]
   })
 
   const ranked = [...relevant].sort(byRelevance(items))

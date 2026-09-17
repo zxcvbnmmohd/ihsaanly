@@ -71,6 +71,16 @@ real content with its evidence attached.
   components driven entirely by exported props. `src/screens/fixtures.ts` supplies
   mock props for each, so a screen can be rendered without a device, a database or
   a navigator.
+- **Calendar occasions, never asserted.** Every day derived from a calculated
+  calendar is labelled as expected. Where the user's adjusted calendar and the
+  plain calculated one disagree about a day, it says so and asks them to confirm
+  with their own authority.
+- **Arafah on both readings.** Some hold it is the ninth of Dhul Hijjah locally,
+  others the day of standing in Makkah. In a year where those fall differently,
+  both are surfaced — the app does not choose.
+- **Moon-sighting bodies**, listed by region under More, with an explicit
+  statement that the app endorses none of them. Names only: a wrong or dead link
+  would be worse than none.
 - **Travelling and paused tracking**, two manual switches under More. Neither is
   ever inferred. Travelling offers shortening, steps the regular sunnah prayers
   aside, raises the travel duas, and offers fasting rather than expecting it.

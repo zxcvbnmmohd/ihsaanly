@@ -13,10 +13,25 @@ import { TodayScreen, type TodayEntry } from '@/screens/today'
 import { strings } from '@/strings'
 import { useNow } from '@/time/use-now'
 
-function detailFor(planned: PlannedItem): string | null {
-  if (planned.optional) return strings.plan.optional
+function caveatLabel(caveat: PlannedItem['caveat']): string | null {
+  if (caveat === 'confirm-locally') return strings.plan.confirmLocally
+  if (caveat === 'expected') return strings.plan.expected
+  return null
+}
+
+function whenLabel(planned: PlannedItem): string | null {
   if (planned.reason !== 'upcoming') return null
   return planned.daysAway === 1 ? strings.plan.tomorrow : strings.plan.inDays(planned.daysAway ?? 0)
+}
+
+function detailFor(planned: PlannedItem): string | null {
+  const parts = [
+    whenLabel(planned),
+    planned.optional ? strings.plan.optional : null,
+    caveatLabel(planned.caveat),
+  ].filter((part): part is string => part !== null)
+
+  return parts.length > 0 ? parts.join(' · ') : null
 }
 
 function toEntry(planned: PlannedItem): TodayEntry | null {

@@ -26,7 +26,12 @@ function dayContextFor(
   const civil = shiftDays(civilDateIn(instant, timeZone), offsetDays)
   const weekday = new Date(Date.UTC(civil.year, civil.month - 1, civil.day)).getUTCDay()
 
-  return { civil, hijri: toHijri(civil, hijriOffset), weekday }
+  return {
+    civil,
+    hijri: toHijri(civil, hijriOffset),
+    hijriCalculated: toHijri(civil, 0),
+    weekday,
+  }
 }
 
 export function usePlan(): Plan | null {

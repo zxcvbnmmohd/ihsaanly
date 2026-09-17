@@ -10,7 +10,10 @@ export type Prayer = 'fajr' | 'dhuhr' | 'asr' | 'maghrib' | 'isha'
 /** One calendar day, already converted, so the planner does no timezone maths. */
 export interface DayContext {
   civil: CivilDate
+  /** The user's calendar, after their offset. */
   hijri: HijriDate
+  /** Umm al-Qura with no offset, which is what Makkah follows. */
+  hijriCalculated: HijriDate
   /** 0 = Sunday, matching Date#getDay. */
   weekday: number
 }
@@ -51,6 +54,11 @@ export interface PlannedItem {
   optional?: boolean
   /** Only set for 'upcoming', so the screen can say when without doing maths. */
   daysAway?: number
+  /**
+   * A calculated date is never asserted. 'confirm-locally' additionally means
+   * the user's calendar and the calculated one disagree about this day.
+   */
+  caveat?: 'expected' | 'confirm-locally'
 }
 
 export interface TodayModel {

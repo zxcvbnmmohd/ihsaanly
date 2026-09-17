@@ -58,11 +58,16 @@ function makeItem(id: string, trigger: Trigger, overrides: Partial<Item> = {}): 
   }
 }
 
-function dayContext(offset: number, hijri: { month: number; day: number }): DayContext {
+function dayContext(
+  offset: number,
+  hijri: { month: number; day: number },
+  calculated = hijri,
+): DayContext {
   const at = new Date(anchor.getTime() + offset * 86_400_000)
   return {
     civil: civilDateIn(at, toronto.timeZone),
     hijri: { year: 1448, month: hijri.month, day: hijri.day },
+    hijriCalculated: { year: 1448, month: calculated.month, day: calculated.day },
     weekday: at.getDay(),
   }
 }
@@ -268,6 +273,41 @@ describe('the calendar', () => {
   it('never lists a day that does not match', () => {
     const result = plan(makeSignals([whiteDays], { today: dayContext(0, { month: 4, day: 6 }) }))
     expect(result.today.comingUp).toEqual([])
+  })
+})
+
+describe('a calculated calendar is never asserted', () => {
+  const arafah = makeItem('fast-arafah', { kind: 'day', day: 'arafah' }, { category: 'fasting' })
+
+  it('marks a day as expected when both readings agree', () => {
+    const result = plan(makeSignals([arafah], { today: dayContext(0, { month: 12, day: 9 }) }))
+    expect(result.today.comingUp[0]?.caveat).toBe('expected')
+  })
+
+  it('recognises Arafah on the local reading when the two differ', () => {
+    const result = plan(
+      makeSignals([arafah], { today: dayContext(0, { month: 12, day: 9 }, { month: 12, day: 8 }) }),
+    )
+    expect(result.today.comingUp[0]?.itemId).toBe('fast-arafah')
+  })
+
+  it('recognises Arafah on the day of standing in Makkah when the two differ', () => {
+    const result = plan(
+      makeSignals([arafah], { today: dayContext(0, { month: 12, day: 8 }, { month: 12, day: 9 }) }),
+    )
+    expect(result.today.comingUp[0]?.itemId).toBe('fast-arafah')
+  })
+
+  it('asks the user to confirm locally when the readings disagree', () => {
+    const result = plan(
+      makeSignals([arafah], { today: dayContext(0, { month: 12, day: 9 }, { month: 12, day: 8 }) }),
+    )
+    expect(result.today.comingUp[0]?.caveat).toBe('confirm-locally')
+  })
+
+  it('leaves a non-calendar item without a caveat', () => {
+    const result = plan(makeSignals([eveningAdhkar]))
+    expect(result.today.rightNow?.caveat).toBeUndefined()
   })
 })
 

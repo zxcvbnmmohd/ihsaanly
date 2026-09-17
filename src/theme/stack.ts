@@ -1,8 +1,8 @@
-import type { Stack } from 'expo-router/stack';
-import type { ComponentProps } from 'react';
-import { Platform, useColorScheme } from 'react-native';
+import type { Stack } from 'expo-router/stack'
+import type { ComponentProps } from 'react'
+import { Platform, useColorScheme } from 'react-native'
 
-import { colors } from '@/theme/colors';
+import { colors } from '@/theme/colors'
 
 /**
  * A hook, not a constant: Android Material colours only re-resolve during render.
@@ -12,10 +12,10 @@ import { colors } from '@/theme/colors';
  * cross-platform renders content underneath the header and the status bar, so
  * Android gets an opaque header that occupies layout space instead.
  */
-type StackScreenOptions = NonNullable<ComponentProps<typeof Stack>['screenOptions']>;
+type StackScreenOptions = NonNullable<ComponentProps<typeof Stack>['screenOptions']>
 
 export function useStackScreenOptions(): StackScreenOptions {
-  useColorScheme();
+  useColorScheme()
 
   if (Platform.OS !== 'ios') {
     return {
@@ -24,7 +24,7 @@ export function useStackScreenOptions(): StackScreenOptions {
       headerTitleStyle: { color: colors.label },
       headerTintColor: colors.label,
       headerBackButtonDisplayMode: 'minimal',
-    };
+    }
   }
 
   return {
@@ -35,5 +35,5 @@ export function useStackScreenOptions(): StackScreenOptions {
     headerLargeStyle: { backgroundColor: 'transparent' },
     headerTitleStyle: { color: colors.label },
     headerBackButtonDisplayMode: 'minimal',
-  };
+  }
 }

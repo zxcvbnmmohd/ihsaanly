@@ -1,8 +1,8 @@
-import type { ReactElement } from 'react';
-import { Stack } from 'expo-router/stack';
+import type { ReactElement } from 'react'
+import { Stack } from 'expo-router/stack'
 
-import { strings } from '@/strings';
-import { useStackScreenOptions } from '@/theme/stack';
+import { strings } from '@/strings'
+import { useStackScreenOptions } from '@/theme/stack'
 
 export default function MoreLayout(): ReactElement {
   return (
@@ -12,5 +12,5 @@ export default function MoreLayout(): ReactElement {
       <Stack.Screen name="calculation" options={{ title: strings.calculation.title }} />
       <Stack.Screen name="hijri" options={{ title: strings.hijri.title }} />
     </Stack>
-  );
+  )
 }

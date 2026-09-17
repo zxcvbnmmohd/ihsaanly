@@ -1,26 +1,26 @@
-import type { ReactElement } from 'react';
-import type { Href } from 'expo-router';
+import type { ReactElement } from 'react'
+import type { Href } from 'expo-router'
 
-import { EmptyState } from '@/components/empty-state';
-import { Row } from '@/components/row';
-import { Screen } from '@/components/screen';
-import type { Ruling } from '@/content/schema';
-import { strings } from '@/strings';
+import { EmptyState } from '@/components/empty-state'
+import { Row } from '@/components/row'
+import { Screen } from '@/components/screen'
+import type { Ruling } from '@/content/schema'
+import { strings } from '@/strings'
 
 export interface LibraryEntry {
-  id: string;
-  title: string;
-  ruling: Ruling;
-  href: Href;
+  id: string
+  title: string
+  ruling: Ruling
+  href: Href
 }
 
 export interface LibraryScreenProps {
-  entries: LibraryEntry[];
+  entries: LibraryEntry[]
 }
 
 export function LibraryScreen({ entries }: LibraryScreenProps): ReactElement {
   if (entries.length === 0) {
-    return <EmptyState message={strings.library.empty} />;
+    return <EmptyState message={strings.library.empty} />
   }
 
   return (
@@ -34,5 +34,5 @@ export function LibraryScreen({ entries }: LibraryScreenProps): ReactElement {
         />
       ))}
     </Screen>
-  );
+  )
 }

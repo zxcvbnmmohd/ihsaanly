@@ -1,19 +1,19 @@
-import type { ReactElement } from 'react';
-import type { Href } from 'expo-router';
-import { Text, useColorScheme, View } from 'react-native';
+import type { ReactElement } from 'react'
+import type { Href } from 'expo-router'
+import { Text, useColorScheme, View } from 'react-native'
 
-import { Row } from '@/components/row';
-import { Screen } from '@/components/screen';
-import type { HijriDate } from '@/hijri/calendar';
-import type { WindowName } from '@/prayer/windows';
-import { strings } from '@/strings';
-import { colors } from '@/theme/colors';
+import { Row } from '@/components/row'
+import { Screen } from '@/components/screen'
+import type { HijriDate } from '@/hijri/calendar'
+import type { WindowName } from '@/prayer/windows'
+import { strings } from '@/strings'
+import { colors } from '@/theme/colors'
 
 export interface TodayScreenProps {
-  hasLocation: boolean;
-  window: WindowName | null;
-  hijri: HijriDate | null;
-  locationHref: Href;
+  hasLocation: boolean
+  window: WindowName | null
+  hijri: HijriDate | null
+  locationHref: Href
 }
 
 export function TodayScreen({
@@ -22,7 +22,7 @@ export function TodayScreen({
   hijri,
   locationHref,
 }: TodayScreenProps): ReactElement {
-  useColorScheme();
+  useColorScheme()
 
   if (!hasLocation) {
     return (
@@ -32,7 +32,7 @@ export function TodayScreen({
         </Text>
         <Row href={locationHref} title={strings.location.title} detail={strings.location.notSet} />
       </Screen>
-    );
+    )
   }
 
   return (
@@ -57,5 +57,5 @@ export function TodayScreen({
         </View>
       ) : null}
     </Screen>
-  );
+  )
 }

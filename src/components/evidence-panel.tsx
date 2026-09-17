@@ -1,28 +1,28 @@
-import type { ReactElement } from 'react';
-import { Text, useColorScheme, View } from 'react-native';
+import type { ReactElement } from 'react'
+import { Text, useColorScheme, View } from 'react-native'
 
-import type { Evidence } from '@/content/schema';
-import { resolveText } from '@/content';
-import { strings } from '@/strings';
-import { colors } from '@/theme/colors';
+import type { Evidence } from '@/content/schema'
+import { resolveText } from '@/content'
+import { strings } from '@/strings'
+import { colors } from '@/theme/colors'
 
 function citationFor(evidence: Evidence): string {
   if (evidence.type === 'quran') {
-    return strings.item.quranReference(evidence.surah, evidence.ayah);
+    return strings.item.quranReference(evidence.surah, evidence.ayah)
   }
 
-  const grading = strings.grading[evidence.grading];
-  const attribution = evidence.gradedBy ? ` — ${strings.item.gradedBy(evidence.gradedBy)}` : '';
+  const grading = strings.grading[evidence.grading]
+  const attribution = evidence.gradedBy ? ` — ${strings.item.gradedBy(evidence.gradedBy)}` : ''
 
-  return `${evidence.collection} ${evidence.reference} · ${grading}${attribution}`;
+  return `${evidence.collection} ${evidence.reference} · ${grading}${attribution}`
 }
 
 interface EvidencePanelProps {
-  evidence: Evidence[];
+  evidence: Evidence[]
 }
 
 export function EvidencePanel({ evidence }: EvidencePanelProps): ReactElement {
-  useColorScheme();
+  useColorScheme()
 
   return (
     <View className="gap-4">
@@ -31,7 +31,7 @@ export function EvidencePanel({ evidence }: EvidencePanelProps): ReactElement {
       </Text>
 
       {evidence.map((entry, index) => {
-        const narration = resolveText(entry.text);
+        const narration = resolveText(entry.text)
 
         return (
           <View key={`${entry.type}-${index}`} className="gap-1">
@@ -44,8 +44,8 @@ export function EvidencePanel({ evidence }: EvidencePanelProps): ReactElement {
               </Text>
             ) : null}
           </View>
-        );
+        )
       })}
     </View>
-  );
+  )
 }

@@ -1,30 +1,30 @@
-import type { ReactElement, ReactNode } from 'react';
-import { Text, useColorScheme, View } from 'react-native';
+import type { ReactElement, ReactNode } from 'react'
+import { Text, useColorScheme, View } from 'react-native'
 
-import { Row } from '@/components/row';
-import { Screen } from '@/components/screen';
+import { Row } from '@/components/row'
+import { Screen } from '@/components/screen'
 import {
   AsrOpinion,
   CalculationMethodName,
   HighLatitudeRuleName,
   type CalculationPreferences,
-} from '@/prayer/calculation';
-import { strings } from '@/strings';
-import { colors } from '@/theme/colors';
+} from '@/prayer/calculation'
+import { strings } from '@/strings'
+import { colors } from '@/theme/colors'
 
 export interface CalculationScreenProps {
-  preferences: CalculationPreferences;
-  onChange: (change: Partial<CalculationPreferences>) => void;
+  preferences: CalculationPreferences
+  onChange: (change: Partial<CalculationPreferences>) => void
 }
 
 interface SectionProps {
-  title: string;
-  footnote?: string;
-  children: ReactNode;
+  title: string
+  footnote?: string
+  children: ReactNode
 }
 
 function Section({ title, footnote, children }: SectionProps): ReactElement {
-  useColorScheme();
+  useColorScheme()
 
   return (
     <View className="gap-3">
@@ -38,11 +38,11 @@ function Section({ title, footnote, children }: SectionProps): ReactElement {
         </Text>
       ) : null}
     </View>
-  );
+  )
 }
 
 export function CalculationScreen({ preferences, onChange }: CalculationScreenProps): ReactElement {
-  useColorScheme();
+  useColorScheme()
 
   return (
     <Screen className="gap-8 p-4">
@@ -85,5 +85,5 @@ export function CalculationScreen({ preferences, onChange }: CalculationScreenPr
         ))}
       </Section>
     </Screen>
-  );
+  )
 }

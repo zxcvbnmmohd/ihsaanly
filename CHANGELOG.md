@@ -97,6 +97,10 @@ real content with its evidence attached.
 
 ### Changed
 
+- **Seven more conventions enforced by lint**: no semicolons, no `any`, no
+  non-null assertions, named exports outside routes, a pure domain layer that
+  cannot import React, React Native, native modules or storage, kebab-case file
+  names, and an `assertNever` helper for exhaustive unions.
 - **Explicit return types on every function and component**, enforced by lint.
   Callbacks passed to an already-typed prop are exempt. Component props moved
   from inline object literals to named interfaces.

@@ -1,26 +1,26 @@
-import type { CalculationScreenProps } from './calculation';
-import type { HijriScreenProps } from './hijri';
-import type { ItemDetail } from './item';
-import type { LibraryScreenProps } from './library';
-import type { LocationScreenProps } from './location';
-import type { MoreScreenProps } from './more';
-import type { TodayScreenProps } from './today';
+import type { CalculationScreenProps } from './calculation'
+import type { HijriScreenProps } from './hijri'
+import type { ItemDetail } from './item'
+import type { LibraryScreenProps } from './library'
+import type { LocationScreenProps } from './location'
+import type { MoreScreenProps } from './more'
+import type { TodayScreenProps } from './today'
 
-const noop = (): void => {};
+const noop = (): void => {}
 
 export const todayFixture: TodayScreenProps = {
   hasLocation: true,
   window: 'asr',
   hijri: { year: 1448, month: 4, day: 6 },
   locationHref: '/location',
-};
+}
 
 export const todayWithoutLocationFixture: TodayScreenProps = {
   ...todayFixture,
   hasLocation: false,
   window: null,
   hijri: null,
-};
+}
 
 export const libraryFixture: LibraryScreenProps = {
   entries: [
@@ -37,9 +37,9 @@ export const libraryFixture: LibraryScreenProps = {
       href: '/item/sunnah-after-dhuhr',
     },
   ],
-};
+}
 
-export const emptyLibraryFixture: LibraryScreenProps = { entries: [] };
+export const emptyLibraryFixture: LibraryScreenProps = { entries: [] }
 
 export const itemFixture: ItemDetail = {
   ruling: 'sunnah',
@@ -59,9 +59,9 @@ export const itemFixture: ItemDetail = {
     },
     { type: 'quran', surah: 2, ayah: 255, text: { en: 'A verse.' } },
   ],
-};
+}
 
-export const missingItemFixture: ItemDetail | null = null;
+export const missingItemFixture: ItemDetail | null = null
 
 export const moreFixture: MoreScreenProps = {
   locationLabel: 'Toronto, Ontario, Canada',
@@ -70,13 +70,13 @@ export const moreFixture: MoreScreenProps = {
   calculationHref: '/calculation',
   hijriLabel: 'No change',
   hijriHref: '/hijri',
-};
+}
 
 export const hijriFixture: HijriScreenProps = {
   offset: 0,
   preview: { year: 1448, month: 4, day: 6 },
   onChange: noop,
-};
+}
 
 export const locationFixture: LocationScreenProps = {
   deviceLabel: null,
@@ -95,16 +95,16 @@ export const locationFixture: LocationScreenProps = {
   onQueryChange: noop,
   onUseDevice: noop,
   onSelect: noop,
-};
+}
 
 export const locationDeclinedFixture: LocationScreenProps = {
   ...locationFixture,
   query: '',
   results: [],
   declined: true,
-};
+}
 
 export const calculationFixture: CalculationScreenProps = {
   preferences: { method: 'MuslimWorldLeague', asr: 'shafi', highLatitudeRule: 'middleofthenight' },
   onChange: noop,
-};
+}

@@ -1,14 +1,14 @@
-import type { ReactElement } from 'react';
-import { Stack, useLocalSearchParams } from 'expo-router';
+import type { ReactElement } from 'react'
+import { Stack, useLocalSearchParams } from 'expo-router'
 
-import { itemById, resolveText } from '@/content';
-import { ItemScreen } from '@/screens/item';
-import { strings } from '@/strings';
+import { itemById, resolveText } from '@/content'
+import { ItemScreen } from '@/screens/item'
+import { strings } from '@/strings'
 
 export default function ItemRoute(): ReactElement {
-  const { id } = useLocalSearchParams<{ id: string }>();
-  const item = itemById(id);
-  const title = item ? resolveText(item.title) : null;
+  const { id } = useLocalSearchParams<{ id: string }>()
+  const item = itemById(id)
+  const title = item ? resolveText(item.title) : null
 
   return (
     <>
@@ -29,5 +29,5 @@ export default function ItemRoute(): ReactElement {
         }
       />
     </>
-  );
+  )
 }

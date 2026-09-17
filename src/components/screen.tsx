@@ -1,6 +1,6 @@
-import type { ReactElement } from 'react';
-import type { ReactNode } from 'react';
-import { ScrollView } from 'react-native';
+import type { ReactElement } from 'react'
+import type { ReactNode } from 'react'
+import { ScrollView } from 'react-native'
 
 /**
  * One scroll container for every screen. `contentInsetAdjustmentBehavior` is
@@ -8,8 +8,8 @@ import { ScrollView } from 'react-native';
  * than in each screen.
  */
 interface ScreenProps {
-  children: ReactNode;
-  className?: string;
+  children: ReactNode
+  className?: string
 }
 
 export function Screen({ children, className }: ScreenProps): ReactElement {
@@ -19,5 +19,5 @@ export function Screen({ children, className }: ScreenProps): ReactElement {
       contentContainerClassName={className ?? 'gap-4 p-4'}>
       {children}
     </ScrollView>
-  );
+  )
 }

@@ -1,14 +1,14 @@
-import type { ReactElement } from 'react';
-import { Text, useColorScheme, View } from 'react-native';
+import type { ReactElement } from 'react'
+import { Text, useColorScheme, View } from 'react-native'
 
-import { colors } from '@/theme/colors';
+import { colors } from '@/theme/colors'
 
 interface EmptyStateProps {
-  message: string;
+  message: string
 }
 
 export function EmptyState({ message }: EmptyStateProps): ReactElement {
-  useColorScheme(); // Android Material colours need this to re-resolve on theme change
+  useColorScheme() // Android Material colours need this to re-resolve on theme change
 
   return (
     <View className="flex-1 items-center justify-center p-6">
@@ -16,5 +16,5 @@ export function EmptyState({ message }: EmptyStateProps): ReactElement {
         {message}
       </Text>
     </View>
-  );
+  )
 }

@@ -1,20 +1,20 @@
-import type { ReactElement } from 'react';
-import { DarkTheme, DefaultTheme, ThemeProvider } from 'expo-router/react-navigation';
-import { NativeTabs } from 'expo-router/unstable-native-tabs';
-import { Text, useColorScheme, View } from 'react-native';
+import type { ReactElement } from 'react'
+import { DarkTheme, DefaultTheme, ThemeProvider } from 'expo-router/react-navigation'
+import { NativeTabs } from 'expo-router/unstable-native-tabs'
+import { Text, useColorScheme, View } from 'react-native'
 
-import { strings } from '@/strings';
-import { colors } from '@/theme/colors';
+import { strings } from '@/strings'
+import { colors } from '@/theme/colors'
 
-import '../../global.css';
+import '../../global.css'
 
 /**
  * Expo Router renders this instead of a white screen when a render throws.
  * Without it, release builds show nothing and the cause is invisible.
  */
 interface ErrorBoundaryProps {
-  error: Error;
-  retry: () => Promise<void>;
+  error: Error
+  retry: () => Promise<void>
 }
 
 export function ErrorBoundary({ error, retry }: ErrorBoundaryProps): ReactElement {
@@ -33,11 +33,11 @@ export function ErrorBoundary({ error, retry }: ErrorBoundaryProps): ReactElemen
         {strings.error.retry}
       </Text>
     </View>
-  );
+  )
 }
 
 export default function RootLayout(): ReactElement {
-  const colorScheme = useColorScheme();
+  const colorScheme = useColorScheme()
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
@@ -56,5 +56,5 @@ export default function RootLayout(): ReactElement {
         </NativeTabs.Trigger>
       </NativeTabs>
     </ThemeProvider>
-  );
+  )
 }

@@ -4,5 +4,6 @@
   "bracketSameLine": true,
   "plugins": ["prettier-plugin-tailwindcss"],
   "tailwindStylesheet": "./global.css",
-  "tailwindAttributes": ["className", "contentContainerClassName"]
+  "tailwindAttributes": ["className", "contentContainerClassName"],
+  "semi": false
 }

@@ -1,21 +1,21 @@
-import type { ReactElement } from 'react';
-import { Link, type Href } from 'expo-router';
-import { Pressable, Text, useColorScheme, View } from 'react-native';
+import type { ReactElement } from 'react'
+import { Link, type Href } from 'expo-router'
+import { Pressable, Text, useColorScheme, View } from 'react-native'
 
-import { Surface } from '@/components/surface';
-import { strings } from '@/strings';
-import { colors } from '@/theme/colors';
+import { Surface } from '@/components/surface'
+import { strings } from '@/strings'
+import { colors } from '@/theme/colors'
 
 interface RowProps {
-  title: string;
-  detail?: string | null;
-  href?: Href;
-  onPress?: () => void;
-  selected?: boolean;
+  title: string
+  detail?: string | null
+  href?: Href
+  onPress?: () => void
+  selected?: boolean
 }
 
 export function Row({ title, detail, href, onPress, selected }: RowProps): ReactElement {
-  useColorScheme();
+  useColorScheme()
 
   const body = (
     <Surface interactive style={{ borderRadius: 16, padding: 16 }}>
@@ -40,15 +40,15 @@ export function Row({ title, detail, href, onPress, selected }: RowProps): React
         ) : null}
       </View>
     </Surface>
-  );
+  )
 
   if (href) {
     return (
       <Link href={href} asChild>
         <Pressable>{body}</Pressable>
       </Link>
-    );
+    )
   }
 
-  return <Pressable onPress={onPress}>{body}</Pressable>;
+  return <Pressable onPress={onPress}>{body}</Pressable>
 }

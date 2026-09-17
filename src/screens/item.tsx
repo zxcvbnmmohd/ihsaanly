@@ -1,35 +1,35 @@
-import type { ReactElement, ReactNode } from 'react';
-import { Text, useColorScheme, View } from 'react-native';
+import type { ReactElement, ReactNode } from 'react'
+import { Text, useColorScheme, View } from 'react-native'
 
-import { ArabicText } from '@/components/arabic-text';
-import { EmptyState } from '@/components/empty-state';
-import { EvidencePanel } from '@/components/evidence-panel';
-import { Screen } from '@/components/screen';
-import type { Evidence, Ruling } from '@/content/schema';
-import { strings } from '@/strings';
-import { colors } from '@/theme/colors';
+import { ArabicText } from '@/components/arabic-text'
+import { EmptyState } from '@/components/empty-state'
+import { EvidencePanel } from '@/components/evidence-panel'
+import { Screen } from '@/components/screen'
+import type { Evidence, Ruling } from '@/content/schema'
+import { strings } from '@/strings'
+import { colors } from '@/theme/colors'
 
 export interface ItemDetail {
-  ruling: Ruling;
-  repeat: number;
-  arabic: string | null;
-  transliteration: string | null;
-  translation: string | null;
-  note: string | null;
-  evidence: Evidence[];
+  ruling: Ruling
+  repeat: number
+  arabic: string | null
+  transliteration: string | null
+  translation: string | null
+  note: string | null
+  evidence: Evidence[]
 }
 
 export interface ItemScreenProps {
-  item: ItemDetail | null;
+  item: ItemDetail | null
 }
 
 interface LabelledProps {
-  label: string;
-  children: ReactNode;
+  label: string
+  children: ReactNode
 }
 
 function Labelled({ label, children }: LabelledProps): ReactElement {
-  useColorScheme();
+  useColorScheme()
 
   return (
     <View className="gap-1">
@@ -38,14 +38,14 @@ function Labelled({ label, children }: LabelledProps): ReactElement {
       </Text>
       {children}
     </View>
-  );
+  )
 }
 
 export function ItemScreen({ item }: ItemScreenProps): ReactElement {
-  useColorScheme();
+  useColorScheme()
 
   if (!item) {
-    return <EmptyState message={strings.notFound.body} />;
+    return <EmptyState message={strings.notFound.body} />
   }
 
   return (
@@ -89,5 +89,5 @@ export function ItemScreen({ item }: ItemScreenProps): ReactElement {
 
       <EvidencePanel evidence={item.evidence} />
     </Screen>
-  );
+  )
 }

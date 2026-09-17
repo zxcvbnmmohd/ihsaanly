@@ -1,11 +1,11 @@
-import type { ReactElement } from 'react';
-import { Text, useColorScheme, type TextProps } from 'react-native';
+import type { ReactElement } from 'react'
+import { Text, useColorScheme, type TextProps } from 'react-native'
 
-import { colors } from '@/theme/colors';
+import { colors } from '@/theme/colors'
 
 /** `writingDirection` + `textAlign: auto` right-aligns Arabic without hardcoding a side. */
 export function ArabicText({ children, ...props }: TextProps): ReactElement {
-  useColorScheme();
+  useColorScheme()
 
   return (
     <Text
@@ -14,5 +14,5 @@ export function ArabicText({ children, ...props }: TextProps): ReactElement {
       style={{ color: colors.label, writingDirection: 'rtl', textAlign: 'auto' }}>
       {children}
     </Text>
-  );
+  )
 }

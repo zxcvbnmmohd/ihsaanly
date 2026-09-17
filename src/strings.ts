@@ -129,4 +129,4 @@ export const strings = {
     title: 'Not found',
     body: 'That screen does not exist.',
   },
-} as const;
+} as const

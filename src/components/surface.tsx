@@ -1,13 +1,13 @@
-import type { ReactElement } from 'react';
-import { BlurView } from 'expo-blur';
-import { GlassView, isGlassEffectAPIAvailable, isLiquidGlassAvailable } from 'expo-glass-effect';
-import { useEffect, useState, type ReactNode } from 'react';
-import { AccessibilityInfo, useColorScheme, View, type ViewProps } from 'react-native';
+import type { ReactElement } from 'react'
+import { BlurView } from 'expo-blur'
+import { GlassView, isGlassEffectAPIAvailable, isLiquidGlassAvailable } from 'expo-glass-effect'
+import { useEffect, useState, type ReactNode } from 'react'
+import { AccessibilityInfo, useColorScheme, View, type ViewProps } from 'react-native'
 
-import { colors } from '@/theme/colors';
+import { colors } from '@/theme/colors'
 
 const canUseGlass =
-  process.env.EXPO_OS === 'ios' && isLiquidGlassAvailable() && isGlassEffectAPIAvailable();
+  process.env.EXPO_OS === 'ios' && isLiquidGlassAvailable() && isGlassEffectAPIAvailable()
 
 /**
  * One elevated container that speaks each platform's own language:
@@ -19,32 +19,32 @@ const canUseGlass =
  * variants when a second surface style actually shows up in a design.
  */
 interface Thing {
-  reduceTransparency: boolean;
+  reduceTransparency: boolean
 }
 
 interface SurfaceProps {
-  children?: ReactNode;
-  style?: ViewProps['style'];
-  interactive?: boolean;
+  children?: ReactNode
+  style?: ViewProps['style']
+  interactive?: boolean
 }
 
 export function Surface({ children, style, interactive = false }: SurfaceProps): ReactElement {
-  const [thing, setThing] = useState<Thing>({ reduceTransparency: false });
+  const [thing, setThing] = useState<Thing>({ reduceTransparency: false })
   // Android's Material colors don't re-resolve on their own — subscribing to the
   // scheme here forces a re-render when the theme flips (React Compiler memoizes).
-  useColorScheme();
+  useColorScheme()
 
   useEffect(() => {
-    const apply = (reduceTransparency: boolean): void => setThing({ reduceTransparency });
+    const apply = (reduceTransparency: boolean): void => setThing({ reduceTransparency })
 
-    AccessibilityInfo.isReduceTransparencyEnabled().then(apply);
-    const sub = AccessibilityInfo.addEventListener('reduceTransparencyChanged', apply);
-    return (): void => sub.remove();
-  }, []);
+    AccessibilityInfo.isReduceTransparencyEnabled().then(apply)
+    const sub = AccessibilityInfo.addEventListener('reduceTransparencyChanged', apply)
+    return (): void => sub.remove()
+  }, [])
 
   // Never clip a GlassView from the outside — it clips itself, and overflow
   // hidden cuts off the rim highlight and press bulge.
-  const base: ViewProps['style'] = [{ borderCurve: 'continuous' }, style];
+  const base: ViewProps['style'] = [{ borderCurve: 'continuous' }, style]
 
   if (
     thing.reduceTransparency ||
@@ -53,7 +53,7 @@ export function Surface({ children, style, interactive = false }: SurfaceProps):
   ) {
     return (
       <View style={[base, { backgroundColor: colors.secondarySystemBackground }]}>{children}</View>
-    );
+    )
   }
 
   if (canUseGlass) {
@@ -61,12 +61,12 @@ export function Surface({ children, style, interactive = false }: SurfaceProps):
       <GlassView isInteractive={interactive} style={base}>
         {children}
       </GlassView>
-    );
+    )
   }
 
   return (
     <BlurView tint="systemMaterial" intensity={80} style={[base, { overflow: 'hidden' }]}>
       {children}
     </BlurView>
-  );
+  )
 }

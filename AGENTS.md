@@ -144,6 +144,18 @@ body. On Android these colours don't re-resolve on their own, and React Compiler
 is enabled, so without the subscription a memoized component keeps stale colours
 when the theme flips.
 
+### React Compiler is on: never memoise an impure read
+
+The compiler infers a memoised expression's dependencies from what it reads. A
+`useMemo(() => readFromSqlite(key), [key, version])` gets re-memoised on `key`
+alone — `version` in the deps array is not a barrier — so a recorded event never
+invalidates the read and the screen shows the write only after a reload.
+
+Anything that reads mutable state outside React (SQLite, a module-level store)
+goes through `useSyncExternalStore`, with the store returning a snapshot cached
+per version so `getSnapshot` is referentially stable until something changes.
+`src/storage/events.ts` is the pattern. `subscribe` is hoisted, never inline.
+
 ### NativeWind v5 is a release candidate
 
 `nativewind@5.0.0-rc.0` and `react-native-css@3.1.0-rc.0` are pinned exactly and

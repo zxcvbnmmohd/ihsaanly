@@ -69,14 +69,14 @@ function writeEvent(event: NewEvent): void {
   )
 }
 
-export function prayerMarksOn(logDay: string): Partial<Record<Prayer, Date>> {
+function readMarks(logDay: string): Partial<Record<Prayer, Date>> {
   const rows = attempt(
-    'prayerMarksOn',
+    'readMarks',
     () =>
       database.getAllSync<{ subject: string; kind: EventKind; at: number }>(
         `SELECT subject, kind, at FROM events
-     WHERE kind IN ('prayer-performed', 'prayer-unmarked') AND log_day = ?
-     ORDER BY id ASC`,
+         WHERE kind IN ('prayer-performed', 'prayer-unmarked') AND log_day = ?
+         ORDER BY id ASC`,
         logDay,
       ),
     [],
@@ -94,12 +94,56 @@ export function prayerMarksOn(logDay: string): Partial<Record<Prayer, Date>> {
   return marks
 }
 
+interface Cached<T> {
+  version: number
+  value: T
+}
+
+const marksCache = new Map<string, Cached<Partial<Record<Prayer, Date>>>>()
+let qadaCache: Cached<Partial<Record<Prayer, number>>> | null = null
+
+/**
+ * Snapshots are cached per store version so `getSnapshot` returns the same
+ * reference until something is recorded. That is what useSyncExternalStore
+ * needs, and it is what the React Compiler cannot reinterpret: a memoised read
+ * inferred its dependencies from the arguments alone, so a recorded event never
+ * invalidated it and the screen showed the write only after a reload.
+ */
+function marksSnapshot(logDay: string): Partial<Record<Prayer, Date>> {
+  const cached = marksCache.get(logDay)
+  if (cached && cached.version === version) return cached.value
+
+  const value = readMarks(logDay)
+  marksCache.set(logDay, { version, value })
+  return value
+}
+
+function qadaSnapshot(): Partial<Record<Prayer, number>> {
+  if (qadaCache && qadaCache.version === version) return qadaCache.value
+
+  const value = readQadaCounts()
+  qadaCache = { version, value }
+  return value
+}
+
+export function prayerMarksOn(logDay: string): Partial<Record<Prayer, Date>> {
+  return marksSnapshot(logDay)
+}
+
+export function useMarksOn(logDay: string): Partial<Record<Prayer, Date>> {
+  return useSyncExternalStore(subscribe, () => marksSnapshot(logDay))
+}
+
+export function useQadaCounts(): Partial<Record<Prayer, number>> {
+  return useSyncExternalStore(subscribe, qadaSnapshot)
+}
+
 export function markedPrayersOn(logDay: string): Prayer[] {
   return Object.keys(prayerMarksOn(logDay)) as Prayer[]
 }
 
 /** Outstanding make-up per prayer: what was missed, less what has been made up. */
-export function qadaCounts(): Partial<Record<Prayer, number>> {
+function readQadaCounts(): Partial<Record<Prayer, number>> {
   const rows = database.getAllSync<{ subject: string; kind: EventKind; total: number }>(
     `SELECT subject, kind, COUNT(*) AS total FROM events
      WHERE kind IN ('prayer-missed', 'prayer-made-up')

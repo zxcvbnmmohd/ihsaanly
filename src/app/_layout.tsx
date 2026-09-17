@@ -2,6 +2,7 @@ import { DarkTheme, DefaultTheme, ThemeProvider } from 'expo-router/react-naviga
 import { NativeTabs } from 'expo-router/unstable-native-tabs';
 import { Text, useColorScheme, View } from 'react-native';
 
+import { strings } from '@/strings';
 import { colors } from '@/theme/colors';
 
 import '../../global.css';
@@ -14,7 +15,7 @@ export function ErrorBoundary({ error, retry }: { error: Error; retry: () => Pro
   return (
     <View className="flex-1 items-center justify-center gap-3 p-6">
       <Text className="text-xl font-semibold" style={{ color: colors.label }}>
-        Something went wrong
+        {strings.error.title}
       </Text>
       <Text selectable className="text-center text-sm" style={{ color: colors.secondaryLabel }}>
         {error.message}
@@ -23,7 +24,7 @@ export function ErrorBoundary({ error, retry }: { error: Error; retry: () => Pro
         onPress={() => retry()}
         className="text-base font-semibold"
         style={{ color: colors.tint }}>
-        Try again
+        {strings.error.retry}
       </Text>
     </View>
   );
@@ -35,13 +36,17 @@ export default function RootLayout() {
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <NativeTabs>
-        <NativeTabs.Trigger name="(home)">
-          <NativeTabs.Trigger.Icon sf="house.fill" md="home" />
-          <NativeTabs.Trigger.Label>Home</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger name="(today)">
+          <NativeTabs.Trigger.Icon sf="sun.max.fill" md="today" />
+          <NativeTabs.Trigger.Label>{strings.tabs.today}</NativeTabs.Trigger.Label>
         </NativeTabs.Trigger>
-        <NativeTabs.Trigger name="(settings)">
-          <NativeTabs.Trigger.Icon sf="gearshape.fill" md="settings" />
-          <NativeTabs.Trigger.Label>Settings</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger name="(library)">
+          <NativeTabs.Trigger.Icon sf="book.fill" md="menu_book" />
+          <NativeTabs.Trigger.Label>{strings.tabs.library}</NativeTabs.Trigger.Label>
+        </NativeTabs.Trigger>
+        <NativeTabs.Trigger name="(more)">
+          <NativeTabs.Trigger.Icon sf="ellipsis" md="more_horiz" />
+          <NativeTabs.Trigger.Label>{strings.tabs.more}</NativeTabs.Trigger.Label>
         </NativeTabs.Trigger>
       </NativeTabs>
     </ThemeProvider>

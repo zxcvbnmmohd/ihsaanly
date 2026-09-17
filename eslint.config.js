@@ -19,6 +19,24 @@ module.exports = [
       globals: { ...globals.node, ...globals.browser, __DEV__: 'readonly' },
     },
     rules: {
+      // RTL is free if logical directions are used from the first screen, and a
+      // sweep across every file if they aren't. Banned here rather than fixed
+      // later (see #19).
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector:
+            'Property[key.name=/^(left|right|marginLeft|marginRight|paddingLeft|paddingRight|borderLeftWidth|borderRightWidth|borderLeftColor|borderRightColor|borderTopLeftRadius|borderTopRightRadius|borderBottomLeftRadius|borderBottomRightRadius)$/]',
+          message:
+            'Use logical directions (start/end, marginStart, paddingEnd, borderStartStartRadius) so RTL works without a rewrite.',
+        },
+        {
+          selector:
+            'JSXAttribute[name.name=/[cC]lassName$/] Literal[value=/(^|\\s)-?(ml|mr|pl|pr|left|right|border-l|border-r|rounded-l|rounded-r|text-left|text-right)(-[^\\s]*)?(\\s|$)/]',
+          message:
+            'Use logical Tailwind utilities (ms/me, ps/pe, start/end, rounded-s/rounded-e, text-start/text-end) so RTL works without a rewrite.',
+        },
+      ],
       'expo/no-dynamic-env-var': 'error',
       'expo/no-env-var-destructuring': 'error',
       'expo/prefer-box-shadow': 'error',

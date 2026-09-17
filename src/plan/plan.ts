@@ -4,6 +4,7 @@ import { civilDateIn, isSameCivilDate, shiftDays } from '@/day/boundaries'
 import { buildWindows, windowAt, type PrayerWindow, type WindowName } from '@/prayer/windows'
 
 import { matchesDay, readingsDiverge } from './day-match'
+import { isQuiet } from './quiet-hours'
 import type {
   DayContext,
   Plan,
@@ -158,17 +159,31 @@ function futureWindows(signals: Signals): PrayerWindow[] {
   return buildWindows(signals.prayerTimes).filter((window) => window.startsAt > signals.now)
 }
 
+/**
+ * A category decides by default; a per-item override wins when present. Known
+ * items leave the rotation, which is what keeps the daily budget flat as the
+ * user enables more content.
+ */
+function isRemindable(item: Item, signals: Signals, category: 'windows' | 'lookAhead'): boolean {
+  const { notifications, knownItemIds } = signals.preferences
+  if (knownItemIds.includes(item.id)) return false
+
+  const override = notifications.perItem[item.id]
+  return override ?? notifications[category]
+}
+
 function scheduleNotifications(signals: Signals, items: Item[]): ScheduledNotification[] {
-  const known = new Set(signals.preferences.knownItemIds)
-  const remindable = items.filter((item) => !known.has(item.id))
+  const { notifications } = signals.preferences
   const perDay = new Map<string, number>()
   const scheduled: ScheduledNotification[] = []
 
   const take = (at: Date, itemId: string, reason: PlanReason): void => {
+    if (isQuiet(at, signals.timeZone, notifications.quietHours)) return
+
     const day = civilDateIn(at, signals.timeZone)
     const key = `${day.year}-${day.month}-${day.day}`
     const used = perDay.get(key) ?? 0
-    if (used >= signals.preferences.maxNotificationsPerDay) return
+    if (used >= notifications.maxPerDay) return
     if (scheduled.length >= MAX_PENDING_NOTIFICATIONS) return
     perDay.set(key, used + 1)
     scheduled.push({ itemId, at, reason })
@@ -177,8 +192,9 @@ function scheduleNotifications(signals: Signals, items: Item[]): ScheduledNotifi
   futureWindows(signals).forEach((window) => {
     const name = WINDOW_FOR[window.name]
     if (name) {
-      remindable
+      items
         .filter((item) => item.trigger.kind === 'window' && item.trigger.window === name)
+        .filter((item) => isRemindable(item, signals, 'windows'))
         .forEach((item) => take(window.startsAt, item.id, 'current-window'))
     }
 
@@ -188,8 +204,9 @@ function scheduleNotifications(signals: Signals, items: Item[]): ScheduledNotifi
     const tomorrow = signals.upcoming.find((day) => isSameCivilDate(day.civil, shiftDays(eve, 1)))
     if (!tomorrow) return
 
-    remindable
+    items
       .filter((item) => item.trigger.kind === 'day' && matchesDay(item.trigger.day, tomorrow))
+      .filter((item) => isRemindable(item, signals, 'lookAhead'))
       .forEach((item) => take(window.startsAt, item.id, 'upcoming'))
   })
 

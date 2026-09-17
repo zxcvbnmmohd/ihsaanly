@@ -7,6 +7,7 @@ import { DEFAULT_CALCULATION_PREFERENCES } from '@/prayer/calculation'
 import { prayerTimesAcross } from '@/prayer/times'
 import { buildWindows, type WindowName } from '@/prayer/windows'
 
+import { DEFAULT_NOTIFICATION_PREFERENCES } from './notification-preferences'
 import { plan } from './plan'
 import type { DayContext, Signals } from './signals'
 
@@ -86,7 +87,7 @@ function makeSignals(items: Item[], overrides: Partial<Signals> = {}): Signals {
     preferences: {
       enabledItemIds: items.map((item) => item.id),
       knownItemIds: [],
-      maxNotificationsPerDay: 3,
+      notifications: { ...DEFAULT_NOTIFICATION_PREFERENCES, quietHours: null },
     },
     ...overrides,
   }
@@ -327,7 +328,11 @@ describe('the notification schedule', () => {
         preferences: {
           enabledItemIds: many.map((item) => item.id),
           knownItemIds: [],
-          maxNotificationsPerDay: 2,
+          notifications: {
+            ...DEFAULT_NOTIFICATION_PREFERENCES,
+            quietHours: null,
+            maxPerDay: 2,
+          },
         },
       }),
     )
@@ -347,7 +352,11 @@ describe('the notification schedule', () => {
       preferences: {
         enabledItemIds: ['evening-adhkar', 'morning-adhkar'],
         knownItemIds: ['morning-adhkar'],
-        maxNotificationsPerDay: 5,
+        notifications: {
+          ...DEFAULT_NOTIFICATION_PREFERENCES,
+          quietHours: null,
+          maxPerDay: 5,
+        },
       },
     })
     const result = plan(signals)
@@ -356,10 +365,52 @@ describe('the notification schedule', () => {
     expect(result.today.rightNow?.itemId).toBe('evening-adhkar')
   })
 
+  it('stays silent during quiet hours', () => {
+    const loud = plan(makeSignals([morningAdhkar, eveningAdhkar]))
+    const quiet = plan(
+      makeSignals([morningAdhkar, eveningAdhkar], {
+        preferences: {
+          enabledItemIds: ['morning-adhkar', 'evening-adhkar'],
+          knownItemIds: [],
+          notifications: {
+            ...DEFAULT_NOTIFICATION_PREFERENCES,
+            quietHours: { from: 0, to: 23 },
+          },
+        },
+      }),
+    )
+
+    expect(loud.notifications.length).toBeGreaterThan(0)
+    expect(quiet.notifications).toEqual([])
+  })
+
+  it('lets a per-item override beat its category', () => {
+    const result = plan(
+      makeSignals([morningAdhkar], {
+        preferences: {
+          enabledItemIds: ['morning-adhkar'],
+          knownItemIds: [],
+          notifications: {
+            ...DEFAULT_NOTIFICATION_PREFERENCES,
+            quietHours: null,
+            windows: false,
+            perItem: { 'morning-adhkar': true },
+          },
+        },
+      }),
+    )
+
+    expect(result.notifications.length).toBeGreaterThan(0)
+  })
+
   it('is empty when nothing is enabled', () => {
     const result = plan(
       makeSignals([morningAdhkar], {
-        preferences: { enabledItemIds: [], knownItemIds: [], maxNotificationsPerDay: 3 },
+        preferences: {
+          enabledItemIds: [],
+          knownItemIds: [],
+          notifications: { ...DEFAULT_NOTIFICATION_PREFERENCES, quietHours: null },
+        },
       }),
     )
     expect(result.notifications).toEqual([])

@@ -4,6 +4,7 @@ import type { ItemDetail } from './item'
 import type { LibraryScreenProps } from './library'
 import type { LocationScreenProps } from './location'
 import type { MoreScreenProps } from './more'
+import type { NotificationsScreenProps } from './notifications'
 import type { TrackingScreenProps } from './tracking'
 import type { TodayScreenProps } from './today'
 
@@ -106,6 +107,7 @@ export const moreFixture: MoreScreenProps = {
   trackingLabel: 'Tracking',
   trackingHref: '/tracking',
   moonSightingHref: '/moon-sighting',
+  notificationsHref: '/notifications',
 }
 
 export const hijriFixture: HijriScreenProps = {
@@ -147,5 +149,17 @@ export const calculationFixture: CalculationScreenProps = {
 
 export const trackingFixture: TrackingScreenProps = {
   userState: { travelling: true, trackingPaused: false },
+  onChange: noop,
+}
+
+export const notificationsFixture: NotificationsScreenProps = {
+  preferences: {
+    windows: true,
+    lookAhead: true,
+    prayers: false,
+    quietHours: { from: 22, to: 7 },
+    perItem: {},
+    maxPerDay: 3,
+  },
   onChange: noop,
 }

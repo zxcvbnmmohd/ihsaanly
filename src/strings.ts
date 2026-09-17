@@ -39,6 +39,21 @@ export const strings = {
     maghrib: 'After Maghrib',
     isha: 'Night',
   },
+  notifications: {
+    title: 'Reminders',
+    windows: 'Morning and evening adhkar',
+    lookAhead: 'Upcoming fasting days',
+    prayers: 'Prayer reminders',
+    prayersDetail: 'Off by default \u2014 your adhan app already does this.',
+    quietHours: 'Quiet hours',
+    quietHoursDetail: (from: number, to: number) => `${from}:00 to ${to}:00`,
+    quietHoursOff: 'Off',
+    perDay: 'At most a day',
+    body: {
+      window: 'Now, until the window closes.',
+      tomorrow: 'Tomorrow.',
+    },
+  },
   moonSighting: {
     title: 'Moon sighting',
     explanation:

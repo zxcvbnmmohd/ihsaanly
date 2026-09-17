@@ -3,6 +3,7 @@ import type { Item } from '@/content/schema'
 import type { HijriDate } from '@/hijri/calendar'
 import type { DailyPrayerTimes, WindowName } from '@/prayer/windows'
 
+import type { NotificationPreferences } from './notification-preferences'
 import type { UserState } from './user-state'
 
 export type Prayer = 'fajr' | 'dhuhr' | 'asr' | 'maghrib' | 'isha'
@@ -22,7 +23,7 @@ export interface Preferences {
   enabledItemIds: string[]
   /** Memorised. Stays in the Library, leaves the reminder rotation. */
   knownItemIds: string[]
-  maxNotificationsPerDay: number
+  notifications: NotificationPreferences
 }
 
 /**

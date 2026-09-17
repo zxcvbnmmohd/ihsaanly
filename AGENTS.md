@@ -144,6 +144,13 @@ body. On Android these colours don't re-resolve on their own, and React Compiler
 is enabled, so without the subscription a memoized component keeps stale colours
 when the theme flips.
 
+### Exact alarms are deliberately not requested
+
+`SCHEDULE_EXACT_ALARM` is a restricted permission that invites a Play Store
+policy review. Reminders here are window-based — "the evening adhkar are open"
+— not to-the-minute, so inexact delivery is correct rather than a compromise.
+Do not add it without a reason that survives that review.
+
 ### React Compiler is on: never memoise an impure read
 
 The compiler infers a memoised expression's dependencies from what it reads. A

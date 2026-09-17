@@ -71,6 +71,14 @@ real content with its evidence attached.
   components driven entirely by exported props. `src/screens/fixtures.ts` supplies
   mock props for each, so a screen can be rendered without a device, a database or
   a navigator.
+- **Notifications.** Two or three a day by default, derived from the plan rather
+  than scheduled ad hoc. Reminders for the obligatory prayers are off unless
+  asked for: an adhan app already does that, and a duplicate is what gets an app
+  deleted in its first week. Quiet hours, a daily cap, and a per-item override
+  that beats its category. Nothing ever says you failed at something.
+- **Re-arming is idempotent** — cancel then schedule, keyed on the schedule's
+  contents rather than the plan object, so the minute-by-minute rebuild does not
+  churn the pending queue. It re-arms when the app returns to the foreground.
 - **Calendar occasions, never asserted.** Every day derived from a calculated
   calendar is labelled as expected. Where the user's adjusted calendar and the
   plain calculated one disagree about a day, it says so and asks them to confirm

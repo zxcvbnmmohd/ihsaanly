@@ -124,7 +124,7 @@ module.exports = [
       'src/hijri/calendar.ts',
       'src/prayer/{calculation,times,windows,qada}.ts',
       'src/location/{place,cities}.ts',
-      'src/plan/{plan,day-match,signals,user-state}.ts',
+      'src/plan/{plan,day-match,signals,user-state,quiet-hours,notification-preferences}.ts',
       'src/assert-never.ts',
     ],
     rules: {

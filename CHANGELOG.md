@@ -44,7 +44,17 @@ real content with its evidence attached.
 - **Library** — browse items and open a detail view showing Arabic, transliteration,
   translation, repetition count, any scholarly note, and a citation panel giving
   collection, reference, grading and grader.
-- **First content item** — the dua on leaving home. Pending verification by a reviewer.
+- **Twenty content items**, covering every trigger kind: contextual duas (leaving
+  home, entering the masjid, travel, sleeping, waking, eating), prayer-bound acts
+  (before Fajr, around Dhuhr, tasbih and Ayat al-Kursi after prayer, siwak),
+  time windows (morning and evening adhkar, Duha) and calendar days (Monday,
+  Thursday, the White Days, Ashura, Arafah, six of Shawwal). **Every reference is
+  pending verification by a reviewer**; the build warns until one is named.
+- **Prayer triggers accept `any`**, for acts tied to every obligatory prayer
+  rather than one of them, such as the dhikr after salah.
+- **A warning when one citation carries two different narrations.** A long hadith
+  quoted in parts is legitimate, which is why this warns rather than fails — but
+  it is equally how a wrong reference number reveals itself.
 - **Strings module** — every user-facing string resolves through one place.
 - **Right-to-left safeguards** — a lint rule rejects `left`/`right` in style objects
   and directional Tailwind utilities in favour of logical directions, so adding Arabic

@@ -16,7 +16,7 @@
         "ar": "دعاء الخروج من المنزل"
       },
       "ruling": "sunnah",
-      "arabic": "بِسْمِ اللَّهِ، تَوَكَّلْتُ عَلَى اللَّهِ، وَلَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ",
+      "arabic": "بِسْمِ اللَّهِ، تَوَكَّلْتُ عَلَى اللَّهِ، وَلَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ",
       "transliteration": {
         "en": "Bismillāh, tawakkaltu ʿalā Allāh, wa lā ḥawla wa lā quwwata illā billāh"
       },
@@ -32,13 +32,665 @@
           "grading": "sahih",
           "gradedBy": "al-Albani",
           "text": {
-            "en": "Whoever says, when he leaves his house, \"In the name of Allah, I place my trust in Allah, and there is no might nor power except with Allah,\" it is said to him: you are guided, sufficed and protected.",
-            "ar": "مَنْ قَالَ ـ يَعْنِي إِذَا خَرَجَ مِنْ بَيْتِهِ ـ بِسْمِ اللَّهِ تَوَكَّلْتُ عَلَى اللَّهِ وَلاَ حَوْلَ وَلاَ قُوَّةَ إِلاَّ بِاللَّهِ، يُقَالُ لَهُ هُدِيتَ وَكُفِيتَ وَوُقِيتَ"
+            "en": "Whoever says, when he leaves his house, “In the name of Allah, I place my trust in Allah, and there is no might nor power except with Allah,” it is said to him: you are guided, sufficed and protected.",
+            "ar": "مَنْ قَالَ — يَعْنِي إِذَا خَرَجَ مِنْ بَيْتِهِ — بِسْمِ اللَّهِ تَوَكَّلْتُ عَلَى اللَّهِ وَلاَ حَوْلَ وَلاَ قُوَّةَ إِلَّا بِاللَّهِ"
           }
         }
       ],
-      "trigger": { "kind": "event", "event": "leaving-home" },
+      "trigger": {
+        "kind": "event",
+        "event": "leaving-home"
+      },
       "defaultOn": true,
+      "note": null,
+      "audio": null,
+      "audioTranslation": null
+    },
+    {
+      "id": "dua-entering-masjid",
+      "category": "masjid",
+      "title": {
+        "en": "Entering the masjid"
+      },
+      "ruling": "sunnah",
+      "arabic": "اللَّهُمَّ افْتَحْ لِي أَبْوَابَ رَحْمَتِكَ",
+      "transliteration": {
+        "en": "Allāhumma-ftaḥ lī abwāba raḥmatik"
+      },
+      "translation": {
+        "en": "O Allah, open for me the doors of Your mercy."
+      },
+      "repeat": 1,
+      "evidence": [
+        {
+          "type": "hadith",
+          "collection": "Sahih Muslim",
+          "reference": "713",
+          "grading": "sahih",
+          "gradedBy": null,
+          "text": {
+            "en": "When one of you enters the masjid, let him say: O Allah, open for me the doors of Your mercy."
+          }
+        }
+      ],
+      "trigger": {
+        "kind": "event",
+        "event": "entering-masjid"
+      },
+      "defaultOn": true,
+      "note": null,
+      "audio": null,
+      "audioTranslation": null
+    },
+    {
+      "id": "dua-travel",
+      "category": "travel",
+      "title": {
+        "en": "Setting out on a journey"
+      },
+      "ruling": "sunnah",
+      "arabic": "سُبْحَانَ الَّذِي سَخَّرَ لَنَا هَذَا وَمَا كُنَّا لَهُ مُقْرِنِينَ وَإِنَّا إِلَى رَبِّنَا لَمُنْقَلِبُونَ",
+      "transliteration": {
+        "en": "Subḥāna-lladhī sakhkhara lanā hādhā wa mā kunnā lahu muqrinīn, wa innā ilā rabbinā la-munqalibūn"
+      },
+      "translation": {
+        "en": "Glory be to the One who has subjected this to us, when we could never have done it ourselves; and to our Lord we shall surely return."
+      },
+      "repeat": 1,
+      "evidence": [
+        {
+          "type": "hadith",
+          "collection": "Sahih Muslim",
+          "reference": "1342",
+          "grading": "sahih",
+          "gradedBy": null,
+          "text": {
+            "en": "When the Prophet mounted his camel to set out on a journey he would say: Glory be to the One who has subjected this to us, when we could never have done it ourselves."
+          }
+        }
+      ],
+      "trigger": {
+        "kind": "event",
+        "event": "travel"
+      },
+      "defaultOn": true,
+      "note": null,
+      "audio": null,
+      "audioTranslation": null
+    },
+    {
+      "id": "dua-sleeping",
+      "category": "sleep",
+      "title": {
+        "en": "Going to sleep"
+      },
+      "ruling": "sunnah",
+      "arabic": "بِاسْمِكَ اللَّهُمَّ أَمُوتُ وَأَحْيَا",
+      "transliteration": {
+        "en": "Bismika-llāhumma amūtu wa aḥyā"
+      },
+      "translation": {
+        "en": "In Your name, O Allah, I die and I live."
+      },
+      "repeat": 1,
+      "evidence": [
+        {
+          "type": "hadith",
+          "collection": "Sahih al-Bukhari",
+          "reference": "6314",
+          "grading": "sahih",
+          "gradedBy": null,
+          "text": {
+            "en": "When the Prophet went to bed he would say: In Your name, O Allah, I die and I live."
+          }
+        }
+      ],
+      "trigger": {
+        "kind": "event",
+        "event": "sleeping"
+      },
+      "defaultOn": true,
+      "note": null,
+      "audio": null,
+      "audioTranslation": null
+    },
+    {
+      "id": "dua-waking",
+      "category": "sleep",
+      "title": {
+        "en": "Waking up"
+      },
+      "ruling": "sunnah",
+      "arabic": "الْحَمْدُ لِلَّهِ الَّذِي أَحْيَانَا بَعْدَ مَا أَمَاتَنَا وَإِلَيْهِ النُّشُورُ",
+      "transliteration": {
+        "en": "Al-ḥamdu lillāhi-lladhī aḥyānā baʿda mā amātanā wa ilayhi-n-nushūr"
+      },
+      "translation": {
+        "en": "Praise be to Allah who gave us life after causing us to die, and to Him is the resurrection."
+      },
+      "repeat": 1,
+      "evidence": [
+        {
+          "type": "hadith",
+          "collection": "Sahih al-Bukhari",
+          "reference": "6312",
+          "grading": "sahih",
+          "gradedBy": null,
+          "text": {
+            "en": "When the Prophet woke he would say: Praise be to Allah who gave us life after causing us to die, and to Him is the resurrection."
+          }
+        }
+      ],
+      "trigger": {
+        "kind": "event",
+        "event": "waking"
+      },
+      "defaultOn": false,
+      "note": null,
+      "audio": null,
+      "audioTranslation": null
+    },
+    {
+      "id": "dua-eating",
+      "category": "food",
+      "title": {
+        "en": "Before eating"
+      },
+      "ruling": "sunnah",
+      "arabic": "بِسْمِ اللَّهِ",
+      "transliteration": {
+        "en": "Bismillāh"
+      },
+      "translation": {
+        "en": "In the name of Allah."
+      },
+      "repeat": 1,
+      "evidence": [
+        {
+          "type": "hadith",
+          "collection": "Sahih al-Bukhari",
+          "reference": "5376",
+          "grading": "sahih",
+          "gradedBy": null,
+          "text": {
+            "en": "The Prophet said to a boy in his care: Say the name of Allah, eat with your right hand, and eat from what is nearest to you."
+          }
+        }
+      ],
+      "trigger": {
+        "kind": "event",
+        "event": "eating"
+      },
+      "defaultOn": true,
+      "note": null,
+      "audio": null,
+      "audioTranslation": null
+    },
+    {
+      "id": "tasbih-after-prayer",
+      "category": "dhikr",
+      "title": {
+        "en": "Tasbih after prayer"
+      },
+      "ruling": "sunnah",
+      "arabic": "سُبْحَانَ اللَّهِ",
+      "transliteration": {
+        "en": "Subḥāna-llāh"
+      },
+      "translation": {
+        "en": "Glory be to Allah."
+      },
+      "repeat": 33,
+      "evidence": [
+        {
+          "type": "hadith",
+          "collection": "Sahih Muslim",
+          "reference": "597",
+          "grading": "sahih",
+          "gradedBy": null,
+          "text": {
+            "en": "Whoever glorifies Allah thirty-three times after each prayer, praises Him thirty-three times and magnifies Him thirty-three times, then completes the hundred, his sins are forgiven even if they are like the foam of the sea."
+          }
+        }
+      ],
+      "trigger": {
+        "kind": "prayer",
+        "prayer": "any",
+        "when": "after"
+      },
+      "defaultOn": true,
+      "note": null,
+      "audio": null,
+      "audioTranslation": null
+    },
+    {
+      "id": "ayat-al-kursi-after-prayer",
+      "category": "dhikr",
+      "title": {
+        "en": "Ayat al-Kursi after prayer"
+      },
+      "ruling": "sunnah",
+      "arabic": null,
+      "transliteration": null,
+      "translation": null,
+      "repeat": 1,
+      "evidence": [
+        {
+          "type": "quran",
+          "surah": 2,
+          "ayah": 255,
+          "text": {
+            "en": "Allah — there is no deity except Him, the Ever-Living, the Sustainer of existence."
+          }
+        },
+        {
+          "type": "hadith",
+          "collection": "Sunan an-Nasa'i",
+          "reference": "9928",
+          "grading": "sahih",
+          "gradedBy": "al-Albani",
+          "text": {
+            "en": "Whoever recites Ayat al-Kursi after every obligatory prayer, nothing stands between him and entering Paradise but death."
+          }
+        }
+      ],
+      "trigger": {
+        "kind": "prayer",
+        "prayer": "any",
+        "when": "after"
+      },
+      "defaultOn": false,
+      "note": null,
+      "audio": null,
+      "audioTranslation": null
+    },
+    {
+      "id": "siwak-before-prayer",
+      "category": "prayer",
+      "title": {
+        "en": "Siwak before prayer"
+      },
+      "ruling": "mustahabb",
+      "arabic": null,
+      "transliteration": null,
+      "translation": null,
+      "repeat": 1,
+      "evidence": [
+        {
+          "type": "hadith",
+          "collection": "Sahih al-Bukhari",
+          "reference": "887",
+          "grading": "sahih",
+          "gradedBy": null,
+          "text": {
+            "en": "Were it not that it would burden my ummah, I would have ordered them to use the siwak at every prayer."
+          }
+        }
+      ],
+      "trigger": {
+        "kind": "prayer",
+        "prayer": "any",
+        "when": "before"
+      },
+      "defaultOn": false,
+      "note": null,
+      "audio": null,
+      "audioTranslation": null
+    },
+    {
+      "id": "sunnah-before-fajr",
+      "category": "prayer",
+      "title": {
+        "en": "Two rak’ah before Fajr"
+      },
+      "ruling": "sunnah-muakkadah",
+      "arabic": null,
+      "transliteration": null,
+      "translation": null,
+      "repeat": 1,
+      "evidence": [
+        {
+          "type": "hadith",
+          "collection": "Sahih Muslim",
+          "reference": "725",
+          "grading": "sahih",
+          "gradedBy": null,
+          "text": {
+            "en": "The two rak’ah before Fajr are better than the world and everything in it."
+          }
+        }
+      ],
+      "trigger": {
+        "kind": "prayer",
+        "prayer": "fajr",
+        "when": "before"
+      },
+      "defaultOn": true,
+      "note": null,
+      "audio": null,
+      "audioTranslation": null
+    },
+    {
+      "id": "sunnah-after-dhuhr",
+      "category": "prayer",
+      "title": {
+        "en": "Sunnah around Dhuhr"
+      },
+      "ruling": "sunnah-muakkadah",
+      "arabic": null,
+      "transliteration": null,
+      "translation": null,
+      "repeat": 1,
+      "evidence": [
+        {
+          "type": "hadith",
+          "collection": "Sahih Muslim",
+          "reference": "728",
+          "grading": "sahih",
+          "gradedBy": null,
+          "text": {
+            "en": "Whoever prays twelve rak’ah in a day and a night, a house will be built for him in Paradise."
+          }
+        }
+      ],
+      "trigger": {
+        "kind": "prayer",
+        "prayer": "dhuhr",
+        "when": "after"
+      },
+      "defaultOn": true,
+      "note": null,
+      "audio": null,
+      "audioTranslation": null
+    },
+    {
+      "id": "morning-adhkar",
+      "category": "adhkar",
+      "title": {
+        "en": "Morning adhkar"
+      },
+      "ruling": "sunnah",
+      "arabic": null,
+      "transliteration": null,
+      "translation": null,
+      "repeat": 1,
+      "evidence": [
+        {
+          "type": "hadith",
+          "collection": "Sahih al-Bukhari",
+          "reference": "6306",
+          "grading": "sahih",
+          "gradedBy": null,
+          "text": {
+            "en": "The best manner of seeking forgiveness is to say: O Allah, You are my Lord, there is no deity but You. You created me and I am Your servant."
+          }
+        }
+      ],
+      "trigger": {
+        "kind": "window",
+        "window": "morning"
+      },
+      "defaultOn": true,
+      "note": null,
+      "audio": null,
+      "audioTranslation": null
+    },
+    {
+      "id": "evening-adhkar",
+      "category": "adhkar",
+      "title": {
+        "en": "Evening adhkar"
+      },
+      "ruling": "sunnah",
+      "arabic": null,
+      "transliteration": null,
+      "translation": null,
+      "repeat": 1,
+      "evidence": [
+        {
+          "type": "hadith",
+          "collection": "Sahih al-Bukhari",
+          "reference": "6306",
+          "grading": "sahih",
+          "gradedBy": null,
+          "text": {
+            "en": "The best manner of seeking forgiveness is to say: O Allah, You are my Lord, there is no deity but You. You created me and I am Your servant."
+          }
+        }
+      ],
+      "trigger": {
+        "kind": "window",
+        "window": "evening"
+      },
+      "defaultOn": true,
+      "note": null,
+      "audio": null,
+      "audioTranslation": null
+    },
+    {
+      "id": "fast-monday",
+      "category": "fasting",
+      "title": {
+        "en": "Fasting on Monday"
+      },
+      "ruling": "sunnah",
+      "arabic": null,
+      "transliteration": null,
+      "translation": null,
+      "repeat": 1,
+      "evidence": [
+        {
+          "type": "hadith",
+          "collection": "Sahih Muslim",
+          "reference": "1162",
+          "grading": "sahih",
+          "gradedBy": null,
+          "text": {
+            "en": "The Prophet was asked about fasting on Monday and said: that is the day I was born, and the day I was sent, or the day revelation came to me."
+          }
+        }
+      ],
+      "trigger": {
+        "kind": "day",
+        "day": "monday"
+      },
+      "defaultOn": false,
+      "note": null,
+      "audio": null,
+      "audioTranslation": null
+    },
+    {
+      "id": "fast-thursday",
+      "category": "fasting",
+      "title": {
+        "en": "Fasting on Thursday"
+      },
+      "ruling": "sunnah",
+      "arabic": null,
+      "transliteration": null,
+      "translation": null,
+      "repeat": 1,
+      "evidence": [
+        {
+          "type": "hadith",
+          "collection": "Sunan at-Tirmidhi",
+          "reference": "747",
+          "grading": "hasan",
+          "gradedBy": "al-Albani",
+          "text": {
+            "en": "Deeds are presented on Monday and Thursday, and I like my deeds to be presented while I am fasting."
+          }
+        }
+      ],
+      "trigger": {
+        "kind": "day",
+        "day": "thursday"
+      },
+      "defaultOn": false,
+      "note": null,
+      "audio": null,
+      "audioTranslation": null
+    },
+    {
+      "id": "fast-white-days",
+      "category": "fasting",
+      "title": {
+        "en": "Fasting the White Days"
+      },
+      "ruling": "sunnah",
+      "arabic": null,
+      "transliteration": null,
+      "translation": null,
+      "repeat": 1,
+      "evidence": [
+        {
+          "type": "hadith",
+          "collection": "Sahih al-Bukhari",
+          "reference": "1178",
+          "grading": "sahih",
+          "gradedBy": null,
+          "text": {
+            "en": "My friend advised me to do three things: to fast three days of every month, to pray two rak’ah of Duha, and to pray Witr before sleeping."
+          }
+        }
+      ],
+      "trigger": {
+        "kind": "day",
+        "day": "white-days"
+      },
+      "defaultOn": false,
+      "note": {
+        "en": "The hadith establishes fasting three days of each month. Scholars differ on whether these must be the thirteenth, fourteenth and fifteenth specifically."
+      },
+      "audio": null,
+      "audioTranslation": null
+    },
+    {
+      "id": "fast-ashura",
+      "category": "fasting",
+      "title": {
+        "en": "Fasting on Ashura"
+      },
+      "ruling": "sunnah",
+      "arabic": null,
+      "transliteration": null,
+      "translation": null,
+      "repeat": 1,
+      "evidence": [
+        {
+          "type": "hadith",
+          "collection": "Sahih al-Bukhari",
+          "reference": "2004",
+          "grading": "sahih",
+          "gradedBy": null,
+          "text": {
+            "en": "The Prophet found the Jews fasting on the day of Ashura, and said: we have more right to Musa than you — so he fasted it and ordered that it be fasted."
+          }
+        }
+      ],
+      "trigger": {
+        "kind": "day",
+        "day": "ashura"
+      },
+      "defaultOn": false,
+      "note": null,
+      "audio": null,
+      "audioTranslation": null
+    },
+    {
+      "id": "fast-arafah",
+      "category": "fasting",
+      "title": {
+        "en": "Fasting on the day of Arafah"
+      },
+      "ruling": "sunnah",
+      "arabic": null,
+      "transliteration": null,
+      "translation": null,
+      "repeat": 1,
+      "evidence": [
+        {
+          "type": "hadith",
+          "collection": "Sahih Muslim",
+          "reference": "1162",
+          "grading": "sahih",
+          "gradedBy": null,
+          "text": {
+            "en": "Fasting the day of Arafah expiates the sins of the preceding year and the coming year."
+          }
+        }
+      ],
+      "trigger": {
+        "kind": "day",
+        "day": "arafah"
+      },
+      "defaultOn": false,
+      "note": {
+        "en": "Scholars differ on whether this follows the local ninth of Dhul Hijjah or the day of standing at Arafah in Makkah when the two fall differently."
+      },
+      "audio": null,
+      "audioTranslation": null
+    },
+    {
+      "id": "fast-shawwal",
+      "category": "fasting",
+      "title": {
+        "en": "Six days of Shawwal"
+      },
+      "ruling": "sunnah",
+      "arabic": null,
+      "transliteration": null,
+      "translation": null,
+      "repeat": 1,
+      "evidence": [
+        {
+          "type": "hadith",
+          "collection": "Sahih Muslim",
+          "reference": "1164",
+          "grading": "sahih",
+          "gradedBy": null,
+          "text": {
+            "en": "Whoever fasts Ramadan and follows it with six days of Shawwal, it is as though he fasted the whole year."
+          }
+        }
+      ],
+      "trigger": {
+        "kind": "day",
+        "day": "shawwal-6"
+      },
+      "defaultOn": false,
+      "note": null,
+      "audio": null,
+      "audioTranslation": null
+    },
+    {
+      "id": "duha-prayer",
+      "category": "prayer",
+      "title": {
+        "en": "Duha prayer"
+      },
+      "ruling": "sunnah",
+      "arabic": null,
+      "transliteration": null,
+      "translation": null,
+      "repeat": 1,
+      "evidence": [
+        {
+          "type": "hadith",
+          "collection": "Sahih al-Bukhari",
+          "reference": "1178",
+          "grading": "sahih",
+          "gradedBy": null,
+          "text": {
+            "en": "My friend advised me to do three things: to fast three days of every month, to pray two rak’ah of Duha, and to pray Witr before sleeping."
+          }
+        }
+      ],
+      "trigger": {
+        "kind": "window",
+        "window": "morning"
+      },
+      "defaultOn": false,
       "note": null,
       "audio": null,
       "audioTranslation": null

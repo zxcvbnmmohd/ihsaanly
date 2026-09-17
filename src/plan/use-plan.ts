@@ -8,6 +8,7 @@ import { usePlace } from '@/location/store'
 import { useCalculationPreferences } from '@/prayer/store'
 import { runRollover, useTodayMarks } from '@/prayer/marks'
 import { prayerTimesAcross } from '@/prayer/times'
+import { useNotificationPreferences } from '@/notifications/store'
 import { useNow } from '@/time/use-now'
 
 import { plan } from './plan'
@@ -15,7 +16,6 @@ import { useUserState } from './user-state-store'
 import type { DayContext, Plan, Signals } from './signals'
 
 const LOOK_AHEAD_DAYS = 7
-const DEFAULT_NOTIFICATIONS_PER_DAY = 3
 
 function dayContextFor(
   instant: Date,
@@ -40,6 +40,7 @@ export function usePlan(): Plan | null {
   const hijriOffset = useHijriOffset()
   const now = useNow()
   const userState = useUserState()
+  const notifications = useNotificationPreferences()
   const prayedToday = useTodayMarks(place?.timeZone ?? 'UTC', now)
 
   useEffect(() => {
@@ -65,7 +66,7 @@ export function usePlan(): Plan | null {
     preferences: {
       enabledItemIds: items.filter((item) => item.defaultOn).map((item) => item.id),
       knownItemIds: [],
-      maxNotificationsPerDay: DEFAULT_NOTIFICATIONS_PER_DAY,
+      notifications,
     },
   }
 

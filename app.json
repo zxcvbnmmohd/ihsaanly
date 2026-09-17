@@ -45,7 +45,8 @@
         {
           "locationWhenInUsePermission": "Ihsaanly uses your location on this device to work out prayer windows. It is never sent anywhere."
         }
-      ]
+      ],
+      "expo-notifications"
     ]
   }
 }

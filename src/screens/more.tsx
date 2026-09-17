@@ -1,7 +1,7 @@
 import type { Href } from 'expo-router';
-import { ScrollView } from 'react-native';
 
 import { Row } from '@/components/row';
+import { Screen } from '@/components/screen';
 import { strings } from '@/strings';
 
 export type MoreScreenProps = {
@@ -22,10 +22,10 @@ export function MoreScreen({
   hijriHref,
 }: MoreScreenProps) {
   return (
-    <ScrollView contentContainerClassName="gap-3 p-4" contentInsetAdjustmentBehavior="automatic">
+    <Screen className="gap-3 p-4">
       <Row href={locationHref} title={strings.location.title} detail={locationLabel} />
       <Row href={calculationHref} title={strings.calculation.title} detail={calculationLabel} />
       <Row href={hijriHref} title={strings.hijri.title} detail={hijriLabel} />
-    </ScrollView>
+    </Screen>
   );
 }

@@ -1,7 +1,8 @@
 import type { Href } from 'expo-router';
-import { ScrollView, Text, useColorScheme, View } from 'react-native';
+import { Text, useColorScheme, View } from 'react-native';
 
 import { Row } from '@/components/row';
+import { Screen } from '@/components/screen';
 import type { HijriDate } from '@/hijri/calendar';
 import type { WindowName } from '@/prayer/windows';
 import { strings } from '@/strings';
@@ -19,17 +20,17 @@ export function TodayScreen({ hasLocation, window, hijri, locationHref }: TodayS
 
   if (!hasLocation) {
     return (
-      <ScrollView contentContainerClassName="gap-4 p-4" contentInsetAdjustmentBehavior="automatic">
+      <Screen className="gap-4 p-4">
         <Text className="text-base" style={{ color: colors.secondaryLabel }}>
           {strings.today.needsLocation}
         </Text>
         <Row href={locationHref} title={strings.location.title} detail={strings.location.notSet} />
-      </ScrollView>
+      </Screen>
     );
   }
 
   return (
-    <ScrollView contentContainerClassName="gap-6 p-4" contentInsetAdjustmentBehavior="automatic">
+    <Screen className="gap-6 p-4">
       <View className="gap-1">
         <Text className="text-xs font-semibold uppercase" style={{ color: colors.secondaryLabel }}>
           {strings.today.title}
@@ -49,6 +50,6 @@ export function TodayScreen({ hasLocation, window, hijri, locationHref }: TodayS
           </Text>
         </View>
       ) : null}
-    </ScrollView>
+    </Screen>
   );
 }

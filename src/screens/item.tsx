@@ -1,8 +1,9 @@
-import { ScrollView, Text, useColorScheme, View } from 'react-native';
+import { Text, useColorScheme, View } from 'react-native';
 
 import { ArabicText } from '@/components/arabic-text';
 import { EmptyState } from '@/components/empty-state';
 import { EvidencePanel } from '@/components/evidence-panel';
+import { Screen } from '@/components/screen';
 import type { Evidence, Ruling } from '@/content/schema';
 import { strings } from '@/strings';
 import { colors } from '@/theme/colors';
@@ -38,7 +39,7 @@ export function ItemScreen({ item }: { item: ItemScreenProps }) {
   }
 
   return (
-    <ScrollView contentContainerClassName="gap-6 p-4" contentInsetAdjustmentBehavior="automatic">
+    <Screen className="gap-6 p-4">
       <View className="gap-2">
         <Text className="text-sm" style={{ color: colors.secondaryLabel }}>
           {strings.ruling[item.ruling]}
@@ -77,6 +78,6 @@ export function ItemScreen({ item }: { item: ItemScreenProps }) {
       ) : null}
 
       <EvidencePanel evidence={item.evidence} />
-    </ScrollView>
+    </Screen>
   );
 }

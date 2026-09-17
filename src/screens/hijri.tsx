@@ -1,6 +1,7 @@
-import { ScrollView, Text, useColorScheme, View } from 'react-native';
+import { Text, useColorScheme, View } from 'react-native';
 
 import { Row } from '@/components/row';
+import { Screen } from '@/components/screen';
 import { offsetOptions, type HijriDate } from '@/hijri/calendar';
 import { strings } from '@/strings';
 import { colors } from '@/theme/colors';
@@ -15,7 +16,7 @@ export function HijriScreen({ offset, preview, onChange }: HijriScreenProps) {
   useColorScheme();
 
   return (
-    <ScrollView contentContainerClassName="gap-6 p-4" contentInsetAdjustmentBehavior="automatic">
+    <Screen className="gap-6 p-4">
       <Text className="text-sm" style={{ color: colors.secondaryLabel }}>
         {strings.hijri.explanation}
       </Text>
@@ -39,6 +40,6 @@ export function HijriScreen({ offset, preview, onChange }: HijriScreenProps) {
           />
         ))}
       </View>
-    </ScrollView>
+    </Screen>
   );
 }

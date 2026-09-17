@@ -96,6 +96,11 @@ real content with its evidence attached.
 
 ### Fixed
 
+- Android screens rendered content behind the header and under the status bar.
+  Transparent headers with large titles are an iOS pattern relying on
+  `contentInsetAdjustmentBehavior`, which Android does not have; Android now
+  gets an opaque header that occupies layout space.
+
 - `Surface` failed to typecheck against React Native 0.88, whose exported
   `ViewStyle` includes web position values that component style props reject.
   It now types its style prop from `ViewProps` and composes with an array.

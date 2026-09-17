@@ -1,6 +1,7 @@
-import { ScrollView, Text, useColorScheme, View } from 'react-native';
+import { Text, useColorScheme, View } from 'react-native';
 
 import { Row } from '@/components/row';
+import { Screen } from '@/components/screen';
 import {
   AsrOpinion,
   CalculationMethodName,
@@ -45,7 +46,7 @@ export function CalculationScreen({ preferences, onChange }: CalculationScreenPr
   useColorScheme();
 
   return (
-    <ScrollView contentContainerClassName="gap-8 p-4" contentInsetAdjustmentBehavior="automatic">
+    <Screen className="gap-8 p-4">
       <Text className="text-sm" style={{ color: colors.secondaryLabel }}>
         {strings.calculation.explanation}
       </Text>
@@ -84,6 +85,6 @@ export function CalculationScreen({ preferences, onChange }: CalculationScreenPr
           />
         ))}
       </Section>
-    </ScrollView>
+    </Screen>
   );
 }

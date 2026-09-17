@@ -9,6 +9,7 @@ import type {
   Plan,
   PlanReason,
   PlannedItem,
+  Prayer,
   ScheduledNotification,
   Signals,
 } from './signals'
@@ -37,6 +38,24 @@ const RULING_RANK: Record<Ruling, number> = {
 const WINDOW_FOR: Partial<Record<WindowName, 'morning' | 'evening'>> = {
   sunrise: 'morning',
   asr: 'evening',
+}
+
+/** The window that leads into each prayer. */
+const PRECEDING_WINDOW: Record<Prayer, WindowName> = {
+  fajr: 'isha',
+  dhuhr: 'sunrise',
+  asr: 'dhuhr',
+  maghrib: 'asr',
+  isha: 'maghrib',
+}
+
+/** The prayer a window belongs to, where it has one. */
+const PRAYER_FOR_WINDOW: Partial<Record<WindowName, Prayer>> = {
+  fajr: 'fajr',
+  dhuhr: 'dhuhr',
+  asr: 'asr',
+  maghrib: 'maghrib',
+  isha: 'isha',
 }
 
 function isRawatib(trigger: Trigger): boolean {
@@ -69,12 +88,23 @@ function reasonFor(item: Item, signals: Signals, window: PrayerWindow | null): P
 
     case 'prayer': {
       const prayed = Object.keys(signals.prayedToday)
+
       if (trigger.when === 'after') {
         const done = trigger.prayer === 'any' ? prayed.length > 0 : prayed.includes(trigger.prayer)
         return done ? 'after-prayer' : null
       }
-      const pending = trigger.prayer === 'any' ? true : !prayed.includes(trigger.prayer)
-      return pending && window !== null ? 'before-prayer' : null
+
+      if (!window) return null
+
+      // A prayer's "before" belongs to the window that leads into it, not to
+      // any moment the prayer happens to be unmarked.
+      if (trigger.prayer === 'any') {
+        const current = PRAYER_FOR_WINDOW[window.name]
+        return current && !prayed.includes(current) ? 'before-prayer' : null
+      }
+
+      const approaching = PRECEDING_WINDOW[trigger.prayer] === window.name
+      return approaching && !prayed.includes(trigger.prayer) ? 'before-prayer' : null
     }
 
     case 'day':
@@ -166,6 +196,7 @@ export function plan(signals: Signals): Plan {
 
   return {
     today: {
+      hijri: signals.today.hijri,
       window: window?.name ?? null,
       rightNow,
       context: ranked.filter(

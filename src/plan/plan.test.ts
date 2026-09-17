@@ -146,6 +146,38 @@ describe('prayer-bound items', () => {
   })
 })
 
+describe('items that come before a prayer', () => {
+  const beforeFajr = makeItem('before-fajr', { kind: 'prayer', prayer: 'fajr', when: 'before' })
+  const beforeAny = makeItem('siwak', { kind: 'prayer', prayer: 'any', when: 'before' })
+
+  it('appear in the window that leads into that prayer', () => {
+    const result = plan(makeSignals([beforeFajr], { now: startOf('isha') }))
+    expect(result.today.rightNow?.reason).toBe('before-prayer')
+  })
+
+  it('stay hidden at every other hour', () => {
+    const result = plan(makeSignals([beforeFajr], { now: startOf('dhuhr') }))
+    expect(result.today.rightNow).toBeNull()
+  })
+
+  it('disappear once that prayer is marked', () => {
+    const result = plan(
+      makeSignals([beforeFajr], { now: startOf('isha'), prayedToday: { fajr: anchor } }),
+    )
+    expect(result.today.rightNow).toBeNull()
+  })
+
+  it('treat "any" as the prayer of the current window', () => {
+    const during = plan(makeSignals([beforeAny], { now: startOf('dhuhr') }))
+    expect(during.today.rightNow?.itemId).toBe('siwak')
+
+    const done = plan(
+      makeSignals([beforeAny], { now: startOf('dhuhr'), prayedToday: { dhuhr: anchor } }),
+    )
+    expect(done.today.rightNow).toBeNull()
+  })
+})
+
 describe('user state overrides selection', () => {
   it('removes every prayer item while tracking is paused', () => {
     const result = plan(

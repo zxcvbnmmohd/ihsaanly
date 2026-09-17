@@ -28,11 +28,16 @@
         {
           "widgets": [
             {
-              "name": "CounterWidget",
-              "contentMarginsDisabled": true,
-              "displayName": "Counter Widget",
-              "description": "A sample counter home screen widget",
-              "supportedFamilies": ["systemSmall", "systemMedium"]
+              "name": "RightNowWidget",
+              "displayName": "Right now",
+              "description": "What the moment calls for.",
+              "supportedFamilies": ["systemSmall"]
+            },
+            {
+              "name": "QuickDuasWidget",
+              "displayName": "Quick duas",
+              "description": "The duas no sensor can find, one tap away.",
+              "supportedFamilies": ["systemMedium"]
             }
           ]
         }

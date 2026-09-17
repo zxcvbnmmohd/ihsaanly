@@ -4,6 +4,7 @@ import { itemById, resolveText } from '@/content'
 import { usePlace } from '@/location/store'
 import type { PlannedItem } from '@/plan/signals'
 import { useNotificationSync } from '@/notifications/use-sync'
+import { useWidgetSnapshot } from '@/widgets/use-snapshot'
 import { usePlan } from '@/plan/use-plan'
 import { markMadeUp, markPrayer, unmarkPrayer, useQada, useTodayMarks } from '@/prayer/marks'
 import { PRAYERS, type Prayer } from '@/prayer/qada'
@@ -53,6 +54,7 @@ export default function TodayRoute(): ReactElement {
   const now = useNow()
   const planned = usePlan()
   useNotificationSync(planned)
+  useWidgetSnapshot(planned)
   const marks = useTodayMarks(place?.timeZone ?? 'UTC', now)
   const qada = useQada()
 

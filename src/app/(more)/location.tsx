@@ -16,9 +16,9 @@ interface State {
 
 export default function LocationRoute() {
   const place = usePlace();
-  const [state, setState] = useState<State>({ query: '', declined: false });
+  const [thing, setThing] = useState<State>({ query: '', declined: false });
 
-  const results = searchCities(state.query);
+  const results = searchCities(thing.query);
 
   const choose = (chosen: Place) => {
     setPlace(chosen);
@@ -28,17 +28,17 @@ export default function LocationRoute() {
   const useDeviceLocation = async () => {
     const located = await requestDeviceLocation();
     if (located) return choose(located);
-    setState((current) => ({ ...current, declined: true }));
+    setThing((current) => ({ ...current, declined: true }));
   };
 
   return (
     <LocationScreen
       deviceLabel={place?.source === 'device' ? place.label : null}
-      query={state.query}
+      query={thing.query}
       results={results}
-      showNoResults={state.query.trim().length >= MINIMUM_QUERY_LENGTH && results.length === 0}
-      declined={state.declined}
-      onQueryChange={(query) => setState((current) => ({ ...current, query }))}
+      showNoResults={thing.query.trim().length >= MINIMUM_QUERY_LENGTH && results.length === 0}
+      declined={thing.declined}
+      onQueryChange={(query) => setThing((current) => ({ ...current, query }))}
       onUseDevice={useDeviceLocation}
       onSelect={choose}
     />

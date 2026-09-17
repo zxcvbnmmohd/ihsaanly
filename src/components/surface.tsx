@@ -30,13 +30,13 @@ export function Surface({
   style?: ViewProps['style'];
   interactive?: boolean;
 }) {
-  const [state, setState] = useState<State>({ reduceTransparency: false });
+  const [thing, setThing] = useState<State>({ reduceTransparency: false });
   // Android's Material colors don't re-resolve on their own — subscribing to the
   // scheme here forces a re-render when the theme flips (React Compiler memoizes).
   useColorScheme();
 
   useEffect(() => {
-    const apply = (reduceTransparency: boolean) => setState({ reduceTransparency });
+    const apply = (reduceTransparency: boolean) => setThing({ reduceTransparency });
 
     AccessibilityInfo.isReduceTransparencyEnabled().then(apply);
     const sub = AccessibilityInfo.addEventListener('reduceTransparencyChanged', apply);
@@ -48,7 +48,7 @@ export function Surface({
   const base: ViewProps['style'] = [{ borderCurve: 'continuous' }, style];
 
   if (
-    state.reduceTransparency ||
+    thing.reduceTransparency ||
     process.env.EXPO_OS === 'android' ||
     process.env.EXPO_OS === 'web'
   ) {

@@ -54,6 +54,26 @@ export const strings = {
       tomorrow: 'Tomorrow.',
     },
   },
+  event: {
+    ascending: 'Going up',
+    descending: 'Going down',
+    driving: 'Driving',
+    travel: 'Travelling',
+    'leaving-home': 'Leaving home',
+    'entering-home': 'Coming home',
+  } as Record<string, string>,
+  events: {
+    title: 'Where you are',
+    explanation:
+      'Most of these moments cannot be detected by a phone at all \u2014 a lift, a hill, a staircase. Their duas are one tap away in the Library and on the widget instead.',
+    detectHome: 'Notice when I leave home',
+    detectHomeDetail:
+      'Approximate. The phone notices a hundred metres or so from the door and up to a minute late, so treat it as a nudge rather than the moment.',
+    setHome: 'Set home to my current place',
+    homeUnset: 'Not set',
+    manual: 'Tell the app instead',
+    manualDetail: 'Raise a state yourself when no sensor can find it.',
+  },
   moonSighting: {
     title: 'Moon sighting',
     explanation:

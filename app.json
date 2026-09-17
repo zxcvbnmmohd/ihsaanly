@@ -9,7 +9,10 @@
     "platforms": ["ios", "android"],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.ihsaanly.app"
+      "bundleIdentifier": "com.ihsaanly.app",
+      "infoPlist": {
+        "UIBackgroundModes": ["location"]
+      }
     },
     "android": {
       "package": "com.ihsaanly.app",
@@ -43,7 +46,9 @@
       [
         "expo-location",
         {
-          "locationWhenInUsePermission": "Ihsaanly uses your location on this device to work out prayer windows. It is never sent anywhere."
+          "locationWhenInUsePermission": "Ihsaanly uses your location on this device to work out prayer windows. It is never sent anywhere.",
+          "isAndroidBackgroundLocationEnabled": true,
+          "locationAlwaysAndWhenInUsePermission": "Ihsaanly can notice when you leave home so it can offer the dua for it. This is optional, off by default, and your location is never sent anywhere."
         }
       ],
       "expo-notifications"

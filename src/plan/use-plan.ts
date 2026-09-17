@@ -8,6 +8,8 @@ import { usePlace } from '@/location/store'
 import { useCalculationPreferences } from '@/prayer/store'
 import { runRollover, useTodayMarks } from '@/prayer/marks'
 import { prayerTimesAcross } from '@/prayer/times'
+import { useEventSettings } from '@/events/store'
+import { currentHomeTransition } from '@/events/geofence'
 import { useNotificationPreferences } from '@/notifications/store'
 import { useNow } from '@/time/use-now'
 
@@ -43,6 +45,7 @@ export function usePlan(): Plan | null {
   const userState = useUserState()
   const notifications = useNotificationPreferences()
   const enabledItemIds = useEnabledItems()
+  const events = useEventSettings()
   const prayedToday = useTodayMarks(place?.timeZone ?? 'UTC', now)
 
   useEffect(() => {
@@ -61,8 +64,10 @@ export function usePlan(): Plan | null {
       dayContextFor(now, place.timeZone, index + 1, hijriOffset),
     ),
     prayedToday,
-    // Contextual events land in #15.
-    activeEvents: [],
+    activeEvents: [
+      ...events.manual,
+      ...(events.detectHome ? [currentHomeTransition()].filter((entry) => entry !== null) : []),
+    ],
     userState,
     preferences: {
       enabledItemIds,

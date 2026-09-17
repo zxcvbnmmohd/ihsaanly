@@ -3,6 +3,8 @@ import { DarkTheme, DefaultTheme, ThemeProvider } from 'expo-router/react-naviga
 import { NativeTabs } from 'expo-router/native-tabs'
 import { Text, useColorScheme, View } from 'react-native'
 
+import { OnboardingFlow } from '@/onboarding/flow'
+import { useOnboarding } from '@/onboarding/store'
 import { strings } from '@/strings'
 import { colors } from '@/theme/colors'
 
@@ -38,6 +40,17 @@ export function ErrorBoundary({ error, retry }: ErrorBoundaryProps): ReactElemen
 
 export default function RootLayout(): ReactElement {
   const colorScheme = useColorScheme()
+  const onboarding = useOnboarding()
+
+  // Onboarding replaces the tab bar rather than sitting over it: there is
+  // nothing to navigate to until it is done.
+  if (!onboarding.completed) {
+    return (
+      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+        <OnboardingFlow />
+      </ThemeProvider>
+    )
+  }
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>

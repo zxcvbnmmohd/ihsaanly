@@ -4,6 +4,7 @@ import type { ItemDetail } from './item'
 import type { LibraryScreenProps } from './library'
 import type { LocationScreenProps } from './location'
 import type { MoreScreenProps } from './more'
+import type { OnboardingScreenProps } from './onboarding'
 import type { NotificationsScreenProps } from './notifications'
 import type { TrackingScreenProps } from './tracking'
 import type { TodayScreenProps } from './today'
@@ -165,6 +166,7 @@ export const calculationFixture: CalculationScreenProps = {
 
 export const trackingFixture: TrackingScreenProps = {
   userState: { travelling: true, trackingPaused: false },
+  showPause: true,
   onChange: noop,
 }
 
@@ -178,4 +180,36 @@ export const notificationsFixture: NotificationsScreenProps = {
     maxPerDay: 3,
   },
   onChange: noop,
+}
+
+export const onboardingFixture: OnboardingScreenProps = {
+  step: 'location',
+  place: null,
+  query: 'toron',
+  results: [
+    {
+      label: 'Toronto, Ontario, Canada',
+      latitude: 43.7,
+      longitude: -79.42,
+      timeZone: 'America/Toronto',
+      source: 'city',
+    },
+  ],
+  gender: 'unspecified',
+  notifications: {
+    windows: true,
+    lookAhead: true,
+    prayers: false,
+    quietHours: { from: 22, to: 7 },
+    perItem: {},
+    maxPerDay: 3,
+  },
+  starters: [{ id: 'dua-leaving-home', title: 'Leaving home', enabled: true }],
+  onQueryChange: noop,
+  onUseDevice: noop,
+  onSelectPlace: noop,
+  onSelectGender: noop,
+  onToggleNotification: noop,
+  onToggleStarter: noop,
+  onNext: noop,
 }

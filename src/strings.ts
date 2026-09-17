@@ -173,6 +173,26 @@ export const strings = {
     title: 'More',
     empty: 'History, settings and help will live here.',
   },
+  onboarding: {
+    title: 'Welcome',
+    intro:
+      'A few things, once. Every one of them has a sensible answer already chosen, so you can accept your way through and change anything later.',
+    locationStep: 'Where are you?',
+    locationWhy: 'Used on this device to work out the parts of the day. Never sent anywhere.',
+    genderStep: 'One more thing',
+    genderWhy:
+      'Asked only so the tracking pause can be offered where it applies. Stored on this device and used for nothing else.',
+    female: 'Female',
+    male: 'Male',
+    skip: 'Prefer not to say',
+    remindersStep: 'Reminders',
+    remindersWhy: 'Two or three a day. Change any of this later in More.',
+    startStep: 'A starting point',
+    startWhy:
+      'A small set to begin with, chosen to be a reasonable day rather than a complete one. Add more from the Library whenever you like.',
+    next: 'Next',
+    done: 'Start',
+  },
   location: {
     title: 'Location',
     notSet: 'Not set',

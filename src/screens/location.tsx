@@ -12,7 +12,7 @@ export interface LocationScreenProps {
   query: string
   results: Place[]
   showNoResults: boolean
-  declined: boolean
+  problem: 'declined' | 'unavailable' | null
   onQueryChange: (query: string) => void
   onUseDevice: () => void
   onSelect: (place: Place) => void
@@ -23,7 +23,7 @@ export function LocationScreen({
   query,
   results,
   showNoResults,
-  declined,
+  problem,
   onQueryChange,
   onUseDevice,
   onSelect,
@@ -38,9 +38,9 @@ export function LocationScreen({
 
       <Row title={strings.location.useDevice} detail={deviceLabel} onPress={onUseDevice} />
 
-      {declined ? (
+      {problem ? (
         <Text className="text-sm" style={{ color: colors.secondaryLabel }}>
-          {strings.location.declined}
+          {problem === 'declined' ? strings.location.declined : strings.location.unavailable}
         </Text>
       ) : null}
 

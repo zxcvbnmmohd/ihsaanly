@@ -14,9 +14,12 @@ export interface PrayerWindow {
  * running past midnight into the next Fajr needs no special case.
  */
 export function buildWindows(days: DailyPrayerTimes[]): PrayerWindow[] {
-  const boundaries = days.flatMap((day) =>
-    WINDOW_ORDER.map((name) => ({ name, startsAt: day[name] })),
-  )
+  const boundaries = days
+    .flatMap((day) => WINDOW_ORDER.map((name) => ({ name, startsAt: day[name] })))
+    // A calculation can fail to produce a time — inside the polar circle, or
+    // from a bad coordinate. Dropping it degrades to "no window" rather than
+    // letting an invalid date travel downstream.
+    .filter((boundary) => !Number.isNaN(boundary.startsAt?.getTime()))
 
   return boundaries
     .flatMap((boundary, index) => {

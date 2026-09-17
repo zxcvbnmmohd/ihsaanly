@@ -71,6 +71,15 @@ real content with its evidence attached.
   components driven entirely by exported props. `src/screens/fixtures.ts` supplies
   mock props for each, so a screen can be rendered without a device, a database or
   a navigator.
+- **The decision function** — one pure function takes a snapshot of the world
+  and returns everything the product decides: what is relevant right now, what
+  is nearby, what is coming, and the notification schedule. It touches no clock,
+  no device and no storage, so it is tested with fixtures and no simulator.
+  Today renders entirely from its output.
+- **Selection rules**: paused tracking removes every prayer item; travelling
+  suppresses the rawatib while keeping the dhikr after prayer; memorised items
+  leave the reminder rotation but stay in the Library; the notification schedule
+  respects a daily budget and the platform's pending limit.
 - **The Hijri date**, shown on Today and computed with Umm al-Qura. It turns at
   Maghrib, not midnight, and is always captioned as calculated rather than
   certain, pointing at the authority the user's community follows.

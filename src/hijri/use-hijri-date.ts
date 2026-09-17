@@ -16,5 +16,5 @@ export function useHijriDate(): HijriDate | null {
   if (!place) return null
 
   const { maghrib } = prayerTimesFor(place, now, preferences)
-  return toHijri(hijriDay(now, maghrib, place.timezone), offset)
+  return toHijri(hijriDay(now, maghrib, place.timeZone), offset)
 }

@@ -27,7 +27,7 @@ export async function requestDeviceLocation(): Promise<Place | null> {
     label: await describe(latitude, longitude),
     latitude,
     longitude,
-    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     source: 'device',
   }
 }

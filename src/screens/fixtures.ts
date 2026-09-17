@@ -12,6 +12,23 @@ export const todayFixture: TodayScreenProps = {
   hasLocation: true,
   window: 'asr',
   hijri: { year: 1448, month: 4, day: 6 },
+  rightNow: {
+    id: 'evening-adhkar',
+    title: 'Evening adhkar',
+    detail: null,
+    href: '/item/evening-adhkar',
+  },
+  context: [
+    { id: 'dua-travel', title: 'Setting out on a journey', detail: null, href: '/item/dua-travel' },
+  ],
+  comingUp: [
+    {
+      id: 'fast-white-days',
+      title: 'Fasting the White Days',
+      detail: 'In 3 days',
+      href: '/item/fast-white-days',
+    },
+  ],
   locationHref: '/location',
 }
 
@@ -20,6 +37,9 @@ export const todayWithoutLocationFixture: TodayScreenProps = {
   hasLocation: false,
   window: null,
   hijri: null,
+  rightNow: null,
+  context: [],
+  comingUp: [],
 }
 
 export const libraryFixture: LibraryScreenProps = {
@@ -86,7 +106,7 @@ export const locationFixture: LocationScreenProps = {
       label: 'Toronto, Ontario, Canada',
       latitude: 43.7,
       longitude: -79.42,
-      timezone: 'America/Toronto',
+      timeZone: 'America/Toronto',
       source: 'city',
     },
   ],

@@ -10,6 +10,13 @@ export const strings = {
     empty: 'Nothing here yet.',
     needsLocation: 'Set your location so the app knows which part of the day you are in.',
   },
+  plan: {
+    rightNow: 'Right now',
+    context: 'Nearby',
+    comingUp: 'Coming up',
+    tomorrow: 'Tomorrow',
+    inDays: (days: number) => `In ${days} days`,
+  },
   window: {
     fajr: 'Fajr',
     sunrise: 'Morning',

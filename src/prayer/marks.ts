@@ -24,20 +24,24 @@ function dateOf(civil: CivilDate): Date {
   return new Date(civil.year, civil.month - 1, civil.day, 12)
 }
 
+/**
+ * The window is optional and only feeds the timing metric. A mark is the
+ * user's statement that they prayed; nothing about our arithmetic should be
+ * able to refuse it.
+ */
 export function markPrayer(
   prayer: Prayer,
   at: Date,
   timeZone: string,
-  windowStart: Date,
-  windowEnd: Date,
+  window?: { startsAt: Date; endsAt: Date },
 ): void {
   recordEvent({
     kind: 'prayer-performed',
     subject: prayer,
     at,
     logDay: civilDateKey(logDay(at, timeZone)),
-    windowStart,
-    windowEnd,
+    windowStart: window?.startsAt,
+    windowEnd: window?.endsAt,
   })
 }
 

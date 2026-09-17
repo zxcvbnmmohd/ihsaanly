@@ -3,11 +3,11 @@ import type { ZodType } from 'zod';
 
 import { readPreference, writePreference } from './preferences';
 
-export type PreferenceStore<T> = {
+export interface PreferenceStore<T> {
   get: () => T;
   set: (value: T) => void;
   use: () => T;
-};
+}
 
 export function createPreferenceStore<T>(
   key: string,

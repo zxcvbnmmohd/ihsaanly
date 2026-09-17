@@ -3,6 +3,7 @@ const tseslint = require('typescript-eslint');
 const reactHooks = require('eslint-plugin-react-hooks');
 const expo = require('eslint-plugin-expo');
 const globals = require('globals');
+const singleUseState = require('./eslint-rules/single-use-state');
 
 /**
  * Hand-rolled instead of `eslint-config-expo` because that config depends on
@@ -14,7 +15,7 @@ module.exports = [
   ...tseslint.configs.recommended,
   reactHooks.configs.flat['recommended-latest'],
   {
-    plugins: { expo },
+    plugins: { expo, local: { rules: { 'single-use-state': singleUseState } } },
     languageOptions: {
       globals: { ...globals.node, ...globals.browser, __DEV__: 'readonly' },
     },
@@ -42,6 +43,8 @@ module.exports = [
             'Prayer times are never rendered as clock times. A window three minutes out is invisible; a clock three minutes out is a bug report.',
         },
       ],
+      'local/single-use-state': 'error',
+      '@typescript-eslint/consistent-type-definitions': ['error', 'interface'],
       'expo/no-dynamic-env-var': 'error',
       'expo/no-env-var-destructuring': 'error',
       'expo/prefer-box-shadow': 'error',

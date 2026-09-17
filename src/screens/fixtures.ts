@@ -1,6 +1,6 @@
 import type { CalculationScreenProps } from './calculation';
 import type { HijriScreenProps } from './hijri';
-import type { ItemScreenProps } from './item';
+import type { ItemDetail } from './item';
 import type { LibraryScreenProps } from './library';
 import type { LocationScreenProps } from './location';
 import type { MoreScreenProps } from './more';
@@ -41,7 +41,7 @@ export const libraryFixture: LibraryScreenProps = {
 
 export const emptyLibraryFixture: LibraryScreenProps = { entries: [] };
 
-export const itemFixture: ItemScreenProps = {
+export const itemFixture: ItemDetail = {
   ruling: 'sunnah',
   repeat: 3,
   arabic: 'بِسْمِ اللَّهِ',
@@ -61,7 +61,7 @@ export const itemFixture: ItemScreenProps = {
   ],
 };
 
-export const missingItemFixture: ItemScreenProps = null;
+export const missingItemFixture: ItemDetail | null = null;
 
 export const moreFixture: MoreScreenProps = {
   locationLabel: 'Toronto, Ontario, Canada',

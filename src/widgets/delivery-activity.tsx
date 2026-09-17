@@ -27,7 +27,7 @@ import {
 import { createLiveActivity, type LiveActivityEnvironment } from 'expo-widgets';
 import type { SFSymbol } from 'sf-symbols-typescript';
 
-export type DeliveryProps = {
+export interface DeliveryProps {
   orderId: string;
   status: string; // 'Preparing' | 'On the way' | 'Delivered'
   stage: number; // 0..2
@@ -36,7 +36,7 @@ export type DeliveryProps = {
   startEpochMs: number;
   etaEpochMs: number;
   logoUri?: string;
-};
+}
 
 // Layout helpers must live *inside* this function: the `'widget'` directive
 // serializes only the function body into the widget's separate JS runtime.

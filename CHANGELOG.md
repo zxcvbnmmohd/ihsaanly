@@ -97,6 +97,11 @@ real content with its evidence attached.
 
 ### Changed
 
+- **Two code conventions are now enforced by lint**: one typed `useState` per file
+  holding a single state object, and `interface` over `type` for object shapes.
+  The first is a local ESLint rule; scattered state hooks drift out of sync and
+  hide what a component actually holds.
+
 - Route groups renamed from Home/Settings to Today/Library/More.
 - Shared stack header options moved into a hook, because Android Material colours
   only re-resolve when read during render with a colour-scheme subscription.

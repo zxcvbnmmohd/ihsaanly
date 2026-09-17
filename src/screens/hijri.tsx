@@ -6,11 +6,11 @@ import { offsetOptions, type HijriDate } from '@/hijri/calendar';
 import { strings } from '@/strings';
 import { colors } from '@/theme/colors';
 
-export type HijriScreenProps = {
+export interface HijriScreenProps {
   offset: number;
   preview: HijriDate | null;
   onChange: (offset: number) => void;
-};
+}
 
 export function HijriScreen({ offset, preview, onChange }: HijriScreenProps) {
   useColorScheme();

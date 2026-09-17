@@ -8,7 +8,7 @@ import type { Evidence, Ruling } from '@/content/schema';
 import { strings } from '@/strings';
 import { colors } from '@/theme/colors';
 
-export type ItemScreenProps = {
+export interface ItemDetail {
   ruling: Ruling;
   repeat: number;
   arabic: string | null;
@@ -16,7 +16,11 @@ export type ItemScreenProps = {
   translation: string | null;
   note: string | null;
   evidence: Evidence[];
-} | null;
+}
+
+export interface ItemScreenProps {
+  item: ItemDetail | null;
+}
 
 function Labelled({ label, children }: { label: string; children: React.ReactNode }) {
   useColorScheme();
@@ -31,7 +35,7 @@ function Labelled({ label, children }: { label: string; children: React.ReactNod
   );
 }
 
-export function ItemScreen({ item }: { item: ItemScreenProps }) {
+export function ItemScreen({ item }: ItemScreenProps) {
   useColorScheme();
 
   if (!item) {

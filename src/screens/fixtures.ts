@@ -102,6 +102,7 @@ export const moreFixture: MoreScreenProps = {
   calculationHref: '/calculation',
   hijriLabel: 'No change',
   hijriHref: '/hijri',
+  diagnosticsHref: '/diagnostics',
 }
 
 export const hijriFixture: HijriScreenProps = {

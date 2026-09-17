@@ -11,6 +11,7 @@ export default function MoreLayout(): ReactElement {
       <Stack.Screen name="location" options={{ title: strings.location.title }} />
       <Stack.Screen name="calculation" options={{ title: strings.calculation.title }} />
       <Stack.Screen name="hijri" options={{ title: strings.hijri.title }} />
+      <Stack.Screen name="diagnostics" options={{ title: strings.diagnostics.title }} />
     </Stack>
   )
 }

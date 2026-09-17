@@ -18,6 +18,7 @@ export default function MoreRoute(): ReactElement {
       calculationLabel={strings.asr[calculation.asr]}
       hijriHref="/hijri"
       hijriLabel={strings.hijri.offsetLabel(hijriOffset)}
+      diagnosticsHref="/diagnostics"
     />
   )
 }

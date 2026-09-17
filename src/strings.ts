@@ -132,7 +132,20 @@ export const strings = {
   library: {
     title: 'Library',
     empty: 'Adhkar, duas and sunnah actions will be listed here.',
+    search: 'Search by name or situation',
+    noResults: 'Nothing matches that.',
   },
+  category: {
+    adhkar: 'Adhkar',
+    dhikr: 'After prayer',
+    fasting: 'Fasting',
+    food: 'Eating',
+    home: 'Home',
+    masjid: 'Masjid',
+    prayer: 'Prayer',
+    sleep: 'Sleep and waking',
+    travel: 'Travel',
+  } as Record<string, string>,
   item: {
     transliteration: 'Transliteration',
     translation: 'Translation',

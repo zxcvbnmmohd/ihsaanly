@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { z } from 'zod'
 
 import { civilDateIn, civilDateKey, logDay, shiftDays, type CivilDate } from '@/day/boundaries'
@@ -93,12 +94,23 @@ export function runRollover(place: Place, preferences: CalculationPreferences, n
   writePreference(PROCESSED_THROUGH, civilDateKey(yesterday))
 }
 
+/**
+ * `version` is the cache key, and is carried inside the memoised value rather
+ * than merely listed as a dependency. The React Compiler memoises these reads
+ * on their arguments, so a discarded version means a recorded event never
+ * invalidates the cached result and the screen never sees the write.
+ */
 export function useTodayMarks(timeZone: string, now: Date): Partial<Record<Prayer, Date>> {
-  useEventVersion()
-  return prayerMarksOn(civilDateKey(logDay(now, timeZone)))
+  const version = useEventVersion()
+  const key = civilDateKey(logDay(now, timeZone))
+  const snapshot = useMemo(() => ({ version, marks: prayerMarksOn(key) }), [key, version])
+
+  return snapshot.marks
 }
 
 export function useQada(): Partial<Record<Prayer, number>> {
-  useEventVersion()
-  return qadaCounts()
+  const version = useEventVersion()
+  const snapshot = useMemo(() => ({ version, counts: qadaCounts() }), [version])
+
+  return snapshot.counts
 }

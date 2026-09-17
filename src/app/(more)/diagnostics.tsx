@@ -7,7 +7,13 @@ import { useCalculationPreferences } from '@/prayer/store'
 import { prayerTimesAcross } from '@/prayer/times'
 import { buildWindows, windowAt } from '@/prayer/windows'
 import { DiagnosticsScreen } from '@/screens/diagnostics'
-import { eventCount, recentEvents, schemaVersion, useEventVersion } from '@/storage/events'
+import {
+  eventCount,
+  lastStorageError,
+  recentEvents,
+  schemaVersion,
+  useEventVersion,
+} from '@/storage/events'
 import { useNow } from '@/time/use-now'
 
 export default function DiagnosticsRoute(): ReactElement {
@@ -35,6 +41,7 @@ export default function DiagnosticsRoute(): ReactElement {
     ['today fajr', today ? String(today.fajr) : 'no times'],
     ['today dhuhr', today ? String(today.dhuhr) : 'no times'],
     ['marks today', JSON.stringify(Object.keys(marks))],
+    ['last storage error', lastStorageError() ?? 'none'],
   ]
 
   return (

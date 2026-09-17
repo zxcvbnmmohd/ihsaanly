@@ -18,6 +18,21 @@ export interface NewEvent {
 
 const listeners = new Set<() => void>()
 let version = 0
+let lastError: string | null = null
+
+/** Temporary, for diagnosing #9 on device. */
+export function lastStorageError(): string | null {
+  return lastError
+}
+
+function attempt<T>(label: string, work: () => T, fallback: T): T {
+  try {
+    return work()
+  } catch (error) {
+    lastError = `${label}: ${error instanceof Error ? error.message : String(error)}`
+    return fallback
+  }
+}
 
 function announce(): void {
   version += 1
@@ -36,6 +51,11 @@ function deltaSeconds(event: NewEvent): number | null {
 }
 
 export function recordEvent(event: NewEvent): void {
+  attempt('recordEvent', () => writeEvent(event), undefined)
+  announce()
+}
+
+function writeEvent(event: NewEvent): void {
   database.runSync(
     `INSERT INTO events (kind, subject, at, log_day, window_start, window_end, delta_seconds)
      VALUES (?, ?, ?, ?, ?, ?, ?)`,
@@ -47,15 +67,19 @@ export function recordEvent(event: NewEvent): void {
     event.windowEnd?.getTime() ?? null,
     deltaSeconds(event),
   )
-  announce()
 }
 
 export function prayerMarksOn(logDay: string): Partial<Record<Prayer, Date>> {
-  const rows = database.getAllSync<{ subject: string; kind: EventKind; at: number }>(
-    `SELECT subject, kind, at FROM events
+  const rows = attempt(
+    'prayerMarksOn',
+    () =>
+      database.getAllSync<{ subject: string; kind: EventKind; at: number }>(
+        `SELECT subject, kind, at FROM events
      WHERE kind IN ('prayer-performed', 'prayer-unmarked') AND log_day = ?
      ORDER BY id ASC`,
-    logDay,
+        logDay,
+      ),
+    [],
   )
 
   // Later facts supersede earlier ones. Nothing is deleted, so the correction

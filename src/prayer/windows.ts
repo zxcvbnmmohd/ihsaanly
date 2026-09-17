@@ -3,11 +3,11 @@ export const WINDOW_ORDER = ['fajr', 'sunrise', 'dhuhr', 'asr', 'maghrib', 'isha
 export type WindowName = (typeof WINDOW_ORDER)[number];
 export type DailyPrayerTimes = Record<WindowName, Date>;
 
-export type PrayerWindow = {
+export interface PrayerWindow {
   name: WindowName;
   startsAt: Date;
   endsAt: Date;
-};
+}
 
 /**
  * Consecutive days are flattened into one ordered timeline, so the Isha window

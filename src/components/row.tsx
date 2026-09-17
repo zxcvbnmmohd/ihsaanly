@@ -5,13 +5,13 @@ import { Surface } from '@/components/surface';
 import { strings } from '@/strings';
 import { colors } from '@/theme/colors';
 
-type RowProps = {
+interface RowProps {
   title: string;
   detail?: string | null;
   href?: Href;
   onPress?: () => void;
   selected?: boolean;
-};
+}
 
 export function Row({ title, detail, href, onPress, selected }: RowProps) {
   useColorScheme();

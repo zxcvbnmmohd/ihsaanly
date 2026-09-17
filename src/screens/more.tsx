@@ -4,14 +4,14 @@ import { Row } from '@/components/row';
 import { Screen } from '@/components/screen';
 import { strings } from '@/strings';
 
-export type MoreScreenProps = {
+export interface MoreScreenProps {
   locationLabel: string;
   locationHref: Href;
   calculationLabel: string;
   calculationHref: Href;
   hijriLabel: string;
   hijriHref: Href;
-};
+}
 
 export function MoreScreen({
   locationLabel,

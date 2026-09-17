@@ -13,11 +13,11 @@ import {
 } from '@expo/ui/swift-ui/modifiers';
 import { createWidget, type WidgetEnvironment } from 'expo-widgets';
 
-type CounterWidgetProps = {
+interface CounterWidgetProps {
   count: number;
   logoUri?: string;
   gridUri?: string;
-};
+}
 
 const CounterWidget = (props: CounterWidgetProps, environment: WidgetEnvironment) => {
   'widget';

@@ -6,7 +6,7 @@ import type { Place } from '@/location/place';
 import { strings } from '@/strings';
 import { colors } from '@/theme/colors';
 
-export type LocationScreenProps = {
+export interface LocationScreenProps {
   deviceLabel: string | null;
   query: string;
   results: Place[];
@@ -15,7 +15,7 @@ export type LocationScreenProps = {
   onQueryChange: (query: string) => void;
   onUseDevice: () => void;
   onSelect: (place: Place) => void;
-};
+}
 
 export function LocationScreen({
   deviceLabel,

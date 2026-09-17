@@ -8,12 +8,12 @@ import type { WindowName } from '@/prayer/windows';
 import { strings } from '@/strings';
 import { colors } from '@/theme/colors';
 
-export type TodayScreenProps = {
+export interface TodayScreenProps {
   hasLocation: boolean;
   window: WindowName | null;
   hijri: HijriDate | null;
   locationHref: Href;
-};
+}
 
 export function TodayScreen({ hasLocation, window, hijri, locationHref }: TodayScreenProps) {
   useColorScheme();

@@ -1,4 +1,8 @@
-export type CivilDate = { year: number; month: number; day: number };
+export interface CivilDate {
+  year: number;
+  month: number;
+  day: number;
+}
 
 /**
  * Two day boundaries exist on purpose and must never be conflated.

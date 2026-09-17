@@ -6,16 +6,16 @@ import { Screen } from '@/components/screen';
 import type { Ruling } from '@/content/schema';
 import { strings } from '@/strings';
 
-export type LibraryEntry = {
+export interface LibraryEntry {
   id: string;
   title: string;
   ruling: Ruling;
   href: Href;
-};
+}
 
-export type LibraryScreenProps = {
+export interface LibraryScreenProps {
   entries: LibraryEntry[];
-};
+}
 
 export function LibraryScreen({ entries }: LibraryScreenProps) {
   if (entries.length === 0) {

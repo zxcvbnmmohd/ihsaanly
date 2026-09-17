@@ -17,6 +17,10 @@ const canUseGlass =
  * ponytail: single `interactive` knob instead of a variant system — add
  * variants when a second surface style actually shows up in a design.
  */
+interface State {
+  reduceTransparency: boolean;
+}
+
 export function Surface({
   children,
   style,
@@ -26,17 +30,16 @@ export function Surface({
   style?: ViewProps['style'];
   interactive?: boolean;
 }) {
-  const [reduceTransparency, setReduceTransparency] = useState(false);
+  const [state, setState] = useState<State>({ reduceTransparency: false });
   // Android's Material colors don't re-resolve on their own — subscribing to the
   // scheme here forces a re-render when the theme flips (React Compiler memoizes).
   useColorScheme();
 
   useEffect(() => {
-    AccessibilityInfo.isReduceTransparencyEnabled().then(setReduceTransparency);
-    const sub = AccessibilityInfo.addEventListener(
-      'reduceTransparencyChanged',
-      setReduceTransparency,
-    );
+    const apply = (reduceTransparency: boolean) => setState({ reduceTransparency });
+
+    AccessibilityInfo.isReduceTransparencyEnabled().then(apply);
+    const sub = AccessibilityInfo.addEventListener('reduceTransparencyChanged', apply);
     return () => sub.remove();
   }, []);
 
@@ -44,7 +47,11 @@ export function Surface({
   // hidden cuts off the rim highlight and press bulge.
   const base: ViewProps['style'] = [{ borderCurve: 'continuous' }, style];
 
-  if (reduceTransparency || process.env.EXPO_OS === 'android' || process.env.EXPO_OS === 'web') {
+  if (
+    state.reduceTransparency ||
+    process.env.EXPO_OS === 'android' ||
+    process.env.EXPO_OS === 'web'
+  ) {
     return (
       <View style={[base, { backgroundColor: colors.secondarySystemBackground }]}>{children}</View>
     );

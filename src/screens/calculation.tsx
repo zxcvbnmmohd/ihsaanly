@@ -11,10 +11,10 @@ import {
 import { strings } from '@/strings';
 import { colors } from '@/theme/colors';
 
-export type CalculationScreenProps = {
+export interface CalculationScreenProps {
   preferences: CalculationPreferences;
   onChange: (change: Partial<CalculationPreferences>) => void;
-};
+}
 
 function Section({
   title,

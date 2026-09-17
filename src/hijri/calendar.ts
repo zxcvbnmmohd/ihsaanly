@@ -5,7 +5,11 @@ import { shiftDays, type CivilDate } from '@/day/boundaries';
 export const MINIMUM_OFFSET = -2;
 export const MAXIMUM_OFFSET = 2;
 
-export type HijriDate = { year: number; month: number; day: number };
+export interface HijriDate {
+  year: number;
+  month: number;
+  day: number;
+}
 
 /**
  * The offset exists because a calculated calendar and local moon sighting

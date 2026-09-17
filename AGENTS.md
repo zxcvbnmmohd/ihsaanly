@@ -44,6 +44,27 @@ prop contracts. Add a fixture whenever you add a screen.
 This exists so screens can be exercised in tests and showcases without a device,
 a database or a navigator.
 
+## Code conventions
+
+Enforced by lint, so a violation fails `bun run check`.
+
+- **One `useState` per file**, holding a single typed object:
+
+  ```ts
+  interface State {
+    query: string;
+    declined: boolean;
+  }
+
+  const [state, setState] = useState<State>({ query: '', declined: false });
+  ```
+
+  Read it as `state.query`, update it as `setState((current) => ({ ...current, query }))`.
+  Scattered state hooks drift out of sync and hide what a component actually holds.
+
+- **`interface` over `type`** for object shapes. Unions, intersections and inferred
+  aliases such as `z.infer<...>` stay as `type` — the rule only covers object literals.
+
 ## Building with EAS
 
 Use EAS to build, sign, and submit the app in the cloud (`eas build`, `eas submit`) and to ship over-the-air updates (`eas update`) — no local Xcode or Android Studio required. Run EAS CLI as `bunx eas-cli <command>` in Bun projects, or `npx eas-cli@latest <command>` otherwise; substitute that for bare `eas` in docs examples.

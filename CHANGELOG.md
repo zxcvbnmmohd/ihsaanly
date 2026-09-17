@@ -71,6 +71,13 @@ real content with its evidence attached.
   components driven entirely by exported props. `src/screens/fixtures.ts` supplies
   mock props for each, so a screen can be rendered without a device, a database or
   a navigator.
+- **Travelling and paused tracking**, two manual switches under More. Neither is
+  ever inferred. Travelling offers shortening, steps the regular sunnah prayers
+  aside, raises the travel duas, and offers fasting rather than expecting it.
+  Pausing removes prayer items and stops anything accruing to make up; it is
+  labelled neutrally, asks for no explanation, and never expires on its own.
+- **Shortening the prayer on a journey**, on its Qur'anic basis, with a note that
+  scholars differ on whether it is obligatory or a concession.
 - **Marking prayers, and the sunnah that follows.** Tapping to say a prayer was
   performed reveals the sunnah attached to it. Marks are persisted against the
   local calendar day.

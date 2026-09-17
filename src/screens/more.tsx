@@ -12,7 +12,8 @@ export interface MoreScreenProps {
   calculationHref: Href
   hijriLabel: string
   hijriHref: Href
-  diagnosticsHref: Href
+  trackingLabel: string
+  trackingHref: Href
 }
 
 export function MoreScreen({
@@ -22,14 +23,15 @@ export function MoreScreen({
   calculationHref,
   hijriLabel,
   hijriHref,
-  diagnosticsHref,
+  trackingLabel,
+  trackingHref,
 }: MoreScreenProps): ReactElement {
   return (
     <Screen className="gap-3 p-4">
       <Row href={locationHref} title={strings.location.title} detail={locationLabel} />
       <Row href={calculationHref} title={strings.calculation.title} detail={calculationLabel} />
       <Row href={hijriHref} title={strings.hijri.title} detail={hijriLabel} />
-      <Row href={diagnosticsHref} title={strings.diagnostics.title} detail={null} />
+      <Row href={trackingHref} title={strings.tracking.title} detail={trackingLabel} />
     </Screen>
   )
 }

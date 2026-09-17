@@ -14,6 +14,7 @@ import { strings } from '@/strings'
 import { useNow } from '@/time/use-now'
 
 function detailFor(planned: PlannedItem): string | null {
+  if (planned.optional) return strings.plan.optional
   if (planned.reason !== 'upcoming') return null
   return planned.daysAway === 1 ? strings.plan.tomorrow : strings.plan.inDays(planned.daysAway ?? 0)
 }

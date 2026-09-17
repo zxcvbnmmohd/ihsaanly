@@ -17,6 +17,7 @@ export const strings = {
     tomorrow: 'Tomorrow',
     inDays: (days: number) => `In ${days} days`,
     prayers: 'Prayers',
+    optional: 'Optional',
     prayed: 'Prayed',
     makeUp: 'To make up',
     outstanding: (count: number) => `${count} to make up`,
@@ -36,10 +37,14 @@ export const strings = {
     maghrib: 'After Maghrib',
     isha: 'Night',
   },
-  diagnostics: {
-    title: 'Diagnostics',
-    record: 'Record a test mark for Fajr',
-    nothing: 'no rows',
+  tracking: {
+    title: 'Tracking',
+    travelling: 'Travelling',
+    travellingDetail:
+      'Shortening is offered, the regular sunnah prayers step aside, and fasting is offered rather than expected.',
+    paused: 'Pause prayer tracking',
+    pausedDetail:
+      'Prayers are not recorded and nothing accrues to make up. It stays off until you turn it back on.',
   },
   hijri: {
     title: 'Hijri date',

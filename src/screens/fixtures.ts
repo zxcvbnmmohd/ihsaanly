@@ -1,4 +1,5 @@
 import type { CalculationScreenProps } from './calculation';
+import type { HijriScreenProps } from './hijri';
 import type { ItemScreenProps } from './item';
 import type { LibraryScreenProps } from './library';
 import type { LocationScreenProps } from './location';
@@ -10,6 +11,7 @@ const noop = () => {};
 export const todayFixture: TodayScreenProps = {
   hasLocation: true,
   window: 'asr',
+  hijri: { year: 1448, month: 4, day: 6 },
   locationHref: '/location',
 };
 
@@ -17,6 +19,7 @@ export const todayWithoutLocationFixture: TodayScreenProps = {
   ...todayFixture,
   hasLocation: false,
   window: null,
+  hijri: null,
 };
 
 export const libraryFixture: LibraryScreenProps = {
@@ -65,6 +68,14 @@ export const moreFixture: MoreScreenProps = {
   locationHref: '/location',
   calculationLabel: 'Standard',
   calculationHref: '/calculation',
+  hijriLabel: 'No change',
+  hijriHref: '/hijri',
+};
+
+export const hijriFixture: HijriScreenProps = {
+  offset: 0,
+  preview: { year: 1448, month: 4, day: 6 },
+  onChange: noop,
 };
 
 export const locationFixture: LocationScreenProps = {

@@ -9,6 +9,8 @@ export type MoreScreenProps = {
   locationHref: Href;
   calculationLabel: string;
   calculationHref: Href;
+  hijriLabel: string;
+  hijriHref: Href;
 };
 
 export function MoreScreen({
@@ -16,11 +18,14 @@ export function MoreScreen({
   locationHref,
   calculationLabel,
   calculationHref,
+  hijriLabel,
+  hijriHref,
 }: MoreScreenProps) {
   return (
     <ScrollView contentContainerClassName="gap-3 p-4" contentInsetAdjustmentBehavior="automatic">
       <Row href={locationHref} title={strings.location.title} detail={locationLabel} />
       <Row href={calculationHref} title={strings.calculation.title} detail={calculationLabel} />
+      <Row href={hijriHref} title={strings.hijri.title} detail={hijriLabel} />
     </ScrollView>
   );
 }

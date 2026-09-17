@@ -18,6 +18,32 @@ export const strings = {
     maghrib: 'After Maghrib',
     isha: 'Night',
   },
+  hijri: {
+    title: 'Hijri date',
+    offset: 'Adjust the date',
+    approximate: 'Calculated \u2014 confirm with the authority your community follows.',
+    explanation:
+      'A calculated calendar and local moon sighting often differ by a day or two. Shift the date here so the app agrees with your community. Dates for fasting days are always shown as expected, never as certain.',
+    offsetLabel: (days: number) =>
+      days === 0
+        ? 'No change'
+        : `${days > 0 ? '+' : ''}${days} day${Math.abs(days) === 1 ? '' : 's'}`,
+    format: (day: number, month: string, year: number) => `${day} ${month} ${year}`,
+  },
+  hijriMonth: {
+    1: 'Muharram',
+    2: 'Safar',
+    3: 'Rabi\u2019 al-Awwal',
+    4: 'Rabi\u2019 ath-Thani',
+    5: 'Jumada al-Ula',
+    6: 'Jumada al-Akhirah',
+    7: 'Rajab',
+    8: 'Sha\u2019ban',
+    9: 'Ramadan',
+    10: 'Shawwal',
+    11: 'Dhu al-Qa\u2019dah',
+    12: 'Dhu al-Hijjah',
+  } as Record<number, string>,
   calculation: {
     title: 'Prayer calculation',
     method: 'Method',

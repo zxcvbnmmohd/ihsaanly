@@ -51,7 +51,9 @@
           "locationAlwaysAndWhenInUsePermission": "Ihsaanly can notice when you leave home so it can offer the dua for it. This is optional, off by default, and your location is never sent anywhere."
         }
       ],
-      "expo-notifications"
+      "expo-notifications",
+      "expo-sharing",
+      "expo-localization"
     ]
   }
 }

@@ -36,6 +36,11 @@ module.exports = [
           message:
             'Use logical Tailwind utilities (ms/me, ps/pe, start/end, rounded-s/rounded-e, text-start/text-end) so RTL works without a rewrite.',
         },
+        {
+          selector: 'MemberExpression[property.name=/^(toLocaleTimeString|toTimeString)$/]',
+          message:
+            'Prayer times are never rendered as clock times. A window three minutes out is invisible; a clock three minutes out is a bug report.',
+        },
       ],
       'expo/no-dynamic-env-var': 'error',
       'expo/no-env-var-destructuring': 'error',

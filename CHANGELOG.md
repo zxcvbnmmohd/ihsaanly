@@ -56,6 +56,16 @@ real content with its evidence attached.
   and nothing downstream can tell which. Declining the permission is a supported
   path, not a dead end: search 7,329 cities offline instead. Coordinates are used
   on-device to derive prayer windows and are never transmitted.
+- **Prayer windows** — computed on-device from coordinates, never shown as clock
+  times. Today names the part of the day you are in. Asr opinion, high-latitude
+  rule and calculation method are all adjustable in settings; Asr defaults to the
+  standard opinion, which cannot be derived from coordinates.
+- **Polar regions** — inside the polar circle the high-latitude rule alone still
+  produces no Isha, so a nearest-day fallback is applied. This is a fallback, not
+  a ruling, and is flagged for the content reviewer.
+- **A lint rule enforcing that no clock time is ever rendered**, alongside the
+  right-to-left rule. Both encode product decisions that are easy to break by
+  accident later.
 - **Storage** — one SQLite database with forward-only migrations under
   `PRAGMA user_version`, holding preferences now and the event log later. Its
   directory is controlled by a single switch, so moving into a shared app-group

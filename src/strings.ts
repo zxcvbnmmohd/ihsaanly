@@ -8,6 +8,49 @@ export const strings = {
   today: {
     title: 'Today',
     empty: 'Nothing here yet.',
+    needsLocation: 'Set your location so the app knows which part of the day you are in.',
+  },
+  window: {
+    fajr: 'Fajr',
+    sunrise: 'Morning',
+    dhuhr: 'After Dhuhr',
+    asr: 'Evening',
+    maghrib: 'After Maghrib',
+    isha: 'Night',
+  },
+  calculation: {
+    title: 'Prayer calculation',
+    method: 'Method',
+    asr: 'Asr',
+    highLatitude: 'High latitude',
+    selected: 'Selected',
+    explanation:
+      'Prayer times are computed on this device and never shown as clock times \u2014 they only decide which part of the day you are in.',
+    highLatitudeExplanation:
+      'Above roughly 48\u00b0 north, Isha does not occur for part of the year. This decides what is used instead.',
+  },
+  asr: {
+    shafi: 'Standard',
+    hanafi: 'Hanafi',
+  },
+  highLatitude: {
+    middleofthenight: 'Middle of the night',
+    seventhofthenight: 'Seventh of the night',
+    twilightangle: 'Twilight angle',
+  },
+  method: {
+    MuslimWorldLeague: 'Muslim World League',
+    Egyptian: 'Egyptian General Authority',
+    Karachi: 'University of Islamic Sciences, Karachi',
+    UmmAlQura: 'Umm al-Qura, Makkah',
+    Dubai: 'Dubai',
+    MoonsightingCommittee: 'Moonsighting Committee',
+    NorthAmerica: 'ISNA, North America',
+    Kuwait: 'Kuwait',
+    Qatar: 'Qatar',
+    Singapore: 'Singapore',
+    Tehran: 'Tehran',
+    Turkey: 'Turkey',
   },
   library: {
     title: 'Library',

@@ -61,6 +61,15 @@ real content with its evidence attached.
   components driven entirely by exported props. `src/screens/fixtures.ts` supplies
   mock props for each, so a screen can be rendered without a device, a database or
   a navigator.
+- **The Hijri date**, shown on Today and computed with Umm al-Qura. It turns at
+  Maghrib, not midnight, and is always captioned as calculated rather than
+  certain, pointing at the authority the user's community follows.
+- **Two day boundaries, deliberately separate.** `hijriDay` turns at Maghrib and
+  governs the Hijri date, fasting and date-based triggers. `logDay` is the local
+  calendar day and governs the prayer log, because a history filed against the
+  Islamic day would put Tuesday evening's Maghrib and Isha under Wednesday.
+- **Hijri offset** from minus two to plus two days, so a user whose community
+  follows local moon sighting can make the app agree with their mosque.
 - **Prayer windows** — computed on-device from coordinates, never shown as clock
   times. Today names the part of the day you are in. Asr opinion, high-latitude
   rule and calculation method are all adjustable in settings; Asr defaults to the

@@ -84,6 +84,21 @@ export const strings = {
     early: (minutes: number) => `usually about ${minutes} min into the window`,
     late: (minutes: number) => `usually about ${minutes} min before it closes`,
   },
+  data: {
+    title: 'Your data',
+    explanation:
+      'Everything here lives on this device. Nothing leaves it unless you send it yourself, from this screen.',
+    export: 'Export my data',
+    exportDetail: 'Readable text you can keep, or carry to another device.',
+    importing: 'Import from a file',
+    importDetail: 'Merges rather than replaces. Importing the same file twice changes nothing.',
+    diagnostics: 'Send a diagnostic report',
+    diagnosticsDetail:
+      'For fixing a problem. Contains your settings, your practice record, your approximate coordinates and recent errors. You will see it before it is sent.',
+    imported: (count: number) => `Added ${count} ${count === 1 ? 'entry' : 'entries'}.`,
+    importFailed: 'That file could not be read.',
+    shareFailed: 'Sharing is not available on this device.',
+  },
   moonSighting: {
     title: 'Moon sighting',
     explanation:

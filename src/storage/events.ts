@@ -1,5 +1,6 @@
 import { useSyncExternalStore } from 'react'
 
+import type { ExportedEvent } from '@/data/bundle'
 import type { Prayer } from '@/prayer/qada'
 
 import { database } from './database'
@@ -206,4 +207,36 @@ function actionsSnapshot(): LoggedAction[] {
 
 export function useActions(): LoggedAction[] {
   return useSyncExternalStore(subscribe, actionsSnapshot)
+}
+
+export function insertExportedEvents(events: ExportedEvent[]): number {
+  return attempt(
+    'insertExportedEvents',
+    () => {
+      events.forEach((event) =>
+        database.runSync(
+          `INSERT INTO events (kind, subject, at, log_day, window_start, window_end, delta_seconds)
+           VALUES (?, ?, ?, ?, NULL, NULL, ?)`,
+          event.kind,
+          event.subject,
+          event.at,
+          event.logDay,
+          event.deltaSeconds,
+        ),
+      )
+      announce()
+      return events.length
+    },
+    0,
+  )
+}
+
+export function allPreferences(): Record<string, unknown> {
+  const rows = attempt(
+    'allPreferences',
+    () => database.getAllSync<{ key: string; value: string }>('SELECT key, value FROM preferences'),
+    [],
+  )
+
+  return Object.fromEntries(rows.map((row) => [row.key, JSON.parse(row.value) as unknown]))
 }

@@ -18,6 +18,7 @@ export interface MoreScreenProps {
   notificationsHref: Href
   eventsHref: Href
   historyHref: Href
+  dataHref: Href
 }
 
 export function MoreScreen({
@@ -33,6 +34,7 @@ export function MoreScreen({
   notificationsHref,
   eventsHref,
   historyHref,
+  dataHref,
 }: MoreScreenProps): ReactElement {
   return (
     <Screen className="gap-3 p-4">
@@ -43,6 +45,7 @@ export function MoreScreen({
       <Row href={trackingHref} title={strings.tracking.title} detail={trackingLabel} />
       <Row href={eventsHref} title={strings.events.title} detail={null} />
       <Row href={historyHref} title={strings.history.title} detail={null} />
+      <Row href={dataHref} title={strings.data.title} detail={null} />
       <Row href={moonSightingHref} title={strings.moonSighting.title} detail={null} />
     </Screen>
   )

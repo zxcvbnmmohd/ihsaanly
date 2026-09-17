@@ -127,6 +127,7 @@ export const moreFixture: MoreScreenProps = {
   notificationsHref: '/notifications',
   eventsHref: '/events',
   historyHref: '/history',
+  dataHref: '/data',
 }
 
 export const hijriFixture: HijriScreenProps = {

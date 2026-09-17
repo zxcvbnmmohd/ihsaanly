@@ -30,6 +30,7 @@ export default function MoreRoute(): ReactElement {
       notificationsHref="/notifications"
       eventsHref="/events"
       historyHref="/history"
+      dataHref="/data"
       trackingLabel={tracking.length > 0 ? tracking.join(', ') : strings.tracking.title}
     />
   )

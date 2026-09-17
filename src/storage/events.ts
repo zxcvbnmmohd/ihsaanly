@@ -111,3 +111,29 @@ function currentVersion(): number {
 export function useEventVersion(): number {
   return useSyncExternalStore(subscribe, currentVersion)
 }
+
+export interface RecentEvent {
+  id: number
+  kind: string
+  subject: string
+  at: number
+  logDay: string
+}
+
+/** Temporary, for diagnosing #9 on device. Removed once marking is trusted. */
+export function recentEvents(limit = 12): RecentEvent[] {
+  return database.getAllSync<RecentEvent>(
+    `SELECT id, kind, subject, at, log_day AS logDay FROM events ORDER BY id DESC LIMIT ?`,
+    limit,
+  )
+}
+
+export function eventCount(): number {
+  const row = database.getFirstSync<{ total: number }>('SELECT COUNT(*) AS total FROM events')
+  return row?.total ?? 0
+}
+
+export function schemaVersion(): number {
+  const row = database.getFirstSync<{ user_version: number }>('PRAGMA user_version')
+  return row?.user_version ?? -1
+}

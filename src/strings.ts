@@ -36,6 +36,11 @@ export const strings = {
     maghrib: 'After Maghrib',
     isha: 'Night',
   },
+  diagnostics: {
+    title: 'Diagnostics',
+    record: 'Record a test mark for Fajr',
+    nothing: 'no rows',
+  },
   hijri: {
     title: 'Hijri date',
     offset: 'Adjust the date',

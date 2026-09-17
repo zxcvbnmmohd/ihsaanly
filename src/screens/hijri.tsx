@@ -1,20 +1,20 @@
-import type { ReactElement } from 'react';
-import { Text, useColorScheme, View } from 'react-native';
+import type { ReactElement } from 'react'
+import { Text, useColorScheme, View } from 'react-native'
 
-import { Row } from '@/components/row';
-import { Screen } from '@/components/screen';
-import { offsetOptions, type HijriDate } from '@/hijri/calendar';
-import { strings } from '@/strings';
-import { colors } from '@/theme/colors';
+import { Row } from '@/components/row'
+import { Screen } from '@/components/screen'
+import { offsetOptions, type HijriDate } from '@/hijri/calendar'
+import { strings } from '@/strings'
+import { colors } from '@/theme/colors'
 
 export interface HijriScreenProps {
-  offset: number;
-  preview: HijriDate | null;
-  onChange: (offset: number) => void;
+  offset: number
+  preview: HijriDate | null
+  onChange: (offset: number) => void
 }
 
 export function HijriScreen({ offset, preview, onChange }: HijriScreenProps): ReactElement {
-  useColorScheme();
+  useColorScheme()
 
   return (
     <Screen className="gap-6 p-4">
@@ -42,5 +42,5 @@ export function HijriScreen({ offset, preview, onChange }: HijriScreenProps): Re
         ))}
       </View>
     </Screen>
-  );
+  )
 }

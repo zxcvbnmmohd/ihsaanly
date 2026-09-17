@@ -1,12 +1,12 @@
-export const WINDOW_ORDER = ['fajr', 'sunrise', 'dhuhr', 'asr', 'maghrib', 'isha'] as const;
+export const WINDOW_ORDER = ['fajr', 'sunrise', 'dhuhr', 'asr', 'maghrib', 'isha'] as const
 
-export type WindowName = (typeof WINDOW_ORDER)[number];
-export type DailyPrayerTimes = Record<WindowName, Date>;
+export type WindowName = (typeof WINDOW_ORDER)[number]
+export type DailyPrayerTimes = Record<WindowName, Date>
 
 export interface PrayerWindow {
-  name: WindowName;
-  startsAt: Date;
-  endsAt: Date;
+  name: WindowName
+  startsAt: Date
+  endsAt: Date
 }
 
 /**
@@ -16,14 +16,16 @@ export interface PrayerWindow {
 export function buildWindows(days: DailyPrayerTimes[]): PrayerWindow[] {
   const boundaries = days.flatMap((day) =>
     WINDOW_ORDER.map((name) => ({ name, startsAt: day[name] })),
-  );
+  )
 
   return boundaries
-    .slice(0, -1)
-    .map((boundary, index) => ({ ...boundary, endsAt: boundaries[index + 1]!.startsAt }))
-    .filter((window) => window.startsAt < window.endsAt);
+    .flatMap((boundary, index) => {
+      const next = boundaries[index + 1]
+      return next ? [{ ...boundary, endsAt: next.startsAt }] : []
+    })
+    .filter((window) => window.startsAt < window.endsAt)
 }
 
 export function windowAt(instant: Date, windows: PrayerWindow[]): PrayerWindow | null {
-  return windows.find((window) => instant >= window.startsAt && instant < window.endsAt) ?? null;
+  return windows.find((window) => instant >= window.startsAt && instant < window.endsAt) ?? null
 }

@@ -1,36 +1,36 @@
-import type { ReactElement } from 'react';
-import { router } from 'expo-router';
-import { useState } from 'react';
+import type { ReactElement } from 'react'
+import { router } from 'expo-router'
+import { useState } from 'react'
 
-import { searchCities } from '@/location/cities';
-import { requestDeviceLocation } from '@/location/device';
-import type { Place } from '@/location/place';
-import { setPlace, usePlace } from '@/location/store';
-import { LocationScreen } from '@/screens/location';
+import { searchCities } from '@/location/cities'
+import { requestDeviceLocation } from '@/location/device'
+import type { Place } from '@/location/place'
+import { setPlace, usePlace } from '@/location/store'
+import { LocationScreen } from '@/screens/location'
 
-const MINIMUM_QUERY_LENGTH = 2;
+const MINIMUM_QUERY_LENGTH = 2
 
 interface Thing {
-  query: string;
-  declined: boolean;
+  query: string
+  declined: boolean
 }
 
 export default function LocationRoute(): ReactElement {
-  const place = usePlace();
-  const [thing, setThing] = useState<Thing>({ query: '', declined: false });
+  const place = usePlace()
+  const [thing, setThing] = useState<Thing>({ query: '', declined: false })
 
-  const results = searchCities(thing.query);
+  const results = searchCities(thing.query)
 
   const choose = (chosen: Place): void => {
-    setPlace(chosen);
-    router.back();
-  };
+    setPlace(chosen)
+    router.back()
+  }
 
   const useDeviceLocation = async (): Promise<void> => {
-    const located = await requestDeviceLocation();
-    if (located) return choose(located);
-    setThing((current) => ({ ...current, declined: true }));
-  };
+    const located = await requestDeviceLocation()
+    if (located) return choose(located)
+    setThing((current) => ({ ...current, declined: true }))
+  }
 
   return (
     <LocationScreen
@@ -43,5 +43,5 @@ export default function LocationRoute(): ReactElement {
       onUseDevice={useDeviceLocation}
       onSelect={choose}
     />
-  );
+  )
 }

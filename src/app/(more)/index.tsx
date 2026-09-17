@@ -1,14 +1,14 @@
-import type { ReactElement } from 'react';
-import { useHijriOffset } from '@/hijri/store';
-import { usePlace } from '@/location/store';
-import { useCalculationPreferences } from '@/prayer/store';
-import { MoreScreen } from '@/screens/more';
-import { strings } from '@/strings';
+import type { ReactElement } from 'react'
+import { useHijriOffset } from '@/hijri/store'
+import { usePlace } from '@/location/store'
+import { useCalculationPreferences } from '@/prayer/store'
+import { MoreScreen } from '@/screens/more'
+import { strings } from '@/strings'
 
 export default function MoreRoute(): ReactElement {
-  const place = usePlace();
-  const calculation = useCalculationPreferences();
-  const hijriOffset = useHijriOffset();
+  const place = usePlace()
+  const calculation = useCalculationPreferences()
+  const hijriOffset = useHijriOffset()
 
   return (
     <MoreScreen
@@ -19,5 +19,5 @@ export default function MoreRoute(): ReactElement {
       hijriHref="/hijri"
       hijriLabel={strings.hijri.offsetLabel(hijriOffset)}
     />
-  );
+  )
 }

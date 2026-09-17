@@ -1,9 +1,11 @@
-const js = require('@eslint/js');
-const tseslint = require('typescript-eslint');
-const reactHooks = require('eslint-plugin-react-hooks');
-const expo = require('eslint-plugin-expo');
-const globals = require('globals');
-const singleUseState = require('./eslint-rules/single-use-state');
+const js = require('@eslint/js')
+const tseslint = require('typescript-eslint')
+const reactHooks = require('eslint-plugin-react-hooks')
+const expo = require('eslint-plugin-expo')
+const globals = require('globals')
+const singleUseState = require('./eslint-rules/single-use-state')
+const noDefaultExport = require('./eslint-rules/no-default-export')
+const kebabCaseFilename = require('./eslint-rules/kebab-case-filename')
 
 /**
  * Hand-rolled instead of `eslint-config-expo` because that config depends on
@@ -15,7 +17,16 @@ module.exports = [
   ...tseslint.configs.recommended,
   reactHooks.configs.flat['recommended-latest'],
   {
-    plugins: { expo, local: { rules: { 'single-use-state': singleUseState } } },
+    plugins: {
+      expo,
+      local: {
+        rules: {
+          'single-use-state': singleUseState,
+          'no-default-export': noDefaultExport,
+          'kebab-case-filename': kebabCaseFilename,
+        },
+      },
+    },
     languageOptions: {
       globals: { ...globals.node, ...globals.browser, __DEV__: 'readonly' },
     },
@@ -55,6 +66,8 @@ module.exports = [
           allowDirectConstAssertionInArrowFunctions: true,
         },
       ],
+      '@typescript-eslint/no-explicit-any': 'error',
+      '@typescript-eslint/no-non-null-assertion': 'error',
       'local/single-use-state': 'error',
       '@typescript-eslint/consistent-type-definitions': ['error', 'interface'],
       'expo/no-dynamic-env-var': 'error',
@@ -88,5 +101,49 @@ module.exports = [
     files: ['src/widgets/**'],
     rules: { '@typescript-eslint/explicit-function-return-type': 'off' },
   },
+  // Our own source follows kebab-case; root config files follow ecosystem
+  // naming conventions instead.
+  {
+    files: ['src/**/*.{ts,tsx}'],
+    rules: { 'local/kebab-case-filename': 'error' },
+  },
+  // Named exports everywhere except routes, which Expo Router requires to
+  // default-export.
+  {
+    files: ['src/**/*.{ts,tsx}'],
+    ignores: ['src/app/**', 'src/widgets/**'],
+    rules: { 'local/no-default-export': 'error' },
+  },
+  // The domain layer stays pure: no React, no React Native, no storage, no
+  // native modules. This is what keeps the decision seam testable without a
+  // device, and it has already been broken once.
+  {
+    files: [
+      'src/content/**',
+      'src/day/**',
+      'src/hijri/calendar.ts',
+      'src/prayer/{calculation,times,windows}.ts',
+      'src/location/{place,cities}.ts',
+      'src/assert-never.ts',
+    ],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            { name: 'react', message: 'Domain modules stay free of React.' },
+            { name: 'react-native', message: 'Domain modules stay free of React Native.' },
+          ],
+          patterns: [
+            {
+              group: ['expo-*', '@expo/*'],
+              message: 'Domain modules stay free of native modules.',
+            },
+            { group: ['@/storage/*'], message: 'Domain modules do not read or write storage.' },
+          ],
+        },
+      ],
+    },
+  },
   { ignores: ['dist/*', '.expo/*', 'expo-env.d.ts'] },
-];
+]

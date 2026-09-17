@@ -52,11 +52,11 @@ Enforced by lint, so a violation fails `bun run check`.
 
   ```ts
   interface Thing {
-    query: string;
-    declined: boolean;
+    query: string
+    declined: boolean
   }
 
-  const [thing, setThing] = useState<Thing>({ query: '', declined: false });
+  const [thing, setThing] = useState<Thing>({ query: '', declined: false })
   ```
 
   Read it as `thing.query`, update it as `setThing((current) => ({ ...current, query }))`.
@@ -71,6 +71,30 @@ Enforced by lint, so a violation fails `bun run check`.
   the cheapest place to catch a function that quietly changed shape.
 
 - **Props are a named `interface`**, not an inline object literal, even for one prop.
+
+- **No semicolons.** Prettier handles it; run `bun run format`.
+
+- **No `any`.** Use `unknown` and narrow, or name the real type.
+
+- **No non-null assertions (`!`).** If a value might be missing, say what happens
+  when it is. `noUncheckedIndexedAccess` is on, which makes `!` tempting and
+  wrong — every one is a silent claim that can fail at runtime.
+
+- **Named exports only.** Files in `src/app/` default-export because Expo Router
+  requires it. Nowhere else does.
+
+- **The domain layer stays pure.** `src/content`, `src/day`, `src/hijri/calendar`,
+  `src/prayer/{calculation,times,windows}` and `src/location/{place,cities}` may not
+  import React, React Native, native modules or storage. This is what keeps the
+  decision seam testable without a device, and lint enforces it.
+
+- **Exhaustive unions end in `assertNever`.** Every `switch` over a union closes
+  with `default: return assertNever(value)`, so adding a trigger kind or a window
+  name fails the build everywhere it must be handled instead of falling through.
+
+- **Kebab-case file names** under `src/`, with the exceptions Expo Router needs
+  (`_layout`, `+not-found`, `[param]`). Root config files follow their own
+  ecosystem conventions.
 
 - **`interface` over `type`** for object shapes. Unions, intersections and inferred
   aliases such as `z.infer<...>` stay as `type` — the rule only covers object literals.

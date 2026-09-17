@@ -13,7 +13,7 @@
  * component actually holds. The shape always has a name, even when it holds
  * one field, so adding a second field never requires restructuring.
  */
-const THING_TYPE = 'Thing';
+const THING_TYPE = 'Thing'
 
 module.exports = {
   meta: {
@@ -30,43 +30,43 @@ module.exports = {
     },
   },
   create(context) {
-    let seen = 0;
+    let seen = 0
 
     return {
       'CallExpression[callee.name="useState"]'(node) {
-        seen += 1;
+        seen += 1
         if (seen > 1) {
-          context.report({ node, messageId: 'multiple' });
-          return;
+          context.report({ node, messageId: 'multiple' })
+          return
         }
 
-        const typeArguments = node.typeArguments ?? node.typeParameters;
-        const [argument] = typeArguments?.params ?? [];
+        const typeArguments = node.typeArguments ?? node.typeParameters
+        const [argument] = typeArguments?.params ?? []
 
         if (!argument) {
-          context.report({ node, messageId: 'untyped' });
+          context.report({ node, messageId: 'untyped' })
         } else if (
           argument.type !== 'TSTypeReference' ||
           argument.typeName.type !== 'Identifier' ||
           argument.typeName.name !== THING_TYPE
         ) {
-          context.report({ node, messageId: 'notThingInterface' });
+          context.report({ node, messageId: 'notThingInterface' })
         }
 
-        const declarator = node.parent;
+        const declarator = node.parent
         if (declarator?.type !== 'VariableDeclarator' || declarator.id.type !== 'ArrayPattern') {
-          context.report({ node, messageId: 'naming' });
-          return;
+          context.report({ node, messageId: 'naming' })
+          return
         }
 
-        const [value, setter] = declarator.id.elements;
+        const [value, setter] = declarator.id.elements
         const named = (element, expected) =>
-          element?.type === 'Identifier' && element.name === expected;
+          element?.type === 'Identifier' && element.name === expected
 
         if (!named(value, 'thing') || !named(setter, 'setThing')) {
-          context.report({ node, messageId: 'naming' });
+          context.report({ node, messageId: 'naming' })
         }
       },
-    };
+    }
   },
-};
+}

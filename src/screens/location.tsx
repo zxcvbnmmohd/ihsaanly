@@ -1,21 +1,21 @@
-import type { ReactElement } from 'react';
-import { Text, TextInput, useColorScheme, View } from 'react-native';
+import type { ReactElement } from 'react'
+import { Text, TextInput, useColorScheme, View } from 'react-native'
 
-import { Row } from '@/components/row';
-import { Screen } from '@/components/screen';
-import type { Place } from '@/location/place';
-import { strings } from '@/strings';
-import { colors } from '@/theme/colors';
+import { Row } from '@/components/row'
+import { Screen } from '@/components/screen'
+import type { Place } from '@/location/place'
+import { strings } from '@/strings'
+import { colors } from '@/theme/colors'
 
 export interface LocationScreenProps {
-  deviceLabel: string | null;
-  query: string;
-  results: Place[];
-  showNoResults: boolean;
-  declined: boolean;
-  onQueryChange: (query: string) => void;
-  onUseDevice: () => void;
-  onSelect: (place: Place) => void;
+  deviceLabel: string | null
+  query: string
+  results: Place[]
+  showNoResults: boolean
+  declined: boolean
+  onQueryChange: (query: string) => void
+  onUseDevice: () => void
+  onSelect: (place: Place) => void
 }
 
 export function LocationScreen({
@@ -28,7 +28,7 @@ export function LocationScreen({
   onUseDevice,
   onSelect,
 }: LocationScreenProps): ReactElement {
-  useColorScheme();
+  useColorScheme()
 
   return (
     <Screen className="gap-4 p-4">
@@ -70,5 +70,5 @@ export function LocationScreen({
         {strings.location.attribution}
       </Text>
     </Screen>
-  );
+  )
 }

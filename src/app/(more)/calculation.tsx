@@ -1,10 +1,10 @@
-import type { ReactElement } from 'react';
-import { setCalculationPreferences, useCalculationPreferences } from '@/prayer/store';
-import type { CalculationPreferences } from '@/prayer/calculation';
-import { CalculationScreen } from '@/screens/calculation';
+import type { ReactElement } from 'react'
+import { setCalculationPreferences, useCalculationPreferences } from '@/prayer/store'
+import type { CalculationPreferences } from '@/prayer/calculation'
+import { CalculationScreen } from '@/screens/calculation'
 
 export default function CalculationRoute(): ReactElement {
-  const preferences = useCalculationPreferences();
+  const preferences = useCalculationPreferences()
 
   return (
     <CalculationScreen
@@ -13,5 +13,5 @@ export default function CalculationRoute(): ReactElement {
         setCalculationPreferences({ ...preferences, ...change })
       }
     />
-  );
+  )
 }

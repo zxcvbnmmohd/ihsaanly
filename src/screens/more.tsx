@@ -1,17 +1,17 @@
-import type { ReactElement } from 'react';
-import type { Href } from 'expo-router';
+import type { ReactElement } from 'react'
+import type { Href } from 'expo-router'
 
-import { Row } from '@/components/row';
-import { Screen } from '@/components/screen';
-import { strings } from '@/strings';
+import { Row } from '@/components/row'
+import { Screen } from '@/components/screen'
+import { strings } from '@/strings'
 
 export interface MoreScreenProps {
-  locationLabel: string;
-  locationHref: Href;
-  calculationLabel: string;
-  calculationHref: Href;
-  hijriLabel: string;
-  hijriHref: Href;
+  locationLabel: string
+  locationHref: Href
+  calculationLabel: string
+  calculationHref: Href
+  hijriLabel: string
+  hijriHref: Href
 }
 
 export function MoreScreen({
@@ -28,5 +28,5 @@ export function MoreScreen({
       <Row href={calculationHref} title={strings.calculation.title} detail={calculationLabel} />
       <Row href={hijriHref} title={strings.hijri.title} detail={hijriLabel} />
     </Screen>
-  );
+  )
 }

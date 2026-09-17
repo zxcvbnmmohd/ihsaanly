@@ -1,4 +1,4 @@
-import { HStack, Image, Rectangle, Spacer, Text, VStack, ZStack } from '@expo/ui/swift-ui';
+import { HStack, Image, Rectangle, Spacer, Text, VStack, ZStack } from '@expo/ui/swift-ui'
 import {
   clipShape,
   containerBackground,
@@ -10,20 +10,20 @@ import {
   resizable,
   scaleEffect,
   zIndex,
-} from '@expo/ui/swift-ui/modifiers';
-import { createWidget, type WidgetEnvironment } from 'expo-widgets';
+} from '@expo/ui/swift-ui/modifiers'
+import { createWidget, type WidgetEnvironment } from 'expo-widgets'
 
 interface CounterWidgetProps {
-  count: number;
-  logoUri?: string;
-  gridUri?: string;
+  count: number
+  logoUri?: string
+  gridUri?: string
 }
 
 const CounterWidget = (props: CounterWidgetProps, environment: WidgetEnvironment) => {
-  'widget';
+  'widget'
   // Only show the full-color background in fullColor mode (or if undefined).
   const isFullColor =
-    environment.widgetRenderingMode == null || environment.widgetRenderingMode === 'fullColor';
+    environment.widgetRenderingMode == null || environment.widgetRenderingMode === 'fullColor'
   return (
     <ZStack
       alignment="leading"
@@ -97,7 +97,7 @@ const CounterWidget = (props: CounterWidgetProps, environment: WidgetEnvironment
         </Text>
       </VStack>
     </ZStack>
-  );
-};
+  )
+}
 
-export default createWidget('CounterWidget', CounterWidget);
+export default createWidget('CounterWidget', CounterWidget)

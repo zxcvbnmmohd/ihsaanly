@@ -1,14 +1,14 @@
-import umalqura from '@umalqura/core';
+import umalqura from '@umalqura/core'
 
-import { shiftDays, type CivilDate } from '@/day/boundaries';
+import { shiftDays, type CivilDate } from '@/day/boundaries'
 
-export const MINIMUM_OFFSET = -2;
-export const MAXIMUM_OFFSET = 2;
+export const MINIMUM_OFFSET = -2
+export const MAXIMUM_OFFSET = 2
 
 export interface HijriDate {
-  year: number;
-  month: number;
-  day: number;
+  year: number
+  month: number
+  day: number
 }
 
 /**
@@ -17,15 +17,15 @@ export interface HijriDate {
  * conversion, which is how a user matches the app to their own community.
  */
 export function toHijri(civil: CivilDate, offsetDays = 0): HijriDate {
-  const adjusted = shiftDays(civil, offsetDays);
-  const converted = umalqura(new Date(Date.UTC(adjusted.year, adjusted.month - 1, adjusted.day)));
+  const adjusted = shiftDays(civil, offsetDays)
+  const converted = umalqura(new Date(Date.UTC(adjusted.year, adjusted.month - 1, adjusted.day)))
 
-  return { year: converted.hy, month: converted.hm, day: converted.hd };
+  return { year: converted.hy, month: converted.hm, day: converted.hd }
 }
 
 export function offsetOptions(): number[] {
   return Array.from(
     { length: MAXIMUM_OFFSET - MINIMUM_OFFSET + 1 },
     (_, index) => MINIMUM_OFFSET + index,
-  );
+  )
 }

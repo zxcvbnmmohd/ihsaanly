@@ -7,7 +7,7 @@ import {
   Text,
   VStack,
   ZStack,
-} from '@expo/ui/swift-ui';
+} from '@expo/ui/swift-ui'
 import {
   clipShape,
   containerBackground,
@@ -23,33 +23,33 @@ import {
   progressViewStyle,
   resizable,
   tint,
-} from '@expo/ui/swift-ui/modifiers';
-import { createLiveActivity, type LiveActivityEnvironment } from 'expo-widgets';
-import type { SFSymbol } from 'sf-symbols-typescript';
+} from '@expo/ui/swift-ui/modifiers'
+import { createLiveActivity, type LiveActivityEnvironment } from 'expo-widgets'
+import type { SFSymbol } from 'sf-symbols-typescript'
 
 export interface DeliveryProps {
-  orderId: string;
-  status: string; // 'Preparing' | 'On the way' | 'Delivered'
-  stage: number; // 0..2
+  orderId: string
+  status: string // 'Preparing' | 'On the way' | 'Delivered'
+  stage: number // 0..2
   // Props are JSON-serialized across the bridge, so pass epoch ms (not Date
   // objects) and rebuild the Dates inside the widget.
-  startEpochMs: number;
-  etaEpochMs: number;
-  logoUri?: string;
+  startEpochMs: number
+  etaEpochMs: number
+  logoUri?: string
 }
 
 // Layout helpers must live *inside* this function: the `'widget'` directive
 // serializes only the function body into the widget's separate JS runtime.
 const DeliveryActivity = (props: DeliveryProps, _env: LiveActivityEnvironment) => {
-  'widget';
-  const TOTAL_STAGES = 3;
-  const ACCENT = '#58BEF6';
-  const DIM = '#FFFFFF40';
+  'widget'
+  const TOTAL_STAGES = 3
+  const ACCENT = '#58BEF6'
+  const DIM = '#FFFFFF40'
   // SF Symbols for each delivery step, shown in the expanded stepper.
-  const STEP_ICONS = ['bag.fill', 'box.truck.fill', 'house.fill'] as const;
+  const STEP_ICONS = ['bag.fill', 'box.truck.fill', 'house.fill'] as const
   // Rebuild the Dates from the epoch ms passed across the bridge.
-  const startDate = new Date(props.startEpochMs);
-  const etaDate = new Date(props.etaEpochMs);
+  const startDate = new Date(props.startEpochMs)
+  const etaDate = new Date(props.etaEpochMs)
 
   // Shared app-group image (copied into widgetsDirectory by the app).
   const Logo = ({
@@ -57,9 +57,9 @@ const DeliveryActivity = (props: DeliveryProps, _env: LiveActivityEnvironment) =
     size,
     modifiers,
   }: {
-    uri?: string;
-    size?: number;
-    modifiers?: ModifierConfig[];
+    uri?: string
+    size?: number
+    modifiers?: ModifierConfig[]
   }) =>
     uri ? (
       <Image
@@ -70,7 +70,7 @@ const DeliveryActivity = (props: DeliveryProps, _env: LiveActivityEnvironment) =
           ...(modifiers ?? []),
         ]}
       />
-    ) : null;
+    ) : null
 
   // Stepped progress bar: SF Symbol milestones joined by connectors that fill on
   // their own. Each connector is a ProgressView with a `timerInterval` for its
@@ -81,10 +81,10 @@ const DeliveryActivity = (props: DeliveryProps, _env: LiveActivityEnvironment) =
   // on the banner's blue gradient, the blue ACCENT on the dark island.
   const StepProgress = ({ stage, accent = ACCENT }: { stage: number; accent?: string }) => {
     // 3 stages -> 2 connectors, each spanning an equal slice of the window.
-    const segMs = (props.etaEpochMs - props.startEpochMs) / (TOTAL_STAGES - 1);
+    const segMs = (props.etaEpochMs - props.startEpochMs) / (TOTAL_STAGES - 1)
     const cells = STEP_ICONS.flatMap((icon, i) => {
-      const step = <Image key={`s${i}`} systemName={icon} size={16} color="#FFFFFF" />;
-      if (i === STEP_ICONS.length - 1) return [step];
+      const step = <Image key={`s${i}`} systemName={icon} size={16} color="#FFFFFF" />
+      if (i === STEP_ICONS.length - 1) return [step]
       const connector = (
         <ZStack key={`l${i}`} modifiers={[frame({ maxWidth: Infinity })]}>
           <Capsule modifiers={[foregroundStyle(DIM), frame({ height: 4, maxWidth: Infinity })]} />
@@ -103,15 +103,15 @@ const DeliveryActivity = (props: DeliveryProps, _env: LiveActivityEnvironment) =
             ]}
           />
         </ZStack>
-      );
-      return [step, connector];
-    });
+      )
+      return [step, connector]
+    })
     return (
       <HStack spacing={8} modifiers={[frame({ maxWidth: Infinity })]}>
         {cells}
       </HStack>
-    );
-  };
+    )
+  }
 
   // Live countdown that updates on its own. A bounded `timerInterval` clamps at
   // 0:00 (the `.timer` date style would count back up past the deadline); it swaps
@@ -127,15 +127,15 @@ const DeliveryActivity = (props: DeliveryProps, _env: LiveActivityEnvironment) =
     deliveredLabel = 'Delivered',
     deliveredIcon,
   }: {
-    start: Date;
-    end: Date;
-    stage: number;
-    size: number;
-    color: string;
-    width: number;
-    deliveredLabel?: string;
+    start: Date
+    end: Date
+    stage: number
+    size: number
+    color: string
+    width: number
+    deliveredLabel?: string
     // SF Symbol shown instead of the label once delivered (for the tiny compact region).
-    deliveredIcon?: SFSymbol;
+    deliveredIcon?: SFSymbol
   }) =>
     stage >= TOTAL_STAGES - 1 ? (
       deliveredIcon ? (
@@ -158,11 +158,11 @@ const DeliveryActivity = (props: DeliveryProps, _env: LiveActivityEnvironment) =
           frame({ width, alignment: 'trailing' }),
         ]}
       />
-    );
+    )
 
   const statusLine = (p: DeliveryProps) =>
     ['Packing your order now', 'Your order is on the way', 'Delivered — enjoy!'][p.stage] ??
-    p.status;
+    p.status
 
   return {
     // Lock screen / Notification Center banner.
@@ -246,7 +246,7 @@ const DeliveryActivity = (props: DeliveryProps, _env: LiveActivityEnvironment) =
         <StepProgress stage={props.stage} />
       </VStack>
     ),
-  };
-};
+  }
+}
 
-export default createLiveActivity<DeliveryProps>('DeliveryActivity', DeliveryActivity);
+export default createLiveActivity<DeliveryProps>('DeliveryActivity', DeliveryActivity)

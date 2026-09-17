@@ -206,16 +206,16 @@ than prose:
 
 ```ts
 type Signals = {
-  now: Date;
-  tz: string;
-  coords: { lat: number; lon: number }; // GPS or manually chosen city, indistinguishable
-  prayerTimes: Record<Prayer, Date>;
-  hijri: { day: number; month: number; year: number; offset: number };
-  prayedToday: Partial<Record<Prayer, Date>>;
-  activeEvents: EventKind[];
-  userState: { travelling: boolean; trackingPaused: boolean };
-  prefs: Prefs;
-};
+  now: Date
+  tz: string
+  coords: { lat: number; lon: number } // GPS or manually chosen city, indistinguishable
+  prayerTimes: Record<Prayer, Date>
+  hijri: { day: number; month: number; year: number; offset: number }
+  prayedToday: Partial<Record<Prayer, Date>>
+  activeEvents: EventKind[]
+  userState: { travelling: boolean; trackingPaused: boolean }
+  prefs: Prefs
+}
 ```
 
 Everything device-shaped — positioning, prayer-time computation, geofencing, Bluetooth,

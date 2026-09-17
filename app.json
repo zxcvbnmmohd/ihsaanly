@@ -11,7 +11,7 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.ihsaanly.app",
       "infoPlist": {
-        "UIBackgroundModes": ["location"]
+        "UIBackgroundModes": ["location", "audio"]
       }
     },
     "android": {
@@ -53,7 +53,8 @@
       ],
       "expo-notifications",
       "expo-sharing",
-      "expo-localization"
+      "expo-localization",
+      "expo-audio"
     ]
   }
 }

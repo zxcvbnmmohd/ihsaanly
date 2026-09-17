@@ -4,7 +4,10 @@ import { Text, useColorScheme, View } from 'react-native'
 import { ArabicText } from '@/components/arabic-text'
 import { EmptyState } from '@/components/empty-state'
 import { EvidencePanel } from '@/components/evidence-panel'
+import { Row } from '@/components/row'
 import { Screen } from '@/components/screen'
+import type { Href } from 'expo-router'
+
 import type { Evidence, Ruling } from '@/content/schema'
 import { strings } from '@/strings'
 import { colors } from '@/theme/colors'
@@ -21,6 +24,7 @@ export interface ItemDetail {
 
 export interface ItemScreenProps {
   item: ItemDetail | null
+  memoriseHref: Href | null
 }
 
 interface LabelledProps {
@@ -41,7 +45,7 @@ function Labelled({ label, children }: LabelledProps): ReactElement {
   )
 }
 
-export function ItemScreen({ item }: ItemScreenProps): ReactElement {
+export function ItemScreen({ item, memoriseHref }: ItemScreenProps): ReactElement {
   useColorScheme()
 
   if (!item) {
@@ -86,6 +90,8 @@ export function ItemScreen({ item }: ItemScreenProps): ReactElement {
           </Text>
         </Labelled>
       ) : null}
+
+      {memoriseHref ? <Row href={memoriseHref} title={strings.memorise.start} /> : null}
 
       <EvidencePanel evidence={item.evidence} />
     </Screen>

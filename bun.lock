@@ -12,6 +12,7 @@
         "city-timezones": "^1.3.4",
         "expo": "^58.0.0-preview.2",
         "expo-asset": "~58.0.3",
+        "expo-audio": "~58.0.0",
         "expo-blur": "~58.0.0",
         "expo-constants": "~58.0.3",
         "expo-device": "~58.0.0",
@@ -711,6 +712,8 @@
     "expo-application": ["expo-application@58.0.1", "", { "peerDependencies": { "expo": "*" } }, "sha512-M3kPfZUkvTjzAy/W/qgTsgN7JD+BHjy19TBSosRfbNlNDeyyGz/MYrtmyLw3eH+3fgfWje+hvaMGR9Rnx+p9aA=="],
 
     "expo-asset": ["expo-asset@58.0.3", "", { "dependencies": { "@expo/image-utils": "^0.12.0", "expo-constants": "~58.0.3" }, "peerDependencies": { "expo": "*", "react": "*", "react-native": "*" } }, "sha512-pZcvdhqzCs23hUjivmRDGPD4+pE5NNBtxy9NREfv8MRJcYPJ/Sk//KsYay3eyFJ7NNDyP87gNbUPrUPpFtQJxg=="],
+
+    "expo-audio": ["expo-audio@58.0.0", "", { "peerDependencies": { "expo": "*", "expo-asset": "*", "react": "*", "react-native": "*" } }, "sha512-3fYQ6SpXJ5ERyzlQj2YHU9AtGFj1BXl65D9JSS+zoWT5mOv8kI1QOZpdghlgkXtr6IrfPoYEmSotc2YN5X/pyQ=="],
 
     "expo-blur": ["expo-blur@58.0.0", "", { "peerDependencies": { "expo": "*", "react": "*", "react-native": "*" } }, "sha512-NfK/deaVdtjTanT1MiVeba3SxYYAnitaYrZMa/2GJM700YkNT8i+ASH8CtuewaR/mjyXLcQjak2pvTRz2T42HA=="],
 

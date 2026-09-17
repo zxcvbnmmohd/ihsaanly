@@ -9,6 +9,7 @@ import { useCalculationPreferences } from '@/prayer/store'
 import { runRollover, useTodayMarks } from '@/prayer/marks'
 import { prayerTimesAcross } from '@/prayer/times'
 import { useEventSettings } from '@/events/store'
+import { useKnownItems } from '@/memorise/store'
 import { currentHomeTransition } from '@/events/geofence'
 import { useNotificationPreferences } from '@/notifications/store'
 import { useNow } from '@/time/use-now'
@@ -46,6 +47,7 @@ export function usePlan(): Plan | null {
   const notifications = useNotificationPreferences()
   const enabledItemIds = useEnabledItems()
   const events = useEventSettings()
+  const knownItemIds = useKnownItems()
   const prayedToday = useTodayMarks(place?.timeZone ?? 'UTC', now)
 
   useEffect(() => {
@@ -71,7 +73,7 @@ export function usePlan(): Plan | null {
     userState,
     preferences: {
       enabledItemIds,
-      knownItemIds: [],
+      knownItemIds,
       notifications,
     },
   }

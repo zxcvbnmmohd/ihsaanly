@@ -126,6 +126,7 @@ module.exports = [
       'src/location/{place,cities}.ts',
       'src/plan/{plan,day-match,signals,user-state,quiet-hours,notification-preferences,history}.ts',
       'src/data/bundle.ts',
+      'src/memorise/reveal.ts',
       'src/assert-never.ts',
     ],
     rules: {

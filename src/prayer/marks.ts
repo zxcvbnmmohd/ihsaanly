@@ -40,6 +40,15 @@ export function markPrayer(
   })
 }
 
+export function unmarkPrayer(prayer: Prayer, at: Date, timeZone: string): void {
+  recordEvent({
+    kind: 'prayer-unmarked',
+    subject: prayer,
+    at,
+    logDay: civilDateKey(logDay(at, timeZone)),
+  })
+}
+
 export function markMadeUp(prayer: Prayer, at: Date, timeZone: string): void {
   recordEvent({
     kind: 'prayer-made-up',

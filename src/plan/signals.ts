@@ -57,6 +57,7 @@ export interface PlannedItem {
 }
 
 export interface TodayModel {
+  hijri: HijriDate
   window: WindowName | null
   rightNow: PlannedItem | null
   context: PlannedItem[]

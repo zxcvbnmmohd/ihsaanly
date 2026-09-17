@@ -4,7 +4,8 @@ import type { Prayer } from '@/prayer/qada'
 
 import { database } from './database'
 
-export type EventKind = 'prayer-performed' | 'prayer-missed' | 'prayer-made-up' | 'item-completed'
+export type EventKind =
+  'prayer-performed' | 'prayer-unmarked' | 'prayer-missed' | 'prayer-made-up' | 'item-completed'
 
 export interface NewEvent {
   kind: EventKind
@@ -50,12 +51,23 @@ export function recordEvent(event: NewEvent): void {
 }
 
 export function prayerMarksOn(logDay: string): Partial<Record<Prayer, Date>> {
-  const rows = database.getAllSync<{ subject: string; at: number }>(
-    `SELECT subject, at FROM events WHERE kind = 'prayer-performed' AND log_day = ?`,
+  const rows = database.getAllSync<{ subject: string; kind: EventKind; at: number }>(
+    `SELECT subject, kind, at FROM events
+     WHERE kind IN ('prayer-performed', 'prayer-unmarked') AND log_day = ?
+     ORDER BY id ASC`,
     logDay,
   )
 
-  return Object.fromEntries(rows.map((row) => [row.subject, new Date(row.at)]))
+  // Later facts supersede earlier ones. Nothing is deleted, so the correction
+  // itself stays in the record.
+  const marks: Partial<Record<Prayer, Date>> = {}
+  rows.forEach((row) => {
+    const prayer = row.subject as Prayer
+    if (row.kind === 'prayer-performed') marks[prayer] = new Date(row.at)
+    else delete marks[prayer]
+  })
+
+  return marks
 }
 
 export function markedPrayersOn(logDay: string): Prayer[] {

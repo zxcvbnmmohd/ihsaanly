@@ -60,7 +60,10 @@ Enforced by lint, so a violation fails `bun run check`.
   ```
 
   Read it as `state.query`, update it as `setState((current) => ({ ...current, query }))`.
-  Scattered state hooks drift out of sync and hide what a component actually holds.
+
+  This holds **even for a single field** — `useState<Date>(…)` is a violation.
+  Naming the shape up front means adding a second field never means restructuring.
+  The rule also requires the destructuring to be `[state, setState]`.
 
 - **`interface` over `type`** for object shapes. Unions, intersections and inferred
   aliases such as `z.infer<...>` stay as `type` — the rule only covers object literals.

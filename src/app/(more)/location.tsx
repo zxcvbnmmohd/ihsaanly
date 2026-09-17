@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import { router } from 'expo-router';
 import { useState } from 'react';
 
@@ -14,18 +15,18 @@ interface Thing {
   declined: boolean;
 }
 
-export default function LocationRoute() {
+export default function LocationRoute(): ReactElement {
   const place = usePlace();
   const [thing, setThing] = useState<Thing>({ query: '', declined: false });
 
   const results = searchCities(thing.query);
 
-  const choose = (chosen: Place) => {
+  const choose = (chosen: Place): void => {
     setPlace(chosen);
     router.back();
   };
 
-  const useDeviceLocation = async () => {
+  const useDeviceLocation = async (): Promise<void> => {
     const located = await requestDeviceLocation();
     if (located) return choose(located);
     setThing((current) => ({ ...current, declined: true }));

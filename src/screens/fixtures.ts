@@ -6,7 +6,7 @@ import type { LocationScreenProps } from './location';
 import type { MoreScreenProps } from './more';
 import type { TodayScreenProps } from './today';
 
-const noop = () => {};
+const noop = (): void => {};
 
 export const todayFixture: TodayScreenProps = {
   hasLocation: true,

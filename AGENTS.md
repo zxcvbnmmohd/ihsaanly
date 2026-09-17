@@ -65,6 +65,13 @@ Enforced by lint, so a violation fails `bun run check`.
   Naming the shape up front means adding a second field never means restructuring.
   The rule also requires the destructuring to be `[thing, setThing]`.
 
+- **Every function and component declares its return type.** Components return
+  `ReactElement`. Callbacks passed to an already-typed prop are exempt, because
+  the type is stated once at the prop. Explicit beats inferred: a return type is
+  the cheapest place to catch a function that quietly changed shape.
+
+- **Props are a named `interface`**, not an inline object literal, even for one prop.
+
 - **`interface` over `type`** for object shapes. Unions, intersections and inferred
   aliases such as `z.infer<...>` stay as `type` — the rule only covers object literals.
 

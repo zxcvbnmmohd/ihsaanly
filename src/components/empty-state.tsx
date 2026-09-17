@@ -1,8 +1,13 @@
+import type { ReactElement } from 'react';
 import { Text, useColorScheme, View } from 'react-native';
 
 import { colors } from '@/theme/colors';
 
-export function EmptyState({ message }: { message: string }) {
+interface EmptyStateProps {
+  message: string;
+}
+
+export function EmptyState({ message }: EmptyStateProps): ReactElement {
   useColorScheme(); // Android Material colours need this to re-resolve on theme change
 
   return (

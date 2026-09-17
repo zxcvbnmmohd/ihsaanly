@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import { Text, TextInput, useColorScheme, View } from 'react-native';
 
 import { Row } from '@/components/row';
@@ -26,7 +27,7 @@ export function LocationScreen({
   onQueryChange,
   onUseDevice,
   onSelect,
-}: LocationScreenProps) {
+}: LocationScreenProps): ReactElement {
   useColorScheme();
 
   return (

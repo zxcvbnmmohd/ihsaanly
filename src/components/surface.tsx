@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import { BlurView } from 'expo-blur';
 import { GlassView, isGlassEffectAPIAvailable, isLiquidGlassAvailable } from 'expo-glass-effect';
 import { useEffect, useState, type ReactNode } from 'react';
@@ -21,26 +22,24 @@ interface Thing {
   reduceTransparency: boolean;
 }
 
-export function Surface({
-  children,
-  style,
-  interactive = false,
-}: {
+interface SurfaceProps {
   children?: ReactNode;
   style?: ViewProps['style'];
   interactive?: boolean;
-}) {
+}
+
+export function Surface({ children, style, interactive = false }: SurfaceProps): ReactElement {
   const [thing, setThing] = useState<Thing>({ reduceTransparency: false });
   // Android's Material colors don't re-resolve on their own — subscribing to the
   // scheme here forces a re-render when the theme flips (React Compiler memoizes).
   useColorScheme();
 
   useEffect(() => {
-    const apply = (reduceTransparency: boolean) => setThing({ reduceTransparency });
+    const apply = (reduceTransparency: boolean): void => setThing({ reduceTransparency });
 
     AccessibilityInfo.isReduceTransparencyEnabled().then(apply);
     const sub = AccessibilityInfo.addEventListener('reduceTransparencyChanged', apply);
-    return () => sub.remove();
+    return (): void => sub.remove();
   }, []);
 
   // Never clip a GlassView from the outside — it clips itself, and overflow

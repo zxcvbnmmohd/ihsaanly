@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import { Text, useColorScheme, View } from 'react-native';
 
 import { Row } from '@/components/row';
@@ -12,7 +13,7 @@ export interface HijriScreenProps {
   onChange: (offset: number) => void;
 }
 
-export function HijriScreen({ offset, preview, onChange }: HijriScreenProps) {
+export function HijriScreen({ offset, preview, onChange }: HijriScreenProps): ReactElement {
   useColorScheme();
 
   return (

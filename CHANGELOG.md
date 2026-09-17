@@ -97,7 +97,10 @@ real content with its evidence attached.
 
 ### Changed
 
-- **Two code conventions are now enforced by lint**: one typed `useState` per file
+- **Explicit return types on every function and component**, enforced by lint.
+  Callbacks passed to an already-typed prop are exempt. Component props moved
+  from inline object literals to named interfaces.
+- **Two further code conventions are now enforced by lint**: one typed `useState` per file
   holding a single state object, and `interface` over `type` for object shapes.
   The first is a local ESLint rule; scattered state hooks drift out of sync and
   hide what a component actually holds.

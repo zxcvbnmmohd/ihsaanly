@@ -43,6 +43,18 @@ module.exports = [
             'Prayer times are never rendered as clock times. A window three minutes out is invisible; a clock three minutes out is a bug report.',
         },
       ],
+      // Explicit over implicit: every function and component declares what it
+      // returns. Callbacks passed to an already-typed prop are exempt — the
+      // type is stated once, at the prop.
+      '@typescript-eslint/explicit-function-return-type': [
+        'error',
+        {
+          allowExpressions: false,
+          allowTypedFunctionExpressions: true,
+          allowHigherOrderFunctions: true,
+          allowDirectConstAssertionInArrowFunctions: true,
+        },
+      ],
       'local/single-use-state': 'error',
       '@typescript-eslint/consistent-type-definitions': ['error', 'interface'],
       'expo/no-dynamic-env-var': 'error',
@@ -61,10 +73,20 @@ module.exports = [
       ],
     },
   },
-  // Build tooling is CommonJS by necessity.
+  // Build tooling and the local lint rules are CommonJS by necessity, and the
+  // TypeScript-only rules do not apply to them.
   {
-    files: ['*.config.js', 'eslint.config.js'],
-    rules: { '@typescript-eslint/no-require-imports': 'off' },
+    files: ['**/*.js'],
+    rules: {
+      '@typescript-eslint/no-require-imports': 'off',
+      '@typescript-eslint/explicit-function-return-type': 'off',
+    },
+  },
+  // Scaffold sample widgets, replaced wholesale in #16. Their render functions
+  // return framework-specific shapes, not ReactElement.
+  {
+    files: ['src/widgets/**'],
+    rules: { '@typescript-eslint/explicit-function-return-type': 'off' },
   },
   { ignores: ['dist/*', '.expo/*', 'expo-env.d.ts'] },
 ];

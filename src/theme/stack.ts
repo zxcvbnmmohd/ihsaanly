@@ -1,3 +1,5 @@
+import type { Stack } from 'expo-router/stack';
+import type { ComponentProps } from 'react';
 import { Platform, useColorScheme } from 'react-native';
 
 import { colors } from '@/theme/colors';
@@ -10,7 +12,9 @@ import { colors } from '@/theme/colors';
  * cross-platform renders content underneath the header and the status bar, so
  * Android gets an opaque header that occupies layout space instead.
  */
-export function useStackScreenOptions() {
+type StackScreenOptions = NonNullable<ComponentProps<typeof Stack>['screenOptions']>;
+
+export function useStackScreenOptions(): StackScreenOptions {
   useColorScheme();
 
   if (Platform.OS !== 'ios') {
@@ -20,7 +24,7 @@ export function useStackScreenOptions() {
       headerTitleStyle: { color: colors.label },
       headerTintColor: colors.label,
       headerBackButtonDisplayMode: 'minimal',
-    } as const;
+    };
   }
 
   return {
@@ -31,5 +35,5 @@ export function useStackScreenOptions() {
     headerLargeStyle: { backgroundColor: 'transparent' },
     headerTitleStyle: { color: colors.label },
     headerBackButtonDisplayMode: 'minimal',
-  } as const;
+  };
 }

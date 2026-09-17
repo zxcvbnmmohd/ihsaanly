@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import type { Href } from 'expo-router';
 
 import { Row } from '@/components/row';
@@ -20,7 +21,7 @@ export function MoreScreen({
   calculationHref,
   hijriLabel,
   hijriHref,
-}: MoreScreenProps) {
+}: MoreScreenProps): ReactElement {
   return (
     <Screen className="gap-3 p-4">
       <Row href={locationHref} title={strings.location.title} detail={locationLabel} />

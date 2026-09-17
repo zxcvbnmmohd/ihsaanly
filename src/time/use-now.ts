@@ -11,7 +11,7 @@ export function useNow(intervalMs = MINUTE): Date {
 
   useEffect(() => {
     const timer = setInterval(() => setThing({ now: new Date() }), intervalMs);
-    return () => clearInterval(timer);
+    return (): void => clearInterval(timer);
   }, [intervalMs]);
 
   return thing.now;

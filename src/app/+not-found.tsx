@@ -1,10 +1,11 @@
+import type { ReactElement } from 'react';
 import { Link, Stack } from 'expo-router';
 import { Text, useColorScheme, View } from 'react-native';
 
 import { strings } from '@/strings';
 import { colors } from '@/theme/colors';
 
-export default function NotFound() {
+export default function NotFound(): ReactElement {
   useColorScheme();
 
   return (

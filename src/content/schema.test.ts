@@ -3,7 +3,9 @@ import { describe, expect, it } from 'bun:test';
 import shippedDocument from '../../content/items.json';
 import { validateContentDocument } from './validate';
 
-const hadithFrom = (collection: string, gradedBy: string | null) => ({
+type Fixture = Record<string, unknown>;
+
+const hadithFrom = (collection: string, gradedBy: string | null): Fixture => ({
   type: 'hadith',
   collection,
   reference: '1',
@@ -12,7 +14,16 @@ const hadithFrom = (collection: string, gradedBy: string | null) => ({
   text: { en: 'narration' },
 });
 
-const documentWith = (evidence: unknown, overrides: Record<string, unknown> = {}) => ({
+interface TestDocument {
+  schemaVersion: number;
+  reviewedBy: string | null;
+  audioReciter: string | null;
+  contentLanguages: string[];
+  translationSources: Record<string, string | null>;
+  items: Fixture[];
+}
+
+const documentWith = (evidence: unknown, overrides: Fixture = {}): TestDocument => ({
   schemaVersion: 1,
   reviewedBy: 'A Reviewer',
   audioReciter: null,

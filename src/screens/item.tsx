@@ -1,3 +1,4 @@
+import type { ReactElement, ReactNode } from 'react';
 import { Text, useColorScheme, View } from 'react-native';
 
 import { ArabicText } from '@/components/arabic-text';
@@ -22,7 +23,12 @@ export interface ItemScreenProps {
   item: ItemDetail | null;
 }
 
-function Labelled({ label, children }: { label: string; children: React.ReactNode }) {
+interface LabelledProps {
+  label: string;
+  children: ReactNode;
+}
+
+function Labelled({ label, children }: LabelledProps): ReactElement {
   useColorScheme();
 
   return (
@@ -35,7 +41,7 @@ function Labelled({ label, children }: { label: string; children: React.ReactNod
   );
 }
 
-export function ItemScreen({ item }: ItemScreenProps) {
+export function ItemScreen({ item }: ItemScreenProps): ReactElement {
   useColorScheme();
 
   if (!item) {

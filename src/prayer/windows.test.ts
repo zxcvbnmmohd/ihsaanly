@@ -4,7 +4,7 @@ import type { Place } from '@/location/place';
 
 import { DEFAULT_CALCULATION_PREFERENCES } from './calculation';
 import { prayerTimesAcross, prayerTimesFor } from './times';
-import { buildWindows, windowAt, WINDOW_ORDER } from './windows';
+import { buildWindows, windowAt, WINDOW_ORDER, type PrayerWindow } from './windows';
 
 const toronto: Place = {
   label: 'Toronto, Ontario, Canada',
@@ -22,7 +22,7 @@ const tromso: Place = {
   source: 'city',
 };
 
-const windowsAround = (place: Place, date: Date) =>
+const windowsAround = (place: Place, date: Date): PrayerWindow[] =>
   buildWindows(prayerTimesAcross(place, date, DEFAULT_CALCULATION_PREFERENCES));
 
 describe('prayer times', () => {
@@ -82,7 +82,7 @@ describe('windows', () => {
 
     const afterMidnight = new Date(today!.isha.getTime() + 4 * 60 * 60 * 1000);
 
-    const localDay = (instant: Date) =>
+    const localDay = (instant: Date): string =>
       instant.toLocaleDateString('en-CA', { timeZone: toronto.timezone });
 
     expect(windowAt(afterMidnight, windows)?.name).toBe('isha');

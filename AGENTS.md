@@ -144,6 +144,20 @@ body. On Android these colours don't re-resolve on their own, and React Compiler
 is enabled, so without the subscription a memoized component keeps stale colours
 when the theme flips.
 
+### A development build is required, not Expo Go
+
+`expo-notifications`, `expo-sqlite`, `expo-location` and `expo-widgets` are not
+in Expo Go. Opening the app there fails at import with "Cannot find native
+module", which surfaces as a route missing its default export rather than as
+anything that names the real cause. Run `npx expo run:android` / `run:ios`.
+
+### iOS-only modules need a platform split, not a runtime check
+
+`expo-widgets` throws when imported on Android, so `Platform.OS === 'ios'`
+inside a function is too late — the import itself is what fails. Put the real
+implementation in `*.ios.ts` and a no-op in the base file, and let Metro pick.
+`src/widgets/snapshot.ts` is the pattern.
+
 ### Exact alarms are deliberately not requested
 
 `SCHEDULE_EXACT_ALARM` is a restricted permission that invites a Play Store

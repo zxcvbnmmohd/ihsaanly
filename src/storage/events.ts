@@ -92,14 +92,22 @@ export function qadaCounts(): Partial<Record<Prayer, number>> {
   return Object.fromEntries(Object.entries(counts).filter(([, count]) => (count ?? 0) > 0))
 }
 
+/**
+ * Hoisted rather than inline: a `subscribe` that changes identity every render
+ * makes React unsubscribe and resubscribe each time, and an event recorded in
+ * that gap is lost.
+ */
+function subscribe(listener: () => void): () => void {
+  listeners.add(listener)
+  return (): void => {
+    listeners.delete(listener)
+  }
+}
+
+function currentVersion(): number {
+  return version
+}
+
 export function useEventVersion(): number {
-  return useSyncExternalStore(
-    (listener) => {
-      listeners.add(listener)
-      return (): void => {
-        listeners.delete(listener)
-      }
-    },
-    () => version,
-  )
+  return useSyncExternalStore(subscribe, currentVersion)
 }

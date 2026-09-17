@@ -48,9 +48,8 @@ export default function TodayRoute(): ReactElement {
 
     const windows = buildWindows(prayerTimesAcross(place, now, preferences))
     const current = windows.filter((entry) => entry.name === prayer && entry.startsAt <= now).pop()
-    if (!current) return
 
-    markPrayer(prayer, now, place.timeZone, current.startsAt, current.endsAt)
+    markPrayer(prayer, now, place.timeZone, current)
   }
 
   return (

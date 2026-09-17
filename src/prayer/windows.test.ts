@@ -10,7 +10,7 @@ const toronto: Place = {
   label: 'Toronto, Ontario, Canada',
   latitude: 43.7,
   longitude: -79.42,
-  timezone: 'America/Toronto',
+  timeZone: 'America/Toronto',
   source: 'city',
 }
 
@@ -18,7 +18,7 @@ const tromso: Place = {
   label: 'Tromsø, Norway',
   latitude: 69.65,
   longitude: 18.96,
-  timezone: 'Europe/Oslo',
+  timeZone: 'Europe/Oslo',
   source: 'city',
 }
 
@@ -84,7 +84,7 @@ describe('windows', () => {
     const afterMidnight = new Date(today.isha.getTime() + 4 * 60 * 60 * 1000)
 
     const localDay = (instant: Date): string =>
-      instant.toLocaleDateString('en-CA', { timeZone: toronto.timezone })
+      instant.toLocaleDateString('en-CA', { timeZone: toronto.timeZone })
 
     expect(windowAt(afterMidnight, windows)?.name).toBe('isha')
     expect(localDay(afterMidnight)).not.toBe(localDay(today.isha))

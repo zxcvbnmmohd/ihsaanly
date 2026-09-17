@@ -24,7 +24,7 @@ describe('city search', () => {
 
     expect(toronto?.latitude).toBeCloseTo(43.7, 0)
     expect(toronto?.longitude).toBeCloseTo(-79.4, 0)
-    expect(toronto?.timezone).toBe('America/Toronto')
+    expect(toronto?.timeZone).toBe('America/Toronto')
     expect(toronto?.source).toBe('city')
   })
 

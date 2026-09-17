@@ -11,7 +11,7 @@ function toPlace(city: CityData): Place {
     label: parts.join(', '),
     latitude: city.lat,
     longitude: city.lng,
-    timezone: city.timezone,
+    timeZone: city.timezone,
     source: 'city',
   }
 }

@@ -17,7 +17,7 @@ const canUseGlass =
  * ponytail: single `interactive` knob instead of a variant system — add
  * variants when a second surface style actually shows up in a design.
  */
-interface State {
+interface Thing {
   reduceTransparency: boolean;
 }
 
@@ -30,7 +30,7 @@ export function Surface({
   style?: ViewProps['style'];
   interactive?: boolean;
 }) {
-  const [thing, setThing] = useState<State>({ reduceTransparency: false });
+  const [thing, setThing] = useState<Thing>({ reduceTransparency: false });
   // Android's Material colors don't re-resolve on their own — subscribing to the
   // scheme here forces a re-render when the theme flips (React Compiler memoizes).
   useColorScheme();

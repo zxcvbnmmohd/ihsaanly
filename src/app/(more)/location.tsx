@@ -9,14 +9,14 @@ import { LocationScreen } from '@/screens/location';
 
 const MINIMUM_QUERY_LENGTH = 2;
 
-interface State {
+interface Thing {
   query: string;
   declined: boolean;
 }
 
 export default function LocationRoute() {
   const place = usePlace();
-  const [thing, setThing] = useState<State>({ query: '', declined: false });
+  const [thing, setThing] = useState<Thing>({ query: '', declined: false });
 
   const results = searchCities(thing.query);
 

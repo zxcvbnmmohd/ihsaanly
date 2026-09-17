@@ -56,14 +56,14 @@ Enforced by lint, so a violation fails `bun run check`.
     declined: boolean;
   }
 
-  const [state, setState] = useState<State>({ query: '', declined: false });
+  const [thing, setThing] = useState<State>({ query: '', declined: false });
   ```
 
-  Read it as `state.query`, update it as `setState((current) => ({ ...current, query }))`.
+  Read it as `thing.query`, update it as `setThing((current) => ({ ...current, query }))`.
 
   This holds **even for a single field** — `useState<Date>(…)` is a violation.
   Naming the shape up front means adding a second field never means restructuring.
-  The rule also requires the destructuring to be `[state, setState]`.
+  The rule also requires the destructuring to be `[thing, setThing]`.
 
 - **`interface` over `type`** for object shapes. Unions, intersections and inferred
   aliases such as `z.infer<...>` stay as `type` — the rule only covers object literals.

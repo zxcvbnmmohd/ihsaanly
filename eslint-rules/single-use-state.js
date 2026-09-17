@@ -7,7 +7,7 @@
  *     declined: boolean;
  *   }
  *
- *   const [state, setState] = useState<State>({ query: '', declined: false });
+ *   const [thing, setThing] = useState<State>({ query: '', declined: false });
  *
  * Scattered or loosely typed state hooks drift out of sync and hide what a
  * component actually holds. The shape always has a name, even when it holds
@@ -26,7 +26,7 @@ module.exports = {
       untyped: 'useState needs an explicit type argument: useState<State>({ … }).',
       notStateInterface:
         'useState must be typed by a local `State` interface, even for a single field: interface State { … } and useState<State>({ … }).',
-      naming: 'Destructure useState as `const [state, setState]`.',
+      naming: 'Destructure useState as `const [thing, setThing]`.',
     },
   },
   create(context) {
@@ -63,7 +63,7 @@ module.exports = {
         const named = (element, expected) =>
           element?.type === 'Identifier' && element.name === expected;
 
-        if (!named(value, 'state') || !named(setter, 'setState')) {
+        if (!named(value, 'thing') || !named(setter, 'setThing')) {
           context.report({ node, messageId: 'naming' });
         }
       },

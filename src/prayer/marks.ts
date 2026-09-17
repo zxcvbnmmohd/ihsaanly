@@ -68,7 +68,7 @@ export function markMadeUp(prayer: Prayer, at: Date, timeZone: string): void {
  * the first run, so installing the app does not hand someone a debt they never
  * agreed to track.
  */
-export function runRollover(place: Place, preferences: CalculationPreferences, now: Date): void {
+function rollover(place: Place, preferences: CalculationPreferences, now: Date): void {
   const yesterday = shiftDays(civilDateIn(now, place.timeZone), -1)
   const processed = readPreference(PROCESSED_THROUGH, ProcessedThrough)
 
@@ -117,4 +117,13 @@ export function useQada(): Partial<Record<Prayer, number>> {
   const snapshot = useMemo(() => ({ version, counts: qadaCounts() }), [version])
 
   return snapshot.counts
+}
+
+/** A failure here must never stop the app rendering. */
+export function runRollover(place: Place, preferences: CalculationPreferences, now: Date): void {
+  try {
+    rollover(place, preferences, now)
+  } catch (error) {
+    console.warn('rollover failed', error)
+  }
 }

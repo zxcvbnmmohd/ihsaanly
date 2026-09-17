@@ -7,8 +7,10 @@
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit",
     "doctor": "bunx expo-doctor",
-    "check": "bun run lint && bun run typecheck && bun run doctor",
-    "clean": "rm -rf .expo node_modules/.cache && expo start --clear"
+    "check": "bun run lint && bun run typecheck && bun run test && bun run validate:content && bun run doctor",
+    "clean": "rm -rf .expo node_modules/.cache && expo start --clear",
+    "test": "bun test",
+    "validate:content": "bun scripts/validate-content.ts"
   },
   "dependencies": {
     "@expo/material-symbols": "^0.1.1",
@@ -35,11 +37,13 @@
     "react-native-reanimated": "4.6.0",
     "react-native-safe-area-context": "~5.9.1",
     "react-native-screens": "~4.27.0",
-    "react-native-worklets": "0.12.2"
+    "react-native-worklets": "0.12.2",
+    "zod": "^4.6.5"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@tailwindcss/postcss": "4.3.3",
+    "@types/bun": "^1.4.2",
     "@types/react": "~19.2.14",
     "eslint": "^10",
     "eslint-plugin-expo": "^1.1.0",
@@ -54,10 +58,11 @@
     "typescript-eslint": "^8.70.0"
   },
   "name": "ihsaanly",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "private": true,
   "main": "expo-router/entry",
   "overrides": {
     "lightningcss": "1.30.1"
-  }
+  },
+  "description": "An offline-first, evidence-backed Sunnah companion. Surfaces the adhkar, duas and sunnah acts relevant to the moment, with a citation on every item and nothing leaving the device."
 }

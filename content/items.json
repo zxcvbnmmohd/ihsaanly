@@ -1,20 +1,27 @@
 {
   "schemaVersion": 1,
-  "reviewedBy": "TODO: name + credentials of the person who signed off, or null",
+  "reviewedBy": null,
+  "audioReciter": null,
+  "contentLanguages": ["en", "ar"],
+  "translationSources": {
+    "en": null,
+    "ar": null
+  },
   "items": [
     {
       "id": "dua-leaving-home",
       "category": "home",
       "title": {
-        "en": "Dua when leaving home"
+        "en": "Leaving home",
+        "ar": "دعاء الخروج من المنزل"
       },
       "ruling": "sunnah",
       "arabic": "بِسْمِ اللَّهِ، تَوَكَّلْتُ عَلَى اللَّهِ، وَلَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ",
       "transliteration": {
-        "en": "Bismillah, tawakkaltu 'ala Allah, wa la hawla wa la quwwata illa billah"
+        "en": "Bismillāh, tawakkaltu ʿalā Allāh, wa lā ḥawla wa lā quwwata illā billāh"
       },
       "translation": {
-        "en": "TODO"
+        "en": "In the name of Allah, I place my trust in Allah, and there is no might nor power except with Allah."
       },
       "repeat": 1,
       "evidence": [
@@ -25,94 +32,16 @@
           "grading": "sahih",
           "gradedBy": "al-Albani",
           "text": {
-            "ar": "TODO: original wording",
-            "en": "TODO: the wording of the narration"
+            "en": "Whoever says, when he leaves his house, \"In the name of Allah, I place my trust in Allah, and there is no might nor power except with Allah,\" it is said to him: you are guided, sufficed and protected.",
+            "ar": "مَنْ قَالَ ـ يَعْنِي إِذَا خَرَجَ مِنْ بَيْتِهِ ـ بِسْمِ اللَّهِ تَوَكَّلْتُ عَلَى اللَّهِ وَلاَ حَوْلَ وَلاَ قُوَّةَ إِلاَّ بِاللَّهِ، يُقَالُ لَهُ هُدِيتَ وَكُفِيتَ وَوُقِيتَ"
           }
         }
       ],
-      "trigger": {
-        "kind": "event",
-        "event": "leaving-home"
-      },
+      "trigger": { "kind": "event", "event": "leaving-home" },
       "defaultOn": true,
       "note": null,
-      "audio": null,
-      "audioTranslation": null
-    },
-    {
-      "id": "sunnah-after-dhuhr",
-      "category": "prayer",
-      "title": {
-        "en": "2 rak'ah after Dhuhr"
-      },
-      "ruling": "sunnah-muakkadah",
-      "arabic": null,
-      "transliteration": null,
-      "translation": null,
-      "repeat": 1,
-      "evidence": [
-        {
-          "type": "hadith",
-          "collection": "Sahih Muslim",
-          "reference": "728",
-          "grading": "sahih",
-          "gradedBy": null,
-          "text": {
-            "ar": "TODO: original wording",
-            "en": "TODO"
-          }
-        }
-      ],
-      "trigger": {
-        "kind": "prayer",
-        "prayer": "dhuhr",
-        "when": "after"
-      },
-      "defaultOn": true,
-      "note": null,
-      "audio": null,
-      "audioTranslation": null
-    },
-    {
-      "id": "fast-white-days",
-      "category": "fasting",
-      "title": {
-        "en": "Fasting the White Days"
-      },
-      "ruling": "sunnah",
-      "arabic": null,
-      "transliteration": null,
-      "translation": null,
-      "repeat": 1,
-      "evidence": [
-        {
-          "type": "hadith",
-          "collection": "TODO",
-          "reference": "TODO",
-          "grading": "TODO",
-          "gradedBy": "TODO",
-          "text": {
-            "ar": "TODO: original wording",
-            "en": "TODO"
-          }
-        }
-      ],
-      "trigger": {
-        "kind": "day",
-        "day": "white-days"
-      },
-      "defaultOn": false,
-      "note": {
-        "en": "Scholars differ on whether these must be the 13th, 14th and 15th specifically."
-      },
       "audio": null,
       "audioTranslation": null
     }
-  ],
-  "translationSources": {
-    "en": "TODO: named, licensed translation",
-    "ar": null
-  },
-  "audioReciter": "TODO: name + permission to ship the recordings",
-  "contentLanguages": ["en", "ar"]
+  ]
 }

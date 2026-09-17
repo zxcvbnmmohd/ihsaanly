@@ -1,11 +1,4 @@
-/**
- * Every user-facing string in the app resolves through here.
- *
- * ponytail: a plain frozen object, not an i18n library. Centralising the
- * strings now is what makes #19 (locale machinery + RTL) an additive change
- * instead of a sweep across every screen. Swap this module's internals for a
- * locale-aware lookup there; callers don't change.
- */
+/** Single source for user-facing text. #19 swaps the internals for locale-aware lookup. */
 export const strings = {
   tabs: {
     today: 'Today',
@@ -19,6 +12,29 @@ export const strings = {
   library: {
     title: 'Library',
     empty: 'Adhkar, duas and sunnah actions will be listed here.',
+  },
+  item: {
+    transliteration: 'Transliteration',
+    translation: 'Translation',
+    evidence: 'Evidence',
+    note: 'Scholars differ',
+    repeat: (times: number) => `Repeat ${times} times`,
+    gradedBy: (grader: string) => `graded by ${grader}`,
+    quranReference: (surah: number, ayah: number) => `Qur\u2019an ${surah}:${ayah}`,
+  },
+  ruling: {
+    fard: 'Obligatory',
+    wajib: 'Obligatory',
+    'sunnah-muakkadah': 'Emphasised sunnah',
+    sunnah: 'Sunnah',
+    mustahabb: 'Recommended',
+    mubah: 'Permissible',
+  },
+  grading: {
+    sahih: 'Sahih',
+    hasan: 'Hasan',
+    "da'if": 'Da\u2019if',
+    disputed: 'Disputed',
   },
   more: {
     title: 'More',

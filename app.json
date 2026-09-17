@@ -6,6 +6,7 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "automatic",
+    "platforms": ["ios", "android"],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.ihsaanly.app"
@@ -13,10 +14,6 @@
     "android": {
       "package": "com.ihsaanly.app",
       "predictiveBackGestureEnabled": true
-    },
-    "web": {
-      "bundler": "metro",
-      "output": "static"
     },
     "experiments": {
       "typedRoutes": true,

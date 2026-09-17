@@ -154,6 +154,8 @@ function localisedFieldsOf(item: z.infer<typeof Item>): Record<string, string>[]
   ].filter((field) => field !== null);
 }
 
+export type Ruling = z.infer<typeof Ruling>;
+export type Grading = z.infer<typeof Grading>;
 export type ContentDocument = z.infer<typeof ContentDocument>;
 export type Item = z.infer<typeof Item>;
 export type Evidence = z.infer<typeof Evidence>;

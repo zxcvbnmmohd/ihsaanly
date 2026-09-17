@@ -16,6 +16,17 @@ export const strings = {
     comingUp: 'Coming up',
     tomorrow: 'Tomorrow',
     inDays: (days: number) => `In ${days} days`,
+    prayers: 'Prayers',
+    prayed: 'Prayed',
+    makeUp: 'To make up',
+    outstanding: (count: number) => `${count} to make up`,
+  },
+  prayer: {
+    fajr: 'Fajr',
+    dhuhr: 'Dhuhr',
+    asr: 'Asr',
+    maghrib: 'Maghrib',
+    isha: 'Isha',
   },
   window: {
     fajr: 'Fajr',

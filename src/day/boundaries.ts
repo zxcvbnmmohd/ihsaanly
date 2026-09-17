@@ -54,3 +54,8 @@ export function hijriDay(instant: Date, maghrib: Date, timeZone: string): CivilD
 export function isSameCivilDate(left: CivilDate, right: CivilDate): boolean {
   return left.year === right.year && left.month === right.month && left.day === right.day
 }
+
+/** Stable key for a civil day, used to file log entries against it. */
+export function civilDateKey(date: CivilDate): string {
+  return `${date.year}-${String(date.month).padStart(2, '0')}-${String(date.day).padStart(2, '0')}`
+}

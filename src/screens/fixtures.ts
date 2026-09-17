@@ -126,6 +126,7 @@ export const moreFixture: MoreScreenProps = {
   moonSightingHref: '/moon-sighting',
   notificationsHref: '/notifications',
   eventsHref: '/events',
+  historyHref: '/history',
 }
 
 export const hijriFixture: HijriScreenProps = {

@@ -74,6 +74,16 @@ export const strings = {
     manual: 'Tell the app instead',
     manualDetail: 'Raise a state yourself when no sensor can find it.',
   },
+  history: {
+    title: 'History',
+    empty: 'Nothing recorded yet.',
+    daysActive: (days: number) => `${days} ${days === 1 ? 'day' : 'days'} recorded`,
+    prayers: 'Prayers',
+    completed: 'Completed',
+    times: (count: number) => `${count} ${count === 1 ? 'time' : 'times'}`,
+    early: (minutes: number) => `usually about ${minutes} min into the window`,
+    late: (minutes: number) => `usually about ${minutes} min before it closes`,
+  },
   moonSighting: {
     title: 'Moon sighting',
     explanation:

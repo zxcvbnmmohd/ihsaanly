@@ -41,7 +41,14 @@
       "expo-router",
       "expo-status-bar",
       "expo-image",
-      "expo-font"
+      "expo-font",
+      "expo-sqlite",
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Ihsaanly uses your location on this device to work out prayer windows. It is never sent anywhere."
+        }
+      ]
     ]
   }
 }

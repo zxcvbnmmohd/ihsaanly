@@ -50,8 +50,16 @@ real content with its evidence attached.
   and directional Tailwind utilities in favour of logical directions, so adding Arabic
   and RTL later is additive rather than a rewrite. Arabic text is right-aligned via
   writing direction rather than a hardcoded side.
-- **Test suite** — `bun test`, covering the grading gate, document integrity and
-  release warnings.
+- **Test suite** — `bun test`, covering the grading gate, document integrity,
+  release warnings and city search.
+- **Location** — coordinates come from the device or from a city the user picks,
+  and nothing downstream can tell which. Declining the permission is a supported
+  path, not a dead end: search 7,329 cities offline instead. Coordinates are used
+  on-device to derive prayer windows and are never transmitted.
+- **Storage** — one SQLite database with forward-only migrations under
+  `PRAGMA user_version`, holding preferences now and the event log later. Its
+  directory is controlled by a single switch, so moving into a shared app-group
+  container once an Apple Developer Program membership exists is a one-line change.
 
 ### Changed
 

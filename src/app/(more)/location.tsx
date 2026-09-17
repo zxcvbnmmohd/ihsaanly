@@ -12,12 +12,12 @@ const MINIMUM_QUERY_LENGTH = 2
 
 interface Thing {
   query: string
-  declined: boolean
+  problem: 'declined' | 'unavailable' | null
 }
 
 export default function LocationRoute(): ReactElement {
   const place = usePlace()
-  const [thing, setThing] = useState<Thing>({ query: '', declined: false })
+  const [thing, setThing] = useState<Thing>({ query: '', problem: null })
 
   const results = searchCities(thing.query)
 
@@ -28,8 +28,8 @@ export default function LocationRoute(): ReactElement {
 
   const useDeviceLocation = async (): Promise<void> => {
     const located = await requestDeviceLocation()
-    if (located) return choose(located)
-    setThing((current) => ({ ...current, declined: true }))
+    if (located.status === 'ok') return choose(located.place)
+    setThing((current) => ({ ...current, problem: located.status }))
   }
 
   return (
@@ -38,7 +38,7 @@ export default function LocationRoute(): ReactElement {
       query={thing.query}
       results={results}
       showNoResults={thing.query.trim().length >= MINIMUM_QUERY_LENGTH && results.length === 0}
-      declined={thing.declined}
+      problem={thing.problem}
       onQueryChange={(query) => setThing((current) => ({ ...current, query }))}
       onUseDevice={useDeviceLocation}
       onSelect={choose}

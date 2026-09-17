@@ -134,6 +134,8 @@ export const strings = {
     useDevice: 'Use my location',
     search: 'Search for a city',
     noResults: 'No cities match that.',
+    unavailable:
+      'Location services are switched off on this device. Turn them on, or search for your city instead.',
     declined:
       'Location access was declined. Search for your city instead \u2014 everything still works.',
     explanation: 'Used on this device to work out prayer windows. It is never sent anywhere.',

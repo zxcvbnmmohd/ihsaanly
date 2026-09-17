@@ -123,7 +123,7 @@ export const locationFixture: LocationScreenProps = {
     },
   ],
   showNoResults: false,
-  declined: false,
+  problem: null,
   onQueryChange: noop,
   onUseDevice: noop,
   onSelect: noop,
@@ -133,7 +133,7 @@ export const locationDeclinedFixture: LocationScreenProps = {
   ...locationFixture,
   query: '',
   results: [],
-  declined: true,
+  problem: 'declined',
 }
 
 export const calculationFixture: CalculationScreenProps = {

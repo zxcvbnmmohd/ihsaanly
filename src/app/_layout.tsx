@@ -1,6 +1,6 @@
 import type { ReactElement } from 'react'
 import { DarkTheme, DefaultTheme, ThemeProvider } from 'expo-router/react-navigation'
-import { NativeTabs } from 'expo-router/unstable-native-tabs'
+import { NativeTabs } from 'expo-router/native-tabs'
 import { Text, useColorScheme, View } from 'react-native'
 
 import { strings } from '@/strings'

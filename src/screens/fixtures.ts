@@ -57,23 +57,39 @@ export const todayWithoutLocationFixture: TodayScreenProps = {
 }
 
 export const libraryFixture: LibraryScreenProps = {
-  entries: [
+  query: '',
+  sections: [
     {
-      id: 'dua-leaving-home',
-      title: 'Leaving home',
-      ruling: 'sunnah',
-      href: '/item/dua-leaving-home',
+      category: 'home',
+      entries: [
+        {
+          id: 'dua-leaving-home',
+          title: 'Leaving home',
+          ruling: 'sunnah',
+          href: '/item/dua-leaving-home',
+        },
+      ],
     },
     {
-      id: 'sunnah-after-dhuhr',
-      title: 'After Dhuhr',
-      ruling: 'sunnah-muakkadah',
-      href: '/item/sunnah-after-dhuhr',
+      category: 'prayer',
+      entries: [
+        {
+          id: 'sunnah-after-dhuhr',
+          title: 'Sunnah around Dhuhr',
+          ruling: 'sunnah-muakkadah',
+          href: '/item/sunnah-after-dhuhr',
+        },
+      ],
     },
   ],
+  onQueryChange: noop,
 }
 
-export const emptyLibraryFixture: LibraryScreenProps = { entries: [] }
+export const emptyLibraryFixture: LibraryScreenProps = {
+  query: 'zzz',
+  sections: [],
+  onQueryChange: noop,
+}
 
 export const itemFixture: ItemDetail = {
   ruling: 'sunnah',

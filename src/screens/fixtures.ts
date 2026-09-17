@@ -114,6 +114,8 @@ export const itemFixture: ItemDetail = {
 
 export const missingItemFixture: ItemDetail | null = null
 
+export const memoriseHrefFixture = '/item/memorise/dua-leaving-home'
+
 export const moreFixture: MoreScreenProps = {
   locationLabel: 'Toronto, Ontario, Canada',
   locationHref: '/location',

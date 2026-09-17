@@ -99,6 +99,18 @@ export const strings = {
     importFailed: 'That file could not be read.',
     shareFailed: 'Sharing is not available on this device.',
   },
+  memorise: {
+    title: 'Learn it',
+    start: 'Practise',
+    hide: 'Hide one more',
+    known: 'I know this',
+    knownDetail: 'It stays in the Library. It stops appearing in reminders.',
+    notKnown: 'Still learning',
+    noAudio: 'No recitation yet for this one.',
+    play: 'Play',
+    stop: 'Stop',
+    loop: 'Repeat',
+  },
   moonSighting: {
     title: 'Moon sighting',
     explanation:

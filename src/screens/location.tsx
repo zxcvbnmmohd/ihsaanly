@@ -1,6 +1,7 @@
-import { ScrollView, Text, TextInput, useColorScheme, View } from 'react-native';
+import { Text, TextInput, useColorScheme, View } from 'react-native';
 
 import { Row } from '@/components/row';
+import { Screen } from '@/components/screen';
 import type { Place } from '@/location/place';
 import { strings } from '@/strings';
 import { colors } from '@/theme/colors';
@@ -29,7 +30,7 @@ export function LocationScreen({
   useColorScheme();
 
   return (
-    <ScrollView contentContainerClassName="gap-4 p-4" contentInsetAdjustmentBehavior="automatic">
+    <Screen className="gap-4 p-4">
       <Text className="text-sm" style={{ color: colors.secondaryLabel }}>
         {strings.location.explanation}
       </Text>
@@ -67,6 +68,6 @@ export function LocationScreen({
       <Text className="text-xs" style={{ color: colors.secondaryLabel }}>
         {strings.location.attribution}
       </Text>
-    </ScrollView>
+    </Screen>
   );
 }

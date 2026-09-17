@@ -1,8 +1,8 @@
 import type { Href } from 'expo-router';
-import { ScrollView } from 'react-native';
 
 import { EmptyState } from '@/components/empty-state';
 import { Row } from '@/components/row';
+import { Screen } from '@/components/screen';
 import type { Ruling } from '@/content/schema';
 import { strings } from '@/strings';
 
@@ -23,7 +23,7 @@ export function LibraryScreen({ entries }: LibraryScreenProps) {
   }
 
   return (
-    <ScrollView contentContainerClassName="gap-3 p-4" contentInsetAdjustmentBehavior="automatic">
+    <Screen className="gap-3 p-4">
       {entries.map((entry) => (
         <Row
           key={entry.id}
@@ -32,6 +32,6 @@ export function LibraryScreen({ entries }: LibraryScreenProps) {
           detail={strings.ruling[entry.ruling]}
         />
       ))}
-    </ScrollView>
+    </Screen>
   );
 }

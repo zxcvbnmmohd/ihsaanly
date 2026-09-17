@@ -1,26 +1,18 @@
-import { ScrollView } from 'react-native';
-
-import { Row } from '@/components/row';
 import { usePlace } from '@/location/store';
 import { useCalculationPreferences } from '@/prayer/store';
+import { MoreScreen } from '@/screens/more';
 import { strings } from '@/strings';
 
-export default function More() {
+export default function MoreRoute() {
   const place = usePlace();
   const calculation = useCalculationPreferences();
 
   return (
-    <ScrollView contentContainerClassName="gap-3 p-4" contentInsetAdjustmentBehavior="automatic">
-      <Row
-        href="/location"
-        title={strings.location.title}
-        detail={place?.label ?? strings.location.notSet}
-      />
-      <Row
-        href="/calculation"
-        title={strings.calculation.title}
-        detail={strings.asr[calculation.asr]}
-      />
-    </ScrollView>
+    <MoreScreen
+      locationHref="/location"
+      locationLabel={place?.label ?? strings.location.notSet}
+      calculationHref="/calculation"
+      calculationLabel={strings.asr[calculation.asr]}
+    />
   );
 }

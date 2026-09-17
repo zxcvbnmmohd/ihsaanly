@@ -1,7 +1,7 @@
 import { BlurView } from 'expo-blur';
 import { GlassView, isGlassEffectAPIAvailable, isLiquidGlassAvailable } from 'expo-glass-effect';
 import { useEffect, useState, type ReactNode } from 'react';
-import { AccessibilityInfo, useColorScheme, View, type ViewStyle } from 'react-native';
+import { AccessibilityInfo, useColorScheme, View, type ViewProps } from 'react-native';
 
 import { colors } from '@/theme/colors';
 
@@ -23,7 +23,7 @@ export function Surface({
   interactive = false,
 }: {
   children?: ReactNode;
-  style?: ViewStyle;
+  style?: ViewProps['style'];
   interactive?: boolean;
 }) {
   const [reduceTransparency, setReduceTransparency] = useState(false);
@@ -42,7 +42,7 @@ export function Surface({
 
   // Never clip a GlassView from the outside — it clips itself, and overflow
   // hidden cuts off the rim highlight and press bulge.
-  const base: ViewStyle = { borderCurve: 'continuous', ...style };
+  const base: ViewProps['style'] = [{ borderCurve: 'continuous' }, style];
 
   if (reduceTransparency || process.env.EXPO_OS === 'android' || process.env.EXPO_OS === 'web') {
     return (

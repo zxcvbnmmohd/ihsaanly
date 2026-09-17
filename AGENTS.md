@@ -29,6 +29,21 @@ Run lint and typecheck before declaring any task done.
 - Import `Link`, `router`, and `useLocalSearchParams` from `expo-router`.
 - Docs: https://docs.expo.dev/router/introduction.md
 
+## Screens and routes are separate
+
+A file in `src/app/` is a **route**: it gathers data, owns hooks, stores, navigation
+and side effects, and renders a screen component. It contains no markup beyond that.
+
+A file in `src/screens/` is a **screen**: a pure presentational component whose entire
+input is its props. No stores, no data hooks, no router calls, no fetching. Every prop
+type is exported so the screen can be rendered with real data or with mock data.
+
+`src/screens/fixtures.ts` holds sample props for each screen, which also type-check the
+prop contracts. Add a fixture whenever you add a screen.
+
+This exists so screens can be exercised in tests and showcases without a device,
+a database or a navigator.
+
 ## Building with EAS
 
 Use EAS to build, sign, and submit the app in the cloud (`eas build`, `eas submit`) and to ship over-the-air updates (`eas update`) — no local Xcode or Android Studio required. Run EAS CLI as `bunx eas-cli <command>` in Bun projects, or `npx eas-cli@latest <command>` otherwise; substitute that for bare `eas` in docs examples.

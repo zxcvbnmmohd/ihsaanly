@@ -56,6 +56,11 @@ real content with its evidence attached.
   and nothing downstream can tell which. Declining the permission is a supported
   path, not a dead end: search 7,329 cities offline instead. Coordinates are used
   on-device to derive prayer windows and are never transmitted.
+- **Screens separated from routes** — routes in `src/app/` own data, hooks,
+  navigation and side effects; screens in `src/screens/` are pure presentational
+  components driven entirely by exported props. `src/screens/fixtures.ts` supplies
+  mock props for each, so a screen can be rendered without a device, a database or
+  a navigator.
 - **Prayer windows** — computed on-device from coordinates, never shown as clock
   times. Today names the part of the day you are in. Asr opinion, high-latitude
   rule and calculation method are all adjustable in settings; Asr defaults to the
@@ -79,6 +84,12 @@ real content with its evidence attached.
 - Six `expo-*` packages brought to the patch versions the SDK expects. `expo-doctor`
   was already failing on this beforehand.
 - `bun run check` now runs lint, typecheck, tests, content validation and doctor.
+
+### Fixed
+
+- `Surface` failed to typecheck against React Native 0.88, whose exported
+  `ViewStyle` includes web position values that component style props reject.
+  It now types its style prop from `ViewProps` and composes with an array.
 
 ### Removed
 

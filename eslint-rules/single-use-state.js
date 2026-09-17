@@ -2,30 +2,30 @@
  * One `useState` per file, holding a single object typed by a local `State`
  * interface, destructured as `state` / `setState`:
  *
- *   interface State {
+ *   interface Thing {
  *     query: string;
  *     declined: boolean;
  *   }
  *
- *   const [thing, setThing] = useState<State>({ query: '', declined: false });
+ *   const [thing, setThing] = useState<Thing>({ query: '', declined: false });
  *
  * Scattered or loosely typed state hooks drift out of sync and hide what a
  * component actually holds. The shape always has a name, even when it holds
  * one field, so adding a second field never requires restructuring.
  */
-const STATE_TYPE = 'State';
+const THING_TYPE = 'Thing';
 
 module.exports = {
   meta: {
     type: 'suggestion',
-    docs: { description: 'Require a single `useState<State>` per file' },
+    docs: { description: 'Require a single `useState<Thing>` per file' },
     schema: [],
     messages: {
       multiple:
-        'Only one useState per file. Combine them into one object: interface State { … } and useState<State>({ … }).',
-      untyped: 'useState needs an explicit type argument: useState<State>({ … }).',
-      notStateInterface:
-        'useState must be typed by a local `State` interface, even for a single field: interface State { … } and useState<State>({ … }).',
+        'Only one useState per file. Combine them into one object: interface Thing { … } and useState<Thing>({ … }).',
+      untyped: 'useState needs an explicit type argument: useState<Thing>({ … }).',
+      notThingInterface:
+        'useState must be typed by a local `Thing` interface, even for a single field: interface Thing { … } and useState<Thing>({ … }).',
       naming: 'Destructure useState as `const [thing, setThing]`.',
     },
   },
@@ -48,9 +48,9 @@ module.exports = {
         } else if (
           argument.type !== 'TSTypeReference' ||
           argument.typeName.type !== 'Identifier' ||
-          argument.typeName.name !== STATE_TYPE
+          argument.typeName.name !== THING_TYPE
         ) {
-          context.report({ node, messageId: 'notStateInterface' });
+          context.report({ node, messageId: 'notThingInterface' });
         }
 
         const declarator = node.parent;

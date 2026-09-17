@@ -51,12 +51,12 @@ Enforced by lint, so a violation fails `bun run check`.
 - **One `useState` per file**, holding a single typed object:
 
   ```ts
-  interface State {
+  interface Thing {
     query: string;
     declined: boolean;
   }
 
-  const [thing, setThing] = useState<State>({ query: '', declined: false });
+  const [thing, setThing] = useState<Thing>({ query: '', declined: false });
   ```
 
   Read it as `thing.query`, update it as `setThing((current) => ({ ...current, query }))`.

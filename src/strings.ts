@@ -111,6 +111,18 @@ export const strings = {
     stop: 'Stop',
     loop: 'Repeat',
   },
+  language: {
+    title: 'Language',
+    restart: 'Arabic reads right to left. Restart the app to see the layout change.',
+    incomplete:
+      'A language appears here only once its content is complete and reviewed. Nothing is machine-translated.',
+    names: {
+      'en-CA': 'English (Canada)',
+      'en-GB': 'English (UK)',
+      'en-US': 'English (US)',
+      ar: 'العربية',
+    } as Record<string, string>,
+  },
   moonSighting: {
     title: 'Moon sighting',
     explanation:

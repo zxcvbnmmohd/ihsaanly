@@ -130,6 +130,8 @@ export const moreFixture: MoreScreenProps = {
   eventsHref: '/events',
   historyHref: '/history',
   dataHref: '/data',
+  languageHref: '/language',
+  languageLabel: 'English (Canada)',
 }
 
 export const hijriFixture: HijriScreenProps = {

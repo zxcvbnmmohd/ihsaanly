@@ -127,6 +127,7 @@ module.exports = [
       'src/plan/{plan,day-match,signals,user-state,quiet-hours,notification-preferences,history}.ts',
       'src/data/bundle.ts',
       'src/memorise/reveal.ts',
+      'src/i18n/locale.ts',
       'src/assert-never.ts',
     ],
     rules: {

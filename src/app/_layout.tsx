@@ -3,12 +3,17 @@ import { DarkTheme, DefaultTheme, ThemeProvider } from 'expo-router/react-naviga
 import { NativeTabs } from 'expo-router/native-tabs'
 import { Text, useColorScheme, View } from 'react-native'
 
+import { setContentLanguage } from '@/content'
+import { languageOf } from '@/i18n/locale'
+import { getLocale } from '@/i18n/store'
 import { OnboardingFlow } from '@/onboarding/flow'
 import { useOnboarding } from '@/onboarding/store'
 import { strings } from '@/strings'
 import { colors } from '@/theme/colors'
 
 import '../../global.css'
+
+setContentLanguage(languageOf(getLocale()))
 
 /**
  * Expo Router renders this instead of a white screen when a render throws.

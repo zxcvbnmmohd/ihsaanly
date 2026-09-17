@@ -179,3 +179,31 @@ function currentVersion(): number {
 export function useEventVersion(): number {
   return useSyncExternalStore(subscribe, currentVersion)
 }
+
+import type { LoggedAction } from '@/plan/history'
+
+export function allActions(): LoggedAction[] {
+  return attempt(
+    'allActions',
+    () =>
+      database.getAllSync<LoggedAction>(
+        `SELECT kind, subject, at, log_day AS logDay, delta_seconds AS deltaSeconds
+         FROM events ORDER BY id ASC`,
+      ),
+    [],
+  )
+}
+
+let actionsCache: Cached<LoggedAction[]> | null = null
+
+function actionsSnapshot(): LoggedAction[] {
+  if (actionsCache && actionsCache.version === version) return actionsCache.value
+
+  const value = allActions()
+  actionsCache = { version, value }
+  return value
+}
+
+export function useActions(): LoggedAction[] {
+  return useSyncExternalStore(subscribe, actionsSnapshot)
+}

@@ -29,6 +29,7 @@ export default function MoreRoute(): ReactElement {
       moonSightingHref="/moon-sighting"
       notificationsHref="/notifications"
       eventsHref="/events"
+      historyHref="/history"
       trackingLabel={tracking.length > 0 ? tracking.join(', ') : strings.tracking.title}
     />
   )

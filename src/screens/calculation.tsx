@@ -1,3 +1,4 @@
+import type { ReactElement, ReactNode } from 'react';
 import { Text, useColorScheme, View } from 'react-native';
 
 import { Row } from '@/components/row';
@@ -16,15 +17,13 @@ export interface CalculationScreenProps {
   onChange: (change: Partial<CalculationPreferences>) => void;
 }
 
-function Section({
-  title,
-  footnote,
-  children,
-}: {
+interface SectionProps {
   title: string;
   footnote?: string;
-  children: React.ReactNode;
-}) {
+  children: ReactNode;
+}
+
+function Section({ title, footnote, children }: SectionProps): ReactElement {
   useColorScheme();
 
   return (
@@ -42,7 +41,7 @@ function Section({
   );
 }
 
-export function CalculationScreen({ preferences, onChange }: CalculationScreenProps) {
+export function CalculationScreen({ preferences, onChange }: CalculationScreenProps): ReactElement {
   useColorScheme();
 
   return (

@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import type { Href } from 'expo-router';
 import { Text, useColorScheme, View } from 'react-native';
 
@@ -15,7 +16,12 @@ export interface TodayScreenProps {
   locationHref: Href;
 }
 
-export function TodayScreen({ hasLocation, window, hijri, locationHref }: TodayScreenProps) {
+export function TodayScreen({
+  hasLocation,
+  window,
+  hijri,
+  locationHref,
+}: TodayScreenProps): ReactElement {
   useColorScheme();
 
   if (!hasLocation) {

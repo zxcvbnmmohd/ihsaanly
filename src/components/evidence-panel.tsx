@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import { Text, useColorScheme, View } from 'react-native';
 
 import type { Evidence } from '@/content/schema';
@@ -16,7 +17,11 @@ function citationFor(evidence: Evidence): string {
   return `${evidence.collection} ${evidence.reference} · ${grading}${attribution}`;
 }
 
-export function EvidencePanel({ evidence }: { evidence: Evidence[] }) {
+interface EvidencePanelProps {
+  evidence: Evidence[];
+}
+
+export function EvidencePanel({ evidence }: EvidencePanelProps): ReactElement {
   useColorScheme();
 
   return (

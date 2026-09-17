@@ -1,5 +1,6 @@
 import {
   CalculationMethod,
+  CalculationParameters,
   Coordinates,
   HighLatitudeRule,
   Madhab,
@@ -20,7 +21,7 @@ const HIGH_LATITUDE_RULE = {
   twilightangle: HighLatitudeRule.TwilightAngle,
 } as const;
 
-function parametersFrom(preferences: CalculationPreferences) {
+function parametersFrom(preferences: CalculationPreferences): CalculationParameters {
   const parameters = CalculationMethod[preferences.method]();
   parameters.madhab = MADHAB[preferences.asr];
   parameters.highLatitudeRule = HIGH_LATITUDE_RULE[preferences.highLatitudeRule];

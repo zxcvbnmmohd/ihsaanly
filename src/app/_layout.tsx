@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import { DarkTheme, DefaultTheme, ThemeProvider } from 'expo-router/react-navigation';
 import { NativeTabs } from 'expo-router/unstable-native-tabs';
 import { Text, useColorScheme, View } from 'react-native';
@@ -11,7 +12,12 @@ import '../../global.css';
  * Expo Router renders this instead of a white screen when a render throws.
  * Without it, release builds show nothing and the cause is invisible.
  */
-export function ErrorBoundary({ error, retry }: { error: Error; retry: () => Promise<void> }) {
+interface ErrorBoundaryProps {
+  error: Error;
+  retry: () => Promise<void>;
+}
+
+export function ErrorBoundary({ error, retry }: ErrorBoundaryProps): ReactElement {
   return (
     <View className="flex-1 items-center justify-center gap-3 p-6">
       <Text className="text-xl font-semibold" style={{ color: colors.label }}>
@@ -30,7 +36,7 @@ export function ErrorBoundary({ error, retry }: { error: Error; retry: () => Pro
   );
 }
 
-export default function RootLayout() {
+export default function RootLayout(): ReactElement {
   const colorScheme = useColorScheme();
 
   return (

@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import { Link, type Href } from 'expo-router';
 import { Pressable, Text, useColorScheme, View } from 'react-native';
 
@@ -13,7 +14,7 @@ interface RowProps {
   selected?: boolean;
 }
 
-export function Row({ title, detail, href, onPress, selected }: RowProps) {
+export function Row({ title, detail, href, onPress, selected }: RowProps): ReactElement {
   useColorScheme();
 
   const body = (

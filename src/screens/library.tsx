@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import type { Href } from 'expo-router';
 
 import { EmptyState } from '@/components/empty-state';
@@ -17,7 +18,7 @@ export interface LibraryScreenProps {
   entries: LibraryEntry[];
 }
 
-export function LibraryScreen({ entries }: LibraryScreenProps) {
+export function LibraryScreen({ entries }: LibraryScreenProps): ReactElement {
   if (entries.length === 0) {
     return <EmptyState message={strings.library.empty} />;
   }

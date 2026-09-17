@@ -18,7 +18,7 @@ export function createPreferenceStore<T>(
   let loaded = false;
   const listeners = new Set<() => void>();
 
-  const get = () => {
+  const get = (): T => {
     if (!loaded) {
       current = readPreference(key, schema) ?? fallback;
       loaded = true;
@@ -26,14 +26,16 @@ export function createPreferenceStore<T>(
     return current;
   };
 
-  const subscribe = (listener: () => void) => {
+  const subscribe = (listener: () => void): (() => void) => {
     listeners.add(listener);
-    return () => listeners.delete(listener);
+    return (): void => {
+      listeners.delete(listener);
+    };
   };
 
   return {
     get,
-    set: (value: T) => {
+    set: (value: T): void => {
       writePreference(key, value);
       current = value;
       loaded = true;

@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import type { ReactNode } from 'react';
 import { ScrollView } from 'react-native';
 
@@ -6,7 +7,12 @@ import { ScrollView } from 'react-native';
  * iOS-only, so anything Android needs to do differently belongs here rather
  * than in each screen.
  */
-export function Screen({ children, className }: { children: ReactNode; className?: string }) {
+interface ScreenProps {
+  children: ReactNode;
+  className?: string;
+}
+
+export function Screen({ children, className }: ScreenProps): ReactElement {
   return (
     <ScrollView
       contentInsetAdjustmentBehavior="automatic"

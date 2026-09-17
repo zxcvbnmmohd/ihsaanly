@@ -1,9 +1,10 @@
+import type { ReactElement } from 'react';
 import { useHijriDate } from '@/hijri/use-hijri-date';
 import { usePlace } from '@/location/store';
 import { useCurrentWindow } from '@/prayer/use-current-window';
 import { TodayScreen } from '@/screens/today';
 
-export default function TodayRoute() {
+export default function TodayRoute(): ReactElement {
   const place = usePlace();
   const window = useCurrentWindow();
   const hijri = useHijriDate();

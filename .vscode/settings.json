@@ -1,0 +1,21 @@
+{
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": { "source.fixAll.eslint": "explicit" },
+
+  // Tailwind 4 is CSS-first, so IntelliSense needs the stylesheet, not a config file.
+  "tailwindCSS.experimental.configFile": "./global.css",
+  // React Native has no `class` attribute, so point IntelliSense at the className
+  // props NativeWind actually supports.
+  "tailwindCSS.classAttributes": [
+    "className",
+    "contentContainerClassName",
+    "columnWrapperClassName",
+    "ListHeaderComponentClassName",
+    "ListFooterComponentClassName"
+  ],
+  "tailwindCSS.includeLanguages": { "typescriptreact": "javascript" },
+
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true
+}

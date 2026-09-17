@@ -1,0 +1,18 @@
+#!/bin/sh
+# Versioned git hook — no husky or lint-staged needed. Enable once per clone:
+#   git config core.hooksPath .githooks
+set -e
+
+staged() {
+  git diff --cached --name-only --diff-filter=ACMR | grep -E "$1" || true
+}
+
+formattable=$(staged '\.(ts|tsx|js|mjs|json|css|md)$')
+lintable=$(staged '\.(ts|tsx|js|mjs)$')
+[ -z "$formattable" ] && exit 0
+
+echo "$formattable" | xargs bunx prettier --write --log-level warn
+[ -n "$lintable" ] && echo "$lintable" | xargs bunx eslint --fix
+echo "$formattable" | xargs git add
+
+bunx tsc --noEmit

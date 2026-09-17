@@ -1,0 +1,7 @@
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/preflight.css' layer(base);
+@import 'tailwindcss/utilities.css';
+@import 'nativewind/theme';
+
+/* Tailwind 4 is CSS-first — theme customisation goes in an @theme block here,
+   not in a tailwind.config.js (NativeWind v5 doesn't read one). */

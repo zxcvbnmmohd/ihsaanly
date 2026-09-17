@@ -1,0 +1,47 @@
+{
+  "expo": {
+    "name": "ihsaanly",
+    "slug": "ihsaanly",
+    "scheme": "ihsaanly",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.ihsaanly.app"
+    },
+    "android": {
+      "package": "com.ihsaanly.app",
+      "predictiveBackGestureEnabled": true
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static"
+    },
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    },
+    "plugins": [
+      [
+        "expo-widgets",
+        {
+          "widgets": [
+            {
+              "name": "CounterWidget",
+              "contentMarginsDisabled": true,
+              "displayName": "Counter Widget",
+              "description": "A sample counter home screen widget",
+              "supportedFamilies": ["systemSmall", "systemMedium"]
+            }
+          ]
+        }
+      ],
+      "expo-asset",
+      "expo-router",
+      "expo-status-bar",
+      "expo-image",
+      "expo-font"
+    ]
+  }
+}

@@ -111,6 +111,16 @@ permission. Your practice is recorded on your device and stays there.
 | Offline  | Often partial       | Usually               | Completely            |
 | Data     | Accounts, analytics | Accounts, analytics   | Stays on device       |
 
+## Store listing metadata
+
+- **Category:** Lifestyle (Reference is the alternative; Lifestyle matches daily use)
+- **Age rating:** 4+ / Everyone. No user content, no ads, no external links in the core loop.
+- **Privacy labels:** Data is _not_ collected. One disclosure is required: a
+  user-initiated diagnostic report can transmit religious practice data and
+  approximate location. It must be declared even though it only happens on a tap.
+- **Privacy policy:** `docs/legal/privacy-policy.md` — needs hosting and a support email
+- **Support page:** `docs/legal/support.md` — same
+
 ## Launch prerequisites
 
 Marketing cannot run ahead of these.

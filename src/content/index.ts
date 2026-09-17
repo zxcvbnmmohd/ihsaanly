@@ -13,12 +13,20 @@ export function itemById(id: string): Item | undefined {
   return items.find((item) => item.id === id)
 }
 
-/** Replaced by locale-aware resolution in #19. */
-export const CURRENT_LANGUAGE = 'en'
+let currentLanguage = 'en'
+
+/** Set once at startup from the chosen locale; content is keyed by language. */
+export function setContentLanguage(language: string): void {
+  currentLanguage = language
+}
+
+export function contentLanguage(): string {
+  return currentLanguage
+}
 
 export function resolveText(
   field: Record<string, string> | null | undefined,
-  locale: string = CURRENT_LANGUAGE,
+  locale: string = currentLanguage,
 ): string | null {
   if (!field) return null
   const language = locale.split('-')[0] ?? locale

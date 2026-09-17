@@ -1,9 +1,12 @@
+import { useEffect } from 'react'
+
 import { items } from '@/content'
 import { civilDateIn, shiftDays } from '@/day/boundaries'
 import { toHijri } from '@/hijri/calendar'
 import { useHijriOffset } from '@/hijri/store'
 import { usePlace } from '@/location/store'
 import { useCalculationPreferences } from '@/prayer/store'
+import { runRollover, useTodayMarks } from '@/prayer/marks'
 import { prayerTimesAcross } from '@/prayer/times'
 import { useNow } from '@/time/use-now'
 
@@ -30,6 +33,11 @@ export function usePlan(): Plan | null {
   const preferences = useCalculationPreferences()
   const hijriOffset = useHijriOffset()
   const now = useNow()
+  const prayedToday = useTodayMarks(place?.timeZone ?? 'UTC', now)
+
+  useEffect(() => {
+    if (place) runRollover(place, preferences, new Date())
+  }, [place, preferences])
 
   if (!place) return null
 
@@ -42,9 +50,9 @@ export function usePlan(): Plan | null {
     upcoming: Array.from({ length: LOOK_AHEAD_DAYS }, (_, index) =>
       dayContextFor(now, place.timeZone, index + 1, hijriOffset),
     ),
-    // Marking prayers lands in #9, contextual events in #15, the manual
-    // switches in #10 and the enabled set in #13.
-    prayedToday: {},
+    prayedToday,
+    // Contextual events land in #15, the manual switches in #10 and the
+    // enabled set in #13.
     activeEvents: [],
     userState: { travelling: false, trackingPaused: false },
     preferences: {

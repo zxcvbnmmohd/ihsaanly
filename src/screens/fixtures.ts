@@ -29,6 +29,16 @@ export const todayFixture: TodayScreenProps = {
       href: '/item/fast-white-days',
     },
   ],
+  prayers: [
+    { prayer: 'fajr', done: true },
+    { prayer: 'dhuhr', done: true },
+    { prayer: 'asr', done: false },
+    { prayer: 'maghrib', done: false },
+    { prayer: 'isha', done: false },
+  ],
+  qada: [{ prayer: 'fajr', count: 2 }],
+  onMarkPrayer: noop,
+  onMakeUp: noop,
   locationHref: '/location',
 }
 
@@ -40,6 +50,8 @@ export const todayWithoutLocationFixture: TodayScreenProps = {
   rightNow: null,
   context: [],
   comingUp: [],
+  prayers: [],
+  qada: [],
 }
 
 export const libraryFixture: LibraryScreenProps = {

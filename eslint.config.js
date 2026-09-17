@@ -122,9 +122,9 @@ module.exports = [
       'src/content/**',
       'src/day/**',
       'src/hijri/calendar.ts',
-      'src/prayer/{calculation,times,windows}.ts',
+      'src/prayer/{calculation,times,windows,qada}.ts',
       'src/location/{place,cities}.ts',
-      'src/plan/**',
+      'src/plan/{plan,day-match,signals}.ts',
       'src/assert-never.ts',
     ],
     rules: {

@@ -71,6 +71,16 @@ real content with its evidence attached.
   components driven entirely by exported props. `src/screens/fixtures.ts` supplies
   mock props for each, so a screen can be rendered without a device, a database or
   a navigator.
+- **Marking prayers, and the sunnah that follows.** Tapping to say a prayer was
+  performed reveals the sunnah attached to it. Marks are persisted against the
+  local calendar day.
+- **An append-only event log.** Nothing is ever updated or deleted, so a make-up
+  is a new fact rather than an erased one. Each entry records what, when, the
+  window it belonged to, and a signed offset saying how early or late it was.
+- **Make-up shown as a count per prayer**, never as a dated list. A prayer
+  accrues only once its window has closed unmarked, and nothing is backfilled
+  before the first run — installing the app does not hand someone a debt they
+  never agreed to track.
 - **The decision function** — one pure function takes a snapshot of the world
   and returns everything the product decides: what is relevant right now, what
   is nearby, what is coming, and the notification schedule. It touches no clock,

@@ -15,6 +15,20 @@ const MIGRATIONS = [
      key TEXT PRIMARY KEY NOT NULL,
      value TEXT NOT NULL
    ) STRICT;`,
+  // Append-only. Nothing here is ever updated or deleted, so the record stays
+  // auditable and a make-up is a new fact rather than an erased one.
+  `CREATE TABLE events (
+     id INTEGER PRIMARY KEY AUTOINCREMENT,
+     kind TEXT NOT NULL,
+     subject TEXT NOT NULL,
+     at INTEGER NOT NULL,
+     log_day TEXT NOT NULL,
+     window_start INTEGER,
+     window_end INTEGER,
+     delta_seconds INTEGER
+   );
+   CREATE INDEX events_log_day ON events (log_day);
+   CREATE INDEX events_kind ON events (kind);`,
 ]
 
 function databaseDirectory(): string | undefined {

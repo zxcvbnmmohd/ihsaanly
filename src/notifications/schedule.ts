@@ -1,3 +1,4 @@
+import Constants, { ExecutionEnvironment } from 'expo-constants'
 import { Platform } from 'react-native'
 
 export interface NotificationContent {
@@ -30,7 +31,19 @@ function isUsable(api: Partial<NotificationsApi>): api is NotificationsApi {
   )
 }
 
+/**
+ * Expo Go does not ship the native side of expo-notifications, and importing it
+ * there throws inside the library's own module evaluation — logged by Metro
+ * whether or not we handle it. Not attempting the import keeps that noise out
+ * of a log where it would only distract from a real problem.
+ */
+function isExpoGo(): boolean {
+  return Constants.executionEnvironment === ExecutionEnvironment.StoreClient
+}
+
 async function notifications(): Promise<NotificationsApi | null> {
+  if (isExpoGo()) return null
+
   try {
     const api = (await import('expo-notifications')) as Partial<NotificationsApi>
     return isUsable(api) ? api : null

@@ -42,6 +42,7 @@
           ]
         }
       ],
+      "./plugins/with-android-theme-recreation.js",
       "expo-asset",
       "expo-router",
       "expo-status-bar",

@@ -140,9 +140,13 @@ A Tailwind class like `bg-white` throws all of that away. Do not add a colour
 palette to `@theme` in `global.css`.
 
 Any component that renders a `colors.*` value must call `useColorScheme()` in its
-body. On Android these colours don't re-resolve on their own, and React Compiler
-is enabled, so without the subscription a memoized component keeps stale colours
-when the theme flips.
+body. Verified on a device: on Android these are not PlatformColors. expo-router
+resolves each Material colour in JavaScript, synchronously, from
+`Appearance.getColorScheme()` at the moment the property is read, so `colors` is
+an object of getters and the re-render is what re-reads them. Never copy a
+`colors.*` value into a module-level constant; it freezes at import time. React
+Compiler is enabled, so without the subscription a memoized component keeps
+stale colours when the theme flips.
 
 ### A development build is required, not Expo Go
 
@@ -203,13 +207,33 @@ joins `SHIPPED` only once every string is complete and reviewed.
 express a brand hue. Pick one with `paletteFor(useColorScheme())`. Today stays
 undecorated, as the spec asks, so nothing there reads a palette.
 
-### The theme override is one call
+### The theme override recreates the Android activity
 
 `src/theme/store.ts` persists System / Light / Dark and applies it with
 `Appearance.setColorScheme`, at module scope in the root layout and again in
-its setter. Every `PlatformColor` follows it, so there is no second colour
-path to keep in sync. In this React Native release the reset value is
-`'auto'`, not `null`.
+its setter. In this React Native release the reset value is `'auto'`, not
+`null`. Read the scheme through `useEffectiveColorScheme()`, never
+`useColorScheme()` alone: on Android the native module keeps reporting the
+system scheme after an override.
+
+Verified on a device: with Expo's default setup the override never reaches
+the activity's resources, live or on cold start, so every `PlatformColor` keeps
+the system scheme. Two things make it work, and both must stay:
+
+- `plugins/with-android-theme-recreation.js` removes `uiMode` from
+  MainActivity's `configChanges`, so AppCompat recreates the activity on a
+  night-mode change the way most Android apps do. A theme switch therefore
+  restarts the screen on Android; iOS re-resolves dynamic colours in place.
+- `expo-system-ui` is deliberately **not installed**. Its Android lifecycle
+  listener calls `setDefaultNightMode` from the static `userInterfaceStyle` on
+  every activity creation, which undoes the override on that recreation.
+  `userInterfaceStyle: automatic` in `app.json` still sets the iOS plist key
+  and the Android theme already follows the system without the package.
+
+With an override stored, a cold start renders once in the system scheme and
+then recreates, because JavaScript applies the preference after the activity
+exists. Persisting it natively would remove that flash and needs a native
+module; not done.
 
 ### Fonts are bundled by the config plugin
 

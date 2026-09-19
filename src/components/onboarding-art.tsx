@@ -39,24 +39,24 @@ const GRID = [0.3, 0.55, 0.3, 0.55, 1, 0.55, 0.3, 0.55, 0.3]
 export function OnboardingArt({ variant, color, onColor }: OnboardingArtProps): ReactElement {
   if (variant === 'how') {
     return (
-      <View className="items-center justify-center" style={{ width: 168, height: 168 }}>
+      <View className="items-center justify-center" style={{ width: 208, height: 208 }}>
         <View style={{ position: 'absolute' }}>
-          <Star size={168} color={color} hollow />
+          <Star size={208} color={color} hollow />
         </View>
         <View
           className="items-center justify-center rounded-full"
-          style={{ width: 44, height: 44, backgroundColor: color }}>
-          <Text style={{ color: onColor, fontSize: 22 }}>✓</Text>
+          style={{ width: 52, height: 52, backgroundColor: color }}>
+          <Text style={{ color: onColor, fontSize: 26 }}>✓</Text>
         </View>
       </View>
     )
   }
 
   return (
-    <View className="flex-row flex-wrap justify-center" style={{ width: 174 }}>
+    <View className="flex-row flex-wrap justify-center" style={{ width: 228 }}>
       {GRID.map((opacity, index) => (
-        <View key={index} style={{ padding: 5 }}>
-          <Star size={48} color={color} hollow={index % 2 === 0 && index !== 4} opacity={opacity} />
+        <View key={index} style={{ padding: 6 }}>
+          <Star size={64} color={color} hollow={index % 2 === 0 && index !== 4} opacity={opacity} />
         </View>
       ))}
     </View>

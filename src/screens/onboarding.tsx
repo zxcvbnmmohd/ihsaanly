@@ -24,7 +24,7 @@ import type { NotificationPreferences } from '@/plan/notification-preferences'
 import { useStrings } from '@/strings'
 import { colors, paletteFor, type Palette } from '@/theme/colors'
 import { fonts } from '@/theme/fonts'
-import { THEME_PREFERENCES, type ThemePreference } from '@/theme/store'
+import { THEME_PREFERENCES, useEffectiveColorScheme, type ThemePreference } from '@/theme/store'
 
 export type OnboardingStep = 'welcome' | 'how' | 'location' | 'you' | 'reminders' | 'start'
 export type StarterPreset = 'essentials' | 'everything'
@@ -325,8 +325,8 @@ function StepBody(props: StepBodyProps): ReactElement {
 
 export function OnboardingScreen(props: OnboardingScreenProps): ReactElement {
   const strings = useStrings()
-  const scheme = useColorScheme()
-  const palette = paletteFor(scheme)
+  useColorScheme()
+  const palette = paletteFor(useEffectiveColorScheme())
   const insets = useSafeAreaInsets()
   const reduceMotion = useReducedMotion()
 

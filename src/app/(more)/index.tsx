@@ -1,5 +1,6 @@
 import type { ReactElement } from 'react'
 import { useHijriOffset } from '@/hijri/store'
+import { supportedLanguageOf } from '@/i18n/locale'
 import { useLocale } from '@/i18n/store'
 import { useUserState } from '@/plan/user-state-store'
 import { usePlace } from '@/location/store'
@@ -37,7 +38,7 @@ export default function MoreRoute(): ReactElement {
       historyHref="/history"
       dataHref="/data"
       languageHref="/language"
-      languageLabel={strings.language.names[locale] ?? locale}
+      languageLabel={strings.language.names[supportedLanguageOf(locale)]}
       appearanceHref="/appearance"
       appearanceLabel={strings.appearance[theme]}
       trackingLabel={tracking.length > 0 ? tracking.join(', ') : strings.tracking.title}

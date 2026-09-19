@@ -3,26 +3,26 @@ import { Text, useColorScheme } from 'react-native'
 
 import { Row } from '@/components/row'
 import { Screen } from '@/components/screen'
-import { SUPPORTED_LOCALES, type SupportedLocale } from '@/i18n/locale'
+import { SUPPORTED_LANGUAGES, type SupportedLanguage } from '@/i18n/locale'
 import { useStrings } from '@/strings'
 import { colors } from '@/theme/colors'
 
 export interface LanguageScreenProps {
-  locale: SupportedLocale
-  onSelect: (locale: SupportedLocale) => void
+  language: SupportedLanguage
+  onSelect: (language: SupportedLanguage) => void
 }
 
-export function LanguageScreen({ locale, onSelect }: LanguageScreenProps): ReactElement {
+export function LanguageScreen({ language, onSelect }: LanguageScreenProps): ReactElement {
   const strings = useStrings()
   useColorScheme()
 
   return (
     <Screen className="gap-4 p-4">
-      {SUPPORTED_LOCALES.map((option) => (
+      {SUPPORTED_LANGUAGES.map((option) => (
         <Row
           key={option}
-          title={strings.language.names[option] ?? option}
-          selected={locale === option}
+          title={strings.language.names[option]}
+          selected={language === option}
           onPress={() => onSelect(option)}
         />
       ))}

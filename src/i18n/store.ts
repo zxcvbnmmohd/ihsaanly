@@ -8,15 +8,21 @@ import { createPreferenceStore } from '@/storage/preference-store'
 import {
   isRightToLeft,
   languageOf,
+  localeForLanguage,
   resolveLocale,
   SUPPORTED_LOCALES,
+  type SupportedLanguage,
   type SupportedLocale,
 } from './locale'
 
 const Locale = z.enum(SUPPORTED_LOCALES)
 
+function deviceLocaleTags(): string[] {
+  return getLocales().map((locale) => locale.languageTag)
+}
+
 function deviceLocale(): SupportedLocale {
-  return resolveLocale(getLocales().map((locale) => locale.languageTag))
+  return resolveLocale(deviceLocaleTags())
 }
 
 const store = createPreferenceStore<SupportedLocale>('locale', Locale, deviceLocale())
@@ -39,8 +45,13 @@ export function applyDirection(locale: SupportedLocale): void {
 }
 
 /** Persist the choice, switch content, and ask for the matching layout direction. */
-export function chooseLocale(locale: SupportedLocale): void {
+function chooseLocale(locale: SupportedLocale): void {
   setLocale(locale)
   setContentLanguage(languageOf(locale))
   applyDirection(locale)
+}
+
+/** The user picks a language; the device decides which region's English. */
+export function chooseLanguage(language: SupportedLanguage): void {
+  chooseLocale(localeForLanguage(language, deviceLocaleTags()))
 }

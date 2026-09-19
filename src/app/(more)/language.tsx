@@ -1,10 +1,11 @@
 import type { ReactElement } from 'react'
 
-import { chooseLocale, useLocale } from '@/i18n/store'
+import { supportedLanguageOf } from '@/i18n/locale'
+import { chooseLanguage, useLocale } from '@/i18n/store'
 import { LanguageScreen } from '@/screens/language'
 
 export default function LanguageRoute(): ReactElement {
-  const locale = useLocale()
+  const language = supportedLanguageOf(useLocale())
 
-  return <LanguageScreen locale={locale} onSelect={chooseLocale} />
+  return <LanguageScreen language={language} onSelect={chooseLanguage} />
 }

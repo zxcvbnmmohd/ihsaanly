@@ -1,7 +1,8 @@
 import { useState, type ReactElement } from 'react'
 
 import { items } from '@/content'
-import { chooseLocale, useLocale } from '@/i18n/store'
+import { supportedLanguageOf } from '@/i18n/locale'
+import { chooseLanguage, useLocale } from '@/i18n/store'
 import { searchCities } from '@/location/cities'
 import { requestDeviceLocation } from '@/location/device'
 import type { Place } from '@/location/place'
@@ -86,7 +87,7 @@ export function OnboardingFlow(): ReactElement {
       step={step}
       stepIndex={thing.index}
       stepCount={STEPS.length}
-      locale={locale}
+      language={supportedLanguageOf(locale)}
       theme={theme}
       place={place}
       problem={thing.problem}
@@ -97,7 +98,7 @@ export function OnboardingFlow(): ReactElement {
       preset={enabled.length === items.length ? 'everything' : 'essentials'}
       itemCount={items.length}
       essentialCount={DEFAULT_ENABLED.length}
-      onSelectLocale={chooseLocale}
+      onSelectLanguage={chooseLanguage}
       onSelectTheme={setThemePreference}
       onQueryChange={(query) => setThing((current) => ({ ...current, query }))}
       onUseDevice={useDevice}

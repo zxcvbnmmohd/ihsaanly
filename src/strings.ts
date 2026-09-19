@@ -1,4 +1,4 @@
-import { languageOf } from '@/i18n/locale'
+import { languageOf, type SupportedLanguage } from '@/i18n/locale'
 import { getLocale, useLocale } from '@/i18n/store'
 
 /** Single source for user-facing text. Read it through useStrings() so it follows the locale. */
@@ -120,11 +120,9 @@ const en = {
     incomplete:
       'A language appears here only once its content is complete and reviewed. Nothing is machine-translated.',
     names: {
-      'en-CA': 'English (Canada)',
-      'en-GB': 'English (UK)',
-      'en-US': 'English (US)',
+      en: 'English',
       ar: 'العربية',
-    } as Record<string, string>,
+    } as Record<SupportedLanguage, string>,
   },
   appearance: {
     title: 'Appearance',

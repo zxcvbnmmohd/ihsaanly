@@ -17,7 +17,7 @@ import { ArabicText } from '@/components/arabic-text'
 import { Button } from '@/components/button'
 import { OnboardingArt } from '@/components/onboarding-art'
 import { Row } from '@/components/row'
-import { isRightToLeft, SUPPORTED_LOCALES, type SupportedLocale } from '@/i18n/locale'
+import { isRightToLeft, SUPPORTED_LANGUAGES, type SupportedLanguage } from '@/i18n/locale'
 import type { Place } from '@/location/place'
 import type { Gender } from '@/onboarding/store'
 import type { NotificationPreferences } from '@/plan/notification-preferences'
@@ -34,7 +34,7 @@ export interface OnboardingScreenProps {
   step: OnboardingStep
   stepIndex: number
   stepCount: number
-  locale: SupportedLocale
+  language: SupportedLanguage
   theme: ThemePreference
   place: Place | null
   problem: LocationProblem
@@ -45,7 +45,7 @@ export interface OnboardingScreenProps {
   preset: StarterPreset
   itemCount: number
   essentialCount: number
-  onSelectLocale: (locale: SupportedLocale) => void
+  onSelectLanguage: (language: SupportedLanguage) => void
   onSelectTheme: (theme: ThemePreference) => void
   onQueryChange: (query: string) => void
   onUseDevice: () => void
@@ -171,12 +171,12 @@ function StepBody(props: StepBodyProps): ReactElement {
           <Heading title={strings.onboarding.welcomeTitle} body={strings.onboarding.welcomeBody} />
           <Field label={strings.onboarding.language}>
             <View className="flex-row flex-wrap gap-2">
-              {SUPPORTED_LOCALES.map((option) => (
+              {SUPPORTED_LANGUAGES.map((option) => (
                 <Chip
                   key={option}
-                  label={strings.language.names[option] ?? option}
-                  selected={props.locale === option}
-                  onPress={() => props.onSelectLocale(option)}
+                  label={strings.language.names[option]}
+                  selected={props.language === option}
+                  onPress={() => props.onSelectLanguage(option)}
                   palette={palette}
                 />
               ))}
@@ -195,7 +195,7 @@ function StepBody(props: StepBodyProps): ReactElement {
               ))}
             </View>
           </Field>
-          {isRightToLeft(props.locale) ? (
+          {isRightToLeft(props.language) ? (
             <Text className="text-xs" style={{ color: colors.secondaryLabel }}>
               {strings.language.restart}
             </Text>

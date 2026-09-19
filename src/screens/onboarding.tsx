@@ -16,6 +16,7 @@ import { assertNever } from '@/assert-never'
 import { ArabicText } from '@/components/arabic-text'
 import { Button } from '@/components/button'
 import { OnboardingArt } from '@/components/onboarding-art'
+import { PlaceMap } from '@/components/place-map'
 import { Row } from '@/components/row'
 import { Surface } from '@/components/surface'
 import { TextField } from '@/components/text-field'
@@ -221,16 +222,30 @@ function PlaceCard({ place, locating, problem, palette, onPress }: PlaceCardProp
         ? strings.location[problem]
         : strings.location.useDeviceDetail
 
+  const settled = place !== null && !locating
+
   return (
     <Pressable accessibilityRole="button" onPress={onPress} disabled={locating}>
       <Surface interactive style={{ borderRadius: 24, padding: 20 }}>
+        {settled ? (
+          <View className="pb-4">
+            <PlaceMap
+              latitude={place.latitude}
+              longitude={place.longitude}
+              accent={palette.accent}
+              onAccent={palette.onAccent}
+            />
+          </View>
+        ) : null}
         <View className="flex-row items-center gap-4">
-          <LocationGlyph
-            accent={palette.accent}
-            onAccent={palette.onAccent}
-            active={place !== null}
-            busy={locating}
-          />
+          {settled ? null : (
+            <LocationGlyph
+              accent={palette.accent}
+              onAccent={palette.onAccent}
+              active={place !== null}
+              busy={locating}
+            />
+          )}
           <View className="flex-1 gap-1">
             <Text
               className="text-xl"

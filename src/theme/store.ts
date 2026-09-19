@@ -1,7 +1,9 @@
-import { Appearance, useColorScheme } from 'react-native'
+import { Appearance, Platform, useColorScheme } from 'react-native'
 import { z } from 'zod'
 
 import { createPreferenceStore } from '@/storage/preference-store'
+
+import { ThemeOverride } from '../../modules/theme-override'
 
 export const THEME_PREFERENCES = ['system', 'light', 'dark'] as const
 export type ThemePreference = (typeof THEME_PREFERENCES)[number]
@@ -12,13 +14,18 @@ export const useThemePreference = store.use
 export const getThemePreference = store.get
 
 /**
- * Every colour is a PlatformColor that resolves against the app's effective
- * interface style, so this one call re-colours the whole app. `'auto'` hands
- * control back to the OS. On Android the activity is recreated for the change
- * to reach its resources (see plugins/with-android-theme-recreation.js), so
- * a switch restarts the screen, as it does in most Android apps.
+ * On Android the local theme-override module persists the mode where the
+ * process reads it at start, so a cold start opens in the right scheme with no
+ * relaunch; a live change still recreates the activity, as most Android apps
+ * do (see plugins/with-android-manifest.js). Elsewhere, and in Expo Go where
+ * the module is absent, Appearance handles it; `'auto'` hands control back to
+ * the OS.
  */
 export function applyThemePreference(preference: ThemePreference): void {
+  if (Platform.OS === 'android' && ThemeOverride) {
+    ThemeOverride.setNightMode(preference)
+    return
+  }
   Appearance.setColorScheme(preference === 'system' ? 'auto' : preference)
 }
 

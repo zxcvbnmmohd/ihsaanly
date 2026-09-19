@@ -14,8 +14,9 @@ Work is tracked as issues on the repository. The product specification is issue 
 
 ### Added
 
-- **Appearance** in More: System, Light or Dark. On Android the change
-  recreates the activity so every platform colour re-resolves.
+- **Appearance** in More: System, Light or Dark. On Android a local native
+  module applies the stored mode when the process starts, so a cold start opens
+  in the chosen scheme; a live change recreates the activity.
 - A `Button` primitive with light haptic feedback, and `expo-linear-gradient`.
 - Amiri, bundled through the `expo-font` config plugin, for all Arabic text.
 - `useStrings()`: interface copy resolves per language. English and a

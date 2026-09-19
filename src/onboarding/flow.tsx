@@ -75,14 +75,19 @@ export function OnboardingFlow(): ReactElement {
 
   const useDevice = (): void => {
     setThing((current) => ({ ...current, locating: true, problem: null }))
-    void requestDeviceLocation().then((located) => {
-      if (located.status === 'ok') {
-        choosePlace(located.place)
-        setThing((current) => ({ ...current, locating: false }))
-        return
-      }
-      setThing((current) => ({ ...current, locating: false, problem: located.status }))
-    })
+    requestDeviceLocation()
+      .then((located) => {
+        if (located.status === 'ok') {
+          choosePlace(located.place)
+          setThing((current) => ({ ...current, locating: false }))
+          return
+        }
+        setThing((current) => ({ ...current, locating: false, problem: located.status }))
+      })
+      .catch(() => {
+        // Whatever the platform threw, the card must not stay on "Finding you".
+        setThing((current) => ({ ...current, locating: false, problem: 'unavailable' }))
+      })
   }
 
   return (

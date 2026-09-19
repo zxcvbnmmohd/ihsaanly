@@ -296,6 +296,7 @@ export const ar: Strings = {
     everythingDetail: (n: number): string =>
       `جميع العناصر، ${count(n, 'عنصر', 'عنصران', 'عناصر', 'عنصرًا')}.`,
     skipIntro: 'تخطّي',
+    skipLocation: 'تخطّي الآن',
     back: 'رجوع',
     continue: 'متابعة',
     allowReminders: 'السماح بالتنبيهات',
@@ -307,6 +308,10 @@ export const ar: Strings = {
     notSet: 'غير محدد',
     currentLocation: 'الموقع الحالي',
     useDevice: 'استخدم موقعي',
+    useDeviceDetail: 'لا يخرج شيء من هذا الهاتف.',
+    locating: 'جارٍ تحديد موقعك…',
+    orSearch: 'أو ابحث عن مدينة',
+    follows: 'ستتبع أوقات الصلاة هذا المكان.',
     search: 'ابحث عن مدينة',
     noResults: 'لا مدن تطابق ذلك.',
     unavailable: 'خدمات الموقع معطّلة على هذا الجهاز. فعّلها، أو ابحث عن مدينتك بدلًا من ذلك.',

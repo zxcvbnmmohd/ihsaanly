@@ -11,6 +11,7 @@ interface ButtonProps {
   /** Defaults to the system tint. Onboarding passes its own accent. */
   color?: ColorValue
   onColor?: ColorValue
+  disabled?: boolean
 }
 
 export function Button({
@@ -19,6 +20,7 @@ export function Button({
   variant = 'primary',
   color = colors.tint,
   onColor = colors.onTint,
+  disabled = false,
 }: ButtonProps): ReactElement {
   useColorScheme()
 
@@ -29,7 +31,13 @@ export function Button({
 
   if (variant === 'secondary') {
     return (
-      <Pressable accessibilityRole="button" onPress={press} className="items-center py-3">
+      <Pressable
+        accessibilityRole="button"
+        accessibilityState={{ disabled }}
+        disabled={disabled}
+        onPress={press}
+        className="items-center py-3"
+        style={{ opacity: disabled ? 0.45 : 1 }}>
         <Text className="text-base font-semibold" style={{ color }}>
           {title}
         </Text>
@@ -40,9 +48,11 @@ export function Button({
   return (
     <Pressable
       accessibilityRole="button"
+      accessibilityState={{ disabled }}
+      disabled={disabled}
       onPress={press}
       className="items-center rounded-full px-6 py-4"
-      style={{ backgroundColor: color, borderCurve: 'continuous' }}>
+      style={{ backgroundColor: color, borderCurve: 'continuous', opacity: disabled ? 0.45 : 1 }}>
       <Text className="text-base font-semibold" style={{ color: onColor }}>
         {title}
       </Text>

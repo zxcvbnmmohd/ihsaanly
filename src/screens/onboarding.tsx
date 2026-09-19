@@ -1,6 +1,7 @@
 import type { ReactElement, ReactNode } from 'react'
 import { LinearGradient } from 'expo-linear-gradient'
 import {
+  ActivityIndicator,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -17,6 +18,7 @@ import { ArabicText } from '@/components/arabic-text'
 import { Button } from '@/components/button'
 import { OnboardingArt } from '@/components/onboarding-art'
 import { Row } from '@/components/row'
+import { Surface } from '@/components/surface'
 import { isRightToLeft, SUPPORTED_LANGUAGES, type SupportedLanguage } from '@/i18n/locale'
 import type { Place } from '@/location/place'
 import type { Gender } from '@/onboarding/store'
@@ -37,6 +39,7 @@ export interface OnboardingScreenProps {
   language: SupportedLanguage
   theme: ThemePreference
   place: Place | null
+  locating: boolean
   problem: LocationProblem
   query: string
   results: Place[]
@@ -152,6 +155,109 @@ function Dots({ count, index, accent }: DotsProps): ReactElement {
   )
 }
 
+/** City labels arrive as "Toronto, Ontario, Canada"; the first part is the city. */
+function cityOf(label: string): string {
+  return label.split(',')[0]?.trim() ?? label
+}
+
+function regionOf(label: string): string | null {
+  const rest = label.split(',').slice(1).join(',').trim()
+  return rest.length > 0 ? rest : null
+}
+
+interface GlyphProps {
+  accent: string
+  onAccent: string
+  active: boolean
+  busy: boolean
+}
+
+function LocationGlyph({ accent, onAccent, active, busy }: GlyphProps): ReactElement {
+  return (
+    <View
+      className="items-center justify-center rounded-full"
+      style={{
+        width: 52,
+        height: 52,
+        borderWidth: 2,
+        borderColor: accent,
+        backgroundColor: active ? accent : undefined,
+      }}>
+      {busy ? (
+        <ActivityIndicator color={accent} />
+      ) : (
+        <View
+          className="rounded-full"
+          style={{ width: 14, height: 14, backgroundColor: active ? onAccent : accent }}
+        />
+      )}
+    </View>
+  )
+}
+
+interface PlaceCardProps {
+  place: Place | null
+  locating: boolean
+  problem: LocationProblem
+  palette: Palette
+  onPress: () => void
+}
+
+/** One card that is the call to action, the progress, the result, or the reason it failed. */
+function PlaceCard({ place, locating, problem, palette, onPress }: PlaceCardProps): ReactElement {
+  const strings = useStrings()
+  useColorScheme()
+
+  const title = locating
+    ? strings.location.locating
+    : place
+      ? cityOf(place.label)
+      : strings.location.useDevice
+  const detail = locating
+    ? null
+    : place
+      ? regionOf(place.label)
+      : problem
+        ? strings.location[problem]
+        : strings.location.useDeviceDetail
+
+  return (
+    <Pressable accessibilityRole="button" onPress={onPress} disabled={locating}>
+      <Surface interactive style={{ borderRadius: 24, padding: 20 }}>
+        <View className="flex-row items-center gap-4">
+          <LocationGlyph
+            accent={palette.accent}
+            onAccent={palette.onAccent}
+            active={place !== null}
+            busy={locating}
+          />
+          <View className="flex-1 gap-1">
+            <Text
+              className="text-xl"
+              style={{
+                color: colors.label,
+                fontFamily: place ? fonts.display : undefined,
+                fontWeight: '600',
+              }}>
+              {title}
+            </Text>
+            {detail ? (
+              <Text className="text-sm leading-snug" style={{ color: colors.secondaryLabel }}>
+                {detail}
+              </Text>
+            ) : null}
+          </View>
+        </View>
+        {place ? (
+          <Text className="pt-3 text-xs" style={{ color: colors.secondaryLabel }}>
+            {strings.location.follows}
+          </Text>
+        ) : null}
+      </Surface>
+    </Pressable>
+  )
+}
+
 interface StepBodyProps extends OnboardingScreenProps {
   palette: Palette
 }
@@ -218,33 +324,46 @@ function StepBody(props: StepBodyProps): ReactElement {
       return (
         <>
           <Heading title={strings.onboarding.locationStep} body={strings.onboarding.locationWhy} />
-          <Row
-            title={strings.location.useDevice}
-            detail={props.place?.label ?? null}
+          <PlaceCard
+            place={props.place}
+            locating={props.locating}
+            problem={props.problem}
+            palette={palette}
             onPress={props.onUseDevice}
           />
-          {props.problem ? (
-            <Text className="text-sm" style={{ color: colors.secondaryLabel }}>
-              {strings.location[props.problem]}
+          <View className="flex-row items-center gap-3 pt-1">
+            <View className="h-px flex-1" style={{ backgroundColor: colors.separator }} />
+            <Text
+              className="text-xs font-semibold tracking-wide uppercase"
+              style={{ color: colors.secondaryLabel }}>
+              {strings.location.orSearch}
             </Text>
-          ) : null}
+            <View className="h-px flex-1" style={{ backgroundColor: colors.separator }} />
+          </View>
           <TextInput
             value={props.query}
             onChangeText={props.onQueryChange}
             placeholder={strings.location.search}
             placeholderTextColor={colors.secondaryLabel}
             autoCorrect={false}
+            returnKeyType="search"
             className="rounded-2xl px-4 py-3 text-base"
             style={{ backgroundColor: colors.secondarySystemBackground, color: colors.label }}
           />
-          {props.results.map((result) => (
+          {props.results.slice(0, 6).map((result) => (
             <Row
               key={result.label}
-              title={result.label}
+              title={cityOf(result.label)}
+              detail={regionOf(result.label)}
               selected={props.place?.label === result.label}
               onPress={() => props.onSelectPlace(result)}
             />
           ))}
+          {props.query.trim().length >= 2 && props.results.length === 0 ? (
+            <Text className="text-sm" style={{ color: colors.secondaryLabel }}>
+              {strings.location.noResults}
+            </Text>
+          ) : null}
         </>
       )
 
@@ -335,6 +454,12 @@ export function OnboardingScreen(props: OnboardingScreenProps): ReactElement {
   const anyReminder =
     props.notifications.windows || props.notifications.lookAhead || props.notifications.prayers
   const asking = step === 'reminders' && anyReminder
+  const needsPlace = step === 'location' && props.place === null
+  const secondary = asking
+    ? { title: strings.onboarding.notNow, onPress: props.onNotNow }
+    : needsPlace
+      ? { title: strings.onboarding.skipLocation, onPress: props.onNext }
+      : null
 
   const primary =
     step === 'start'
@@ -399,13 +524,14 @@ export function OnboardingScreen(props: OnboardingScreenProps): ReactElement {
             onPress={props.onNext}
             color={palette.accent}
             onColor={palette.onAccent}
+            disabled={needsPlace}
           />
         </View>
-        {asking ? (
+        {secondary ? (
           <Button
             variant="secondary"
-            title={strings.onboarding.notNow}
-            onPress={props.onNotNow}
+            title={secondary.title}
+            onPress={secondary.onPress}
             color={palette.accent}
           />
         ) : null}

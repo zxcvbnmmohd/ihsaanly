@@ -285,6 +285,11 @@ export const en = {
     everythingDetail: (count: number): string => `All ${count} items.`,
     skipIntro: 'Skip',
     skipLocation: 'Skip for now',
+    reminderPolicy: (perDay: number, from: number, to: number): string =>
+      `At most ${perDay} a day, and nothing between ${from}:00 and ${to}:00.`,
+    reminderCap: (perDay: number): string => `At most ${perDay} a day.`,
+    included: 'Included',
+    andMore: (count: number): string => `and ${count} more`,
     back: 'Back',
     continue: 'Continue',
     allowReminders: 'Allow reminders',

@@ -1,8 +1,7 @@
-import { languageOf, type SupportedLanguage } from '@/i18n/locale'
-import { getLocale, useLocale } from '@/i18n/store'
+import type { SupportedLanguage } from '@/i18n/locale'
 
-/** Single source for user-facing text. Read it through useStrings() so it follows the locale. */
-const en = {
+/** The English table. Every other language must match its shape; see Strings. */
+export const en = {
   tabs: {
     today: 'Today',
     library: 'Library',
@@ -18,14 +17,14 @@ const en = {
     context: 'Nearby',
     comingUp: 'Coming up',
     tomorrow: 'Tomorrow',
-    inDays: (days: number) => `In ${days} days`,
+    inDays: (days: number): string => `In ${days} days`,
     prayers: 'Prayers',
     optional: 'Optional',
     expected: 'Expected',
     confirmLocally: 'Confirm with your local authority',
     prayed: 'Prayed',
     makeUp: 'To make up',
-    outstanding: (count: number) => `${count} to make up`,
+    outstanding: (count: number): string => `${count} to make up`,
   },
   prayer: {
     fajr: 'Fajr',
@@ -49,7 +48,7 @@ const en = {
     prayers: 'Prayer reminders',
     prayersDetail: 'Off by default \u2014 your adhan app already does this.',
     quietHours: 'Quiet hours',
-    quietHoursDetail: (from: number, to: number) => `${from}:00 to ${to}:00`,
+    quietHoursDetail: (from: number, to: number): string => `${from}:00 to ${to}:00`,
     quietHoursOff: 'Off',
     perDay: 'At most a day',
     body: {
@@ -80,12 +79,12 @@ const en = {
   history: {
     title: 'History',
     empty: 'Nothing recorded yet.',
-    daysActive: (days: number) => `${days} ${days === 1 ? 'day' : 'days'} recorded`,
+    daysActive: (days: number): string => `${days} ${days === 1 ? 'day' : 'days'} recorded`,
     prayers: 'Prayers',
     completed: 'Completed',
-    times: (count: number) => `${count} ${count === 1 ? 'time' : 'times'}`,
-    early: (minutes: number) => `usually about ${minutes} min into the window`,
-    late: (minutes: number) => `usually about ${minutes} min before it closes`,
+    times: (count: number): string => `${count} ${count === 1 ? 'time' : 'times'}`,
+    early: (minutes: number): string => `usually about ${minutes} min into the window`,
+    late: (minutes: number): string => `usually about ${minutes} min before it closes`,
   },
   data: {
     title: 'Your data',
@@ -98,7 +97,7 @@ const en = {
     diagnostics: 'Send a diagnostic report',
     diagnosticsDetail:
       'For fixing a problem. Contains your settings, your practice record, your approximate coordinates and recent errors. You will see it before it is sent.',
-    imported: (count: number) => `Added ${count} ${count === 1 ? 'entry' : 'entries'}.`,
+    imported: (count: number): string => `Added ${count} ${count === 1 ? 'entry' : 'entries'}.`,
     importFailed: 'That file could not be read.',
     shareFailed: 'Sharing is not available on this device.',
   },
@@ -152,11 +151,11 @@ const en = {
     approximate: 'Calculated \u2014 confirm with the authority your community follows.',
     explanation:
       'A calculated calendar and local moon sighting often differ by a day or two. Shift the date here so the app agrees with your community. Dates for fasting days are always shown as expected, never as certain.',
-    offsetLabel: (days: number) =>
+    offsetLabel: (days: number): string =>
       days === 0
         ? 'No change'
         : `${days > 0 ? '+' : ''}${days} day${Math.abs(days) === 1 ? '' : 's'}`,
-    format: (day: number, month: string, year: number) => `${day} ${month} ${year}`,
+    format: (day: number, month: string, year: number): string => `${day} ${month} ${year}`,
   },
   hijriMonth: {
     1: 'Muharram',
@@ -228,9 +227,9 @@ const en = {
     translation: 'Translation',
     evidence: 'Evidence',
     note: 'Scholars differ',
-    repeat: (times: number) => `Repeat ${times} times`,
-    gradedBy: (grader: string) => `graded by ${grader}`,
-    quranReference: (surah: number, ayah: number) => `Qur\u2019an ${surah}:${ayah}`,
+    repeat: (times: number): string => `Repeat ${times} times`,
+    gradedBy: (grader: string): string => `graded by ${grader}`,
+    quranReference: (surah: number, ayah: number): string => `Qur\u2019an ${surah}:${ayah}`,
   },
   ruling: {
     fard: 'Obligatory',
@@ -276,10 +275,10 @@ const en = {
     startWhy:
       'Choose a size to begin with. Add or remove anything in the Library whenever you like.',
     essentials: 'Essentials',
-    essentialsDetail: (count: number) =>
+    essentialsDetail: (count: number): string =>
       `${count} items, chosen to be a reasonable day rather than a complete one.`,
     everything: 'Everything',
-    everythingDetail: (count: number) => `All ${count} items.`,
+    everythingDetail: (count: number): string => `All ${count} items.`,
     skipIntro: 'Skip',
     back: 'Back',
     continue: 'Continue',
@@ -309,26 +308,6 @@ const en = {
     title: 'Not found',
     body: 'That screen does not exist.',
   },
-} as const
+}
 
 export type Strings = typeof en
-
-/**
- * A language joins this table only once every string is complete and
- * reviewed; until then the interface stays English while content and layout
- * direction already follow the chosen locale.
- */
-const SHIPPED: Record<string, Strings> = { en }
-
-export function stringsFor(language: string): Strings {
-  return SHIPPED[language] ?? en
-}
-
-/** For code that runs outside React. Components use useStrings(). */
-export function getStrings(): Strings {
-  return stringsFor(languageOf(getLocale()))
-}
-
-export function useStrings(): Strings {
-  return stringsFor(languageOf(useLocale()))
-}

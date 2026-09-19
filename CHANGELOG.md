@@ -18,8 +18,9 @@ Work is tracked as issues on the repository. The product specification is issue 
   recreates the activity so every platform colour re-resolves.
 - A `Button` primitive with light haptic feedback, and `expo-linear-gradient`.
 - Amiri, bundled through the `expo-font` config plugin, for all Arabic text.
-- `useStrings()`: interface copy resolves per language. English is the only
-  shipped table; a language joins once complete and reviewed.
+- `useStrings()`: interface copy resolves per language. English and a
+  complete Arabic draft ship; the Arabic awaits review by a qualified speaker
+  before release.
 
 ### Changed
 

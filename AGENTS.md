@@ -193,12 +193,18 @@ one — theme customisation goes in an `@theme` block in `global.css`.
 
 ### Copy is read through `useStrings()`
 
-`src/strings.ts` holds one English table and resolves it per language.
+`src/strings/en.ts` is the English table and defines the `Strings` shape;
+`src/strings/ar.ts` must match it key for key, which the typechecker enforces.
 Components call `const strings = useStrings()`. A helper that formats copy
 takes `strings: Strings` as a parameter rather than reading a module-level
 value: React Compiler memoises the helper on its arguments, so a locale change
-would never invalidate it. Code outside React uses `getStrings()`. A language
-joins `SHIPPED` only once every string is complete and reviewed.
+would never invalidate it. Code outside React uses `getStrings()`.
+
+Arabic is a complete draft written in one pass (2026-09-19) and **not yet
+reviewed by a qualified speaker**. That review is a release condition. Counts
+go through the `count` helper in `ar.ts`, which handles singular, dual, the
+3-to-10 plural and the 11-and-up singular; never interpolate a bare number
+next to a noun in Arabic copy.
 
 ### Onboarding may use literal colours; nothing else may
 

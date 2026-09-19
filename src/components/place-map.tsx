@@ -4,8 +4,8 @@ import { View, type LayoutChangeEvent } from 'react-native'
 
 import worldMap from '../../assets/images/world-equirectangular.png'
 
-/** The bundled map is equirectangular and cropped to the projection, so this is the whole transform. */
-const MAP_ASPECT = 1770 / 872
+/** Exactly 2:1 over the full globe, so x = (lon + 180) / 360 and y = (90 - lat) / 180. */
+const MAP_ASPECT = 1440 / 720
 
 interface Thing {
   width: number

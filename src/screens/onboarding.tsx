@@ -622,11 +622,16 @@ export function OnboardingScreen(props: OnboardingScreenProps): ReactElement {
     props.notifications.windows || props.notifications.lookAhead || props.notifications.prayers
   const asking = step === 'reminders' && anyReminder
   const needsPlace = step === 'location' && props.place === null
-  const secondary = asking
-    ? { title: strings.onboarding.notNow, onPress: props.onNotNow }
-    : needsPlace
-      ? { title: strings.onboarding.skipLocation, onPress: props.onNext }
-      : null
+
+  // Every way past a step sits beside Back, so the footer is the same height
+  // on all six and the primary button never moves under the thumb.
+  const escape = intro
+    ? { title: strings.onboarding.skipIntro, onPress: props.onSkipIntro }
+    : asking
+      ? { title: strings.onboarding.notNow, onPress: props.onNotNow }
+      : needsPlace
+        ? { title: strings.onboarding.skipLocation, onPress: props.onNext }
+        : null
 
   const primary =
     step === 'start'
@@ -657,11 +662,11 @@ export function OnboardingScreen(props: OnboardingScreenProps): ReactElement {
         ) : (
           <View />
         )}
-        {intro ? (
+        {escape ? (
           <Button
             variant="secondary"
-            title={strings.onboarding.skipIntro}
-            onPress={props.onSkipIntro}
+            title={escape.title}
+            onPress={escape.onPress}
             color={palette.accent}
           />
         ) : (
@@ -694,14 +699,6 @@ export function OnboardingScreen(props: OnboardingScreenProps): ReactElement {
             disabled={needsPlace}
           />
         </View>
-        {secondary ? (
-          <Button
-            variant="secondary"
-            title={secondary.title}
-            onPress={secondary.onPress}
-            color={palette.accent}
-          />
-        ) : null}
       </View>
     </View>
   )

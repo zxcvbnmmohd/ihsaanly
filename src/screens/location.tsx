@@ -1,8 +1,9 @@
 import type { ReactElement } from 'react'
-import { Text, TextInput, useColorScheme, View } from 'react-native'
+import { Text, useColorScheme, View } from 'react-native'
 
 import { Row } from '@/components/row'
 import { Screen } from '@/components/screen'
+import { TextField } from '@/components/text-field'
 import type { Place } from '@/location/place'
 import { useStrings } from '@/strings'
 import { colors } from '@/theme/colors'
@@ -45,14 +46,12 @@ export function LocationScreen({
         </Text>
       ) : null}
 
-      <TextInput
+      <TextField
         value={query}
         onChangeText={onQueryChange}
         placeholder={strings.location.search}
-        placeholderTextColor={colors.secondaryLabel}
-        autoCorrect={false}
-        className="rounded-2xl px-4 py-3 text-base"
-        style={{ backgroundColor: colors.secondarySystemBackground, color: colors.label }}
+        kind="search"
+        returnKeyType="search"
       />
 
       {showNoResults ? (

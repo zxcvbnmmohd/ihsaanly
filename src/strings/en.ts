@@ -305,6 +305,9 @@ export const en = {
     explanation: 'Used on this device to work out prayer windows. It is never sent anywhere.',
     attribution: 'City data from city-timezones (MIT).',
   },
+  textField: {
+    clear: 'Clear',
+  },
   error: {
     title: 'Something went wrong',
     retry: 'Try again',

@@ -6,7 +6,6 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   useColorScheme,
   View,
 } from 'react-native'
@@ -19,6 +18,7 @@ import { Button } from '@/components/button'
 import { OnboardingArt } from '@/components/onboarding-art'
 import { Row } from '@/components/row'
 import { Surface } from '@/components/surface'
+import { TextField } from '@/components/text-field'
 import { isRightToLeft, SUPPORTED_LANGUAGES, type SupportedLanguage } from '@/i18n/locale'
 import type { Place } from '@/location/place'
 import type { Gender } from '@/onboarding/store'
@@ -340,15 +340,13 @@ function StepBody(props: StepBodyProps): ReactElement {
             </Text>
             <View className="h-px flex-1" style={{ backgroundColor: colors.separator }} />
           </View>
-          <TextInput
+          <TextField
             value={props.query}
             onChangeText={props.onQueryChange}
             placeholder={strings.location.search}
-            placeholderTextColor={colors.secondaryLabel}
-            autoCorrect={false}
+            kind="search"
             returnKeyType="search"
-            className="rounded-2xl px-4 py-3 text-base"
-            style={{ backgroundColor: colors.secondarySystemBackground, color: colors.label }}
+            accent={palette.accent}
           />
           {props.results.slice(0, 6).map((result) => (
             <Row

@@ -13,9 +13,11 @@ const { withAndroidManifest } = require('expo/config-plugins')
  * activity creation, which would undo the override on the very recreation
  * this plugin allows.
  */
-module.exports = function withAndroidThemeRecreation(config) {
+module.exports = function withAndroidManifestTweaks(config) {
   return withAndroidManifest(config, (config) => {
     const application = config.modResults.manifest.application?.[0]
+    // RTL layouts need this; expo-localization's plugin used to set it and is gone.
+    if (application) application.$['android:supportsRtl'] = 'true'
     const main = application?.activity?.find((entry) => entry.$['android:name'] === '.MainActivity')
     const changes = main?.$['android:configChanges']
     if (main && changes) {

@@ -24,7 +24,6 @@
         "expo-image": "~58.0.2",
         "expo-linear-gradient": "~58.0.0",
         "expo-linking": "~58.0.3",
-        "expo-localization": "~58.0.0",
         "expo-location": "~58.0.3",
         "expo-notifications": "~58.0.3",
         "expo-router": "~58.0.4",
@@ -739,8 +738,6 @@
 
     "expo-linking": ["expo-linking@58.0.3", "", { "dependencies": { "expo-constants": "~58.0.3", "invariant": "^2.2.4" }, "peerDependencies": { "expo": "*", "react": "*", "react-native": "*" } }, "sha512-HtCX2mZWZ4kUpN19KvcflZmuU4w2Nl72LVIOyaO+6vycNqDQsQLbm4VdEqSYH8StUoxY+UghmtlArn5UTg8kIQ=="],
 
-    "expo-localization": ["expo-localization@58.0.0", "", { "dependencies": { "rtl-detect": "^1.0.2" }, "peerDependencies": { "expo": "*", "react": "*" } }, "sha512-+GiBnY7DTKXuYHIFfpivep+epIWI3OAVTJg6DXPjMSvI5epoqG5fYiwqdLLr9Qrq35F6L5q3NkWVDtZmjcOobQ=="],
-
     "expo-location": ["expo-location@58.0.3", "", { "dependencies": { "@expo/image-utils": "^0.12.0" }, "peerDependencies": { "expo": "*", "react": "*", "react-native": "*" } }, "sha512-tp1cTuiMeqFOGyOdujsLEz3jQPowu4hDSWkdJyDdIDi1aWqVfwaPquaX+zzjt9CIZAb1kOYOAFGjm6IluLaYAg=="],
 
     "expo-modules-autolinking": ["expo-modules-autolinking@58.0.2", "", { "dependencies": { "@expo/require-utils": "^58.0.0", "@expo/spawn-async": "^1.8.0", "chalk": "^4.1.0", "commander": "^7.2.0" }, "bin": { "expo-modules-autolinking": "bin/expo-modules-autolinking.js" } }, "sha512-m7o+13Oi6SJcJ7b2fQqPLn9oUILqTxulOLmrMa7jKHJw9dpxA3aFyClUwlfIrN/B08D0WReuvF9n0WVCGaR3BQ=="],
@@ -1136,8 +1133,6 @@
     "resolve-workspace-root": ["resolve-workspace-root@2.0.1", "", {}, "sha512-nR23LHAvaI6aHtMg6RWoaHpdR4D881Nydkzi2CixINyg9T00KgaJdJI6Vwty+Ps8WLxZHuxsS0BseWjxSA4C+w=="],
 
     "restore-cursor": ["restore-cursor@2.0.0", "", { "dependencies": { "onetime": "^2.0.0", "signal-exit": "^3.0.2" } }, "sha512-6IzJLuGi4+R14vwagDHX+JrXmPVtPpn4mffDJ1UdR7/Edm87fl6yi8mMBIVvFtJaNTUvjughmW4hwLhRG7gC1Q=="],
-
-    "rtl-detect": ["rtl-detect@1.1.2", "", {}, "sha512-PGMBq03+TTG/p/cRB7HCLKJ1MgDIi07+QU1faSjiYRfmY5UsAttV9Hs08jDAHVwcOwmVLcSJkpwyfXszVjWfIQ=="],
 
     "safe-buffer": ["safe-buffer@5.2.1", "", {}, "sha512-rp3So07KcdmmKbGvgaNxQSJr7bGVSVk5S9Eq1F+ppbRo70+YeaDxkw5Dd8NPN+GD6bjnYm2VuPuCXmpuYvmCXQ=="],
 

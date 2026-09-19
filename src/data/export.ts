@@ -1,13 +1,13 @@
 import * as Device from 'expo-device'
 import { File, Paths } from 'expo-file-system'
 import * as Sharing from 'expo-sharing'
-import { getLocales } from 'expo-localization'
 import { Platform } from 'react-native'
 import Constants from 'expo-constants'
 
 import { getNotificationPreferences } from '@/notifications/store'
 import { getPlace } from '@/location/store'
 import { allActions, allPreferences, lastStorageError } from '@/storage/events'
+import { deviceLocaleTags } from '@/i18n/device'
 
 import { EXPORT_VERSION, type ExportedData } from './bundle'
 
@@ -48,7 +48,7 @@ export function buildDiagnostics(): Record<string, unknown> {
       osVersion: String(Platform.Version),
       device: `${Device.manufacturer ?? '?'} ${Device.modelName ?? '?'}`,
     },
-    locale: getLocales()[0]?.languageTag ?? 'unknown',
+    locale: deviceLocaleTags()[0] ?? 'unknown',
     timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     coordinates: place ? { latitude: place.latitude, longitude: place.longitude } : null,
     notifications: getNotificationPreferences(),

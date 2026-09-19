@@ -33,9 +33,14 @@ Work is tracked as issues on the repository. The product specification is issue 
   twenty-one toggles.
 - Onboarding carries a warm gradient wash and an eight-point-star motif. Today
   stays undecorated, as the spec asks.
+- Switching to or from Arabic reloads the app so the layout direction applies
+  at once, instead of asking the user to restart.
 
 ### Removed
 
+- `expo-localization`. Its module re-applied the RTL flags from static
+  resources on every React instance start, which erased a runtime language
+  change on the reload meant to apply it. The device locale comes from `Intl`.
 - `expo-system-ui`. It was never imported, and its Android lifecycle listener
   re-applied the static interface style on every activity creation, which
   defeated the Appearance override. See AGENTS.md before reinstalling it.

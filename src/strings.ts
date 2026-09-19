@@ -116,7 +116,7 @@ const en = {
   },
   language: {
     title: 'Language',
-    restart: 'Arabic reads right to left. Restart the app to see the layout change.',
+    restart: 'Arabic reads right to left. Switching to or from it restarts the app.',
     incomplete:
       'A language appears here only once its content is complete and reviewed. Nothing is machine-translated.',
     names: {

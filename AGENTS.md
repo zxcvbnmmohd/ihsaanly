@@ -220,7 +220,7 @@ Verified on a device: with Expo's default setup the override never reaches
 the activity's resources, live or on cold start, so every `PlatformColor` keeps
 the system scheme. Two things make it work, and both must stay:
 
-- `plugins/with-android-theme-recreation.js` removes `uiMode` from
+- `plugins/with-android-manifest.js` removes `uiMode` from
   MainActivity's `configChanges`, so AppCompat recreates the activity on a
   night-mode change the way most Android apps do. A theme switch therefore
   restarts the screen on Android; iOS re-resolves dynamic colours in place.
@@ -240,6 +240,20 @@ in production), and does not appear with System stored or when the override
 matches the OS. Persisting the preference natively, so `MainApplication` can
 apply it before the activity exists, would remove both the flash and the
 warning; it needs a native module and is not done.
+
+### Switching layout direction reloads the app
+
+`chooseLanguage` in `src/i18n/store.ts` writes the RTL flags through
+`I18nManager` and then calls `reloadAppAsync` from `expo`, after a short
+delay so the native writes land first. React reads the flags when it builds
+the tree, so a reload is what makes them visible.
+
+`expo-localization` is deliberately **not installed**. Verified on a device:
+its module re-applies `allowRTL`/`forceRTL` from static string resources in
+`OnCreate`, which runs on every React instance start, so the reload erased the
+change every time. The device locale now comes from `Intl` in
+`src/i18n/device.ts`, and `plugins/with-android-manifest.js` keeps
+`android:supportsRtl` on, which that package's plugin used to set.
 
 ### Fonts are bundled by the config plugin
 

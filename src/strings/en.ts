@@ -280,6 +280,7 @@ export const en = {
     everything: 'Everything',
     everythingDetail: (count: number): string => `All ${count} items.`,
     skipIntro: 'Skip',
+    skipLocation: 'Skip for now',
     back: 'Back',
     continue: 'Continue',
     allowReminders: 'Allow reminders',
@@ -291,6 +292,10 @@ export const en = {
     notSet: 'Not set',
     currentLocation: 'Current location',
     useDevice: 'Use my location',
+    useDeviceDetail: 'Nothing leaves this phone.',
+    locating: 'Finding you\u2026',
+    orSearch: 'or search for a city',
+    follows: 'Prayer windows will follow this place.',
     search: 'Search for a city',
     noResults: 'No cities match that.',
     unavailable:

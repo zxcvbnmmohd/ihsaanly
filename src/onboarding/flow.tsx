@@ -28,6 +28,7 @@ interface Thing {
   index: number
   query: string
   problem: LocationProblem
+  locating: boolean
 }
 
 /**
@@ -36,7 +37,7 @@ interface Thing {
  * through and arrive at a reasonable day without understanding the choices yet.
  */
 export function OnboardingFlow(): ReactElement {
-  const [thing, setThing] = useState<Thing>({ index: 0, query: '', problem: null })
+  const [thing, setThing] = useState<Thing>({ index: 0, query: '', problem: null, locating: false })
   const place = usePlace()
   const onboarding = useOnboarding()
   const notifications = useNotificationPreferences()
@@ -73,12 +74,14 @@ export function OnboardingFlow(): ReactElement {
   }
 
   const useDevice = (): void => {
+    setThing((current) => ({ ...current, locating: true, problem: null }))
     void requestDeviceLocation().then((located) => {
       if (located.status === 'ok') {
         choosePlace(located.place)
+        setThing((current) => ({ ...current, locating: false }))
         return
       }
-      setThing((current) => ({ ...current, problem: located.status }))
+      setThing((current) => ({ ...current, locating: false, problem: located.status }))
     })
   }
 
@@ -90,6 +93,7 @@ export function OnboardingFlow(): ReactElement {
       language={supportedLanguageOf(locale)}
       theme={theme}
       place={place}
+      locating={thing.locating}
       problem={thing.problem}
       query={thing.query}
       results={searchCities(thing.query)}

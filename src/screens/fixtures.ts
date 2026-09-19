@@ -199,6 +199,7 @@ export const onboardingFixture: OnboardingScreenProps = {
   language: 'en',
   theme: 'system',
   place: null,
+  locating: false,
   problem: null,
   query: 'toron',
   results: [

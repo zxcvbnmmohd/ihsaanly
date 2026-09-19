@@ -1,6 +1,6 @@
 import { useState, type ReactElement } from 'react'
 
-import { items } from '@/content'
+import { items, resolveText } from '@/content'
 import { supportedLanguageOf } from '@/i18n/locale'
 import { chooseLanguage, useLocale } from '@/i18n/store'
 import { searchCities } from '@/location/cities'
@@ -105,6 +105,9 @@ export function OnboardingFlow(): ReactElement {
       gender={onboarding.gender}
       notifications={notifications}
       preset={enabled.length === items.length ? 'everything' : 'essentials'}
+      enabledTitles={items
+        .filter((item) => enabled.includes(item.id))
+        .map((item) => resolveText(item.title) ?? item.id)}
       itemCount={items.length}
       essentialCount={DEFAULT_ENABLED.length}
       onSelectLanguage={chooseLanguage}

@@ -221,6 +221,7 @@ export const onboardingFixture: OnboardingScreenProps = {
     maxPerDay: 3,
   },
   preset: 'essentials',
+  enabledTitles: ['Leaving home', 'Morning adhkar', 'Evening adhkar'],
   itemCount: 21,
   essentialCount: 11,
   onSelectLanguage: noop,

@@ -18,8 +18,10 @@ import { ArabicText } from '@/components/arabic-text'
 import { Button } from '@/components/button'
 import { OnboardingArt } from '@/components/onboarding-art'
 import { PlaceMap } from '@/components/place-map'
+import { ChoiceRow } from '@/components/choice-row'
 import { Row } from '@/components/row'
 import { Surface } from '@/components/surface'
+import { SwitchRow } from '@/components/switch-row'
 import { TextField } from '@/components/text-field'
 import { isRightToLeft, SUPPORTED_LANGUAGES, type SupportedLanguage } from '@/i18n/locale'
 import type { Place } from '@/location/place'
@@ -48,6 +50,7 @@ export interface OnboardingScreenProps {
   gender: Gender
   notifications: NotificationPreferences
   preset: StarterPreset
+  enabledTitles: string[]
   itemCount: number
   essentialCount: number
   onSelectLanguage: (language: SupportedLanguage) => void
@@ -379,40 +382,6 @@ function ChoiceTile({
   )
 }
 
-interface WideChoiceProps {
-  title: string
-  detail: string
-  selected: boolean
-  palette: Palette
-  onPress: () => void
-}
-
-function WideChoice({ title, detail, selected, palette, onPress }: WideChoiceProps): ReactElement {
-  useColorScheme()
-
-  return (
-    <Pressable accessibilityRole="radio" accessibilityState={{ selected }} onPress={onPress}>
-      <Surface
-        interactive
-        style={{
-          borderRadius: 20,
-          padding: 18,
-          borderWidth: 2,
-          borderColor: selected ? palette.accent : 'transparent',
-        }}>
-        <View className="gap-1">
-          <Text className="text-base font-semibold" style={{ color: colors.label }}>
-            {title}
-          </Text>
-          <Text className="text-sm" style={{ color: colors.secondaryLabel }}>
-            {detail}
-          </Text>
-        </View>
-      </Surface>
-    </Pressable>
-  )
-}
-
 interface StepBodyProps extends OnboardingScreenProps {
   palette: Palette
 }
@@ -542,11 +511,11 @@ function StepBody(props: StepBodyProps): ReactElement {
               onPress={() => props.onSelectGender('female')}
             />
           </View>
-          <WideChoice
+          <ChoiceRow
             title={strings.onboarding.skip}
             detail={strings.onboarding.skipDetail}
             selected={props.gender === 'unspecified'}
-            palette={palette}
+            accent={palette.accent}
             onPress={() => props.onSelectGender('unspecified')}
           />
           <Text className="pt-1 text-xs leading-snug" style={{ color: colors.secondaryLabel }}>
@@ -555,54 +524,99 @@ function StepBody(props: StepBodyProps): ReactElement {
         </>
       )
 
-    case 'reminders':
+    case 'reminders': {
+      const quiet = props.notifications.quietHours
+
       return (
         <>
           <Heading
             title={strings.onboarding.remindersStep}
             body={strings.onboarding.remindersWhy}
           />
-          <Row
+          <SwitchRow
             title={strings.notifications.windows}
             detail={strings.onboarding.windowsDetail}
-            selected={props.notifications.windows}
-            onPress={() => props.onToggleNotification({ windows: !props.notifications.windows })}
+            value={props.notifications.windows}
+            onValueChange={(windows) => props.onToggleNotification({ windows })}
+            accent={palette.accent}
+            knob={palette.knob}
           />
-          <Row
+          <SwitchRow
             title={strings.notifications.lookAhead}
             detail={strings.onboarding.lookAheadDetail}
-            selected={props.notifications.lookAhead}
-            onPress={() =>
-              props.onToggleNotification({ lookAhead: !props.notifications.lookAhead })
-            }
+            value={props.notifications.lookAhead}
+            onValueChange={(lookAhead) => props.onToggleNotification({ lookAhead })}
+            accent={palette.accent}
+            knob={palette.knob}
           />
-          <Row
+          <SwitchRow
             title={strings.notifications.prayers}
             detail={strings.notifications.prayersDetail}
-            selected={props.notifications.prayers}
-            onPress={() => props.onToggleNotification({ prayers: !props.notifications.prayers })}
+            value={props.notifications.prayers}
+            onValueChange={(prayers) => props.onToggleNotification({ prayers })}
+            accent={palette.accent}
+            knob={palette.knob}
           />
+          <Text className="pt-1 text-xs leading-snug" style={{ color: colors.secondaryLabel }}>
+            {quiet
+              ? strings.onboarding.reminderPolicy(
+                  props.notifications.maxPerDay,
+                  quiet.from,
+                  quiet.to,
+                )
+              : strings.onboarding.reminderCap(props.notifications.maxPerDay)}
+          </Text>
         </>
       )
+    }
 
-    case 'start':
+    case 'start': {
+      const preview = props.enabledTitles.slice(0, 5)
+      const rest = props.enabledTitles.length - preview.length
+
       return (
         <>
           <Heading title={strings.onboarding.startStep} body={strings.onboarding.startWhy} />
-          <Row
+          <ChoiceRow
             title={strings.onboarding.essentials}
             detail={strings.onboarding.essentialsDetail(props.essentialCount)}
             selected={props.preset === 'essentials'}
+            accent={palette.accent}
             onPress={() => props.onSelectPreset('essentials')}
           />
-          <Row
+          <ChoiceRow
             title={strings.onboarding.everything}
             detail={strings.onboarding.everythingDetail(props.itemCount)}
             selected={props.preset === 'everything'}
+            accent={palette.accent}
             onPress={() => props.onSelectPreset('everything')}
           />
+          <View className="gap-2 pt-2">
+            <Text
+              className="text-xs font-semibold tracking-wide uppercase"
+              style={{ color: colors.secondaryLabel }}>
+              {strings.onboarding.included}
+            </Text>
+            {preview.map((title) => (
+              <View key={title} className="flex-row items-center gap-3">
+                <View
+                  className="rounded-full"
+                  style={{ width: 5, height: 5, backgroundColor: palette.accent }}
+                />
+                <Text className="flex-1 text-sm" style={{ color: colors.label }}>
+                  {title}
+                </Text>
+              </View>
+            ))}
+            {rest > 0 ? (
+              <Text className="ps-8 text-sm" style={{ color: colors.secondaryLabel }}>
+                {strings.onboarding.andMore(rest)}
+              </Text>
+            ) : null}
+          </View>
         </>
       )
+    }
 
     default:
       return assertNever(step)

@@ -301,6 +301,13 @@ export const ar: Strings = {
       `جميع العناصر، ${count(n, 'عنصر', 'عنصران', 'عناصر', 'عنصرًا')}.`,
     skipIntro: 'تخطّي',
     skipLocation: 'تخطّي الآن',
+    reminderPolicy: (perDay: number, from: number, to: number): string =>
+      `${count(perDay, 'تنبيه واحد', 'تنبيهان', 'تنبيهات', 'تنبيهًا')} في اليوم على الأكثر، ولا شيء بين ${from}:00 و${to}:00.`,
+    reminderCap: (perDay: number): string =>
+      `${count(perDay, 'تنبيه واحد', 'تنبيهان', 'تنبيهات', 'تنبيهًا')} في اليوم على الأكثر.`,
+    included: 'المتضمَّن',
+    andMore: (n: number): string =>
+      `و${count(n, 'عنصر آخر', 'عنصران آخران', 'عناصر أخرى', 'عنصرًا آخر')}`,
     back: 'رجوع',
     continue: 'متابعة',
     allowReminders: 'السماح بالتنبيهات',

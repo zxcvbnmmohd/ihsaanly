@@ -8,6 +8,7 @@ import {
   Text,
   useColorScheme,
   View,
+  type ColorValue,
 } from 'react-native'
 import Animated, { FadeInRight, useReducedMotion } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -273,7 +274,59 @@ function PlaceCard({ place, locating, problem, palette, onPress }: PlaceCardProp
   )
 }
 
-interface ChoiceCardProps {
+interface PersonGlyphProps {
+  variant: 'brother' | 'sister'
+  color: ColorValue
+}
+
+/**
+ * Two silhouettes drawn from plain views: a round head over shoulders, and a
+ * draped one that meets the shoulders without a break. Deliberately abstract,
+ * and no icon dependency for two glyphs.
+ */
+function PersonGlyph({ variant, color }: PersonGlyphProps): ReactElement {
+  const shoulders = (
+    <View
+      style={{
+        width: 36,
+        height: 15,
+        backgroundColor: color,
+        borderTopStartRadius: 18,
+        borderTopEndRadius: 18,
+      }}
+    />
+  )
+
+  if (variant === 'sister') {
+    return (
+      <View className="items-center" style={{ height: 52, justifyContent: 'flex-end' }}>
+        <View
+          style={{
+            width: 26,
+            height: 33,
+            backgroundColor: color,
+            borderTopStartRadius: 13,
+            borderTopEndRadius: 13,
+            borderBottomStartRadius: 5,
+            borderBottomEndRadius: 5,
+          }}
+        />
+        {shoulders}
+      </View>
+    )
+  }
+
+  return (
+    <View className="items-center" style={{ height: 52, justifyContent: 'flex-end' }}>
+      <View style={{ width: 22, height: 22, borderRadius: 11, backgroundColor: color }} />
+      <View style={{ height: 5 }} />
+      {shoulders}
+    </View>
+  )
+}
+
+interface ChoiceTileProps {
+  variant: 'brother' | 'sister'
   title: string
   detail: string
   selected: boolean
@@ -281,38 +334,79 @@ interface ChoiceCardProps {
   onPress: () => void
 }
 
-/** Single-select, so the mark is a radio rather than the checkmark Row uses. */
-function ChoiceCard({ title, detail, selected, palette, onPress }: ChoiceCardProps): ReactElement {
+/** One of a pair, so the selection reads as a ring around the whole tile. */
+function ChoiceTile({
+  variant,
+  title,
+  detail,
+  selected,
+  palette,
+  onPress,
+}: ChoiceTileProps): ReactElement {
+  useColorScheme()
+
+  return (
+    <Pressable
+      accessibilityRole="radio"
+      accessibilityState={{ selected }}
+      onPress={onPress}
+      className="flex-1">
+      <Surface
+        interactive
+        style={{
+          borderRadius: 20,
+          paddingVertical: 20,
+          paddingHorizontal: 12,
+          borderWidth: 2,
+          borderColor: selected ? palette.accent : 'transparent',
+        }}>
+        <View className="items-center gap-3">
+          <PersonGlyph
+            variant={variant}
+            color={selected ? palette.accent : colors.secondaryLabel}
+          />
+          <View className="items-center gap-1">
+            <Text className="text-base font-semibold" style={{ color: colors.label }}>
+              {title}
+            </Text>
+            <Text className="text-center text-xs" style={{ color: colors.secondaryLabel }}>
+              {detail}
+            </Text>
+          </View>
+        </View>
+      </Surface>
+    </Pressable>
+  )
+}
+
+interface WideChoiceProps {
+  title: string
+  detail: string
+  selected: boolean
+  palette: Palette
+  onPress: () => void
+}
+
+function WideChoice({ title, detail, selected, palette, onPress }: WideChoiceProps): ReactElement {
   useColorScheme()
 
   return (
     <Pressable accessibilityRole="radio" accessibilityState={{ selected }} onPress={onPress}>
-      <Surface interactive style={{ borderRadius: 20, padding: 18 }}>
-        <View className="flex-row items-center gap-4">
-          <View
-            className="items-center justify-center rounded-full"
-            style={{
-              width: 24,
-              height: 24,
-              borderWidth: 2,
-              borderColor: selected ? palette.accent : colors.separator,
-              backgroundColor: selected ? palette.accent : undefined,
-            }}>
-            {selected ? (
-              <View
-                className="rounded-full"
-                style={{ width: 8, height: 8, backgroundColor: palette.onAccent }}
-              />
-            ) : null}
-          </View>
-          <View className="flex-1 gap-1">
-            <Text className="text-base font-semibold" style={{ color: colors.label }}>
-              {title}
-            </Text>
-            <Text className="text-sm leading-snug" style={{ color: colors.secondaryLabel }}>
-              {detail}
-            </Text>
-          </View>
+      <Surface
+        interactive
+        style={{
+          borderRadius: 20,
+          padding: 18,
+          borderWidth: 2,
+          borderColor: selected ? palette.accent : 'transparent',
+        }}>
+        <View className="gap-1">
+          <Text className="text-base font-semibold" style={{ color: colors.label }}>
+            {title}
+          </Text>
+          <Text className="text-sm" style={{ color: colors.secondaryLabel }}>
+            {detail}
+          </Text>
         </View>
       </Surface>
     </Pressable>
@@ -426,40 +520,40 @@ function StepBody(props: StepBodyProps): ReactElement {
         </>
       )
 
-    case 'you': {
-      const options = [
-        {
-          value: 'female',
-          title: strings.onboarding.female,
-          detail: strings.onboarding.femaleDetail,
-        },
-        { value: 'male', title: strings.onboarding.male, detail: strings.onboarding.maleDetail },
-        {
-          value: 'unspecified',
-          title: strings.onboarding.skip,
-          detail: strings.onboarding.skipDetail,
-        },
-      ] as const
-
+    case 'you':
       return (
         <>
           <Heading title={strings.onboarding.genderStep} body={strings.onboarding.genderWhy} />
-          {options.map((option) => (
-            <ChoiceCard
-              key={option.value}
-              title={option.title}
-              detail={option.detail}
-              selected={props.gender === option.value}
+          <View className="flex-row gap-3">
+            <ChoiceTile
+              variant="brother"
+              title={strings.onboarding.brother}
+              detail={strings.onboarding.brotherDetail}
+              selected={props.gender === 'male'}
               palette={palette}
-              onPress={() => props.onSelectGender(option.value)}
+              onPress={() => props.onSelectGender('male')}
             />
-          ))}
+            <ChoiceTile
+              variant="sister"
+              title={strings.onboarding.sister}
+              detail={strings.onboarding.sisterDetail}
+              selected={props.gender === 'female'}
+              palette={palette}
+              onPress={() => props.onSelectGender('female')}
+            />
+          </View>
+          <WideChoice
+            title={strings.onboarding.skip}
+            detail={strings.onboarding.skipDetail}
+            selected={props.gender === 'unspecified'}
+            palette={palette}
+            onPress={() => props.onSelectGender('unspecified')}
+          />
           <Text className="pt-1 text-xs leading-snug" style={{ color: colors.secondaryLabel }}>
             {strings.onboarding.genderPrivacy}
           </Text>
         </>
       )
-    }
 
     case 'reminders':
       return (

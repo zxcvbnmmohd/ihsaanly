@@ -319,6 +319,9 @@ export const ar: Strings = {
     explanation: 'يُستخدم على هذا الجهاز لتحديد أوقات الصلاة. لا يُرسل إلى أي مكان.',
     attribution: 'بيانات المدن من city-timezones (MIT).',
   },
+  textField: {
+    clear: 'مسح',
+  },
   error: {
     title: 'حدث خطأ ما',
     retry: 'أعد المحاولة',

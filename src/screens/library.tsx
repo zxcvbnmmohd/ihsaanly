@@ -1,10 +1,11 @@
 import type { Href } from 'expo-router'
 import type { ReactElement } from 'react'
-import { Text, TextInput, useColorScheme, View } from 'react-native'
+import { Text, useColorScheme, View } from 'react-native'
 
 import { EmptyState } from '@/components/empty-state'
 import { Row } from '@/components/row'
 import { Screen } from '@/components/screen'
+import { TextField } from '@/components/text-field'
 import type { Ruling } from '@/content/schema'
 import { useStrings } from '@/strings'
 import { colors } from '@/theme/colors'
@@ -37,14 +38,12 @@ export function LibraryScreen({
 
   return (
     <Screen className="gap-6 p-4">
-      <TextInput
+      <TextField
         value={query}
         onChangeText={onQueryChange}
         placeholder={strings.library.search}
-        placeholderTextColor={colors.secondaryLabel}
-        autoCorrect={false}
-        className="rounded-2xl px-4 py-3 text-base"
-        style={{ backgroundColor: colors.secondarySystemBackground, color: colors.label }}
+        kind="search"
+        returnKeyType="search"
       />
 
       {sections.length === 0 ? (

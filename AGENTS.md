@@ -187,6 +187,42 @@ per version so `getSnapshot` is referentially stable until something changes.
 Tailwind 4 is CSS-first. There is no `tailwind.config.js` and v5 would not read
 one — theme customisation goes in an `@theme` block in `global.css`.
 
+### Copy is read through `useStrings()`
+
+`src/strings.ts` holds one English table and resolves it per language.
+Components call `const strings = useStrings()`. A helper that formats copy
+takes `strings: Strings` as a parameter rather than reading a module-level
+value: React Compiler memoises the helper on its arguments, so a locale change
+would never invalidate it. Code outside React uses `getStrings()`. A language
+joins `SHIPPED` only once every string is complete and reviewed.
+
+### Onboarding may use literal colours; nothing else may
+
+`palettes` in `src/theme/colors.ts` are the only hex values in the app.
+`LinearGradient` and the star artwork need strings, and `PlatformColor` cannot
+express a brand hue. Pick one with `paletteFor(useColorScheme())`. Today stays
+undecorated, as the spec asks, so nothing there reads a palette.
+
+### The theme override is one call
+
+`src/theme/store.ts` persists System / Light / Dark and applies it with
+`Appearance.setColorScheme`, at module scope in the root layout and again in
+its setter. Every `PlatformColor` follows it, so there is no second colour
+path to keep in sync. In this React Native release the reset value is
+`'auto'`, not `null`.
+
+### Fonts are bundled by the config plugin
+
+Files under `assets/fonts/` are listed in the `expo-font` plugin entry in
+`app.json`, so they exist before first paint and no `useFonts` gate is needed.
+Adding one is a native change: run prebuild. The file name must equal the
+font's PostScript name, because Android registers by file name and iOS by
+PostScript name. The display serif is the platform's own, via
+`src/theme/fonts.ts`; only Arabic ships a face.
+
+`expo prebuild` regenerates `android/` and removes `local.properties` with it.
+Set `ANDROID_HOME` in your shell instead of relying on that file.
+
 ### Linting
 
 Run `bun run lint` (`eslint .`), **not** `npx expo lint` — the latter tries to

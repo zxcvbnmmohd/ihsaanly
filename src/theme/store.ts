@@ -22,10 +22,14 @@ export const getThemePreference = store.get
  * the OS.
  */
 export function applyThemePreference(preference: ThemePreference): void {
-  if (Platform.OS === 'android' && ThemeOverride) {
-    ThemeOverride.setNightMode(preference)
-    return
-  }
+  // Persist for the next cold start. Android only; elsewhere the module is absent.
+  if (Platform.OS === 'android' && ThemeOverride) ThemeOverride.setNightMode(preference)
+
+  // Apply now. This must run on every platform even when the module already
+  // applied the same mode natively: React Native caches the scheme in
+  // JavaScript and only this call refreshes it, and that context survives the
+  // Android activity recreation. Skipping it leaves every colors.* getter
+  // resolving to the previous scheme. Setting the same mode twice is a no-op.
   Appearance.setColorScheme(preference === 'system' ? 'auto' : preference)
 }
 

@@ -9,7 +9,7 @@ import {
   HighLatitudeRuleName,
   type CalculationPreferences,
 } from '@/prayer/calculation'
-import { strings } from '@/strings'
+import { useStrings } from '@/strings'
 import { colors } from '@/theme/colors'
 
 export interface CalculationScreenProps {
@@ -42,6 +42,7 @@ function Section({ title, footnote, children }: SectionProps): ReactElement {
 }
 
 export function CalculationScreen({ preferences, onChange }: CalculationScreenProps): ReactElement {
+  const strings = useStrings()
   useColorScheme()
 
   return (

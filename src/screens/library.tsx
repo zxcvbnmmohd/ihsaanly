@@ -6,7 +6,7 @@ import { EmptyState } from '@/components/empty-state'
 import { Row } from '@/components/row'
 import { Screen } from '@/components/screen'
 import type { Ruling } from '@/content/schema'
-import { strings } from '@/strings'
+import { useStrings } from '@/strings'
 import { colors } from '@/theme/colors'
 
 export interface LibraryEntry {
@@ -32,6 +32,7 @@ export function LibraryScreen({
   sections,
   onQueryChange,
 }: LibraryScreenProps): ReactElement {
+  const strings = useStrings()
   useColorScheme()
 
   return (

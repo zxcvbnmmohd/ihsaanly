@@ -4,7 +4,7 @@ import { Text, useColorScheme, View } from 'react-native'
 import { EmptyState } from '@/components/empty-state'
 import { Screen } from '@/components/screen'
 import type { ActionSummary } from '@/plan/history'
-import { strings } from '@/strings'
+import { useStrings, type Strings } from '@/strings'
 import { colors } from '@/theme/colors'
 
 export interface HistoryScreenProps {
@@ -14,7 +14,7 @@ export interface HistoryScreenProps {
   labelFor: (subject: string) => string
 }
 
-function offsetLabel(seconds: number | null): string | null {
+function offsetLabel(seconds: number | null, strings: Strings): string | null {
   if (seconds === null) return null
   const minutes = Math.round(Math.abs(seconds) / 60)
   if (minutes === 0) return null
@@ -30,6 +30,7 @@ function Group({
   summaries: ActionSummary[]
   labelFor: (subject: string) => string
 }): ReactElement | null {
+  const strings = useStrings()
   useColorScheme()
 
   if (summaries.length === 0) return null
@@ -44,9 +45,9 @@ function Group({
           <Text className="text-base" style={{ color: colors.label }}>
             {labelFor(summary.subject)} · {strings.history.times(summary.count)}
           </Text>
-          {offsetLabel(summary.typicalOffsetSeconds) ? (
+          {offsetLabel(summary.typicalOffsetSeconds, strings) ? (
             <Text className="text-sm" style={{ color: colors.secondaryLabel }}>
-              {offsetLabel(summary.typicalOffsetSeconds)}
+              {offsetLabel(summary.typicalOffsetSeconds, strings)}
             </Text>
           ) : null}
         </View>
@@ -61,6 +62,7 @@ export function HistoryScreen({
   items,
   labelFor,
 }: HistoryScreenProps): ReactElement {
+  const strings = useStrings()
   useColorScheme()
 
   if (daysActive === 0) {

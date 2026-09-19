@@ -4,7 +4,7 @@ import { Text, useColorScheme, View } from 'react-native'
 import { Row } from '@/components/row'
 import { Screen } from '@/components/screen'
 import { offsetOptions, type HijriDate } from '@/hijri/calendar'
-import { strings } from '@/strings'
+import { useStrings } from '@/strings'
 import { colors } from '@/theme/colors'
 
 export interface HijriScreenProps {
@@ -14,6 +14,7 @@ export interface HijriScreenProps {
 }
 
 export function HijriScreen({ offset, preview, onChange }: HijriScreenProps): ReactElement {
+  const strings = useStrings()
   useColorScheme()
 
   return (

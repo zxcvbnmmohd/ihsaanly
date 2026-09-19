@@ -7,7 +7,7 @@ import { Screen } from '@/components/screen'
 import type { HijriDate } from '@/hijri/calendar'
 import type { Prayer } from '@/prayer/qada'
 import type { WindowName } from '@/prayer/windows'
-import { strings } from '@/strings'
+import { useStrings } from '@/strings'
 import { colors } from '@/theme/colors'
 
 export interface TodayEntry {
@@ -67,6 +67,7 @@ export function TodayScreen({
   onMakeUp,
   locationHref,
 }: TodayScreenProps): ReactElement {
+  const strings = useStrings()
   useColorScheme()
 
   if (!hasLocation) {

@@ -8,7 +8,7 @@ import { languageOf } from '@/i18n/locale'
 import { getLocale } from '@/i18n/store'
 import { OnboardingFlow } from '@/onboarding/flow'
 import { useOnboarding } from '@/onboarding/store'
-import { strings } from '@/strings'
+import { useStrings } from '@/strings'
 import { colors } from '@/theme/colors'
 import { applyThemePreference, getThemePreference } from '@/theme/store'
 
@@ -27,6 +27,7 @@ interface ErrorBoundaryProps {
 }
 
 export function ErrorBoundary({ error, retry }: ErrorBoundaryProps): ReactElement {
+  const strings = useStrings()
   return (
     <View className="flex-1 items-center justify-center gap-3 p-6">
       <Text className="text-xl font-semibold" style={{ color: colors.label }}>
@@ -46,6 +47,7 @@ export function ErrorBoundary({ error, retry }: ErrorBoundaryProps): ReactElemen
 }
 
 export default function RootLayout(): ReactElement {
+  const strings = useStrings()
   const colorScheme = useColorScheme()
   const onboarding = useOnboarding()
 

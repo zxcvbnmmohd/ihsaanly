@@ -9,7 +9,7 @@ import { Screen } from '@/components/screen'
 import type { Href } from 'expo-router'
 
 import type { Evidence, Ruling } from '@/content/schema'
-import { strings } from '@/strings'
+import { useStrings } from '@/strings'
 import { colors } from '@/theme/colors'
 
 export interface ItemDetail {
@@ -46,6 +46,7 @@ function Labelled({ label, children }: LabelledProps): ReactElement {
 }
 
 export function ItemScreen({ item, memoriseHref }: ItemScreenProps): ReactElement {
+  const strings = useStrings()
   useColorScheme()
 
   if (!item) {

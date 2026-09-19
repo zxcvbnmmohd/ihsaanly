@@ -5,10 +5,11 @@ import { useUserState } from '@/plan/user-state-store'
 import { usePlace } from '@/location/store'
 import { useCalculationPreferences } from '@/prayer/store'
 import { MoreScreen } from '@/screens/more'
-import { strings } from '@/strings'
+import { useStrings } from '@/strings'
 import { useThemePreference } from '@/theme/store'
 
 export default function MoreRoute(): ReactElement {
+  const strings = useStrings()
   const place = usePlace()
   const calculation = useCalculationPreferences()
   const hijriOffset = useHijriOffset()

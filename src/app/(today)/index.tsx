@@ -12,38 +12,38 @@ import { useCalculationPreferences } from '@/prayer/store'
 import { prayerTimesAcross } from '@/prayer/times'
 import { buildWindows } from '@/prayer/windows'
 import { TodayScreen, type TodayEntry } from '@/screens/today'
-import { strings } from '@/strings'
+import { useStrings, type Strings } from '@/strings'
 import { useNow } from '@/time/use-now'
 
-function caveatLabel(caveat: PlannedItem['caveat']): string | null {
+function caveatLabel(caveat: PlannedItem['caveat'], strings: Strings): string | null {
   if (caveat === 'confirm-locally') return strings.plan.confirmLocally
   if (caveat === 'expected') return strings.plan.expected
   return null
 }
 
-function whenLabel(planned: PlannedItem): string | null {
+function whenLabel(planned: PlannedItem, strings: Strings): string | null {
   if (planned.reason !== 'upcoming') return null
   return planned.daysAway === 1 ? strings.plan.tomorrow : strings.plan.inDays(planned.daysAway ?? 0)
 }
 
-function detailFor(planned: PlannedItem): string | null {
+function detailFor(planned: PlannedItem, strings: Strings): string | null {
   const parts = [
-    whenLabel(planned),
+    whenLabel(planned, strings),
     planned.optional ? strings.plan.optional : null,
-    caveatLabel(planned.caveat),
+    caveatLabel(planned.caveat, strings),
   ].filter((part): part is string => part !== null)
 
   return parts.length > 0 ? parts.join(' · ') : null
 }
 
-function toEntry(planned: PlannedItem): TodayEntry | null {
+function toEntry(planned: PlannedItem, strings: Strings): TodayEntry | null {
   const item = itemById(planned.itemId)
   if (!item) return null
 
   return {
     id: planned.itemId,
     title: resolveText(item.title) ?? item.id,
-    detail: detailFor(planned),
+    detail: detailFor(planned, strings),
     href: `/item/${item.id}`,
   }
 }
@@ -57,6 +57,7 @@ export default function TodayRoute(): ReactElement {
   useWidgetSnapshot(planned)
   const marks = useTodayMarks(place?.timeZone ?? 'UTC', now)
   const qada = useQada()
+  const strings = useStrings()
 
   const togglePrayer = (prayer: Prayer): void => {
     if (!place) return
@@ -77,9 +78,9 @@ export default function TodayRoute(): ReactElement {
       hasLocation={place !== null}
       window={planned?.today.window ?? null}
       hijri={planned?.today.hijri ?? null}
-      rightNow={planned?.today.rightNow ? toEntry(planned.today.rightNow) : null}
-      context={planned?.today.context.flatMap((entry) => toEntry(entry) ?? []) ?? []}
-      comingUp={planned?.today.comingUp.flatMap((entry) => toEntry(entry) ?? []) ?? []}
+      rightNow={planned?.today.rightNow ? toEntry(planned.today.rightNow, strings) : null}
+      context={planned?.today.context.flatMap((entry) => toEntry(entry, strings) ?? []) ?? []}
+      comingUp={planned?.today.comingUp.flatMap((entry) => toEntry(entry, strings) ?? []) ?? []}
       prayers={
         place ? PRAYERS.map((prayer) => ({ prayer, done: marks[prayer] !== undefined })) : []
       }

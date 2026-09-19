@@ -3,10 +3,10 @@ import { Text, useColorScheme, View } from 'react-native'
 
 import type { Evidence } from '@/content/schema'
 import { resolveText } from '@/content'
-import { strings } from '@/strings'
+import { useStrings, type Strings } from '@/strings'
 import { colors } from '@/theme/colors'
 
-function citationFor(evidence: Evidence): string {
+function citationFor(evidence: Evidence, strings: Strings): string {
   if (evidence.type === 'quran') {
     return strings.item.quranReference(evidence.surah, evidence.ayah)
   }
@@ -22,6 +22,7 @@ interface EvidencePanelProps {
 }
 
 export function EvidencePanel({ evidence }: EvidencePanelProps): ReactElement {
+  const strings = useStrings()
   useColorScheme()
 
   return (
@@ -36,7 +37,7 @@ export function EvidencePanel({ evidence }: EvidencePanelProps): ReactElement {
         return (
           <View key={`${entry.type}-${index}`} className="gap-1">
             <Text className="text-sm" style={{ color: colors.label }}>
-              {citationFor(entry)}
+              {citationFor(entry, strings)}
             </Text>
             {narration ? (
               <Text className="text-sm italic" style={{ color: colors.secondaryLabel }}>

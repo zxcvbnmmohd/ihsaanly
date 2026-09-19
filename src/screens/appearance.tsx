@@ -3,7 +3,7 @@ import { Text, useColorScheme } from 'react-native'
 
 import { Row } from '@/components/row'
 import { Screen } from '@/components/screen'
-import { strings } from '@/strings'
+import { useStrings } from '@/strings'
 import { colors } from '@/theme/colors'
 import { THEME_PREFERENCES, type ThemePreference } from '@/theme/store'
 
@@ -13,6 +13,7 @@ export interface AppearanceScreenProps {
 }
 
 export function AppearanceScreen({ preference, onSelect }: AppearanceScreenProps): ReactElement {
+  const strings = useStrings()
   useColorScheme()
 
   return (

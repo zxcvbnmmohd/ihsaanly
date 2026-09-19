@@ -21,7 +21,7 @@ import { isRightToLeft, SUPPORTED_LOCALES, type SupportedLocale } from '@/i18n/l
 import type { Place } from '@/location/place'
 import type { Gender } from '@/onboarding/store'
 import type { NotificationPreferences } from '@/plan/notification-preferences'
-import { strings } from '@/strings'
+import { useStrings } from '@/strings'
 import { colors, paletteFor, type Palette } from '@/theme/colors'
 import { fonts } from '@/theme/fonts'
 import { THEME_PREFERENCES, type ThemePreference } from '@/theme/store'
@@ -157,6 +157,7 @@ interface StepBodyProps extends OnboardingScreenProps {
 }
 
 function StepBody(props: StepBodyProps): ReactElement {
+  const strings = useStrings()
   useColorScheme()
   const { step, palette } = props
 
@@ -323,6 +324,7 @@ function StepBody(props: StepBodyProps): ReactElement {
 }
 
 export function OnboardingScreen(props: OnboardingScreenProps): ReactElement {
+  const strings = useStrings()
   const scheme = useColorScheme()
   const palette = paletteFor(scheme)
   const insets = useSafeAreaInsets()

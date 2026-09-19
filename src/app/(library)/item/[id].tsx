@@ -3,9 +3,10 @@ import { Stack, useLocalSearchParams } from 'expo-router'
 
 import { itemById, resolveText } from '@/content'
 import { ItemScreen } from '@/screens/item'
-import { strings } from '@/strings'
+import { useStrings } from '@/strings'
 
 export default function ItemRoute(): ReactElement {
+  const strings = useStrings()
   const { id } = useLocalSearchParams<{ id: string }>()
   const item = itemById(id)
   const title = item ? resolveText(item.title) : null

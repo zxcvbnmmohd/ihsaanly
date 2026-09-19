@@ -7,7 +7,7 @@ import { itemById, resolveText } from '@/content'
 import { FULLY_REVEALED, nextStage, type Reveal } from '@/memorise/reveal'
 import { toggleKnown, useKnownItems } from '@/memorise/store'
 import { MemoriseScreen } from '@/screens/memorise'
-import { strings } from '@/strings'
+import { useStrings } from '@/strings'
 
 interface Thing {
   reveal: Reveal
@@ -15,6 +15,7 @@ interface Thing {
 }
 
 export default function MemoriseRoute(): ReactElement {
+  const strings = useStrings()
   const { id } = useLocalSearchParams<{ id: string }>()
   const item = itemById(id)
   const known = useKnownItems()

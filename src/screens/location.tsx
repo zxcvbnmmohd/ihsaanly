@@ -4,7 +4,7 @@ import { Text, TextInput, useColorScheme, View } from 'react-native'
 import { Row } from '@/components/row'
 import { Screen } from '@/components/screen'
 import type { Place } from '@/location/place'
-import { strings } from '@/strings'
+import { useStrings } from '@/strings'
 import { colors } from '@/theme/colors'
 
 export interface LocationScreenProps {
@@ -28,6 +28,7 @@ export function LocationScreen({
   onUseDevice,
   onSelect,
 }: LocationScreenProps): ReactElement {
+  const strings = useStrings()
   useColorScheme()
 
   return (

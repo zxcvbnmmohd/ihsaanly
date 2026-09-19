@@ -1,6 +1,6 @@
 import * as Location from 'expo-location'
 
-import { strings } from '@/strings'
+import { getStrings } from '@/strings'
 
 import type { Place } from './place'
 
@@ -13,7 +13,7 @@ async function describe(latitude: number, longitude: number): Promise<string> {
     // Reverse geocoding is a convenience; coordinates alone are enough to work.
   }
 
-  return strings.location.currentLocation
+  return getStrings().location.currentLocation
 }
 
 export type DeviceLocation =

@@ -3,7 +3,7 @@ import { AppState } from 'react-native'
 
 import { resolveText, itemById } from '@/content'
 import type { Plan } from '@/plan/signals'
-import { strings } from '@/strings'
+import { getStrings } from '@/strings'
 
 import { ensurePermission, sync, type NotificationContent } from './schedule'
 
@@ -18,8 +18,8 @@ function contentsFor(plan: Plan): NotificationContent[] {
         title: resolveText(item.title) ?? entry.itemId,
         body:
           entry.reason === 'upcoming'
-            ? strings.notifications.body.tomorrow
-            : strings.notifications.body.window,
+            ? getStrings().notifications.body.tomorrow
+            : getStrings().notifications.body.window,
         at: entry.at,
       },
     ]

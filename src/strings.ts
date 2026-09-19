@@ -1,5 +1,8 @@
-/** Single source for user-facing text. #19 swaps the internals for locale-aware lookup. */
-export const strings = {
+import { languageOf } from '@/i18n/locale'
+import { getLocale, useLocale } from '@/i18n/store'
+
+/** Single source for user-facing text. Read it through useStrings() so it follows the locale. */
+const en = {
   tabs: {
     today: 'Today',
     library: 'Library',
@@ -309,3 +312,25 @@ export const strings = {
     body: 'That screen does not exist.',
   },
 } as const
+
+export type Strings = typeof en
+
+/**
+ * A language joins this table only once every string is complete and
+ * reviewed; until then the interface stays English while content and layout
+ * direction already follow the chosen locale.
+ */
+const SHIPPED: Record<string, Strings> = { en }
+
+export function stringsFor(language: string): Strings {
+  return SHIPPED[language] ?? en
+}
+
+/** For code that runs outside React. Components use useStrings(). */
+export function getStrings(): Strings {
+  return stringsFor(languageOf(getLocale()))
+}
+
+export function useStrings(): Strings {
+  return stringsFor(languageOf(useLocale()))
+}

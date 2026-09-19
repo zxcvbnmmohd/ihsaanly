@@ -3,7 +3,7 @@ import type { Href } from 'expo-router'
 
 import { Row } from '@/components/row'
 import { Screen } from '@/components/screen'
-import { strings } from '@/strings'
+import { useStrings } from '@/strings'
 
 export interface MoreScreenProps {
   locationLabel: string
@@ -44,6 +44,7 @@ export function MoreScreen({
   appearanceHref,
   appearanceLabel,
 }: MoreScreenProps): ReactElement {
+  const strings = useStrings()
   return (
     <Screen className="gap-3 p-4">
       <Row href={locationHref} title={strings.location.title} detail={locationLabel} />

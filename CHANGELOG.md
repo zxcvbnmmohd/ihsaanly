@@ -14,8 +14,8 @@ Work is tracked as issues on the repository. The product specification is issue 
 
 ### Added
 
-- **Appearance** in More: System, Light or Dark, applied through
-  `Appearance.setColorScheme` so every platform colour follows it.
+- **Appearance** in More: System, Light or Dark. On Android the change
+  recreates the activity so every platform colour re-resolves.
 - A `Button` primitive with light haptic feedback, and `expo-linear-gradient`.
 - Amiri, bundled through the `expo-font` config plugin, for all Arabic text.
 - `useStrings()`: interface copy resolves per language. English is the only
@@ -33,6 +33,12 @@ Work is tracked as issues on the repository. The product specification is issue 
   twenty-one toggles.
 - Onboarding carries a warm gradient wash and an eight-point-star motif. Today
   stays undecorated, as the spec asks.
+
+### Removed
+
+- `expo-system-ui`. It was never imported, and its Android lifecycle listener
+  re-applied the static interface style on every activity creation, which
+  defeated the Appearance override. See AGENTS.md before reinstalling it.
 
 ### Blocked on external dependencies
 

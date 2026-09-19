@@ -1,7 +1,8 @@
 import type { ReactElement } from 'react'
 import { DarkTheme, DefaultTheme, ThemeProvider } from 'expo-router/react-navigation'
 import { NativeTabs } from 'expo-router/native-tabs'
-import { Text, useColorScheme, View } from 'react-native'
+import { StatusBar } from 'expo-status-bar'
+import { Text, View } from 'react-native'
 
 import { setContentLanguage } from '@/content'
 import { languageOf } from '@/i18n/locale'
@@ -10,7 +11,7 @@ import { OnboardingFlow } from '@/onboarding/flow'
 import { useOnboarding } from '@/onboarding/store'
 import { useStrings } from '@/strings'
 import { colors } from '@/theme/colors'
-import { applyThemePreference, getThemePreference } from '@/theme/store'
+import { applyThemePreference, getThemePreference, useEffectiveColorScheme } from '@/theme/store'
 
 import '../../global.css'
 
@@ -48,7 +49,7 @@ export function ErrorBoundary({ error, retry }: ErrorBoundaryProps): ReactElemen
 
 export default function RootLayout(): ReactElement {
   const strings = useStrings()
-  const colorScheme = useColorScheme()
+  const colorScheme = useEffectiveColorScheme()
   const onboarding = useOnboarding()
 
   // Onboarding replaces the tab bar rather than sitting over it: there is
@@ -56,6 +57,7 @@ export default function RootLayout(): ReactElement {
   if (!onboarding.completed) {
     return (
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+        <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
         <OnboardingFlow />
       </ThemeProvider>
     )
@@ -63,6 +65,7 @@ export default function RootLayout(): ReactElement {
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+      <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
       <NativeTabs>
         <NativeTabs.Trigger name="(today)">
           <NativeTabs.Trigger.Icon sf="sun.max.fill" md="today" />

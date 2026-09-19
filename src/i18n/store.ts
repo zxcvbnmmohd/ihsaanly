@@ -2,9 +2,16 @@ import { getLocales } from 'expo-localization'
 import { I18nManager } from 'react-native'
 import { z } from 'zod'
 
+import { setContentLanguage } from '@/content'
 import { createPreferenceStore } from '@/storage/preference-store'
 
-import { isRightToLeft, resolveLocale, SUPPORTED_LOCALES, type SupportedLocale } from './locale'
+import {
+  isRightToLeft,
+  languageOf,
+  resolveLocale,
+  SUPPORTED_LOCALES,
+  type SupportedLocale,
+} from './locale'
 
 const Locale = z.enum(SUPPORTED_LOCALES)
 
@@ -29,4 +36,11 @@ export function applyDirection(locale: SupportedLocale): void {
 
   I18nManager.allowRTL(shouldBeRtl)
   I18nManager.forceRTL(shouldBeRtl)
+}
+
+/** Persist the choice, switch content, and ask for the matching layout direction. */
+export function chooseLocale(locale: SupportedLocale): void {
+  setLocale(locale)
+  setContentLanguage(languageOf(locale))
+  applyDirection(locale)
 }

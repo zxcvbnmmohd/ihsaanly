@@ -1,3 +1,4 @@
+import type { AppearanceScreenProps } from './appearance'
 import type { CalculationScreenProps } from './calculation'
 import type { HijriScreenProps } from './hijri'
 import type { ItemDetail } from './item'
@@ -132,6 +133,8 @@ export const moreFixture: MoreScreenProps = {
   dataHref: '/data',
   languageHref: '/language',
   languageLabel: 'English (Canada)',
+  appearanceHref: '/appearance',
+  appearanceLabel: 'System',
 }
 
 export const hijriFixture: HijriScreenProps = {
@@ -191,7 +194,12 @@ export const notificationsFixture: NotificationsScreenProps = {
 
 export const onboardingFixture: OnboardingScreenProps = {
   step: 'location',
+  stepIndex: 2,
+  stepCount: 6,
+  locale: 'en-CA',
+  theme: 'system',
   place: null,
+  problem: null,
   query: 'toron',
   results: [
     {
@@ -211,12 +219,24 @@ export const onboardingFixture: OnboardingScreenProps = {
     perItem: {},
     maxPerDay: 3,
   },
-  starters: [{ id: 'dua-leaving-home', title: 'Leaving home', enabled: true }],
+  preset: 'essentials',
+  itemCount: 21,
+  essentialCount: 11,
+  onSelectLocale: noop,
+  onSelectTheme: noop,
   onQueryChange: noop,
   onUseDevice: noop,
   onSelectPlace: noop,
   onSelectGender: noop,
   onToggleNotification: noop,
-  onToggleStarter: noop,
+  onSelectPreset: noop,
   onNext: noop,
+  onBack: noop,
+  onSkipIntro: noop,
+  onNotNow: noop,
+}
+
+export const appearanceFixture: AppearanceScreenProps = {
+  preference: 'system',
+  onSelect: noop,
 }

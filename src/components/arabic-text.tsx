@@ -2,6 +2,7 @@ import type { ReactElement } from 'react'
 import { Text, useColorScheme, type TextProps } from 'react-native'
 
 import { colors } from '@/theme/colors'
+import { fonts } from '@/theme/fonts'
 
 /** `writingDirection` + `textAlign: auto` right-aligns Arabic without hardcoding a side. */
 export function ArabicText({ children, ...props }: TextProps): ReactElement {
@@ -11,7 +12,12 @@ export function ArabicText({ children, ...props }: TextProps): ReactElement {
     <Text
       {...props}
       className="text-2xl leading-loose"
-      style={{ color: colors.label, writingDirection: 'rtl', textAlign: 'auto' }}>
+      style={{
+        color: colors.label,
+        fontFamily: fonts.arabic,
+        writingDirection: 'rtl',
+        textAlign: 'auto',
+      }}>
       {children}
     </Text>
   )

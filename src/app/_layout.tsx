@@ -10,10 +10,12 @@ import { OnboardingFlow } from '@/onboarding/flow'
 import { useOnboarding } from '@/onboarding/store'
 import { strings } from '@/strings'
 import { colors } from '@/theme/colors'
+import { applyThemePreference, getThemePreference } from '@/theme/store'
 
 import '../../global.css'
 
 setContentLanguage(languageOf(getLocale()))
+applyThemePreference(getThemePreference())
 
 /**
  * Expo Router renders this instead of a white screen when a render throws.

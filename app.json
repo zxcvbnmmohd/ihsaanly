@@ -46,7 +46,7 @@
       "expo-router",
       "expo-status-bar",
       "expo-image",
-      "expo-font",
+      ["expo-font", { "fonts": ["./assets/fonts/Amiri-Regular.ttf"] }],
       "expo-sqlite",
       [
         "expo-location",

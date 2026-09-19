@@ -184,7 +184,7 @@ function LocationGlyph({ accent, onAccent, active, busy }: GlyphProps): ReactEle
         backgroundColor: active ? accent : undefined,
       }}>
       {busy ? (
-        <ActivityIndicator color={accent} />
+        <ActivityIndicator color={active ? onAccent : accent} />
       ) : (
         <View
           className="rounded-full"
@@ -236,7 +236,7 @@ function PlaceCard({ place, locating, problem, palette, onPress }: PlaceCardProp
               className="text-xl"
               style={{
                 color: colors.label,
-                fontFamily: place ? fonts.display : undefined,
+                fontFamily: place && !locating ? fonts.display : undefined,
                 fontWeight: '600',
               }}>
               {title}
@@ -248,7 +248,7 @@ function PlaceCard({ place, locating, problem, palette, onPress }: PlaceCardProp
             ) : null}
           </View>
         </View>
-        {place ? (
+        {place && !locating ? (
           <Text className="pt-3 text-xs" style={{ color: colors.secondaryLabel }}>
             {strings.location.follows}
           </Text>

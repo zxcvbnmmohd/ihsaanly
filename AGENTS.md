@@ -230,10 +230,16 @@ the system scheme. Two things make it work, and both must stay:
   `userInterfaceStyle: automatic` in `app.json` still sets the iOS plist key
   and the Android theme already follows the system without the package.
 
-With an override stored, a cold start renders once in the system scheme and
-then recreates, because JavaScript applies the preference after the activity
-exists. Persisting it natively would remove that flash and needs a native
-module; not done.
+With a Light or Dark override stored that differs from the OS scheme, a cold
+start renders once in the system scheme and then relaunches the activity,
+because JavaScript applies the preference after the activity exists. In
+development the visible symptom is expo-router's "configured linking in
+multiple places" error: the new root mounts before the old root's effect
+cleanup runs. It is transient, dev-only (`useLinking.native.js` returns early
+in production), and does not appear with System stored or when the override
+matches the OS. Persisting the preference natively, so `MainApplication` can
+apply it before the activity exists, would remove both the flash and the
+warning; it needs a native module and is not done.
 
 ### Fonts are bundled by the config plugin
 

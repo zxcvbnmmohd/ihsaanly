@@ -1,9 +1,11 @@
-import { getLocales } from 'expo-localization'
+import { reloadAppAsync } from 'expo'
 import { I18nManager } from 'react-native'
 import { z } from 'zod'
 
 import { setContentLanguage } from '@/content'
 import { createPreferenceStore } from '@/storage/preference-store'
+
+import { deviceLocaleTags } from './device'
 
 import {
   isRightToLeft,
@@ -16,10 +18,7 @@ import {
 } from './locale'
 
 const Locale = z.enum(SUPPORTED_LOCALES)
-
-function deviceLocaleTags(): string[] {
-  return getLocales().map((locale) => locale.languageTag)
-}
+const RELOAD_DELAY_MS = 300
 
 function deviceLocale(): SupportedLocale {
   return resolveLocale(deviceLocaleTags())
@@ -32,9 +31,9 @@ export const useLocale = store.use
 export const getLocale = store.get
 
 /**
- * Layout direction is a native setting that only takes effect on restart, so
- * this asks for it and the change lands next launch. Every style already uses
- * logical directions, so nothing else has to move.
+ * Layout direction is a native setting that takes effect when the tree is
+ * next built; chooseLanguage reloads for it. Every style already uses logical
+ * directions, so nothing else has to move.
  */
 export function applyDirection(locale: SupportedLocale): void {
   const shouldBeRtl = isRightToLeft(locale)
@@ -51,7 +50,21 @@ function chooseLocale(locale: SupportedLocale): void {
   applyDirection(locale)
 }
 
-/** The user picks a language; the device decides which region's English. */
+/**
+ * The user picks a language; the device decides which region's English.
+ * Layout direction is read natively when the tree is built, so a change of
+ * direction reloads the app rather than asking the user to.
+ */
 export function chooseLanguage(language: SupportedLanguage): void {
-  chooseLocale(localeForLanguage(language, deviceLocaleTags()))
+  const locale = localeForLanguage(language, deviceLocaleTags())
+  const directionChanges = isRightToLeft(locale) !== I18nManager.isRTL
+
+  chooseLocale(locale)
+  if (!directionChanges) return
+
+  // The RTL flags are written by native calls that are still in flight when
+  // this returns; reloading at once has been seen to lose the second write.
+  // ponytail: a fixed delay rather than a completion signal, which the API
+  // does not offer.
+  setTimeout(() => void reloadAppAsync('layout direction changed'), RELOAD_DELAY_MS)
 }

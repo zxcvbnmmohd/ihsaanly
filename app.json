@@ -42,7 +42,7 @@
           ]
         }
       ],
-      "./plugins/with-android-theme-recreation.js",
+      "./plugins/with-android-manifest.js",
       "expo-asset",
       "expo-router",
       "expo-status-bar",
@@ -59,7 +59,6 @@
       ],
       "expo-notifications",
       "expo-sharing",
-      "expo-localization",
       "expo-audio"
     ]
   }

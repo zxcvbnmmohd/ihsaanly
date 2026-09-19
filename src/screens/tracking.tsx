@@ -3,7 +3,7 @@ import type { ReactElement } from 'react'
 import { Row } from '@/components/row'
 import { Screen } from '@/components/screen'
 import type { UserState } from '@/plan/user-state'
-import { strings } from '@/strings'
+import { useStrings } from '@/strings'
 
 export interface TrackingScreenProps {
   userState: UserState
@@ -16,6 +16,7 @@ export function TrackingScreen({
   showPause,
   onChange,
 }: TrackingScreenProps): ReactElement {
+  const strings = useStrings()
   return (
     <Screen className="gap-3 p-4">
       <Row

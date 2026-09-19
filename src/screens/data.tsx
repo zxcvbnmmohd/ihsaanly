@@ -3,7 +3,7 @@ import { Text, useColorScheme } from 'react-native'
 
 import { Row } from '@/components/row'
 import { Screen } from '@/components/screen'
-import { strings } from '@/strings'
+import { useStrings } from '@/strings'
 import { colors } from '@/theme/colors'
 
 export interface DataScreenProps {
@@ -19,6 +19,7 @@ export function DataScreen({
   onImport,
   onDiagnostics,
 }: DataScreenProps): ReactElement {
+  const strings = useStrings()
   useColorScheme()
 
   return (

@@ -5,7 +5,7 @@ import { ArabicText } from '@/components/arabic-text'
 import { Row } from '@/components/row'
 import { Screen } from '@/components/screen'
 import type { Reveal } from '@/memorise/reveal'
-import { strings } from '@/strings'
+import { useStrings } from '@/strings'
 import { colors } from '@/theme/colors'
 
 export interface MemoriseScreenProps {
@@ -24,6 +24,7 @@ export interface MemoriseScreenProps {
 }
 
 export function MemoriseScreen(props: MemoriseScreenProps): ReactElement {
+  const strings = useStrings()
   useColorScheme()
 
   return (

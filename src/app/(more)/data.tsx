@@ -5,7 +5,7 @@ import { useState, type ReactElement } from 'react'
 import { eventsToAdd, parseExport } from '@/data/bundle'
 import { buildExport, shareDiagnostics, shareExport } from '@/data/export'
 import { DataScreen } from '@/screens/data'
-import { strings } from '@/strings'
+import { useStrings } from '@/strings'
 import { insertExportedEvents } from '@/storage/events'
 
 interface Thing {
@@ -13,6 +13,7 @@ interface Thing {
 }
 
 export default function DataRoute(): ReactElement {
+  const strings = useStrings()
   const [thing, setThing] = useState<Thing>({ message: null })
 
   const say = (message: string | null): void => setThing({ message })

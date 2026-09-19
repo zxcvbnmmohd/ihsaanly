@@ -4,7 +4,7 @@ import { Text, useColorScheme } from 'react-native'
 import { Row } from '@/components/row'
 import { Screen } from '@/components/screen'
 import { SUPPORTED_LOCALES, type SupportedLocale } from '@/i18n/locale'
-import { strings } from '@/strings'
+import { useStrings } from '@/strings'
 import { colors } from '@/theme/colors'
 
 export interface LanguageScreenProps {
@@ -13,6 +13,7 @@ export interface LanguageScreenProps {
 }
 
 export function LanguageScreen({ locale, onSelect }: LanguageScreenProps): ReactElement {
+  const strings = useStrings()
   useColorScheme()
 
   return (

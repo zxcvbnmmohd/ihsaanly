@@ -4,7 +4,7 @@ import { Text, useColorScheme, View } from 'react-native'
 import { Row } from '@/components/row'
 import { Screen } from '@/components/screen'
 import type { NotificationPreferences, QuietHours } from '@/plan/notification-preferences'
-import { strings } from '@/strings'
+import { useStrings, type Strings } from '@/strings'
 import { colors } from '@/theme/colors'
 
 export const QUIET_HOUR_PRESETS: (QuietHours | null)[] = [
@@ -34,7 +34,7 @@ function Section({ title, children }: { title: string; children: ReactElement[] 
   )
 }
 
-function quietLabel(quiet: QuietHours | null): string {
+function quietLabel(quiet: QuietHours | null, strings: Strings): string {
   return quiet
     ? strings.notifications.quietHoursDetail(quiet.from, quiet.to)
     : strings.notifications.quietHoursOff
@@ -44,6 +44,7 @@ export function NotificationsScreen({
   preferences,
   onChange,
 }: NotificationsScreenProps): ReactElement {
+  const strings = useStrings()
   useColorScheme()
 
   return (
@@ -70,9 +71,9 @@ export function NotificationsScreen({
       <Section title={strings.notifications.quietHours}>
         {QUIET_HOUR_PRESETS.map((preset) => (
           <Row
-            key={quietLabel(preset)}
-            title={quietLabel(preset)}
-            selected={quietLabel(preferences.quietHours) === quietLabel(preset)}
+            key={quietLabel(preset, strings)}
+            title={quietLabel(preset, strings)}
+            selected={quietLabel(preferences.quietHours, strings) === quietLabel(preset, strings)}
             onPress={() => onChange({ quietHours: preset })}
           />
         ))}

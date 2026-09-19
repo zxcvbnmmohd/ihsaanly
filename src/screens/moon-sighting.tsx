@@ -3,7 +3,7 @@ import { Text, useColorScheme, View } from 'react-native'
 
 import { Screen } from '@/components/screen'
 import type { SightingAuthority } from '@/content/moon-sighting'
-import { strings } from '@/strings'
+import { useStrings } from '@/strings'
 import { colors } from '@/theme/colors'
 
 export interface MoonSightingScreenProps {
@@ -11,6 +11,7 @@ export interface MoonSightingScreenProps {
 }
 
 export function MoonSightingScreen({ authorities }: MoonSightingScreenProps): ReactElement {
+  const strings = useStrings()
   useColorScheme()
 
   return (

@@ -3,10 +3,11 @@ import type { ReactElement } from 'react'
 import { itemById, resolveText } from '@/content'
 import { daysActive, summarise } from '@/plan/history'
 import { HistoryScreen } from '@/screens/history'
-import { strings } from '@/strings'
+import { useStrings } from '@/strings'
 import { useActions } from '@/storage/events'
 
 export default function HistoryRoute(): ReactElement {
+  const strings = useStrings()
   const actions = useActions()
 
   const labelFor = (subject: string): string => {

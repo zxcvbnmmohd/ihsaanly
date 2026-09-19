@@ -3,7 +3,7 @@ import { Link, type Href } from 'expo-router'
 import { Pressable, Text, useColorScheme, View } from 'react-native'
 
 import { Surface } from '@/components/surface'
-import { strings } from '@/strings'
+import { useStrings } from '@/strings'
 import { colors } from '@/theme/colors'
 
 interface RowProps {
@@ -15,6 +15,7 @@ interface RowProps {
 }
 
 export function Row({ title, detail, href, onPress, selected }: RowProps): ReactElement {
+  const strings = useStrings()
   useColorScheme()
 
   const body = (

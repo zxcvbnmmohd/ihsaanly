@@ -4,7 +4,7 @@ import { Text, useColorScheme, View } from 'react-native'
 import { Row } from '@/components/row'
 import { Screen } from '@/components/screen'
 import type { EventSettings } from '@/events/store'
-import { strings } from '@/strings'
+import { useStrings } from '@/strings'
 import { colors } from '@/theme/colors'
 
 /** The moments no sensor can find. Raised by hand, cleared by hand. */
@@ -23,6 +23,7 @@ export function EventsScreen({
   onSetHome,
   onToggleManual,
 }: EventsScreenProps): ReactElement {
+  const strings = useStrings()
   useColorScheme()
 
   return (

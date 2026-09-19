@@ -273,6 +273,52 @@ function PlaceCard({ place, locating, problem, palette, onPress }: PlaceCardProp
   )
 }
 
+interface ChoiceCardProps {
+  title: string
+  detail: string
+  selected: boolean
+  palette: Palette
+  onPress: () => void
+}
+
+/** Single-select, so the mark is a radio rather than the checkmark Row uses. */
+function ChoiceCard({ title, detail, selected, palette, onPress }: ChoiceCardProps): ReactElement {
+  useColorScheme()
+
+  return (
+    <Pressable accessibilityRole="radio" accessibilityState={{ selected }} onPress={onPress}>
+      <Surface interactive style={{ borderRadius: 20, padding: 18 }}>
+        <View className="flex-row items-center gap-4">
+          <View
+            className="items-center justify-center rounded-full"
+            style={{
+              width: 24,
+              height: 24,
+              borderWidth: 2,
+              borderColor: selected ? palette.accent : colors.separator,
+              backgroundColor: selected ? palette.accent : undefined,
+            }}>
+            {selected ? (
+              <View
+                className="rounded-full"
+                style={{ width: 8, height: 8, backgroundColor: palette.onAccent }}
+              />
+            ) : null}
+          </View>
+          <View className="flex-1 gap-1">
+            <Text className="text-base font-semibold" style={{ color: colors.label }}>
+              {title}
+            </Text>
+            <Text className="text-sm leading-snug" style={{ color: colors.secondaryLabel }}>
+              {detail}
+            </Text>
+          </View>
+        </View>
+      </Surface>
+    </Pressable>
+  )
+}
+
 interface StepBodyProps extends OnboardingScreenProps {
   palette: Palette
 }
@@ -380,26 +426,40 @@ function StepBody(props: StepBodyProps): ReactElement {
         </>
       )
 
-    case 'you':
+    case 'you': {
+      const options = [
+        {
+          value: 'female',
+          title: strings.onboarding.female,
+          detail: strings.onboarding.femaleDetail,
+        },
+        { value: 'male', title: strings.onboarding.male, detail: strings.onboarding.maleDetail },
+        {
+          value: 'unspecified',
+          title: strings.onboarding.skip,
+          detail: strings.onboarding.skipDetail,
+        },
+      ] as const
+
       return (
         <>
           <Heading title={strings.onboarding.genderStep} body={strings.onboarding.genderWhy} />
-          {(['female', 'male', 'unspecified'] as const).map((option) => (
-            <Row
-              key={option}
-              title={
-                option === 'female'
-                  ? strings.onboarding.female
-                  : option === 'male'
-                    ? strings.onboarding.male
-                    : strings.onboarding.skip
-              }
-              selected={props.gender === option}
-              onPress={() => props.onSelectGender(option)}
+          {options.map((option) => (
+            <ChoiceCard
+              key={option.value}
+              title={option.title}
+              detail={option.detail}
+              selected={props.gender === option.value}
+              palette={palette}
+              onPress={() => props.onSelectGender(option.value)}
             />
           ))}
+          <Text className="pt-1 text-xs leading-snug" style={{ color: colors.secondaryLabel }}>
+            {strings.onboarding.genderPrivacy}
+          </Text>
         </>
       )
+    }
 
     case 'reminders':
       return (

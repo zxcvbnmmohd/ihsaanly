@@ -239,9 +239,17 @@ the system scheme. Two things make it work, and both must stay:
 `modules/theme-override` is a local Expo module, Android only, autolinked
 from `modules/`. It persists the mode in SharedPreferences and applies it from
 an `ApplicationLifecycleListener`, so the process opens in the stored scheme
-before any activity exists and a cold start never relaunches. JavaScript calls
-its `setNightMode` on Android; iOS and Expo Go fall back to `Appearance`.
-Adding or editing it is a native change: run prebuild.
+before any activity exists and a cold start never relaunches. Adding or
+editing it is a native change: run prebuild.
+
+`applyThemePreference` calls that module **and** `Appearance.setColorScheme`,
+never one or the other. React Native caches the colour scheme in JavaScript
+and only `setColorScheme` refreshes that cache; the JavaScript context
+survives the Android activity recreation, so skipping the call leaves every
+`colors.*` getter resolving to the previous scheme while the onboarding
+palette, which reads the preference store, correctly flips. Verified on a
+device: the result is a light card on a dark screen. Setting the same mode
+twice is a no-op natively, so the pair is safe.
 
 A live theme change still recreates the activity. In development that shows
 expo-router's "configured linking in multiple places" error once, because the

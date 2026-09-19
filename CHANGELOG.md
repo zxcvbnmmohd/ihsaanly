@@ -12,6 +12,28 @@ store-facing version, which stays at `1.0.0` until first submission.
 Work is tracked as issues on the repository. The product specification is issue #1;
 `docs/PRD.md` and `docs/SPEC.md` hold the requirements and the decision log.
 
+### Added
+
+- **Appearance** in More: System, Light or Dark, applied through
+  `Appearance.setColorScheme` so every platform colour follows it.
+- A `Button` primitive with light haptic feedback, and `expo-linear-gradient`.
+- Amiri, bundled through the `expo-font` config plugin, for all Arabic text.
+- `useStrings()`: interface copy resolves per language. English is the only
+  shipped table; a language joins once complete and reviewed.
+
+### Changed
+
+- Onboarding is six steps with page dots, Back, Skip past the introduction, a
+  fixed footer and motion between steps. Two screens say what the app is, then
+  four set it up. Language and appearance are chosen on the first screen.
+- The notification permission is requested by the "Allow reminders" button on
+  the Reminders step, not silently from the Today tab afterwards.
+- A declined or unavailable location during onboarding is named on the step.
+- The starting point is two presets, Essentials or Everything, instead of
+  twenty-one toggles.
+- Onboarding carries a warm gradient wash and an eight-point-star motif. Today
+  stays undecorated, as the spec asks.
+
 ### Blocked on external dependencies
 
 - No release is possible until a named, qualified reviewer signs off on the content.

@@ -21,6 +21,8 @@ export interface MoreScreenProps {
   dataHref: Href
   languageHref: Href
   languageLabel: string
+  appearanceHref: Href
+  appearanceLabel: string
 }
 
 export function MoreScreen({
@@ -39,6 +41,8 @@ export function MoreScreen({
   dataHref,
   languageHref,
   languageLabel,
+  appearanceHref,
+  appearanceLabel,
 }: MoreScreenProps): ReactElement {
   return (
     <Screen className="gap-3 p-4">
@@ -50,6 +54,7 @@ export function MoreScreen({
       <Row href={eventsHref} title={strings.events.title} detail={null} />
       <Row href={historyHref} title={strings.history.title} detail={null} />
       <Row href={languageHref} title={strings.language.title} detail={languageLabel} />
+      <Row href={appearanceHref} title={strings.appearance.title} detail={appearanceLabel} />
       <Row href={dataHref} title={strings.data.title} detail={null} />
       <Row href={moonSightingHref} title={strings.moonSighting.title} detail={null} />
     </Screen>

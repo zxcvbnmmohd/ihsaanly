@@ -6,6 +6,7 @@ import { usePlace } from '@/location/store'
 import { useCalculationPreferences } from '@/prayer/store'
 import { MoreScreen } from '@/screens/more'
 import { strings } from '@/strings'
+import { useThemePreference } from '@/theme/store'
 
 export default function MoreRoute(): ReactElement {
   const place = usePlace()
@@ -13,6 +14,7 @@ export default function MoreRoute(): ReactElement {
   const hijriOffset = useHijriOffset()
   const userState = useUserState()
   const locale = useLocale()
+  const theme = useThemePreference()
 
   const tracking = [
     userState.travelling ? strings.tracking.travelling : null,
@@ -35,6 +37,8 @@ export default function MoreRoute(): ReactElement {
       dataHref="/data"
       languageHref="/language"
       languageLabel={strings.language.names[locale] ?? locale}
+      appearanceHref="/appearance"
+      appearanceLabel={strings.appearance[theme]}
       trackingLabel={tracking.length > 0 ? tracking.join(', ') : strings.tracking.title}
     />
   )

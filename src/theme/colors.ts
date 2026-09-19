@@ -1,5 +1,5 @@
 import { Color } from 'expo-router'
-import { Platform } from 'react-native'
+import { Platform, type ColorSchemeName } from 'react-native'
 
 /**
  * Native semantic colors: UIKit on iOS, Material 3 dynamic (wallpaper-derived)
@@ -42,4 +42,25 @@ export const colors = {
     android: Color.android.dynamic.onPrimary,
     default: '#ffffff',
   }),
+}
+
+/**
+ * Onboarding's warm editorial palette, and the only literal colours in the
+ * app. LinearGradient and the star artwork need strings, and PlatformColor
+ * cannot express a brand hue. Nothing on Today uses this; the spec keeps the
+ * home screen undecorated.
+ */
+export interface Palette {
+  wash: readonly [string, string]
+  accent: string
+  onAccent: string
+}
+
+export const palettes: Record<'light' | 'dark', Palette> = {
+  light: { wash: ['#f7f0e9', '#e8cdbd'], accent: '#a94a32', onAccent: '#fff6f0' },
+  dark: { wash: ['#1b1411', '#3a241d'], accent: '#e28c6f', onAccent: '#1d120d' },
+}
+
+export function paletteFor(scheme: ColorSchemeName | null): Palette {
+  return palettes[scheme === 'dark' ? 'dark' : 'light']
 }

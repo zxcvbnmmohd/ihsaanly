@@ -123,6 +123,13 @@ export const strings = {
       ar: 'العربية',
     } as Record<string, string>,
   },
+  appearance: {
+    title: 'Appearance',
+    system: 'System',
+    light: 'Light',
+    dark: 'Dark',
+    note: 'Colours still come from the system, so its contrast settings apply either way.',
+  },
   moonSighting: {
     title: 'Moon sighting',
     explanation:
@@ -243,9 +250,15 @@ export const strings = {
     empty: 'History, settings and help will live here.',
   },
   onboarding: {
-    title: 'Welcome',
-    intro:
-      'A few things, once. Every one of them has a sensible answer already chosen, so you can accept your way through and change anything later.',
+    welcomeTitle: 'The moment, not the clock.',
+    welcomeBody:
+      'Ihsaanly tells you when the evening adhkar are open. Never a time. Never a score.',
+    howTitle: 'You mark the prayer. The sunnah appears.',
+    howBody:
+      'Tap Dhuhr when you have prayed it and the dhikr that follows is waiting. Nothing leaves this phone. No account, no server.',
+    language: 'Language',
+    appearance: 'Appearance',
+    howSample: 'سُبْحَانَ اللهِ وَبِحَمْدِهِ',
     locationStep: 'Where are you?',
     locationWhy: 'Used on this device to work out the parts of the day. Never sent anywhere.',
     genderStep: 'One more thing',
@@ -255,11 +268,22 @@ export const strings = {
     male: 'Male',
     skip: 'Prefer not to say',
     remindersStep: 'Reminders',
-    remindersWhy: 'Two or three a day. Change any of this later in More.',
+    remindersWhy: 'Two or three a day, never in the night. Change any of this later in More.',
+    windowsDetail: 'When each window opens',
+    lookAheadDetail: 'The evening before',
     startStep: 'A starting point',
     startWhy:
-      'A small set to begin with, chosen to be a reasonable day rather than a complete one. Add more from the Library whenever you like.',
-    next: 'Next',
+      'Choose a size to begin with. Add or remove anything in the Library whenever you like.',
+    essentials: 'Essentials',
+    essentialsDetail: (count: number) =>
+      `${count} items, chosen to be a reasonable day rather than a complete one.`,
+    everything: 'Everything',
+    everythingDetail: (count: number) => `All ${count} items.`,
+    skipIntro: 'Skip',
+    back: 'Back',
+    continue: 'Continue',
+    allowReminders: 'Allow reminders',
+    notNow: 'Not now',
     done: 'Start',
   },
   location: {

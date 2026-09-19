@@ -1,81 +1,118 @@
 import { useState, type ReactElement } from 'react'
 
-import { items, resolveText } from '@/content'
+import { items } from '@/content'
+import { chooseLocale, useLocale } from '@/i18n/store'
 import { searchCities } from '@/location/cities'
 import { requestDeviceLocation } from '@/location/device'
 import type { Place } from '@/location/place'
 import { setPlace, usePlace } from '@/location/store'
+import { ensurePermission } from '@/notifications/schedule'
 import { setNotificationPreferences, useNotificationPreferences } from '@/notifications/store'
+import { DEFAULT_ENABLED, setEnabledItems, useEnabledItems } from '@/plan/enabled-store'
 import type { NotificationPreferences } from '@/plan/notification-preferences'
-import { setEnabledItems, useEnabledItems } from '@/plan/enabled-store'
-import { OnboardingScreen, type OnboardingStep } from '@/screens/onboarding'
+import {
+  OnboardingScreen,
+  type LocationProblem,
+  type OnboardingStep,
+  type StarterPreset,
+} from '@/screens/onboarding'
+import { setThemePreference, useThemePreference } from '@/theme/store'
 
 import { setOnboarding, useOnboarding, type Gender } from './store'
 
-const STEPS: OnboardingStep[] = ['intro', 'location', 'gender', 'reminders', 'start']
+const STEPS: OnboardingStep[] = ['welcome', 'how', 'location', 'you', 'reminders', 'start']
+const SETUP_INDEX = STEPS.indexOf('location')
 
 interface Thing {
   index: number
   query: string
+  problem: LocationProblem
 }
 
 /**
- * Five screens, every one with an answer already chosen, so someone new can
- * accept their way through and arrive at a reasonable day without having to
- * understand the choices yet.
+ * Two screens that say what the app is, then four that set it up. Every
+ * question has an answer already chosen, so someone new can accept their way
+ * through and arrive at a reasonable day without understanding the choices yet.
  */
 export function OnboardingFlow(): ReactElement {
-  const [thing, setThing] = useState<Thing>({ index: 0, query: '' })
+  const [thing, setThing] = useState<Thing>({ index: 0, query: '', problem: null })
   const place = usePlace()
   const onboarding = useOnboarding()
   const notifications = useNotificationPreferences()
   const enabled = useEnabledItems()
+  const locale = useLocale()
+  const theme = useThemePreference()
 
   const step = STEPS[thing.index] ?? 'start'
+  const anyReminder = notifications.windows || notifications.lookAhead || notifications.prayers
+
+  const go = (index: number): void => setThing((current) => ({ ...current, index }))
 
   const advance = (): void => {
     if (thing.index >= STEPS.length - 1) {
       setOnboarding({ ...onboarding, completed: true })
       return
     }
-    setThing((current) => ({ ...current, index: current.index + 1 }))
+    go(thing.index + 1)
+  }
+
+  const next = (): void => {
+    // The permission prompt belongs to the button that asks for it, not to
+    // the Today tab some time later.
+    if (step === 'reminders' && anyReminder) {
+      void ensurePermission().finally(advance)
+      return
+    }
+    advance()
   }
 
   const choosePlace = (chosen: Place): void => {
     setPlace(chosen)
-    setThing((current) => ({ ...current, query: '' }))
+    setThing((current) => ({ ...current, query: '', problem: null }))
+  }
+
+  const useDevice = (): void => {
+    void requestDeviceLocation().then((located) => {
+      if (located.status === 'ok') {
+        choosePlace(located.place)
+        return
+      }
+      setThing((current) => ({ ...current, problem: located.status }))
+    })
   }
 
   return (
     <OnboardingScreen
       step={step}
+      stepIndex={thing.index}
+      stepCount={STEPS.length}
+      locale={locale}
+      theme={theme}
       place={place}
+      problem={thing.problem}
       query={thing.query}
       results={searchCities(thing.query)}
       gender={onboarding.gender}
       notifications={notifications}
-      starters={items.map((item) => ({
-        id: item.id,
-        title: resolveText(item.title) ?? item.id,
-        enabled: enabled.includes(item.id),
-      }))}
+      preset={enabled.length === items.length ? 'everything' : 'essentials'}
+      itemCount={items.length}
+      essentialCount={DEFAULT_ENABLED.length}
+      onSelectLocale={chooseLocale}
+      onSelectTheme={setThemePreference}
       onQueryChange={(query) => setThing((current) => ({ ...current, query }))}
-      onUseDevice={() => {
-        void requestDeviceLocation().then((located) => {
-          if (located.status === 'ok') choosePlace(located.place)
-        })
-      }}
+      onUseDevice={useDevice}
       onSelectPlace={choosePlace}
       onSelectGender={(gender: Gender) => setOnboarding({ ...onboarding, gender })}
       onToggleNotification={(change: Partial<NotificationPreferences>) =>
         setNotificationPreferences({ ...notifications, ...change })
       }
-      onToggleStarter={(id) =>
-        setEnabledItems(
-          enabled.includes(id) ? enabled.filter((entry) => entry !== id) : [...enabled, id],
-        )
+      onSelectPreset={(preset: StarterPreset) =>
+        setEnabledItems(preset === 'everything' ? items.map((item) => item.id) : DEFAULT_ENABLED)
       }
-      onNext={advance}
+      onNext={next}
+      onBack={() => go(Math.max(0, thing.index - 1))}
+      onSkipIntro={() => go(SETUP_INDEX)}
+      onNotNow={advance}
     />
   )
 }

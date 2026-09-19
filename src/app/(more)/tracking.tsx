@@ -12,7 +12,8 @@ export default function TrackingRoute(): ReactElement {
   return (
     <TrackingScreen
       userState={userState}
-      showPause={onboarding.gender === 'female'}
+      // Offered unless it is known not to apply, so declining to answer costs nothing.
+      showPause={onboarding.gender !== 'male'}
       onChange={(change: Partial<UserState>) => setUserState({ ...userState, ...change })}
     />
   )

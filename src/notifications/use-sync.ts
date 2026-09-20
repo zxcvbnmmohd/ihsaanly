@@ -1,39 +1,29 @@
 import { useEffect } from 'react'
 import { AppState } from 'react-native'
 
-import { resolveText, itemById } from '@/content'
+import { items } from '@/content'
 import type { Plan } from '@/plan/signals'
 import { getStrings } from '@/strings'
 
-import { ensurePermission, sync, type NotificationContent } from './schedule'
+import { notificationContent, type NotificationContent } from './content'
+import { ensurePermission, sync } from './schedule'
 
 function contentsFor(plan: Plan): NotificationContent[] {
-  return plan.notifications.flatMap((entry) => {
-    const item = itemById(entry.itemId)
-    if (!item) return []
-
-    return [
-      {
-        itemId: entry.itemId,
-        title: resolveText(item.title) ?? entry.itemId,
-        body:
-          entry.reason === 'upcoming'
-            ? getStrings().notifications.body.tomorrow
-            : getStrings().notifications.body.window,
-        at: entry.at,
-      },
-    ]
-  })
+  const strings = getStrings()
+  return plan.notifications.flatMap((entry) => notificationContent(entry, items, strings) ?? [])
 }
 
 /**
- * Keyed on the schedule's contents rather than the plan object. The plan is
- * rebuilt every minute as the clock advances, and cancelling and rescheduling
- * everything once a minute would be both wasteful and unreliable.
+ * Keyed on the schedule's identifiers rather than the plan object. The plan is
+ * rebuilt every minute as the clock advances, and re-syncing once a minute
+ * would be both wasteful and unreliable. The identifier carries kind, subject
+ * and instant, which is everything that decides what is pending.
  */
 function scheduleKey(plan: Plan | null): string {
   if (!plan) return ''
-  return plan.notifications.map((entry) => `${entry.itemId}@${entry.at.getTime()}`).join('|')
+  return contentsFor(plan)
+    .map((content) => content.identifier)
+    .join('|')
 }
 
 export function useNotificationSync(plan: Plan | null): void {
@@ -45,7 +35,7 @@ export function useNotificationSync(plan: Plan | null): void {
     let cancelled = false
 
     const run = async (): Promise<void> => {
-      const granted = await ensurePermission()
+      const granted = await ensurePermission(getStrings())
       if (!granted || cancelled) return
       await sync(contentsFor(plan))
     }

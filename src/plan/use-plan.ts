@@ -22,6 +22,14 @@ import type { DayContext, Plan, Signals } from './signals'
 
 const LOOK_AHEAD_DAYS = 7
 
+/**
+ * Prayer times from yesterday to the end of the look-ahead. Reminders are
+ * scheduled from these, so this is how long they survive without the app
+ * being opened; three days was the old default and reminders stopped after a
+ * weekend away.
+ */
+const HORIZON_DAYS = LOOK_AHEAD_DAYS + 1
+
 function dayContextFor(
   instant: Date,
   timeZone: string,
@@ -62,7 +70,7 @@ export function usePlan(): Plan | null {
     now,
     timeZone: place.timeZone,
     items,
-    prayerTimes: prayerTimesAcross(place, now, preferences),
+    prayerTimes: prayerTimesAcross(place, now, preferences, HORIZON_DAYS),
     today: dayContextFor(now, place.timeZone, 0, hijriOffset),
     upcoming: Array.from({ length: LOOK_AHEAD_DAYS }, (_, index) =>
       dayContextFor(now, place.timeZone, index + 1, hijriOffset),

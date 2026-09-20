@@ -14,6 +14,15 @@ Work is tracked as issues on the repository. The product specification is issue 
 
 ### Added
 
+- **Reminders that land and last.** Tapping a reminder opens its item; Done
+  and Later actions work from the notification shade, including while the app
+  is closed on Android. The schedule now covers a week, so reminders no longer
+  stop after two days unopened. Bodies say until which prayer a window is
+  open; the fasting look-ahead arrives twenty minutes after the evening
+  adhkar instead of stacked on it. The Prayer reminders switch now does
+  something: one notification when each prayer's window opens, on its own
+  channel. The Reminders screen shows the system permission with a way to the
+  settings when denied, a per-item list, and a test reminder.
 - **An item can be marked done.** Item detail gains Done and Undo, a tap
   counter for repeated dhikr that completes at the target, On Today and Remind
   me switches, and Share as text or as an image card. A completion hides the

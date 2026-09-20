@@ -9,7 +9,7 @@ import { buildWindows, type WindowName } from '@/prayer/windows'
 
 import { DEFAULT_NOTIFICATION_PREFERENCES } from './notification-preferences'
 import { plan } from './plan'
-import type { DayContext, Signals } from './signals'
+import type { DayContext, ScheduledNotification, Signals } from './signals'
 
 const toronto: Place = {
   label: 'Toronto, Ontario, Canada',
@@ -20,7 +20,7 @@ const toronto: Place = {
 }
 
 const anchor = new Date('2026-09-17T12:00:00Z')
-const times = prayerTimesAcross(toronto, anchor, DEFAULT_CALCULATION_PREFERENCES)
+const times = prayerTimesAcross(toronto, anchor, DEFAULT_CALCULATION_PREFERENCES, 8)
 
 function startOf(name: WindowName): Date {
   const window = buildWindows(times).find(
@@ -96,6 +96,10 @@ function makeSignals(items: Item[], overrides: Partial<Signals> = {}): Signals {
 
 /** A prayer marked a few minutes before the fixture's `now`, inside the after-prayer grace. */
 const justNow = new Date(startOf('asr').getTime() - 5 * 60_000)
+
+function itemIds(entries: ScheduledNotification[]): string[] {
+  return entries.flatMap((entry) => (entry.kind === 'item' ? [entry.itemId] : []))
+}
 
 const eveningAdhkar = makeItem('evening-adhkar', { kind: 'window', window: 'evening' })
 const morningAdhkar = makeItem('morning-adhkar', { kind: 'window', window: 'morning' })
@@ -365,7 +369,7 @@ describe('the notification schedule', () => {
     })
     const result = plan(signals)
 
-    expect(result.notifications.some((entry) => entry.itemId === 'morning-adhkar')).toBe(false)
+    expect(itemIds(result.notifications)).not.toContain('morning-adhkar')
     expect(result.today.rightNow?.itemId).toBe('evening-adhkar')
   })
 
@@ -546,5 +550,74 @@ describe('marking an item done', () => {
   it('leaves what the next prayer asks untouched', () => {
     const result = plan(makeSignals([dhikr], { now, completedToday: { 'after-any': now } }))
     expect(result.today.next?.after).toEqual(['after-any'])
+  })
+})
+
+describe('prayer reminders', () => {
+  const on = {
+    enabledItemIds: ['morning-adhkar'],
+    knownItemIds: [],
+    notifications: { ...DEFAULT_NOTIFICATION_PREFERENCES, quietHours: null, prayers: true },
+  }
+
+  it('are absent unless asked for', () => {
+    const result = plan(makeSignals([morningAdhkar]))
+    expect(result.notifications.some((entry) => entry.kind === 'prayer')).toBe(false)
+  })
+
+  it('fire once per prayer window, never at sunrise', () => {
+    const result = plan(makeSignals([morningAdhkar], { preferences: on }))
+    const prayers = result.notifications.flatMap((entry) =>
+      entry.kind === 'prayer' ? [entry.prayer] : [],
+    )
+    expect(prayers.slice(0, 5)).toEqual(
+      expect.arrayContaining(['fajr', 'dhuhr', 'asr', 'maghrib', 'isha']),
+    )
+    expect(prayers).not.toContain('sunrise')
+  })
+
+  it('do not spend the daily budget', () => {
+    const result = plan(
+      makeSignals([morningAdhkar], {
+        preferences: { ...on, notifications: { ...on.notifications, maxPerDay: 1 } },
+      }),
+    )
+    expect(itemIds(result.notifications).length).toBeGreaterThan(0)
+  })
+})
+
+describe('the schedule over a week', () => {
+  it('reaches beyond five days', () => {
+    const result = plan(makeSignals([morningAdhkar]))
+    const farthest = Math.max(...result.notifications.map((entry) => entry.at.getTime()))
+    expect(farthest - anchor.getTime()).toBeGreaterThan(5 * 86_400_000)
+  })
+
+  it('names the prayer that closes each adhkar window', () => {
+    const result = plan(makeSignals([morningAdhkar, eveningAdhkar]))
+    const windows = result.notifications.flatMap((entry) =>
+      entry.kind === 'item' && entry.window ? [`${entry.itemId}:${entry.window.closes}`] : [],
+    )
+    expect(windows).toContain('morning-adhkar:dhuhr')
+    expect(windows).toContain('evening-adhkar:maghrib')
+  })
+
+  it('sends the look-ahead twenty minutes after the evening adhkar', () => {
+    const monday = makeItem('fast-monday', { kind: 'day', day: 'monday' })
+    const result = plan(
+      makeSignals([eveningAdhkar, monday], {
+        upcoming: Array.from({ length: 7 }, (_, index) =>
+          dayContext(index + 1, { month: 4, day: 7 + index }),
+        ),
+      }),
+    )
+    const evenings = result.notifications.flatMap((entry) =>
+      entry.kind === 'item' && entry.itemId === 'evening-adhkar' ? [entry.at.getTime()] : [],
+    )
+    const aheads = result.notifications.flatMap((entry) =>
+      entry.kind === 'item' && entry.itemId === 'fast-monday' ? [entry.at.getTime()] : [],
+    )
+    expect(aheads.length).toBeGreaterThan(0)
+    aheads.forEach((at) => expect(evenings).toContain(at - 20 * 60_000))
   })
 })

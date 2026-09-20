@@ -5,6 +5,7 @@ import { StatusBar } from 'expo-status-bar'
 import { Text, View } from 'react-native'
 
 import { setContentLanguage } from '@/content'
+import { useNotificationResponse } from '@/notifications/use-response'
 import { languageOf } from '@/i18n/locale'
 import { getLocale } from '@/i18n/store'
 import { OnboardingFlow } from '@/onboarding/flow'
@@ -68,6 +69,7 @@ export default function RootLayout(): ReactElement {
   const colorScheme = useEffectiveColorScheme()
   const palette = usePalette()
   const onboarding = useOnboarding()
+  useNotificationResponse(onboarding.completed)
 
   // Onboarding replaces the tab bar rather than sitting over it: there is
   // nothing to navigate to until it is done.

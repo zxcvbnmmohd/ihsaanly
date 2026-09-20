@@ -1,9 +1,12 @@
 import type { ReactElement } from 'react'
 import { Text, useColorScheme, View } from 'react-native'
 
+import { Button } from '@/components/button'
+import { ChoiceRow } from '@/components/choice-row'
+import { Row } from '@/components/row'
 import { Screen } from '@/components/screen'
 import { SwitchRow } from '@/components/switch-row'
-import { ChoiceRow } from '@/components/choice-row'
+import type { PermissionStatus } from '@/notifications/schedule'
 import type { NotificationPreferences, QuietHours } from '@/plan/notification-preferences'
 import { useStrings, type Strings } from '@/strings'
 import { colors } from '@/theme/colors'
@@ -18,19 +21,43 @@ export const QUIET_HOUR_PRESETS: (QuietHours | null)[] = [
 
 export const PER_DAY_OPTIONS = [1, 2, 3, 5]
 
-export interface NotificationsScreenProps {
-  preferences: NotificationPreferences
-  onChange: (change: Partial<NotificationPreferences>) => void
+export interface RemindableItem {
+  id: string
+  title: string
+  on: boolean
 }
 
-function Section({ title, children }: { title: string; children: ReactElement[] }): ReactElement {
+export interface NotificationsScreenProps {
+  preferences: NotificationPreferences
+  permission: PermissionStatus
+  items: RemindableItem[]
+  onChange: (change: Partial<NotificationPreferences>) => void
+  onToggleItem: (id: string, on: boolean) => void
+  onOpenSettings: () => void
+  onSendTest: () => void
+}
+
+interface SectionProps {
+  title: string
+  detail?: string
+  children: ReactElement | (ReactElement | null)[]
+}
+
+function Section({ title, detail, children }: SectionProps): ReactElement {
   useColorScheme()
 
   return (
     <View className="gap-3">
-      <Text className="text-xs font-semibold uppercase" style={{ color: colors.secondaryLabel }}>
-        {title}
-      </Text>
+      <View className="gap-1">
+        <Text className="text-xs font-semibold uppercase" style={{ color: colors.secondaryLabel }}>
+          {title}
+        </Text>
+        {detail ? (
+          <Text className="text-sm" style={{ color: colors.secondaryLabel }}>
+            {detail}
+          </Text>
+        ) : null}
+      </View>
       {children}
     </View>
   )
@@ -42,9 +69,27 @@ function quietLabel(quiet: QuietHours | null, strings: Strings): string {
     : strings.notifications.quietHoursOff
 }
 
+function permissionLabel(status: PermissionStatus, strings: Strings): string {
+  switch (status) {
+    case 'granted':
+      return strings.notifications.permissionGranted
+    case 'denied':
+      return strings.notifications.permissionDenied
+    case 'undetermined':
+      return strings.notifications.permissionUndetermined
+    case 'unavailable':
+      return strings.notifications.permissionUnavailable
+  }
+}
+
 export function NotificationsScreen({
   preferences,
+  permission,
+  items,
   onChange,
+  onToggleItem,
+  onOpenSettings,
+  onSendTest,
 }: NotificationsScreenProps): ReactElement {
   const strings = useStrings()
   const palette = usePalette()
@@ -52,6 +97,21 @@ export function NotificationsScreen({
 
   return (
     <Screen className="gap-8 p-4">
+      <View className="gap-3">
+        <Row
+          title={strings.notifications.permission}
+          detail={permissionLabel(permission, strings)}
+        />
+        {permission === 'denied' ? (
+          <Button
+            title={strings.notifications.openSettings}
+            onPress={onOpenSettings}
+            variant="secondary"
+            color={palette.accent}
+          />
+        ) : null}
+      </View>
+
       <View className="gap-3">
         <SwitchRow
           title={strings.notifications.windows}
@@ -77,6 +137,23 @@ export function NotificationsScreen({
         />
       </View>
 
+      {items.length > 0 ? (
+        <Section
+          title={strings.notifications.whichItems}
+          detail={strings.notifications.whichItemsDetail}>
+          {items.map((item) => (
+            <SwitchRow
+              key={item.id}
+              title={item.title}
+              value={item.on}
+              onValueChange={(on) => onToggleItem(item.id, on)}
+              accent={palette.accent}
+              knob={palette.knob}
+            />
+          ))}
+        </Section>
+      ) : null}
+
       <Section title={strings.notifications.quietHours}>
         {QUIET_HOUR_PRESETS.map((preset) => (
           <ChoiceRow
@@ -100,6 +177,12 @@ export function NotificationsScreen({
           />
         ))}
       </Section>
+
+      <Row
+        title={strings.notifications.sendTest}
+        detail={strings.notifications.sendTestDetail}
+        onPress={onSendTest}
+      />
     </Screen>
   )
 }

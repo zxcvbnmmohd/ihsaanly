@@ -17,6 +17,7 @@ import {
   type OnboardingStep,
   type StarterPreset,
 } from '@/screens/onboarding'
+import { getStrings } from '@/strings'
 import { setThemePreference, useThemePreference } from '@/theme/store'
 
 import { setOnboarding, useOnboarding, type Gender } from './store'
@@ -62,7 +63,7 @@ export function OnboardingFlow(): ReactElement {
     // The permission prompt belongs to the button that asks for it, not to
     // the Today tab some time later.
     if (step === 'reminders' && anyReminder) {
-      void ensurePermission().finally(advance)
+      void ensurePermission(getStrings()).finally(advance)
       return
     }
     advance()

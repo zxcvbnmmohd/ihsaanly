@@ -200,6 +200,33 @@ native module: adding it required prebuild and a new dev build. The share card
 is rendered by the item **route** in an absolute view off-screen and captured
 there; the screen stays pure and receives callbacks only.
 
+### Reminders are diffed by identifier and answered by kind
+
+Every scheduled notification has a stable identifier from
+`src/notifications/payload.ts`: `plan:<item>@<ms>` and
+`plan:prayer:<prayer>@<ms>` are owned by `sync()` in
+`src/notifications/schedule.ts`, which cancels and adds only within that
+prefix. `later:` (a snooze from the shade) and `test:` are never touched, so a
+snooze made while the app was killed survives the next sync. Do not go back to
+cancel-all. The `data` payload is versioned and narrowed by
+`parseNotificationData`; nothing reads it raw.
+
+Taps are answered once, in `src/notifications/respond.ts`, from three doors:
+the warm listener, the cold-start replay (read then cleared) and the Android
+background task. The task is defined in `index.ts`, the app entry, because a
+`defineTask` inside a route's import chain runs after the bundle has loaded
+and cannot be found when the OS starts the app headless.
+
+Prayer-window reminders are their own opt-in on their own Android channel and
+do **not** spend `maxPerDay`: five a day would consume a budget of three and
+silently turn the adhkar off. Prayer times are computed for eight days
+(`HORIZON_DAYS` in `src/plan/use-plan.ts`) so reminders survive a week
+unopened; `expo-background-task` was considered and not added, since it is
+best-effort with a 15-minute floor and stops after an iOS swipe-kill. No
+notification fires at the moment a prayer is marked: the user is in the app.
+`maxPerDay` counts pending entries only, so a replan after a delivery can
+re-grant that day's budget; the drift is bounded to one day and accepted.
+
 ### Exact alarms are deliberately not requested
 
 `SCHEDULE_EXACT_ALARM` is a restricted permission that invites a Play Store

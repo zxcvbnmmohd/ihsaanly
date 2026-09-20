@@ -2,6 +2,7 @@ import { Link, type Href } from 'expo-router'
 import type { ReactElement } from 'react'
 import { Pressable, Text, useColorScheme, View } from 'react-native'
 
+import { Chip } from '@/components/chip'
 import { EmptyState } from '@/components/empty-state'
 import { Pill } from '@/components/pill'
 import { Screen } from '@/components/screen'
@@ -9,15 +10,21 @@ import { Surface } from '@/components/surface'
 import { TextField } from '@/components/text-field'
 import { Wash } from '@/components/wash'
 import type { Ruling } from '@/content/schema'
-import { useStrings } from '@/strings'
+import { useStrings, type Strings } from '@/strings'
 import { colors } from '@/theme/colors'
 import { usePalette } from '@/theme/store'
+
+export type LibraryFilter = 'all' | 'onToday' | 'known'
+
+export const LIBRARY_FILTERS: LibraryFilter[] = ['all', 'onToday', 'known']
 
 export interface LibraryEntry {
   id: string
   title: string
   ruling: Ruling
   href: Href
+  onToday: boolean
+  known: boolean
 }
 
 export interface LibrarySectionView {
@@ -27,14 +34,33 @@ export interface LibrarySectionView {
 
 export interface LibraryScreenProps {
   query: string
+  filter: LibraryFilter
+  counts: Record<LibraryFilter, number>
   sections: LibrarySectionView[]
   onQueryChange: (query: string) => void
+  onFilterChange: (filter: LibraryFilter) => void
+}
+
+function filterLabel(filter: LibraryFilter, strings: Strings): string {
+  if (filter === 'onToday') return strings.library.filterOnToday
+  if (filter === 'known') return strings.library.filterKnown
+  return strings.library.filterAll
+}
+
+function emptyMessage(query: string, filter: LibraryFilter, strings: Strings): string {
+  if (query.trim()) return strings.library.noResults
+  if (filter === 'onToday') return strings.library.emptyOnToday
+  if (filter === 'known') return strings.library.emptyKnown
+  return strings.library.empty
 }
 
 export function LibraryScreen({
   query,
+  filter,
+  counts,
   sections,
   onQueryChange,
+  onFilterChange,
 }: LibraryScreenProps): ReactElement {
   const strings = useStrings()
   const palette = usePalette()
@@ -44,17 +70,30 @@ export function LibraryScreen({
     <View className="flex-1" style={{ backgroundColor: colors.systemBackground }}>
       <Wash palette={palette} />
       <Screen className="gap-6 p-4">
-        <TextField
-          value={query}
-          onChangeText={onQueryChange}
-          placeholder={strings.library.search}
-          kind="search"
-          returnKeyType="search"
-          accent={palette.accent}
-        />
+        <View className="gap-3">
+          <TextField
+            value={query}
+            onChangeText={onQueryChange}
+            placeholder={strings.library.search}
+            kind="search"
+            returnKeyType="search"
+            accent={palette.accent}
+          />
+          <View className="flex-row gap-2">
+            {LIBRARY_FILTERS.map((candidate) => (
+              <Chip
+                key={candidate}
+                label={`${filterLabel(candidate, strings)} · ${counts[candidate]}`}
+                selected={filter === candidate}
+                onPress={() => onFilterChange(candidate)}
+                palette={palette}
+              />
+            ))}
+          </View>
+        </View>
 
         {sections.length === 0 ? (
-          <EmptyState message={query.trim() ? strings.library.noResults : strings.library.empty} />
+          <EmptyState message={emptyMessage(query, filter, strings)} />
         ) : (
           sections.map((section) => (
             <View key={section.category} className="gap-3">
@@ -71,12 +110,29 @@ export function LibraryScreen({
                         <Text className="text-base font-semibold" style={{ color: colors.label }}>
                           {entry.title}
                         </Text>
-                        <Pill
-                          label={strings.ruling[entry.ruling]}
-                          emphasis={entry.ruling === 'fard' || entry.ruling === 'wajib'}
-                          accent={palette.accent}
-                          onAccent={palette.onAccent}
-                        />
+                        <View className="flex-row flex-wrap gap-1.5">
+                          <Pill
+                            label={strings.ruling[entry.ruling]}
+                            emphasis={entry.ruling === 'fard' || entry.ruling === 'wajib'}
+                            accent={palette.accent}
+                            onAccent={palette.onAccent}
+                          />
+                          {entry.onToday ? (
+                            <Pill
+                              label={strings.library.onToday}
+                              emphasis
+                              accent={palette.accent}
+                              onAccent={palette.onAccent}
+                            />
+                          ) : null}
+                          {entry.known ? (
+                            <Pill
+                              label={strings.library.known}
+                              accent={palette.accent}
+                              onAccent={palette.onAccent}
+                            />
+                          ) : null}
+                        </View>
                       </View>
                     </Surface>
                   </Pressable>

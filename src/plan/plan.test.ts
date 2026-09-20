@@ -82,6 +82,7 @@ function makeSignals(items: Item[], overrides: Partial<Signals> = {}): Signals {
     today: dayContext(0, { month: 4, day: 6 }),
     upcoming: [],
     prayedToday: {},
+    completedToday: {},
     activeEvents: [],
     userState: { travelling: false, trackingPaused: false },
     preferences: {
@@ -498,5 +499,52 @@ describe('the next prayer', () => {
     const result = plan(makeSignals([beforeFajr], { now: startOf('isha') }))
     expect(result.today.next?.prayer).toBe('fajr')
     expect(result.today.next?.before).toEqual(['before-fajr'])
+  })
+})
+
+describe('marking an item done', () => {
+  const now = startOf('asr')
+
+  it('moves it out of now and into done, and the next item leads', () => {
+    const siwak = makeItem('siwak', { kind: 'prayer', prayer: 'any', when: 'before' })
+    const result = plan(
+      makeSignals([eveningAdhkar, siwak], {
+        now,
+        completedToday: { 'evening-adhkar': new Date(now.getTime() - 60_000) },
+      }),
+    )
+    expect(result.today.now.map((entry) => entry.itemId)).toEqual(['siwak'])
+    expect(result.today.done.map((entry) => entry.itemId)).toEqual(['evening-adhkar'])
+    expect(result.today.rightNow?.itemId).toBe('siwak')
+  })
+
+  it('does not count a completion from before the window opened', () => {
+    const result = plan(
+      makeSignals([eveningAdhkar], {
+        now,
+        completedToday: { 'evening-adhkar': new Date(now.getTime() - 6 * 3_600_000) },
+      }),
+    )
+    expect(result.today.rightNow?.itemId).toBe('evening-adhkar')
+  })
+
+  it('owes the after-any dhikr again after the next prayer', () => {
+    const dhuhrMark = new Date(now.getTime() - 3 * 3_600_000)
+    const asrMark = new Date(now.getTime() - 60_000)
+    const doneAfterDhuhr = new Date(dhuhrMark.getTime() + 5 * 60_000)
+
+    const result = plan(
+      makeSignals([dhikr], {
+        now,
+        prayedToday: { dhuhr: dhuhrMark, asr: asrMark },
+        completedToday: { 'after-any': doneAfterDhuhr },
+      }),
+    )
+    expect(result.today.rightNow?.itemId).toBe('after-any')
+  })
+
+  it('leaves what the next prayer asks untouched', () => {
+    const result = plan(makeSignals([dhikr], { now, completedToday: { 'after-any': now } }))
+    expect(result.today.next?.after).toEqual(['after-any'])
   })
 })

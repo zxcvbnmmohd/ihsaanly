@@ -14,6 +14,14 @@ Work is tracked as issues on the repository. The product specification is issue 
 
 ### Added
 
+- **An item can be marked done.** Item detail gains Done and Undo, a tap
+  counter for repeated dhikr that completes at the target, On Today and Remind
+  me switches, and Share as text or as an image card. A completion hides the
+  item for its current occasion only; History's "Completed" group now fills,
+  and undone or unmarked entries no longer count there.
+- **The Library shows state and filters.** Rows carry "On Today" and "Known"
+  pills, a chip row filters All / On Today / Known with counts, and sections
+  sort by their translated name.
 - **Today answers "what now, and what next".** Every sunnah open right now is
   listed, best first, with the rest under "Also now" instead of being dropped.
   Marking a prayer puts its after-prayer sunnah at the top for an hour. An "Up

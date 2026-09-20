@@ -11,3 +11,8 @@ export const setEnabledItems = store.set
 export const useEnabledItems = store.use
 export const getEnabledItems = store.get
 export { DEFAULT_ENABLED }
+
+export function toggleEnabled(id: string): void {
+  const enabled = getEnabledItems()
+  setEnabledItems(enabled.includes(id) ? enabled.filter((entry) => entry !== id) : [...enabled, id])
+}

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test'
 
-import { daysActive, summarise, type LoggedAction } from './history'
+import { daysActive, summarise, withoutRetracted, type LoggedAction } from './history'
 
 const action = (
   subject: string,
@@ -46,5 +46,46 @@ describe('summarising what was done', () => {
   it('handles an empty log', () => {
     expect(summarise([], 'prayer-performed')).toEqual([])
     expect(daysActive([])).toBe(0)
+  })
+})
+
+const pairs: [string, string][] = [
+  ['prayer-performed', 'prayer-unmarked'],
+  ['item-completed', 'item-uncompleted'],
+]
+
+const event = (kind: string, subject: string, at: number, logDay = 'a'): LoggedAction => ({
+  kind,
+  subject,
+  at,
+  logDay,
+  deltaSeconds: null,
+})
+
+describe('retracted actions', () => {
+  it('drops a mark and the unmark that undid it', () => {
+    const actions = [
+      event('prayer-performed', 'fajr', 1),
+      event('prayer-unmarked', 'fajr', 2),
+      event('prayer-performed', 'dhuhr', 3),
+    ]
+    expect(withoutRetracted(actions, pairs).map((entry) => entry.subject)).toEqual(['dhuhr'])
+  })
+
+  it('keeps a mark made again after an undo', () => {
+    const actions = [
+      event('item-completed', 'tasbih', 1),
+      event('item-uncompleted', 'tasbih', 2),
+      event('item-completed', 'tasbih', 3),
+    ]
+    expect(withoutRetracted(actions, pairs)).toEqual([event('item-completed', 'tasbih', 3)])
+  })
+
+  it('never retracts across days', () => {
+    const actions = [
+      event('item-completed', 'tasbih', 1, 'a'),
+      event('item-uncompleted', 'tasbih', 2, 'b'),
+    ]
+    expect(withoutRetracted(actions, pairs)).toHaveLength(1)
   })
 })

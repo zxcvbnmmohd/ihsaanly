@@ -14,6 +14,12 @@ Work is tracked as issues on the repository. The product specification is issue 
 
 ### Added
 
+- **Paths for each starting point.** Onboarding offers a third preset, "Just
+  starting", of five things to carry from day one, and says who each preset
+  is for. Today shows one "Try one more" card a week for an item not yet on
+  the day, with its why and a one-tap Add or Not now; fasting waits three
+  weeks. A new To make up screen under More lets someone returning set what
+  they owe from before tracking began and record several make-ups at once.
 - **Content that teaches.** Every item now opens with a plain "Why" and
   numbered "How" steps, and its ruling label links to a glossary of the words
   the app uses, in English and Arabic. Eleven new items: the rawatib before

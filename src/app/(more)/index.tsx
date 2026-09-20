@@ -4,6 +4,7 @@ import { supportedLanguageOf } from '@/i18n/locale'
 import { useLocale } from '@/i18n/store'
 import { useUserState } from '@/plan/user-state-store'
 import { usePlace } from '@/location/store'
+import { useQada } from '@/prayer/marks'
 import { useCalculationPreferences } from '@/prayer/store'
 import { MoreScreen } from '@/screens/more'
 import { useStrings } from '@/strings'
@@ -17,6 +18,7 @@ export default function MoreRoute(): ReactElement {
   const userState = useUserState()
   const locale = useLocale()
   const theme = useThemePreference()
+  const owed = Object.values(useQada()).reduce((sum, count) => sum + (count ?? 0), 0)
 
   const tracking = [
     userState.travelling ? strings.tracking.travelling : null,
@@ -36,6 +38,8 @@ export default function MoreRoute(): ReactElement {
       notificationsHref="/notifications"
       eventsHref="/events"
       historyHref="/history"
+      qadaHref="/qada"
+      qadaLabel={owed > 0 ? strings.qada.summary(owed) : strings.qada.none}
       dataHref="/data"
       languageHref="/language"
       languageLabel={strings.language.names[supportedLanguageOf(locale)]}

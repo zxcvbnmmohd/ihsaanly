@@ -1,17 +1,27 @@
-import type { ReactElement } from 'react'
+import { useEffect, type ReactElement } from 'react'
 
 import { itemById, resolveText } from '@/content'
 import { usePlace } from '@/location/store'
 import type { NextPrayer, PlannedItem } from '@/plan/signals'
 import { useNotificationSync } from '@/notifications/use-sync'
 import { useWidgetSnapshot } from '@/widgets/use-snapshot'
-import { usePlan } from '@/plan/use-plan'
+import { useOnboarding } from '@/onboarding/store'
+import { setEnabledItems, useEnabledItems } from '@/plan/enabled-store'
+import { plan } from '@/plan/plan'
+import { suggest, SUGGESTION_INTERVAL_MS, type Phase } from '@/plan/suggest'
+import { setSuggestion, useSuggestion } from '@/plan/suggestion-store'
+import { useSignals } from '@/plan/use-plan'
 import { markMadeUp, markPrayer, unmarkPrayer, useQada, useTodayMarks } from '@/prayer/marks'
 import { PRAYERS, type Prayer } from '@/prayer/qada'
 import { useCalculationPreferences } from '@/prayer/store'
 import { prayerTimesAcross } from '@/prayer/times'
 import { buildWindows } from '@/prayer/windows'
-import { TodayScreen, type NextPrayerEntry, type TodayEntry } from '@/screens/today'
+import {
+  TodayScreen,
+  type NextPrayerEntry,
+  type SuggestionEntry,
+  type TodayEntry,
+} from '@/screens/today'
 import { useStrings, type Strings } from '@/strings'
 import { useNow } from '@/time/use-now'
 
@@ -114,13 +124,43 @@ export default function TodayRoute(): ReactElement {
   const place = usePlace()
   const preferences = useCalculationPreferences()
   const now = useNow()
-  const planned = usePlan()
+  const signals = useSignals()
+  const planned = signals ? plan(signals) : null
   useNotificationSync(planned)
   useWidgetSnapshot(planned)
   const marks = useTodayMarks(place?.timeZone ?? 'UTC', now)
   const qada = useQada()
   const strings = useStrings()
   const ahead = split(planned?.today.comingUp ?? [])
+  const onboarding = useOnboarding()
+  const suggestion = useSuggestion()
+  const enabled = useEnabledItems()
+
+  // Three weeks of settling before fasting is offered; missing means an
+  // install from before the date was recorded, treated as early.
+  const phase: Phase =
+    onboarding.completedAt &&
+    now.getTime() - new Date(onboarding.completedAt).getTime() > 3 * SUGGESTION_INTERVAL_MS
+      ? 'settled'
+      : 'early'
+  const suggestedId = signals ? suggest(signals, suggestion, phase) : null
+
+  useEffect(() => {
+    if (suggestedId && suggestedId !== suggestion.itemId) {
+      setSuggestion({ ...suggestion, shownAt: now.toISOString(), itemId: suggestedId })
+    }
+  }, [suggestedId, suggestion, now])
+
+  const suggested = ((): SuggestionEntry | null => {
+    const item = suggestedId ? itemById(suggestedId) : undefined
+    if (!item) return null
+    return {
+      id: item.id,
+      title: resolveText(item.title) ?? item.id,
+      why: resolveText(item.why) ?? resolveText(item.translation),
+      href: `/item/${item.id}`,
+    }
+  })()
 
   const togglePrayer = (prayer: Prayer): void => {
     if (!place) return
@@ -156,6 +196,12 @@ export default function TodayRoute(): ReactElement {
       }))}
       onMarkPrayer={togglePrayer}
       onMakeUp={onMakeUpFor(place?.timeZone, now)}
+      suggestion={suggested}
+      onAddSuggestion={(id) => setEnabledItems([...enabled, id])}
+      onDismissSuggestion={(id) =>
+        setSuggestion({ ...suggestion, dismissed: [...suggestion.dismissed, id] })
+      }
+      qadaHref="/qada"
       locationHref="/location"
     />
   )

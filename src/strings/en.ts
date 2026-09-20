@@ -14,6 +14,9 @@ export const en = {
   },
   plan: {
     rightNow: 'Right now',
+    tryOneMore: 'Try one more',
+    add: 'Add',
+    notNow: 'Not now',
     alsoNow: 'Also now',
     upNext: 'Up next',
     before: 'Before',
@@ -101,6 +104,19 @@ export const en = {
     homeUnset: 'Not set',
     manual: 'Tell the app instead',
     manualDetail: 'Raise a state yourself when no sensor can find it.',
+  },
+  qada: {
+    title: 'To make up',
+    intro:
+      'Prayers owed from before you started tracking, and any owed since. A count, never a list.',
+    owed: 'Owed from before',
+    madeUp: 'Made up now',
+    record: (count: number): string => (count === 1 ? 'Record one' : `Record ${count}`),
+    outstanding: (count: number): string => (count === 1 ? '1 owed' : `${count} owed`),
+    none: 'Nothing owed',
+    summary: (count: number): string => (count === 1 ? '1 prayer owed' : `${count} prayers owed`),
+    manage: 'Owed from before, or several at once',
+    manageDetail: 'Set what you carry over and record make-ups in one go.',
   },
   history: {
     title: 'History',
@@ -336,11 +352,15 @@ export const en = {
     startStep: 'A starting point',
     startWhy:
       'Choose a size to begin with. Add or remove anything in the Library whenever you like.',
+    starting: 'Just starting',
+    startingDetail: (count: number): string =>
+      `${count} things you can carry from day one: two windows, one dhikr, two duas. For someone new to all of this.`,
     essentials: 'Essentials',
     essentialsDetail: (count: number): string =>
-      `${count} items, chosen to be a reasonable day rather than a complete one.`,
+      `${count} items, a reasonable day rather than a complete one. For someone who already prays and wants the sunnah around it.`,
     everything: 'Everything',
-    everythingDetail: (count: number): string => `All ${count} items.`,
+    everythingDetail: (count: number): string =>
+      `All ${count} items. For someone who knows the content and wants the whole calendar.`,
     skipIntro: 'Skip',
     skipLocation: 'Skip for now',
     reminderPolicy: (perDay: number, from: number, to: number): string =>

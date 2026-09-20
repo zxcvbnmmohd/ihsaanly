@@ -9,7 +9,8 @@ import type { Place } from '@/location/place'
 import { setPlace, usePlace } from '@/location/store'
 import { ensurePermission } from '@/notifications/schedule'
 import { setNotificationPreferences, useNotificationPreferences } from '@/notifications/store'
-import { DEFAULT_ENABLED, setEnabledItems, useEnabledItems } from '@/plan/enabled-store'
+import { setEnabledItems, useEnabledItems } from '@/plan/enabled-store'
+import { idsForPreset, presetFor } from '@/plan/presets'
 import type { NotificationPreferences } from '@/plan/notification-preferences'
 import {
   OnboardingScreen,
@@ -53,7 +54,7 @@ export function OnboardingFlow(): ReactElement {
 
   const advance = (): void => {
     if (thing.index >= STEPS.length - 1) {
-      setOnboarding({ ...onboarding, completed: true })
+      setOnboarding({ ...onboarding, completed: true, completedAt: new Date().toISOString() })
       return
     }
     go(thing.index + 1)
@@ -105,12 +106,13 @@ export function OnboardingFlow(): ReactElement {
       results={searchCities(thing.query)}
       gender={onboarding.gender}
       notifications={notifications}
-      preset={enabled.length === items.length ? 'everything' : 'essentials'}
+      preset={presetFor(enabled, items)}
       enabledTitles={items
         .filter((item) => enabled.includes(item.id))
         .map((item) => resolveText(item.title) ?? item.id)}
       itemCount={items.length}
-      essentialCount={DEFAULT_ENABLED.length}
+      essentialCount={idsForPreset('essentials', items).length}
+      startingCount={idsForPreset('starting', items).length}
       onSelectLanguage={chooseLanguage}
       onSelectTheme={setThemePreference}
       onQueryChange={(query) => setThing((current) => ({ ...current, query }))}
@@ -120,9 +122,7 @@ export function OnboardingFlow(): ReactElement {
       onToggleNotification={(change: Partial<NotificationPreferences>) =>
         setNotificationPreferences({ ...notifications, ...change })
       }
-      onSelectPreset={(preset: StarterPreset) =>
-        setEnabledItems(preset === 'everything' ? items.map((item) => item.id) : DEFAULT_ENABLED)
-      }
+      onSelectPreset={(preset: StarterPreset) => setEnabledItems(idsForPreset(preset, items))}
       onNext={next}
       onBack={() => go(Math.max(0, thing.index - 1))}
       onSkipIntro={() => go(SETUP_INDEX)}

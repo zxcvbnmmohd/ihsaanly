@@ -241,6 +241,24 @@ English. `content/glossary.json` defines every `Ruling` value by id (a test
 enforces it) plus the recurring terms; a ruling label on item detail links to
 `/glossary?term=<ruling>`.
 
+### Suggestions are weekly, deterministic and pure
+
+`suggest()` in `src/plan/suggest.ts` picks one not-enabled, not-known,
+not-declined item from the same `Signals` the plan reads, so a test can pin
+its answer. The weekly gate lives in the `suggestion` preference
+(`shownAt`, `itemId`, `dismissed`); the Today route writes `shownAt` only when
+the chosen id changes, so the effect cannot loop. Fasting is held back for
+three weeks after `onboarding.completedAt`; a row from before that field
+existed is treated as early. `useSignals()` exists so the route can call both
+`plan()` and `suggest()` on one snapshot; do not compute a second set of
+signals for the card.
+
+Qada is `outstanding(net, backlog)` in `src/prayer/qada.ts`: the raw recorded
+net (which may go negative while a backlog is paid down) plus the
+`qadaBacklog` preference, clamped at zero. `readQadaCounts` no longer filters
+positives; the clamp lives next to the addition. Still a count per prayer,
+never a dated list, and the word "missed" appears on no screen.
+
 ### Exact alarms are deliberately not requested
 
 `SCHEDULE_EXACT_ALARM` is a restricted permission that invites a Play Store

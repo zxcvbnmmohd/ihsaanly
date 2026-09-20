@@ -61,8 +61,8 @@ export function useSignals(): Signals | null {
   const completedToday = useCompletedToday(place?.timeZone ?? 'UTC', now)
 
   useEffect(() => {
-    if (place) runRollover(place, preferences, new Date())
-  }, [place, preferences])
+    if (place) runRollover(place, preferences, new Date(), userState.trackingPaused)
+  }, [place, preferences, userState.trackingPaused])
 
   if (!place) return null
 

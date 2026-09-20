@@ -1,3 +1,4 @@
+import type { AboutScreenProps } from './about'
 import type { AppearanceScreenProps } from './appearance'
 import type { CalculationScreenProps } from './calculation'
 import type { GlossaryScreenProps } from './glossary'
@@ -184,7 +185,7 @@ export const moreFixture: MoreScreenProps = {
   hijriHref: '/hijri',
   trackingLabel: 'Tracking',
   trackingHref: '/tracking',
-  moonSightingHref: '/moon-sighting',
+  aboutHref: '/about',
   notificationsHref: '/notifications',
   eventsHref: '/events',
   historyHref: '/history',
@@ -199,11 +200,13 @@ export const moreFixture: MoreScreenProps = {
 
 export const hijriFixture: HijriScreenProps = {
   offset: 0,
+  authorities: [{ region: 'Europe', bodies: ['European Council for Fatwa and Research'] }],
   preview: { year: 1448, month: 4, day: 6 },
   onChange: noop,
 }
 
 export const locationFixture: LocationScreenProps = {
+  place: null,
   deviceLabel: null,
   query: 'toron',
   results: [
@@ -325,4 +328,11 @@ export const qadaFixture: QadaScreenProps = {
   onOwedChange: noop,
   onPendingChange: noop,
   onRecord: noop,
+}
+
+export const aboutFixture: AboutScreenProps = {
+  version: '1.0.0',
+  build: '12',
+  itemCount: 32,
+  reviewedBy: null,
 }

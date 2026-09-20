@@ -142,6 +142,29 @@ export const en = {
     imported: (count: number): string => `Added ${count} ${count === 1 ? 'entry' : 'entries'}.`,
     importFailed: 'That file could not be read.',
     shareFailed: 'Sharing is not available on this device.',
+    delete: 'Delete my data',
+    deleteDetail:
+      'Everything on this device: settings and your practice record. The app starts over.',
+    deleteConfirmTitle: 'Delete everything?',
+    deleteConfirmBody:
+      'Your settings and your practice record are removed from this device. There is no copy anywhere else unless you exported one.',
+    deleteConfirm: 'Delete',
+    cancel: 'Cancel',
+  },
+  about: {
+    title: 'About',
+    version: 'Version',
+    content: 'Content',
+    contentUnreviewed: (count: number): string =>
+      `${count} items, drafted and awaiting review by a named scholar.`,
+    contentReviewedBy: (name: string, count: number): string =>
+      `${count} items, reviewed by ${name}.`,
+    privacyTitle: 'Nothing leaves this phone',
+    privacyBody:
+      'Ihsaanly has no account, no server and no analytics. Your location is used on the device to compute prayer times and is stored only here. Your practice record is stored only here. Nothing is sent anywhere unless you export it or share it yourself.',
+    licences: 'Built with',
+    licencesBody:
+      'Expo and React Native, the adhan library for prayer times, Umm al-Qura calendar tables, city data from city-timezones, and Natural Earth for the map. Each is used under its own open licence, listed in the source repository.',
   },
   memorise: {
     title: 'Learn it',

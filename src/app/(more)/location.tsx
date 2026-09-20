@@ -34,6 +34,7 @@ export default function LocationRoute(): ReactElement {
 
   return (
     <LocationScreen
+      place={place}
       deviceLabel={place?.source === 'device' ? place.label : null}
       query={thing.query}
       results={results}

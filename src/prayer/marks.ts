@@ -81,7 +81,12 @@ export function markMadeUpMany(prayer: Prayer, count: number, at: Date, timeZone
  * the first run, so installing the app does not hand someone a debt they never
  * agreed to track.
  */
-function rollover(place: Place, preferences: CalculationPreferences, now: Date): void {
+function rollover(
+  place: Place,
+  preferences: CalculationPreferences,
+  now: Date,
+  paused: boolean,
+): void {
   const yesterday = shiftDays(civilDateIn(now, place.timeZone), -1)
   const processed = readPreference(PROCESSED_THROUGH, ProcessedThrough)
 
@@ -97,6 +102,10 @@ function rollover(place: Place, preferences: CalculationPreferences, now: Date):
     const times = prayerTimesFor(place, dateOf(cursor), preferences)
     const next = prayerTimesFor(place, dateOf(shiftDays(cursor, 1)), preferences)
     const key = civilDateKey(cursor)
+
+    // While tracking is paused nothing is owed, so the days pass unrecorded
+    // and the cursor still advances: resuming never backfills them.
+    if (paused) continue
 
     missedPrayers(times, next, markedPrayersOn(key), now).forEach((prayer) =>
       recordEvent({
@@ -120,9 +129,14 @@ export function useQada(): Partial<Record<Prayer, number>> {
 }
 
 /** A failure here must never stop the app rendering. */
-export function runRollover(place: Place, preferences: CalculationPreferences, now: Date): void {
+export function runRollover(
+  place: Place,
+  preferences: CalculationPreferences,
+  now: Date,
+  paused = false,
+): void {
   try {
-    rollover(place, preferences, now)
+    rollover(place, preferences, now, paused)
   } catch (error) {
     console.warn('rollover failed', error)
   }

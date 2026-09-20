@@ -34,7 +34,7 @@ export default function MoreRoute(): ReactElement {
       hijriHref="/hijri"
       hijriLabel={strings.hijri.offsetLabel(hijriOffset)}
       trackingHref="/tracking"
-      moonSightingHref="/moon-sighting"
+      aboutHref="/about"
       notificationsHref="/notifications"
       eventsHref="/events"
       historyHref="/history"

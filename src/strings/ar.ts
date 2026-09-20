@@ -263,6 +263,9 @@ export const ar: Strings = {
   },
   more: {
     title: 'المزيد',
+    prayer: 'الصلاة',
+    app: 'التطبيق',
+    practice: 'ممارستك',
     empty: 'هنا سيكون السجل والإعدادات والمساعدة.',
   },
   onboarding: {

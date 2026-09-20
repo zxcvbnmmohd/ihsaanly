@@ -38,6 +38,20 @@ Work is tracked as issues on the repository. The product specification is issue 
 - Switching to or from Arabic reloads the app so the layout direction applies
   at once, instead of asking the user to restart.
 
+### Changed
+
+- The three tabs carry the onboarding design language: the brand wash, serif
+  display headings, accent section captions, and a native tab bar branded
+  through its own tint rather than reimplemented.
+- **Today** leads with a hero card for what the moment calls for, and collapses
+  five stacked prayer cards into one strip of marks.
+- **Library** shows each ruling as a pill; **More** groups its eleven rows
+  under Prayer, App and Your practice.
+- Every settings screen uses the control its choice deserves: switches for
+  on/off, a ring for one-of-many. The checkmark row is gone from both.
+- The app opens on Today. It opened on Library, because `/` resolves to the
+  alphabetically first route group; the group holding Today is now `(home)`.
+
 ### Removed
 
 - `expo-localization`. Its module re-applied the RTL flags from static

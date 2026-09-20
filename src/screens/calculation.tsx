@@ -1,7 +1,7 @@
 import type { ReactElement, ReactNode } from 'react'
 import { Text, useColorScheme, View } from 'react-native'
 
-import { Row } from '@/components/row'
+import { ChoiceRow } from '@/components/choice-row'
 import { Screen } from '@/components/screen'
 import {
   AsrOpinion,
@@ -11,6 +11,7 @@ import {
 } from '@/prayer/calculation'
 import { useStrings } from '@/strings'
 import { colors } from '@/theme/colors'
+import { usePalette } from '@/theme/store'
 
 export interface CalculationScreenProps {
   preferences: CalculationPreferences
@@ -43,6 +44,7 @@ function Section({ title, footnote, children }: SectionProps): ReactElement {
 
 export function CalculationScreen({ preferences, onChange }: CalculationScreenProps): ReactElement {
   const strings = useStrings()
+  const palette = usePalette()
   useColorScheme()
 
   return (
@@ -53,11 +55,12 @@ export function CalculationScreen({ preferences, onChange }: CalculationScreenPr
 
       <Section title={strings.calculation.asr}>
         {AsrOpinion.options.map((option) => (
-          <Row
+          <ChoiceRow
             key={option}
             title={strings.asr[option]}
             selected={preferences.asr === option}
             onPress={() => onChange({ asr: option })}
+            accent={palette.accent}
           />
         ))}
       </Section>
@@ -66,22 +69,24 @@ export function CalculationScreen({ preferences, onChange }: CalculationScreenPr
         title={strings.calculation.highLatitude}
         footnote={strings.calculation.highLatitudeExplanation}>
         {HighLatitudeRuleName.options.map((option) => (
-          <Row
+          <ChoiceRow
             key={option}
             title={strings.highLatitude[option]}
             selected={preferences.highLatitudeRule === option}
             onPress={() => onChange({ highLatitudeRule: option })}
+            accent={palette.accent}
           />
         ))}
       </Section>
 
       <Section title={strings.calculation.method}>
         {CalculationMethodName.options.map((option) => (
-          <Row
+          <ChoiceRow
             key={option}
             title={strings.method[option]}
             selected={preferences.method === option}
             onPress={() => onChange({ method: option })}
+            accent={palette.accent}
           />
         ))}
       </Section>

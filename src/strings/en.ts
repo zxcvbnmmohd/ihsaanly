@@ -247,6 +247,9 @@ export const en = {
   },
   more: {
     title: 'More',
+    prayer: 'Prayer',
+    app: 'App',
+    practice: 'Your practice',
     empty: 'History, settings and help will live here.',
   },
   onboarding: {

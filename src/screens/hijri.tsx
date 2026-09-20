@@ -1,11 +1,12 @@
 import type { ReactElement } from 'react'
 import { Text, useColorScheme, View } from 'react-native'
 
-import { Row } from '@/components/row'
+import { ChoiceRow } from '@/components/choice-row'
 import { Screen } from '@/components/screen'
 import { offsetOptions, type HijriDate } from '@/hijri/calendar'
 import { useStrings } from '@/strings'
 import { colors } from '@/theme/colors'
+import { usePalette } from '@/theme/store'
 
 export interface HijriScreenProps {
   offset: number
@@ -15,6 +16,7 @@ export interface HijriScreenProps {
 
 export function HijriScreen({ offset, preview, onChange }: HijriScreenProps): ReactElement {
   const strings = useStrings()
+  const palette = usePalette()
   useColorScheme()
 
   return (
@@ -34,11 +36,12 @@ export function HijriScreen({ offset, preview, onChange }: HijriScreenProps): Re
           {strings.hijri.offset}
         </Text>
         {offsetOptions().map((option) => (
-          <Row
+          <ChoiceRow
             key={option}
             title={strings.hijri.offsetLabel(option)}
             selected={offset === option}
             onPress={() => onChange(option)}
+            accent={palette.accent}
           />
         ))}
       </View>

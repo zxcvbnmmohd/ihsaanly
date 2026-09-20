@@ -47,7 +47,7 @@ function dayContextFor(
   }
 }
 
-export function usePlan(): Plan | null {
+export function useSignals(): Signals | null {
   const place = usePlace()
   const preferences = useCalculationPreferences()
   const hijriOffset = useHijriOffset()
@@ -89,5 +89,10 @@ export function usePlan(): Plan | null {
     },
   }
 
-  return plan(signals)
+  return signals
+}
+
+export function usePlan(): Plan | null {
+  const signals = useSignals()
+  return signals ? plan(signals) : null
 }

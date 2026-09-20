@@ -22,6 +22,8 @@ export interface MoreScreenProps {
   notificationsHref: Href
   eventsHref: Href
   historyHref: Href
+  qadaHref: Href
+  qadaLabel: string
   dataHref: Href
   languageHref: Href
   languageLabel: string
@@ -42,6 +44,8 @@ export function MoreScreen({
   notificationsHref,
   eventsHref,
   historyHref,
+  qadaHref,
+  qadaLabel,
   dataHref,
   languageHref,
   languageLabel,
@@ -73,6 +77,7 @@ export function MoreScreen({
 
         <Group title={strings.more.practice} accent={palette.accent}>
           <Row href={historyHref} title={strings.history.title} detail={null} />
+          <Row href={qadaHref} title={strings.qada.title} detail={qadaLabel} />
           <Row href={dataHref} title={strings.data.title} detail={null} />
         </Group>
       </Screen>

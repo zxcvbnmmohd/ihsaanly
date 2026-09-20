@@ -180,7 +180,11 @@ export function markedPrayersOn(logDay: string): Prayer[] {
   return Object.keys(prayerMarksOn(logDay)) as Prayer[]
 }
 
-/** Outstanding make-up per prayer: what was missed, less what has been made up. */
+/**
+ * Net per prayer: what was missed, less what has been made up. Raw, and it can
+ * go negative when a backlog from before tracking is being paid down; the
+ * clamp lives in `outstanding` in prayer/qada.ts, next to the backlog it adds.
+ */
 function readQadaCounts(): Partial<Record<Prayer, number>> {
   const rows = database.getAllSync<{ subject: string; kind: EventKind; total: number }>(
     `SELECT subject, kind, COUNT(*) AS total FROM events
@@ -195,7 +199,7 @@ function readQadaCounts(): Partial<Record<Prayer, number>> {
     counts[prayer] = (counts[prayer] ?? 0) + sign * row.total
   })
 
-  return Object.fromEntries(Object.entries(counts).filter(([, count]) => (count ?? 0) > 0))
+  return counts
 }
 
 /**

@@ -27,6 +27,9 @@ export const ar: Strings = {
   },
   plan: {
     rightNow: 'الآن',
+    tryOneMore: 'جرّب واحدًا آخر',
+    add: 'أضِف',
+    notNow: 'ليس الآن',
     alsoNow: 'أيضًا الآن',
     upNext: 'التالي',
     before: 'قبلها',
@@ -116,6 +119,18 @@ export const ar: Strings = {
     homeUnset: 'غير محدد',
     manual: 'أخبر التطبيق بنفسك',
     manualDetail: 'أعلن الحالة بنفسك حين لا يجدها أي مستشعر.',
+  },
+  qada: {
+    title: 'القضاء',
+    intro: 'صلوات عليك من قبل أن تبدأ المتابعة، وما تراكم بعدها. عدد لا قائمة.',
+    owed: 'عليك من قبل',
+    madeUp: 'قضيتها الآن',
+    record: (n: number): string => `سجّل ${count(n, 'واحدة', 'اثنتين', 'صلوات', 'صلاة')}`,
+    outstanding: (n: number): string => `${count(n, 'صلاة واحدة', 'صلاتان', 'صلوات', 'صلاة')} عليك`,
+    none: 'لا شيء عليك',
+    summary: (n: number): string => `${count(n, 'صلاة واحدة', 'صلاتان', 'صلوات', 'صلاة')} عليك`,
+    manage: 'ما عليك من قبل، أو عدة مرات معًا',
+    manageDetail: 'حدّد ما تحمله من قبل وسجّل القضاء دفعة واحدة.',
   },
   history: {
     title: 'السجل',
@@ -352,12 +367,15 @@ export const ar: Strings = {
     lookAheadDetail: 'في المساء السابق',
     startStep: 'نقطة بداية',
     startWhy: 'اختر حجمًا تبدأ به. أضِف أو أزِل ما تشاء من المكتبة في أي وقت.',
+    starting: 'بداية فقط',
+    startingDetail: (n: number): string =>
+      `${count(n, 'شيء واحد', 'شيئان', 'أشياء', 'شيئًا')} تحملها من أول يوم: وقتان، وذكر، ودعاءان. لمن هذا كله جديد عليه.`,
     essentials: 'الأساسيات',
     essentialsDetail: (n: number): string =>
-      `${count(n, 'عنصر واحد', 'عنصران', 'عناصر', 'عنصرًا')}، اختيرت لتكون يومًا معقولًا لا كاملًا.`,
+      `${count(n, 'عنصر واحد', 'عنصران', 'عناصر', 'عنصرًا')}، يوم معقول لا كامل. لمن يصلي ويريد السنن حول صلاته.`,
     everything: 'الكل',
     everythingDetail: (n: number): string =>
-      `جميع العناصر، ${count(n, 'عنصر', 'عنصران', 'عناصر', 'عنصرًا')}.`,
+      `جميع العناصر، ${count(n, 'عنصر', 'عنصران', 'عناصر', 'عنصرًا')}. لمن يعرف المحتوى ويريد التقويم كله.`,
     skipIntro: 'تخطّي',
     skipLocation: 'تخطّي الآن',
     reminderPolicy: (perDay: number, from: number, to: number): string =>

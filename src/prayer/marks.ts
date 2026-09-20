@@ -2,11 +2,18 @@ import { z } from 'zod'
 
 import { civilDateIn, civilDateKey, logDay, shiftDays, type CivilDate } from '@/day/boundaries'
 import type { Place } from '@/location/place'
-import { markedPrayersOn, recordEvent, useMarksOn, useQadaCounts } from '@/storage/events'
+import {
+  markedPrayersOn,
+  recordEvent,
+  recordEvents,
+  useMarksOn,
+  useQadaCounts,
+} from '@/storage/events'
 import { readPreference, writePreference } from '@/storage/preferences'
 
 import type { CalculationPreferences } from './calculation'
-import { missedPrayers, type Prayer } from './qada'
+import { useQadaBacklog } from './backlog-store'
+import { missedPrayers, outstanding, type Prayer } from './qada'
 import { prayerTimesFor } from './times'
 import { windowClosedAt } from './qada'
 
@@ -56,6 +63,19 @@ export function markMadeUp(prayer: Prayer, at: Date, timeZone: string): void {
   })
 }
 
+/** Several made up at once, for someone paying down a backlog. */
+export function markMadeUpMany(prayer: Prayer, count: number, at: Date, timeZone: string): void {
+  const key = civilDateKey(logDay(at, timeZone))
+  recordEvents(
+    Array.from({ length: count }, () => ({
+      kind: 'prayer-made-up' as const,
+      subject: prayer,
+      at,
+      logDay: key,
+    })),
+  )
+}
+
 /**
  * Accrue misses for days that have fully passed. Nothing is backfilled before
  * the first run, so installing the app does not hand someone a debt they never
@@ -96,7 +116,7 @@ export function useTodayMarks(timeZone: string, now: Date): Partial<Record<Praye
 }
 
 export function useQada(): Partial<Record<Prayer, number>> {
-  return useQadaCounts()
+  return outstanding(useQadaCounts(), useQadaBacklog())
 }
 
 /** A failure here must never stop the app rendering. */

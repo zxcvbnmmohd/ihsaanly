@@ -34,7 +34,9 @@ import { fonts } from '@/theme/fonts'
 import { THEME_PREFERENCES, useEffectiveColorScheme, type ThemePreference } from '@/theme/store'
 
 export type OnboardingStep = 'welcome' | 'how' | 'location' | 'you' | 'reminders' | 'start'
-export type StarterPreset = 'essentials' | 'everything'
+import type { StarterPreset } from '@/plan/presets'
+
+export type { StarterPreset }
 export type LocationProblem = 'declined' | 'unavailable' | null
 
 export interface OnboardingScreenProps {
@@ -50,10 +52,11 @@ export interface OnboardingScreenProps {
   results: Place[]
   gender: Gender
   notifications: NotificationPreferences
-  preset: StarterPreset
+  preset: StarterPreset | null
   enabledTitles: string[]
   itemCount: number
   essentialCount: number
+  startingCount: number
   onSelectLanguage: (language: SupportedLanguage) => void
   onSelectTheme: (theme: ThemePreference) => void
   onQueryChange: (query: string) => void
@@ -552,6 +555,13 @@ function StepBody(props: StepBodyProps): ReactElement {
       return (
         <>
           <Heading title={strings.onboarding.startStep} body={strings.onboarding.startWhy} />
+          <ChoiceRow
+            title={strings.onboarding.starting}
+            detail={strings.onboarding.startingDetail(props.startingCount)}
+            selected={props.preset === 'starting'}
+            accent={palette.accent}
+            onPress={() => props.onSelectPreset('starting')}
+          />
           <ChoiceRow
             title={strings.onboarding.essentials}
             detail={strings.onboarding.essentialsDetail(props.essentialCount)}

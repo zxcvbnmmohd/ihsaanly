@@ -16,6 +16,7 @@ export default function MoreLayout(): ReactElement {
       <Stack.Screen name="tracking" options={{ title: strings.tracking.title }} />
       <Stack.Screen name="events" options={{ title: strings.events.title }} />
       <Stack.Screen name="history" options={{ title: strings.history.title }} />
+      <Stack.Screen name="qada" options={{ title: strings.qada.title }} />
       <Stack.Screen name="data" options={{ title: strings.data.title }} />
       <Stack.Screen name="language" options={{ title: strings.language.title }} />
       <Stack.Screen name="appearance" options={{ title: strings.appearance.title }} />

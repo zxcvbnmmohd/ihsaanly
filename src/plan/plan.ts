@@ -52,7 +52,7 @@ const REASON_RANK: Record<PlanReason, number> = {
   upcoming: 5,
 }
 
-const RULING_RANK: Record<Ruling, number> = {
+export const RULING_RANK: Record<Ruling, number> = {
   fard: 0,
   wajib: 1,
   'sunnah-muakkadah': 2,
@@ -309,6 +309,12 @@ function scheduleNotifications(signals: Signals, items: Item[]): ScheduledNotifi
   })
 
   return scheduled
+}
+
+/** Whether an item has a reason to appear at this moment, enabled or not. */
+export function isRelevantNow(item: Item, signals: Signals): boolean {
+  const window = windowAt(signals.now, buildWindows(signals.prayerTimes))
+  return reasonFor(item, signals, window) !== null
 }
 
 /**

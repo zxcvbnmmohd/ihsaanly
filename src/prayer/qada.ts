@@ -13,6 +13,23 @@ const CLOSES_AT: Record<Prayer, WindowName> = {
   isha: 'fajr',
 }
 
+/**
+ * What is still owed per prayer: the recorded net (missed less made up) plus
+ * whatever was owed before tracking began, never below zero. A count, never a
+ * dated list.
+ */
+export function outstanding(
+  net: Partial<Record<Prayer, number>>,
+  backlog: Partial<Record<Prayer, number>>,
+): Partial<Record<Prayer, number>> {
+  const result: Partial<Record<Prayer, number>> = {}
+  PRAYERS.forEach((prayer) => {
+    const total = Math.max(0, (net[prayer] ?? 0) + (backlog[prayer] ?? 0))
+    if (total > 0) result[prayer] = total
+  })
+  return result
+}
+
 export function windowClosedAt(
   prayer: Prayer,
   today: DailyPrayerTimes,

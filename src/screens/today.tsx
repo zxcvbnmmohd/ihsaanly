@@ -2,6 +2,7 @@ import { Link, type Href } from 'expo-router'
 import type { ReactElement, ReactNode } from 'react'
 import { Pressable, Text, useColorScheme, View } from 'react-native'
 
+import { Button } from '@/components/button'
 import { Row } from '@/components/row'
 import { Screen } from '@/components/screen'
 import { Surface } from '@/components/surface'
@@ -38,8 +39,20 @@ export interface NextPrayerEntry {
   after: TodayEntry[]
 }
 
+export interface SuggestionEntry {
+  id: string
+  title: string
+  why: string | null
+  href: Href
+}
+
 export interface TodayScreenProps {
   hasLocation: boolean
+  /** One item not yet on Today, offered at most weekly. */
+  suggestion: SuggestionEntry | null
+  onAddSuggestion: (id: string) => void
+  onDismissSuggestion: (id: string) => void
+  qadaHref: Href
   window: WindowName | null
   hijri: HijriDate | null
   placeLabel: string | null
@@ -158,6 +171,61 @@ function UpNextCard({ next, names, palette }: UpNextCardProps): ReactElement {
   )
 }
 
+interface SuggestionCardProps {
+  entry: SuggestionEntry
+  palette: Palette
+  onAdd: () => void
+  onDismiss: () => void
+}
+
+/** Growth, one item at a time: what it is, why it matters, and a way to say yes or not yet. */
+function SuggestionCard({ entry, palette, onAdd, onDismiss }: SuggestionCardProps): ReactElement {
+  const strings = useStrings()
+  useColorScheme()
+
+  return (
+    <Surface style={{ borderRadius: 24, padding: 22 }}>
+      <View className="gap-4">
+        <Link href={entry.href} asChild>
+          <Pressable accessibilityRole="link">
+            <View className="gap-1.5">
+              <Text
+                className="text-2xl leading-tight"
+                style={{ color: colors.label, fontFamily: fonts.display, fontWeight: '600' }}>
+                {entry.title}
+              </Text>
+              {entry.why ? (
+                <Text
+                  className="text-sm leading-snug"
+                  numberOfLines={3}
+                  style={{ color: colors.secondaryLabel }}>
+                  {entry.why}
+                </Text>
+              ) : null}
+            </View>
+          </Pressable>
+        </Link>
+        <View className="flex-row items-center gap-3">
+          <View className="flex-1">
+            <Button
+              title={strings.plan.add}
+              onPress={onAdd}
+              color={palette.accent}
+              onColor={palette.onAccent}
+            />
+          </View>
+          <Button
+            title={strings.plan.notNow}
+            onPress={onDismiss}
+            variant="secondary"
+            color={palette.accent}
+          />
+        </View>
+      </View>
+    </Surface>
+  )
+}
+
 interface PrayerStripProps {
   prayers: PrayerEntry[]
   names: Record<Prayer, string>
@@ -210,6 +278,10 @@ function PrayerStrip({ prayers, names, palette, onMark }: PrayerStripProps): Rea
 
 export function TodayScreen({
   hasLocation,
+  suggestion,
+  onAddSuggestion,
+  onDismissSuggestion,
+  qadaHref,
   window,
   hijri,
   placeLabel,
@@ -310,6 +382,17 @@ export function TodayScreen({
           </Section>
         ) : null}
 
+        {suggestion ? (
+          <Section title={strings.plan.tryOneMore} accent={palette.accent}>
+            <SuggestionCard
+              entry={suggestion}
+              palette={palette}
+              onAdd={() => onAddSuggestion(suggestion.id)}
+              onDismiss={() => onDismissSuggestion(suggestion.id)}
+            />
+          </Section>
+        ) : null}
+
         {qada.length > 0 ? (
           <Section title={strings.plan.makeUp} accent={palette.accent}>
             {qada.map((entry) => (
@@ -320,6 +403,7 @@ export function TodayScreen({
                 onPress={() => onMakeUp(entry.prayer)}
               />
             ))}
+            <Row href={qadaHref} title={strings.qada.manage} detail={strings.qada.manageDetail} />
           </Section>
         ) : null}
 

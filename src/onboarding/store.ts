@@ -12,6 +12,8 @@ export type Gender = z.infer<typeof Gender>
 export const Onboarding = z.object({
   completed: z.boolean(),
   gender: Gender,
+  /** ISO instant onboarding finished. Optional so rows written before it existed still parse. */
+  completedAt: z.string().optional(),
 })
 
 export type Onboarding = z.infer<typeof Onboarding>

@@ -3,7 +3,7 @@ import { describe, expect, it } from 'bun:test'
 import type { Place } from '@/location/place'
 
 import { DEFAULT_CALCULATION_PREFERENCES } from './calculation'
-import { missedPrayers, PRAYERS, windowClosedAt } from './qada'
+import { missedPrayers, PRAYERS, windowClosedAt, outstanding } from './qada'
 import { prayerTimesAcross } from './times'
 
 const toronto: Place = {
@@ -57,5 +57,15 @@ describe('what counts as missed', () => {
   it('counts the whole day once the next Fajr arrives', () => {
     const nextMorning = new Date(tomorrow.fajr.getTime() + 60_000)
     expect(missedPrayers(today, tomorrow, [], nextMorning)).toEqual(PRAYERS)
+  })
+})
+
+describe('what is outstanding', () => {
+  it('adds the backlog to the recorded net', () => {
+    expect(outstanding({ fajr: 2 }, { fajr: 10, isha: 3 })).toEqual({ fajr: 12, isha: 3 })
+  })
+
+  it('never goes below zero and drops what is settled', () => {
+    expect(outstanding({ fajr: -4, dhuhr: 0 }, { fajr: 3 })).toEqual({})
   })
 })

@@ -7,6 +7,7 @@ import type { LibraryScreenProps } from './library'
 import type { LocationScreenProps } from './location'
 import type { MoreScreenProps } from './more'
 import type { OnboardingScreenProps } from './onboarding'
+import type { QadaScreenProps } from './qada'
 import type { NotificationsScreenProps } from './notifications'
 import type { TrackingScreenProps } from './tracking'
 import type { TodayScreenProps } from './today'
@@ -15,6 +16,15 @@ const noop = (): void => {}
 
 export const todayFixture: TodayScreenProps = {
   hasLocation: true,
+  suggestion: {
+    id: 'fast-monday',
+    title: 'Fasting on Monday',
+    why: 'The Prophet ﷺ fasted Mondays and Thursdays and said deeds are presented on those days.',
+    href: '/item/fast-monday',
+  },
+  onAddSuggestion: noop,
+  onDismissSuggestion: noop,
+  qadaHref: '/qada',
   window: 'asr',
   hijri: { year: 1448, month: 4, day: 6 },
   placeLabel: 'Toronto',
@@ -61,6 +71,7 @@ export const todayFixture: TodayScreenProps = {
 export const todayWithoutLocationFixture: TodayScreenProps = {
   ...todayFixture,
   hasLocation: false,
+  suggestion: null,
   window: null,
   hijri: null,
   placeLabel: null,
@@ -177,6 +188,8 @@ export const moreFixture: MoreScreenProps = {
   notificationsHref: '/notifications',
   eventsHref: '/events',
   historyHref: '/history',
+  qadaHref: '/qada',
+  qadaLabel: '2 prayers owed',
   dataHref: '/data',
   languageHref: '/language',
   languageLabel: 'English',
@@ -274,8 +287,9 @@ export const onboardingFixture: OnboardingScreenProps = {
   },
   preset: 'essentials',
   enabledTitles: ['Leaving home', 'Morning adhkar', 'Evening adhkar'],
-  itemCount: 21,
-  essentialCount: 11,
+  itemCount: 32,
+  essentialCount: 21,
+  startingCount: 5,
   onSelectLanguage: noop,
   onSelectTheme: noop,
   onQueryChange: noop,
@@ -301,4 +315,14 @@ export const glossaryFixture: GlossaryScreenProps = {
     { id: 'sunnah', term: 'Sunnah', definition: 'What the Prophet ﷺ did, said or approved.' },
     { id: 'qada', term: 'Qada', definition: 'Making up an obligatory prayer after its time.' },
   ],
+}
+
+export const qadaFixture: QadaScreenProps = {
+  rows: [
+    { prayer: 'fajr', outstanding: 12, owed: 10, pending: 2 },
+    { prayer: 'dhuhr', outstanding: 0, owed: 0, pending: 0 },
+  ],
+  onOwedChange: noop,
+  onPendingChange: noop,
+  onRecord: noop,
 }

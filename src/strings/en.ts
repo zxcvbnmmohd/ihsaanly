@@ -14,6 +14,13 @@ export const en = {
   },
   plan: {
     rightNow: 'Right now',
+    alsoNow: 'Also now',
+    upNext: 'Up next',
+    before: 'Before',
+    after: 'After',
+    soon: 'Soon',
+    inAboutAnHour: 'In about an hour',
+    inAboutHours: (hours: number): string => `In about ${hours} hours`,
     context: 'Nearby',
     comingUp: 'Later this week',
     alsoToday: 'Also today',

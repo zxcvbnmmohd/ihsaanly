@@ -62,12 +62,23 @@ export interface PlannedItem {
   caveat?: 'expected' | 'confirm-locally'
 }
 
+/** What the next prayer asks of you, from content rather than from the moment. */
+export interface NextPrayer {
+  prayer: Prayer
+  startsAt: Date
+  before: string[]
+  after: string[]
+}
+
 export interface TodayModel {
   hijri: HijriDate
   window: WindowName | null
+  /** Everything that applies right now, best first. `rightNow` is its head. */
+  now: PlannedItem[]
   rightNow: PlannedItem | null
   context: PlannedItem[]
   comingUp: PlannedItem[]
+  next: NextPrayer | null
 }
 
 export interface ScheduledNotification {

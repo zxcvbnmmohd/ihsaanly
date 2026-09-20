@@ -29,6 +29,11 @@ export function buildWindows(days: DailyPrayerTimes[]): PrayerWindow[] {
     .filter((window) => window.startsAt < window.endsAt)
 }
 
+/** The next prayer's window after `instant`. Sunrise is a boundary, not a prayer. */
+export function nextPrayerWindow(instant: Date, windows: PrayerWindow[]): PrayerWindow | null {
+  return windows.find((window) => window.startsAt > instant && window.name !== 'sunrise') ?? null
+}
+
 export function windowAt(instant: Date, windows: PrayerWindow[]): PrayerWindow | null {
   return windows.find((window) => instant >= window.startsAt && instant < window.endsAt) ?? null
 }

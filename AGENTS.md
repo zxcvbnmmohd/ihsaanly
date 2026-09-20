@@ -180,6 +180,26 @@ so `nextPrayerWindow` skips it) and lists what enabled content asks before and
 after it, computed from triggers rather than from the moment so it is stable
 all day. The screen renders a rough distance to it, never a clock time.
 
+### A completion counts for one occasion only
+
+`item-completed` and `item-uncompleted` are the on/off pair for library items,
+written by `src/plan/completions.ts` against the local civil day like prayer
+marks. `isDoneForOccasion` in `src/plan/plan.ts` hides a done item only when
+the completion is at or after the start of its current occasion: the latest
+prayer mark for `after-prayer`, the window start otherwise. The tasbih after
+"any" prayer, done after Dhuhr, is therefore owed again after Asr. Do not
+replace this with "completed today hides", which was the first draft and is
+wrong for exactly that item. `TodayModel.done` carries the hidden entries.
+
+### `react-native-view-shot` is typed locally
+
+The package ships TypeScript source that does not compile against
+react-native 0.88's ref types, so `tsconfig.json` maps the module to
+`types/react-native-view-shot.d.ts`, which declares only `captureRef`. It is a
+native module: adding it required prebuild and a new dev build. The share card
+is rendered by the item **route** in an absolute view off-screen and captured
+there; the screen stays pure and receives callbacks only.
+
 ### Exact alarms are deliberately not requested
 
 `SCHEDULE_EXACT_ALARM` is a restricted permission that invites a Play Store

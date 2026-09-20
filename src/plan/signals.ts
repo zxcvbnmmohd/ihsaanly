@@ -40,6 +40,8 @@ export interface Signals {
   today: DayContext
   upcoming: DayContext[]
   prayedToday: Partial<Record<Prayer, Date>>
+  /** Items marked done today, with the moment of the mark. */
+  completedToday: Partial<Record<string, Date>>
   activeEvents: string[]
   userState: UserState
   preferences: Preferences
@@ -75,6 +77,8 @@ export interface TodayModel {
   window: WindowName | null
   /** Everything that applies right now, best first. `rightNow` is its head. */
   now: PlannedItem[]
+  /** Relevant right now but already done for this occasion. */
+  done: PlannedItem[]
   rightNow: PlannedItem | null
   context: PlannedItem[]
   comingUp: PlannedItem[]

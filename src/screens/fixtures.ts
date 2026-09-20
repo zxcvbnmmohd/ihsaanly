@@ -1,7 +1,7 @@
 import type { AppearanceScreenProps } from './appearance'
 import type { CalculationScreenProps } from './calculation'
 import type { HijriScreenProps } from './hijri'
-import type { ItemDetail } from './item'
+import type { ItemDetail, ItemScreenProps } from './item'
 import type { LibraryScreenProps } from './library'
 import type { LocationScreenProps } from './location'
 import type { MoreScreenProps } from './more'
@@ -74,6 +74,8 @@ export const todayWithoutLocationFixture: TodayScreenProps = {
 
 export const libraryFixture: LibraryScreenProps = {
   query: '',
+  filter: 'all',
+  counts: { all: 1, onToday: 1, known: 0 },
   sections: [
     {
       category: 'home',
@@ -82,6 +84,8 @@ export const libraryFixture: LibraryScreenProps = {
           id: 'dua-leaving-home',
           title: 'Leaving home',
           ruling: 'sunnah',
+          onToday: true,
+          known: false,
           href: '/item/dua-leaving-home',
         },
       ],
@@ -94,17 +98,23 @@ export const libraryFixture: LibraryScreenProps = {
           title: 'Sunnah around Dhuhr',
           ruling: 'sunnah-muakkadah',
           href: '/item/sunnah-after-dhuhr',
+          onToday: true,
+          known: true,
         },
       ],
     },
   ],
   onQueryChange: noop,
+  onFilterChange: noop,
 }
 
 export const emptyLibraryFixture: LibraryScreenProps = {
   query: 'zzz',
+  filter: 'all',
+  counts: { all: 0, onToday: 0, known: 0 },
   sections: [],
   onQueryChange: noop,
+  onFilterChange: noop,
 }
 
 export const itemFixture: ItemDetail = {
@@ -125,6 +135,22 @@ export const itemFixture: ItemDetail = {
     },
     { type: 'quran', surah: 2, ayah: 255, text: { en: 'A verse.' } },
   ],
+}
+
+export const itemScreenFixture: ItemScreenProps = {
+  item: itemFixture,
+  memoriseHref: '/item/memorise/dua-eating',
+  done: false,
+  onToggleDone: noop,
+  counter: { count: 1, target: 3 },
+  onTapCounter: noop,
+  onResetCounter: noop,
+  onToday: true,
+  onToggleOnToday: noop,
+  remind: null,
+  onToggleRemind: noop,
+  onShareText: noop,
+  onShareImage: noop,
 }
 
 export const missingItemFixture: ItemDetail | null = null

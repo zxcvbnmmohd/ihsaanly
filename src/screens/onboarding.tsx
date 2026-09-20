@@ -16,6 +16,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { assertNever } from '@/assert-never'
 import { ArabicText } from '@/components/arabic-text'
 import { Button } from '@/components/button'
+import { Chip } from '@/components/chip'
 import { OnboardingArt } from '@/components/onboarding-art'
 import { PlaceMap } from '@/components/place-map'
 import { ChoiceRow } from '@/components/choice-row'
@@ -106,32 +107,6 @@ function Field({ label, children }: FieldProps): ReactElement {
       </Text>
       {children}
     </View>
-  )
-}
-
-interface ChipProps {
-  label: string
-  selected: boolean
-  onPress: () => void
-  palette: Palette
-}
-
-function Chip({ label, selected, onPress, palette }: ChipProps): ReactElement {
-  useColorScheme()
-
-  return (
-    <Pressable
-      accessibilityRole="button"
-      accessibilityState={{ selected }}
-      onPress={onPress}
-      className="rounded-full px-3 py-2"
-      style={{ backgroundColor: selected ? palette.accent : colors.secondarySystemBackground }}>
-      <Text
-        className="text-sm font-semibold"
-        style={{ color: selected ? palette.onAccent : colors.label }}>
-        {label}
-      </Text>
-    </Pressable>
   )
 }
 

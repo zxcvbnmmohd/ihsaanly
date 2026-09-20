@@ -51,6 +51,34 @@ export function summarise(actions: LoggedAction[], kind: string): ActionSummary[
     .sort((left, right) => right.count - left.count)
 }
 
+/**
+ * An `off` fact retracts the latest un-retracted `on` for the same subject on
+ * the same day, so an unmarked prayer or an undone item is not counted.
+ */
+export function withoutRetracted(
+  actions: LoggedAction[],
+  pairs: [on: string, off: string][],
+): LoggedAction[] {
+  const retracted = new Set<LoggedAction>()
+  const openBy = new Map<string, LoggedAction[]>()
+
+  actions.forEach((action) => {
+    pairs.forEach(([on, off]) => {
+      const key = `${on}|${action.subject}|${action.logDay}`
+      if (action.kind === on) {
+        openBy.set(key, [...(openBy.get(key) ?? []), action])
+      } else if (action.kind === off) {
+        const open = openBy.get(key) ?? []
+        const latest = open.pop()
+        if (latest) retracted.add(latest)
+        retracted.add(action)
+      }
+    })
+  })
+
+  return actions.filter((action) => !retracted.has(action))
+}
+
 export function daysActive(actions: LoggedAction[]): number {
   return new Set(actions.map((action) => action.logDay)).size
 }

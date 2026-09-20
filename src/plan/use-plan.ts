@@ -14,6 +14,7 @@ import { currentHomeTransition } from '@/events/geofence'
 import { useNotificationPreferences } from '@/notifications/store'
 import { useNow } from '@/time/use-now'
 
+import { useCompletedToday } from './completions'
 import { useEnabledItems } from './enabled-store'
 import { plan } from './plan'
 import { useUserState } from './user-state-store'
@@ -49,6 +50,7 @@ export function usePlan(): Plan | null {
   const events = useEventSettings()
   const knownItemIds = useKnownItems()
   const prayedToday = useTodayMarks(place?.timeZone ?? 'UTC', now)
+  const completedToday = useCompletedToday(place?.timeZone ?? 'UTC', now)
 
   useEffect(() => {
     if (place) runRollover(place, preferences, new Date())
@@ -66,6 +68,7 @@ export function usePlan(): Plan | null {
       dayContextFor(now, place.timeZone, index + 1, hijriOffset),
     ),
     prayedToday,
+    completedToday,
     activeEvents: [
       ...events.manual,
       ...(events.detectHome ? [currentHomeTransition()].filter((entry) => entry !== null) : []),

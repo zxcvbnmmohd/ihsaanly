@@ -102,6 +102,52 @@ function availableItems(signals: Signals): Item[] {
   })
 }
 
+/** The most recent mark this trigger answers to. */
+function latestMark(trigger: Extract<Trigger, { kind: 'prayer' }>, signals: Signals): Date | null {
+  const marks =
+    trigger.prayer === 'any'
+      ? Object.values(signals.prayedToday)
+      : [signals.prayedToday[trigger.prayer]]
+  return (
+    marks
+      .filter((mark): mark is Date => mark instanceof Date)
+      .sort((a, b) => b.getTime() - a.getTime())[0] ?? null
+  )
+}
+
+/**
+ * A completion only counts for the occasion it belongs to. The tasbih after
+ * "any" prayer, done after Dhuhr, is owed again after Asr; the morning adhkar
+ * done at sunrise stay done until the window closes.
+ */
+function isDoneForOccasion(
+  item: Item,
+  reason: PlanReason,
+  signals: Signals,
+  window: PrayerWindow | null,
+): boolean {
+  const completed = signals.completedToday[item.id]
+  if (!completed) return false
+
+  const start = ((): Date | null => {
+    switch (reason) {
+      case 'after-prayer':
+        return item.trigger.kind === 'prayer' ? latestMark(item.trigger, signals) : null
+      case 'current-window':
+      case 'before-prayer':
+      case 'active-event':
+        return window?.startsAt ?? null
+      case 'today':
+      case 'upcoming':
+        return null
+      default:
+        return assertNever(reason)
+    }
+  })()
+
+  return start === null || completed >= start
+}
+
 function reasonFor(item: Item, signals: Signals, window: PrayerWindow | null): PlanReason | null {
   const { trigger } = item
 
@@ -118,13 +164,7 @@ function reasonFor(item: Item, signals: Signals, window: PrayerWindow | null): P
       const prayed = Object.keys(signals.prayedToday)
 
       if (trigger.when === 'after') {
-        const marks =
-          trigger.prayer === 'any'
-            ? Object.values(signals.prayedToday)
-            : [signals.prayedToday[trigger.prayer]]
-        const latest = marks
-          .filter((mark): mark is Date => mark instanceof Date)
-          .sort((a, b) => b.getTime() - a.getTime())[0]
+        const latest = latestMark(trigger, signals)
         if (!latest) return null
         return signals.now.getTime() - latest.getTime() <= AFTER_PRAYER_GRACE_MS
           ? 'after-prayer'
@@ -257,12 +297,18 @@ export function plan(signals: Signals): Plan {
     ]
   })
 
+  const isDone = (entry: PlannedItem): boolean => {
+    const item = items.find((candidate) => candidate.id === entry.itemId)
+    return item ? isDoneForOccasion(item, entry.reason, signals, window) : false
+  }
   const ranked = [...relevant].sort(byRelevance(items))
+  const open = ranked.filter((entry) => !isDone(entry))
+  const done = ranked.filter(isDone)
+
   // A calendar day is never the right-now card: fasting tomorrow is something
   // to prepare for, not something to do at this moment.
-  const [rightNow = null] = ranked.filter((entry) => entry.reason !== 'today')
-
-  const now = ranked.filter((entry) => entry.reason !== 'today')
+  const now = open.filter((entry) => entry.reason !== 'today')
+  const [rightNow = null] = now
 
   const nextWindow = nextPrayerWindow(signals.now, windows)
   const nextPrayer = nextWindow ? PRAYER_FOR_WINDOW[nextWindow.name] : undefined
@@ -281,6 +327,7 @@ export function plan(signals: Signals): Plan {
       hijri: signals.today.hijri,
       window: window?.name ?? null,
       now,
+      done,
       next:
         nextWindow && nextPrayer
           ? {
@@ -291,11 +338,11 @@ export function plan(signals: Signals): Plan {
             }
           : null,
       rightNow,
-      context: ranked.filter(
+      context: open.filter(
         (entry) => entry.reason === 'active-event' && entry.itemId !== rightNow?.itemId,
       ),
       comingUp: [
-        ...ranked.filter((entry) => entry.reason === 'today'),
+        ...open.filter((entry) => entry.reason === 'today'),
         ...lookAhead(items, signals.upcoming, signals),
       ],
     },

@@ -6,7 +6,12 @@ import type { Prayer } from '@/prayer/qada'
 import { database } from './database'
 
 export type EventKind =
-  'prayer-performed' | 'prayer-unmarked' | 'prayer-missed' | 'prayer-made-up' | 'item-completed'
+  | 'prayer-performed'
+  | 'prayer-unmarked'
+  | 'prayer-missed'
+  | 'prayer-made-up'
+  | 'item-completed'
+  | 'item-uncompleted'
 
 export interface NewEvent {
   kind: EventKind
@@ -56,6 +61,16 @@ export function recordEvent(event: NewEvent): void {
   announce()
 }
 
+/** Several facts at once, one transaction, one announcement. */
+export function recordEvents(events: NewEvent[]): void {
+  attempt(
+    'recordEvents',
+    () => database.withTransactionSync(() => events.forEach(writeEvent)),
+    undefined,
+  )
+  announce()
+}
+
 function writeEvent(event: NewEvent): void {
   database.runSync(
     `INSERT INTO events (kind, subject, at, log_day, window_start, window_end, delta_seconds)
@@ -70,29 +85,37 @@ function writeEvent(event: NewEvent): void {
   )
 }
 
-function readMarks(logDay: string): Partial<Record<Prayer, Date>> {
+/**
+ * The latest of an on/off pair per subject on one day. Later facts supersede
+ * earlier ones; nothing is deleted, so the correction itself stays in the
+ * record.
+ */
+function readToggles(logDay: string, on: EventKind, off: EventKind): Partial<Record<string, Date>> {
   const rows = attempt(
-    'readMarks',
+    'readToggles',
     () =>
       database.getAllSync<{ subject: string; kind: EventKind; at: number }>(
         `SELECT subject, kind, at FROM events
-         WHERE kind IN ('prayer-performed', 'prayer-unmarked') AND log_day = ?
+         WHERE kind IN (?, ?) AND log_day = ?
          ORDER BY id ASC`,
+        on,
+        off,
         logDay,
       ),
     [],
   )
 
-  // Later facts supersede earlier ones. Nothing is deleted, so the correction
-  // itself stays in the record.
-  const marks: Partial<Record<Prayer, Date>> = {}
+  const latest: Partial<Record<string, Date>> = {}
   rows.forEach((row) => {
-    const prayer = row.subject as Prayer
-    if (row.kind === 'prayer-performed') marks[prayer] = new Date(row.at)
-    else delete marks[prayer]
+    if (row.kind === on) latest[row.subject] = new Date(row.at)
+    else delete latest[row.subject]
   })
 
-  return marks
+  return latest
+}
+
+function readMarks(logDay: string): Partial<Record<Prayer, Date>> {
+  return readToggles(logDay, 'prayer-performed', 'prayer-unmarked') as Partial<Record<Prayer, Date>>
 }
 
 interface Cached<T> {
@@ -101,6 +124,7 @@ interface Cached<T> {
 }
 
 const marksCache = new Map<string, Cached<Partial<Record<Prayer, Date>>>>()
+const completionsCache = new Map<string, Cached<Partial<Record<string, Date>>>>()
 let qadaCache: Cached<Partial<Record<Prayer, number>>> | null = null
 
 /**
@@ -117,6 +141,19 @@ function marksSnapshot(logDay: string): Partial<Record<Prayer, Date>> {
   const value = readMarks(logDay)
   marksCache.set(logDay, { version, value })
   return value
+}
+
+function completionsSnapshot(logDay: string): Partial<Record<string, Date>> {
+  const cached = completionsCache.get(logDay)
+  if (cached && cached.version === version) return cached.value
+
+  const value = readToggles(logDay, 'item-completed', 'item-uncompleted')
+  completionsCache.set(logDay, { version, value })
+  return value
+}
+
+export function useCompletedOn(logDay: string): Partial<Record<string, Date>> {
+  return useSyncExternalStore(subscribe, () => completionsSnapshot(logDay))
 }
 
 function qadaSnapshot(): Partial<Record<Prayer, number>> {

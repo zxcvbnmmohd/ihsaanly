@@ -388,7 +388,7 @@ device. Mocking them would assert that the mocks work.
 - Machine-translated religious content, under any labelling.
 - Any dated ledger of missed obligatory prayers in the interface.
 - Children's and family modes; a different product.
-- Community, sharing or social features.
+- Community or social features. **Bent 2026-09-20**: one dua at a time may be shared as text or an image card through the system share sheet; nothing is posted, tracked or received.
 - A nearby-mosque directory, which would require place data and a network dependency.
 - Watch and wearable applications.
 - The diagnostic replay tool. The bundle is designed to make it possible later; it is not built now.

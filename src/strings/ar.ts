@@ -28,7 +28,8 @@ export const ar: Strings = {
   plan: {
     rightNow: 'الآن',
     context: 'بالقرب منك',
-    comingUp: 'قادم',
+    comingUp: 'لاحقًا هذا الأسبوع',
+    alsoToday: 'أيضًا اليوم',
     tomorrow: 'غدًا',
     inDays: (days: number): string => `بعد ${count(days, 'يوم', 'يومين', 'أيام', 'يومًا')}`,
     prayers: 'الصلوات',

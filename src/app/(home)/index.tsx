@@ -26,9 +26,9 @@ function whenLabel(planned: PlannedItem, strings: Strings): string | null {
   return planned.daysAway === 1 ? strings.plan.tomorrow : strings.plan.inDays(planned.daysAway ?? 0)
 }
 
-function detailFor(planned: PlannedItem, strings: Strings): string | null {
+function detailFor(planned: PlannedItem, strings: Strings, showWhen: boolean): string | null {
   const parts = [
-    whenLabel(planned, strings),
+    showWhen ? whenLabel(planned, strings) : null,
     planned.optional ? strings.plan.optional : null,
     caveatLabel(planned.caveat, strings),
   ].filter((part): part is string => part !== null)
@@ -36,16 +36,54 @@ function detailFor(planned: PlannedItem, strings: Strings): string | null {
   return parts.length > 0 ? parts.join(' · ') : null
 }
 
-function toEntry(planned: PlannedItem, strings: Strings): TodayEntry | null {
+function toEntry(planned: PlannedItem, strings: Strings, showWhen = true): TodayEntry | null {
   const item = itemById(planned.itemId)
   if (!item) return null
 
   return {
     id: planned.itemId,
     title: resolveText(item.title) ?? item.id,
-    detail: detailFor(planned, strings),
+    detail: detailFor(planned, strings, showWhen),
     href: `/item/${item.id}`,
   }
+}
+
+/**
+ * The plan returns today's all-day items and the look-ahead in one list. They
+ * are different questions — what to do today, and what to prepare for — so
+ * they are split here rather than shown under one caption that reads as
+ * "not now".
+ */
+function split(entries: PlannedItem[]): {
+  allDay: PlannedItem[]
+  tomorrow: PlannedItem[]
+  later: PlannedItem[]
+} {
+  return {
+    allDay: entries.filter((entry) => entry.reason === 'today'),
+    tomorrow: soonestEach(
+      entries.filter((entry) => entry.reason === 'upcoming' && entry.daysAway === 1),
+    ),
+    later: soonestEach(
+      entries.filter((entry) => entry.reason === 'upcoming' && (entry.daysAway ?? 0) > 1),
+    ),
+  }
+}
+
+/**
+ * The White Days are three consecutive days, so the look-ahead returns the
+ * same item once per day. Three identical rows say nothing the first does, and
+ * they collide as React keys, so only the soonest is kept.
+ */
+function soonestEach(entries: PlannedItem[]): PlannedItem[] {
+  const soonest = new Map<string, PlannedItem>()
+
+  for (const entry of entries) {
+    const seen = soonest.get(entry.itemId)
+    if (!seen || (entry.daysAway ?? 0) < (seen.daysAway ?? 0)) soonest.set(entry.itemId, entry)
+  }
+
+  return [...soonest.values()].sort((a, b) => (a.daysAway ?? 0) - (b.daysAway ?? 0))
 }
 
 export default function TodayRoute(): ReactElement {
@@ -58,6 +96,7 @@ export default function TodayRoute(): ReactElement {
   const marks = useTodayMarks(place?.timeZone ?? 'UTC', now)
   const qada = useQada()
   const strings = useStrings()
+  const ahead = split(planned?.today.comingUp ?? [])
 
   const togglePrayer = (prayer: Prayer): void => {
     if (!place) return
@@ -80,7 +119,9 @@ export default function TodayRoute(): ReactElement {
       hijri={planned?.today.hijri ?? null}
       rightNow={planned?.today.rightNow ? toEntry(planned.today.rightNow, strings) : null}
       context={planned?.today.context.flatMap((entry) => toEntry(entry, strings) ?? []) ?? []}
-      comingUp={planned?.today.comingUp.flatMap((entry) => toEntry(entry, strings) ?? []) ?? []}
+      allDay={ahead.allDay.flatMap((entry) => toEntry(entry, strings, false) ?? [])}
+      tomorrow={ahead.tomorrow.flatMap((entry) => toEntry(entry, strings, false) ?? [])}
+      later={ahead.later.flatMap((entry) => toEntry(entry, strings) ?? [])}
       prayers={
         place ? PRAYERS.map((prayer) => ({ prayer, done: marks[prayer] !== undefined })) : []
       }

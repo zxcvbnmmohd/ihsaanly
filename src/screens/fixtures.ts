@@ -25,7 +25,7 @@ export const todayFixture: TodayScreenProps = {
   context: [
     { id: 'dua-travel', title: 'Setting out on a journey', detail: null, href: '/item/dua-travel' },
   ],
-  comingUp: [
+  allDay: [
     {
       id: 'fast-white-days',
       title: 'Fasting the White Days',
@@ -33,6 +33,8 @@ export const todayFixture: TodayScreenProps = {
       href: '/item/fast-white-days',
     },
   ],
+  tomorrow: [],
+  later: [],
   prayers: [
     { prayer: 'fajr', done: true },
     { prayer: 'dhuhr', done: true },
@@ -53,7 +55,9 @@ export const todayWithoutLocationFixture: TodayScreenProps = {
   hijri: null,
   rightNow: null,
   context: [],
-  comingUp: [],
+  allDay: [],
+  tomorrow: [],
+  later: [],
   prayers: [],
   qada: [],
 }

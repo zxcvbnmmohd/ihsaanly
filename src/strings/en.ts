@@ -15,7 +15,8 @@ export const en = {
   plan: {
     rightNow: 'Right now',
     context: 'Nearby',
-    comingUp: 'Coming up',
+    comingUp: 'Later this week',
+    alsoToday: 'Also today',
     tomorrow: 'Tomorrow',
     inDays: (days: number): string => `In ${days} days`,
     prayers: 'Prayers',

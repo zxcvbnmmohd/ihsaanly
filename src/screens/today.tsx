@@ -37,7 +37,9 @@ export interface TodayScreenProps {
   hijri: HijriDate | null
   rightNow: TodayEntry | null
   context: TodayEntry[]
-  comingUp: TodayEntry[]
+  allDay: TodayEntry[]
+  tomorrow: TodayEntry[]
+  later: TodayEntry[]
   prayers: PrayerEntry[]
   qada: QadaEntry[]
   onMarkPrayer: (prayer: Prayer) => void
@@ -154,7 +156,9 @@ export function TodayScreen({
   hijri,
   rightNow,
   context,
-  comingUp,
+  allDay,
+  tomorrow,
+  later,
   prayers,
   qada,
   onMarkPrayer,
@@ -219,6 +223,14 @@ export function TodayScreen({
           </Section>
         ) : null}
 
+        {allDay.length > 0 ? (
+          <Section title={strings.plan.alsoToday} accent={palette.accent}>
+            {allDay.map((entry) => (
+              <Row key={entry.id} href={entry.href} title={entry.title} detail={entry.detail} />
+            ))}
+          </Section>
+        ) : null}
+
         {prayers.length > 0 ? (
           <Section title={strings.plan.prayers} accent={palette.accent}>
             <PrayerStrip
@@ -243,9 +255,17 @@ export function TodayScreen({
           </Section>
         ) : null}
 
-        {comingUp.length > 0 ? (
+        {tomorrow.length > 0 ? (
+          <Section title={strings.plan.tomorrow} accent={palette.accent}>
+            {tomorrow.map((entry) => (
+              <Row key={entry.id} href={entry.href} title={entry.title} detail={entry.detail} />
+            ))}
+          </Section>
+        ) : null}
+
+        {later.length > 0 ? (
           <Section title={strings.plan.comingUp} accent={palette.accent}>
-            {comingUp.map((entry) => (
+            {later.map((entry) => (
               <Row key={entry.id} href={entry.href} title={entry.title} detail={entry.detail} />
             ))}
           </Section>

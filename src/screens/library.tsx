@@ -5,6 +5,7 @@ import { Pressable, Text, useColorScheme, View } from 'react-native'
 import { Chip } from '@/components/chip'
 import { EmptyState } from '@/components/empty-state'
 import { Pill } from '@/components/pill'
+import { Row } from '@/components/row'
 import { Screen } from '@/components/screen'
 import { Surface } from '@/components/surface'
 import { TextField } from '@/components/text-field'
@@ -37,6 +38,7 @@ export interface LibraryScreenProps {
   filter: LibraryFilter
   counts: Record<LibraryFilter, number>
   sections: LibrarySectionView[]
+  glossaryHref: Href
   onQueryChange: (query: string) => void
   onFilterChange: (filter: LibraryFilter) => void
 }
@@ -59,6 +61,7 @@ export function LibraryScreen({
   filter,
   counts,
   sections,
+  glossaryHref,
   onQueryChange,
   onFilterChange,
 }: LibraryScreenProps): ReactElement {
@@ -91,6 +94,14 @@ export function LibraryScreen({
             ))}
           </View>
         </View>
+
+        {query.trim() === '' && filter === 'all' ? (
+          <Row
+            href={glossaryHref}
+            title={strings.library.terms}
+            detail={strings.library.termsDetail}
+          />
+        ) : null}
 
         {sections.length === 0 ? (
           <EmptyState message={emptyMessage(query, filter, strings)} />

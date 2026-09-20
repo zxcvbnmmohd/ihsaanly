@@ -96,6 +96,12 @@ const Item = z
     trigger: Trigger,
     defaultOn: z.boolean(),
     note: LocalisedText.nullable(),
+    /** One plain paragraph: what this is and why it matters. For the reader who has never heard of it. */
+    why: LocalisedText.nullable(),
+    /** Ordered steps for doing it. Empty when the text itself is the whole act. */
+    how: z.array(LocalisedText),
+    /** Signed off by the content reviewer. Unreviewed items ship only in development. */
+    reviewed: z.boolean(),
     audio: z.string().min(1).nullable(),
     audioTranslation: LocalisedText.nullable(),
   })
@@ -151,10 +157,27 @@ function localisedFieldsOf(item: z.infer<typeof Item>): Record<string, string>[]
     item.transliteration,
     item.translation,
     item.note,
+    item.why,
     item.audioTranslation,
+    ...item.how,
     ...item.evidence.map((evidence) => evidence.text),
   ].filter((field) => field !== null)
 }
+
+/** Short definitions of the words the app uses, for the reader meeting them for the first time. */
+export const GlossaryTerm = z.object({
+  id: Slug,
+  term: LocalisedText,
+  definition: LocalisedText,
+})
+
+export const GlossaryDocument = z.object({
+  schemaVersion: z.literal(1),
+  terms: z.array(GlossaryTerm),
+})
+
+export type GlossaryTerm = z.infer<typeof GlossaryTerm>
+export type GlossaryDocument = z.infer<typeof GlossaryDocument>
 
 export type Ruling = z.infer<typeof Ruling>
 export type Grading = z.infer<typeof Grading>

@@ -21,6 +21,9 @@ const item: Item = {
   trigger: { kind: 'window', window: 'evening' },
   defaultOn: true,
   note: null,
+  why: null,
+  how: [],
+  reviewed: true,
   audio: null,
   audioTranslation: null,
 }

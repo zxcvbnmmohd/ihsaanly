@@ -9,6 +9,7 @@ export default function LibraryLayout(): ReactElement {
   return (
     <Stack screenOptions={useStackScreenOptions()}>
       <Stack.Screen name="index" options={{ title: strings.library.title }} />
+      <Stack.Screen name="glossary" options={{ title: strings.glossary.title }} />
     </Stack>
   )
 }

@@ -1,5 +1,6 @@
 import type { AppearanceScreenProps } from './appearance'
 import type { CalculationScreenProps } from './calculation'
+import type { GlossaryScreenProps } from './glossary'
 import type { HijriScreenProps } from './hijri'
 import type { ItemDetail, ItemScreenProps } from './item'
 import type { LibraryScreenProps } from './library'
@@ -104,6 +105,7 @@ export const libraryFixture: LibraryScreenProps = {
       ],
     },
   ],
+  glossaryHref: '/glossary',
   onQueryChange: noop,
   onFilterChange: noop,
 }
@@ -113,12 +115,17 @@ export const emptyLibraryFixture: LibraryScreenProps = {
   filter: 'all',
   counts: { all: 0, onToday: 0, known: 0 },
   sections: [],
+  glossaryHref: '/glossary',
   onQueryChange: noop,
   onFilterChange: noop,
 }
 
 export const itemFixture: ItemDetail = {
   ruling: 'sunnah',
+  rulingHref: '/glossary?term=sunnah',
+  reviewed: false,
+  why: 'Naming Allah over food is the difference between eating and eating with gratitude.',
+  how: ['Say Bismillah before the first bite.'],
   repeat: 3,
   arabic: 'بِسْمِ اللَّهِ',
   transliteration: 'Bismillāh',
@@ -286,4 +293,12 @@ export const onboardingFixture: OnboardingScreenProps = {
 export const appearanceFixture: AppearanceScreenProps = {
   preference: 'system',
   onSelect: noop,
+}
+
+export const glossaryFixture: GlossaryScreenProps = {
+  highlighted: 'sunnah',
+  entries: [
+    { id: 'sunnah', term: 'Sunnah', definition: 'What the Prophet ﷺ did, said or approved.' },
+    { id: 'qada', term: 'Qada', definition: 'Making up an obligatory prayer after its time.' },
+  ],
 }

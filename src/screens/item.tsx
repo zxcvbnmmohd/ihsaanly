@@ -1,5 +1,5 @@
 import type { ReactElement, ReactNode } from 'react'
-import { Text, useColorScheme, View } from 'react-native'
+import { Pressable, Text, useColorScheme, View } from 'react-native'
 
 import { ArabicText } from '@/components/arabic-text'
 import { Button } from '@/components/button'
@@ -9,15 +9,20 @@ import { EvidencePanel } from '@/components/evidence-panel'
 import { Row } from '@/components/row'
 import { Screen } from '@/components/screen'
 import { SwitchRow } from '@/components/switch-row'
-import type { Href } from 'expo-router'
+import { Link, type Href } from 'expo-router'
 
 import type { Evidence, Ruling } from '@/content/schema'
 import { useStrings } from '@/strings'
 import { colors } from '@/theme/colors'
+import { fonts } from '@/theme/fonts'
 import { usePalette } from '@/theme/store'
 
 export interface ItemDetail {
   ruling: Ruling
+  rulingHref: Href
+  reviewed: boolean
+  why: string | null
+  how: string[]
   repeat: number
   arabic: string | null
   transliteration: string | null
@@ -98,15 +103,55 @@ export function ItemScreen({
   return (
     <Screen className="gap-6 p-4">
       <View className="gap-2">
-        <Text className="text-sm" style={{ color: colors.secondaryLabel }}>
-          {strings.ruling[item.ruling]}
-        </Text>
+        <View className="flex-row flex-wrap items-center gap-2">
+          <Link href={item.rulingHref} asChild>
+            <Pressable accessibilityRole="link" accessibilityHint={strings.glossary.title}>
+              <Text
+                className="text-sm font-semibold"
+                style={{ color: palette.accent, textDecorationLine: 'underline' }}>
+                {strings.ruling[item.ruling]}
+              </Text>
+            </Pressable>
+          </Link>
+          {item.reviewed ? null : (
+            <Text className="text-sm" style={{ color: colors.secondaryLabel }}>
+              · {strings.item.unreviewed}
+            </Text>
+          )}
+        </View>
         {item.repeat > 1 ? (
           <Text className="text-sm" style={{ color: colors.secondaryLabel }}>
             {strings.item.repeat(item.repeat)}
           </Text>
         ) : null}
       </View>
+
+      {item.why ? (
+        <Labelled label={strings.item.why}>
+          <Text className="text-base leading-relaxed" style={{ color: colors.label }}>
+            {item.why}
+          </Text>
+        </Labelled>
+      ) : null}
+
+      {item.how.length > 0 ? (
+        <Labelled label={strings.item.how}>
+          <View className="gap-2">
+            {item.how.map((step, index) => (
+              <View key={step} className="flex-row gap-3">
+                <Text
+                  className="text-base"
+                  style={{ color: palette.accent, fontFamily: fonts.display, fontWeight: '600' }}>
+                  {index + 1}
+                </Text>
+                <Text className="flex-1 text-base leading-relaxed" style={{ color: colors.label }}>
+                  {step}
+                </Text>
+              </View>
+            ))}
+          </View>
+        </Labelled>
+      ) : null}
 
       {item.arabic ? <ArabicText>{item.arabic}</ArabicText> : null}
 

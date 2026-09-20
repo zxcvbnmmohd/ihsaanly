@@ -93,6 +93,9 @@ function makeSignals(items: Item[], overrides: Partial<Signals> = {}): Signals {
   }
 }
 
+/** A prayer marked a few minutes before the fixture's `now`, inside the after-prayer grace. */
+const justNow = new Date(startOf('asr').getTime() - 5 * 60_000)
+
 const eveningAdhkar = makeItem('evening-adhkar', { kind: 'window', window: 'evening' })
 const morningAdhkar = makeItem('morning-adhkar', { kind: 'window', window: 'morning' })
 const leavingHome = makeItem('leaving-home', { kind: 'event', event: 'leaving-home' })
@@ -142,12 +145,12 @@ describe('prayer-bound items', () => {
     const before = plan(makeSignals([rawatib]))
     expect(before.today.rightNow).toBeNull()
 
-    const after = plan(makeSignals([rawatib], { prayedToday: { dhuhr: anchor } }))
+    const after = plan(makeSignals([rawatib], { prayedToday: { dhuhr: justNow } }))
     expect(after.today.rightNow?.reason).toBe('after-prayer')
   })
 
   it('treat "any" as satisfied by any marked prayer', () => {
-    const result = plan(makeSignals([dhikr], { prayedToday: { asr: anchor } }))
+    const result = plan(makeSignals([dhikr], { prayedToday: { asr: justNow } }))
     expect(result.today.rightNow?.itemId).toBe('after-any')
   })
 })
@@ -178,7 +181,7 @@ describe('items that come before a prayer', () => {
     expect(during.today.rightNow?.itemId).toBe('siwak')
 
     const done = plan(
-      makeSignals([beforeAny], { now: startOf('dhuhr'), prayedToday: { dhuhr: anchor } }),
+      makeSignals([beforeAny], { now: startOf('dhuhr'), prayedToday: { dhuhr: justNow } }),
     )
     expect(done.today.rightNow).toBeNull()
   })
@@ -188,7 +191,7 @@ describe('user state overrides selection', () => {
   it('removes every prayer item while tracking is paused', () => {
     const result = plan(
       makeSignals([rawatib, dhikr, eveningAdhkar], {
-        prayedToday: { dhuhr: anchor },
+        prayedToday: { dhuhr: justNow },
         userState: { travelling: false, trackingPaused: true },
       }),
     )
@@ -198,7 +201,7 @@ describe('user state overrides selection', () => {
   it('suppresses the rawatib while travelling but keeps the dhikr after prayer', () => {
     const result = plan(
       makeSignals([rawatib, dhikr], {
-        prayedToday: { dhuhr: anchor },
+        prayedToday: { dhuhr: justNow },
         userState: { travelling: true, trackingPaused: false },
       }),
     )
@@ -213,7 +216,7 @@ describe('travelling', () => {
   const onJourney = (extra: Partial<Signals> = {}): Signals =>
     makeSignals([fast, travelDua, rawatib], {
       today: { ...dayContext(0, { month: 4, day: 6 }), weekday: 1 },
-      prayedToday: { dhuhr: anchor },
+      prayedToday: { dhuhr: justNow },
       activeEvents: ['travel'],
       userState: { travelling: true, trackingPaused: false },
       ...extra,
@@ -414,5 +417,86 @@ describe('the notification schedule', () => {
       }),
     )
     expect(result.notifications).toEqual([])
+  })
+})
+
+describe('everything open right now', () => {
+  const siwak = makeItem('siwak', { kind: 'prayer', prayer: 'any', when: 'before' })
+
+  it('lists every relevant item, best first, with the hero at its head', () => {
+    const now = startOf('asr')
+    const result = plan(
+      makeSignals([eveningAdhkar, leavingHome, siwak], { now, activeEvents: ['leaving-home'] }),
+    )
+    expect(result.today.now.map((entry) => entry.itemId)).toEqual([
+      'leaving-home',
+      'evening-adhkar',
+      'siwak',
+    ])
+    expect(result.today.rightNow?.itemId).toBe('leaving-home')
+  })
+
+  it('leaves all-day items out of now', () => {
+    const result = plan(
+      makeSignals([whiteDays, eveningAdhkar], { today: dayContext(0, { month: 4, day: 13 }) }),
+    )
+    expect(result.today.now.map((entry) => entry.itemId)).toEqual(['evening-adhkar'])
+  })
+})
+
+describe('the hour after a prayer', () => {
+  const now = startOf('asr')
+
+  it('lets the sunnah of a just-marked prayer lead the window item', () => {
+    const asr = new Date(now.getTime() - 5 * 60_000)
+    const result = plan(makeSignals([eveningAdhkar, dhikr], { now, prayedToday: { asr } }))
+    expect(result.today.now.map((entry) => entry.itemId)).toEqual(['after-any', 'evening-adhkar'])
+  })
+
+  it('returns the window item to the front once the hour has passed', () => {
+    const asr = new Date(now.getTime() - 61 * 60_000)
+    const result = plan(makeSignals([eveningAdhkar, dhikr], { now, prayedToday: { asr } }))
+    expect(result.today.now.map((entry) => entry.itemId)).toEqual(['evening-adhkar'])
+  })
+
+  it('measures "any" from the most recent mark', () => {
+    const result = plan(
+      makeSignals([dhikr], {
+        now,
+        prayedToday: {
+          dhuhr: new Date(now.getTime() - 3 * 3_600_000),
+          asr: new Date(now.getTime() - 60_000),
+        },
+      }),
+    )
+    expect(result.today.rightNow?.itemId).toBe('after-any')
+  })
+})
+
+describe('the next prayer', () => {
+  const beforeMaghrib = makeItem('before-maghrib', {
+    kind: 'prayer',
+    prayer: 'maghrib',
+    when: 'before',
+  })
+  const beforeFajr = makeItem('before-fajr', { kind: 'prayer', prayer: 'fajr', when: 'before' })
+
+  it('names the prayer after this one and what content asks around it', () => {
+    const result = plan(
+      makeSignals([beforeMaghrib, beforeFajr, dhikr, rawatib], { now: startOf('asr') }),
+    )
+    expect(result.today.next?.prayer).toBe('maghrib')
+    expect(result.today.next?.before).toEqual(['before-maghrib'])
+    expect(result.today.next?.after).toEqual(['after-any'])
+  })
+
+  it('skips sunrise after fajr', () => {
+    expect(plan(makeSignals([], { now: startOf('fajr') })).today.next?.prayer).toBe('dhuhr')
+  })
+
+  it('wraps from isha to fajr', () => {
+    const result = plan(makeSignals([beforeFajr], { now: startOf('isha') }))
+    expect(result.today.next?.prayer).toBe('fajr')
+    expect(result.today.next?.before).toEqual(['before-fajr'])
   })
 })

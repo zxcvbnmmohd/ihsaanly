@@ -27,6 +27,14 @@ export const ar: Strings = {
   },
   plan: {
     rightNow: 'الآن',
+    alsoNow: 'أيضًا الآن',
+    upNext: 'التالي',
+    before: 'قبلها',
+    after: 'بعدها',
+    soon: 'قريبًا',
+    inAboutAnHour: 'بعد نحو ساعة',
+    inAboutHours: (hours: number): string =>
+      `بعد نحو ${count(hours, 'ساعة', 'ساعتين', 'ساعات', 'ساعة')}`,
     context: 'بالقرب منك',
     comingUp: 'لاحقًا هذا الأسبوع',
     alsoToday: 'أيضًا اليوم',

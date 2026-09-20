@@ -2,7 +2,7 @@ import type { ReactElement } from 'react'
 
 import { itemById, resolveText } from '@/content'
 import { usePlace } from '@/location/store'
-import type { PlannedItem } from '@/plan/signals'
+import type { NextPrayer, PlannedItem } from '@/plan/signals'
 import { useNotificationSync } from '@/notifications/use-sync'
 import { useWidgetSnapshot } from '@/widgets/use-snapshot'
 import { usePlan } from '@/plan/use-plan'
@@ -11,7 +11,7 @@ import { PRAYERS, type Prayer } from '@/prayer/qada'
 import { useCalculationPreferences } from '@/prayer/store'
 import { prayerTimesAcross } from '@/prayer/times'
 import { buildWindows } from '@/prayer/windows'
-import { TodayScreen, type TodayEntry } from '@/screens/today'
+import { TodayScreen, type NextPrayerEntry, type TodayEntry } from '@/screens/today'
 import { useStrings, type Strings } from '@/strings'
 import { useNow } from '@/time/use-now'
 
@@ -34,6 +34,30 @@ function detailFor(planned: PlannedItem, strings: Strings, showWhen: boolean): s
   ].filter((part): part is string => part !== null)
 
   return parts.length > 0 ? parts.join(' · ') : null
+}
+
+/** A rough distance, never a clock time: the app says how the day feels, not when it ticks. */
+function distanceLabel(minutes: number, strings: Strings): string {
+  if (minutes < 45) return strings.plan.soon
+  if (minutes < 90) return strings.plan.inAboutAnHour
+  return strings.plan.inAboutHours(Math.round(minutes / 60))
+}
+
+function itemEntry(id: string): TodayEntry | null {
+  const item = itemById(id)
+  return item
+    ? { id, title: resolveText(item.title) ?? id, detail: null, href: `/item/${id}` }
+    : null
+}
+
+function toNext(next: NextPrayer | null, now: Date, strings: Strings): NextPrayerEntry | null {
+  if (!next) return null
+  return {
+    prayer: next.prayer,
+    distance: distanceLabel((next.startsAt.getTime() - now.getTime()) / 60_000, strings),
+    before: next.before.flatMap((id) => itemEntry(id) ?? []),
+    after: next.after.flatMap((id) => itemEntry(id) ?? []),
+  }
 }
 
 function toEntry(planned: PlannedItem, strings: Strings, showWhen = true): TodayEntry | null {
@@ -117,8 +141,9 @@ export default function TodayRoute(): ReactElement {
       hasLocation={place !== null}
       window={planned?.today.window ?? null}
       hijri={planned?.today.hijri ?? null}
-      rightNow={planned?.today.rightNow ? toEntry(planned.today.rightNow, strings) : null}
-      context={planned?.today.context.flatMap((entry) => toEntry(entry, strings) ?? []) ?? []}
+      placeLabel={place ? (place.label.split(',')[0]?.trim() ?? place.label) : null}
+      now={planned?.today.now.flatMap((entry) => toEntry(entry, strings) ?? []) ?? []}
+      next={toNext(planned?.today.next ?? null, now, strings)}
       allDay={ahead.allDay.flatMap((entry) => toEntry(entry, strings, false) ?? [])}
       tomorrow={ahead.tomorrow.flatMap((entry) => toEntry(entry, strings, false) ?? [])}
       later={ahead.later.flatMap((entry) => toEntry(entry, strings) ?? [])}

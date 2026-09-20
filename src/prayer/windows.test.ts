@@ -4,7 +4,13 @@ import type { Place } from '@/location/place'
 
 import { DEFAULT_CALCULATION_PREFERENCES } from './calculation'
 import { prayerTimesAcross, prayerTimesFor } from './times'
-import { buildWindows, windowAt, WINDOW_ORDER, type PrayerWindow } from './windows'
+import {
+  buildWindows,
+  nextPrayerWindow,
+  windowAt,
+  WINDOW_ORDER,
+  type PrayerWindow,
+} from './windows'
 
 const toronto: Place = {
   label: 'Toronto, Ontario, Canada',
@@ -93,5 +99,32 @@ describe('windows', () => {
   it('return nothing for an instant outside the built range', () => {
     const windows = windowsAround(toronto, new Date('2026-09-17T12:00:00Z'))
     expect(windowAt(new Date('2020-01-01T00:00:00Z'), windows)).toBeNull()
+  })
+})
+
+describe('the next prayer', () => {
+  const windows = windowsAround(toronto, new Date('2026-09-17T12:00:00Z'))
+  const at = (name: 'fajr' | 'sunrise' | 'dhuhr' | 'asr' | 'maghrib' | 'isha'): Date => {
+    const found = windows.find(
+      (window) => window.name === name && window.startsAt > new Date('2026-09-17T00:00:00Z'),
+    )
+    if (!found) throw new Error(`no ${name}`)
+    return new Date(found.startsAt.getTime() + 60_000)
+  }
+
+  it('skips sunrise, which is a boundary and not a prayer', () => {
+    expect(nextPrayerWindow(at('fajr'), windows)?.name).toBe('dhuhr')
+  })
+
+  it('names each prayer in turn', () => {
+    expect(nextPrayerWindow(at('dhuhr'), windows)?.name).toBe('asr')
+    expect(nextPrayerWindow(at('asr'), windows)?.name).toBe('maghrib')
+    expect(nextPrayerWindow(at('maghrib'), windows)?.name).toBe('isha')
+  })
+
+  it('wraps from isha to the next fajr', () => {
+    const next = nextPrayerWindow(at('isha'), windows)
+    expect(next?.name).toBe('fajr')
+    expect(next && next.startsAt > at('isha')).toBe(true)
   })
 })

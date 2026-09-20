@@ -16,15 +16,24 @@ export const todayFixture: TodayScreenProps = {
   hasLocation: true,
   window: 'asr',
   hijri: { year: 1448, month: 4, day: 6 },
-  rightNow: {
-    id: 'evening-adhkar',
-    title: 'Evening adhkar',
-    detail: null,
-    href: '/item/evening-adhkar',
-  },
-  context: [
+  placeLabel: 'Toronto',
+  now: [
+    { id: 'evening-adhkar', title: 'Evening adhkar', detail: null, href: '/item/evening-adhkar' },
     { id: 'dua-travel', title: 'Setting out on a journey', detail: null, href: '/item/dua-travel' },
   ],
+  next: {
+    prayer: 'maghrib',
+    distance: 'In about 2 hours',
+    before: [],
+    after: [
+      {
+        id: 'tasbih-after-prayer',
+        title: 'Tasbih after prayer',
+        detail: null,
+        href: '/item/tasbih-after-prayer',
+      },
+    ],
+  },
   allDay: [
     {
       id: 'fast-white-days',
@@ -53,8 +62,9 @@ export const todayWithoutLocationFixture: TodayScreenProps = {
   hasLocation: false,
   window: null,
   hijri: null,
-  rightNow: null,
-  context: [],
+  placeLabel: null,
+  now: [],
+  next: null,
   allDay: [],
   tomorrow: [],
   later: [],

@@ -14,6 +14,11 @@ Work is tracked as issues on the repository. The product specification is issue 
 
 ### Added
 
+- **Today answers "what now, and what next".** Every sunnah open right now is
+  listed, best first, with the rest under "Also now" instead of being dropped.
+  Marking a prayer puts its after-prayer sunnah at the top for an hour. An "Up
+  next" card names the next prayer with a rough distance ("in about an hour")
+  and what content asks before and after it. The header names the place.
 - **Appearance** in More: System, Light or Dark. On Android a local native
   module applies the stored mode when the process starts, so a cold start opens
   in the chosen scheme; a live change recreates the activity.

@@ -162,6 +162,24 @@ inside a function is too late — the import itself is what fails. Put the real
 implementation in `*.ios.ts` and a no-op in the base file, and let Metro pick.
 `src/widgets/snapshot.ts` is the pattern.
 
+### After-prayer items lead for an hour, then expire
+
+`REASON_RANK` in `src/plan/plan.ts` puts `after-prayer` above `current-window`,
+and an `after` trigger is relevant only while the prayer was marked within
+`AFTER_PRAYER_GRACE_MS` (60 minutes; `prayer: any` uses the most recent mark).
+Both halves are deliberate. Onboarding promises "You mark the prayer. The
+sunnah appears", which the old order (window first) broke. Without the expiry
+the tasbih would sit at the top from the first mark until day rollover, so the
+grace is what makes the higher rank safe. Do not restore the old order or drop
+the expiry without changing the other.
+
+`TodayModel.now` is every relevant non-all-day item in rank order; `rightNow`
+is its head and is kept for the widget snapshot and notifications.
+`TodayModel.next` names the next prayer (sunrise is a boundary, not a prayer,
+so `nextPrayerWindow` skips it) and lists what enabled content asks before and
+after it, computed from triggers rather than from the moment so it is stable
+all day. The screen renders a rough distance to it, never a clock time.
+
 ### Exact alarms are deliberately not requested
 
 `SCHEDULE_EXACT_ALARM` is a restricted permission that invites a Play Store

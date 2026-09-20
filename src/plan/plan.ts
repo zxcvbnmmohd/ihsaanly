@@ -1,7 +1,13 @@
 import { assertNever } from '@/assert-never'
 import type { Item, Ruling, Trigger } from '@/content/schema'
 import { civilDateIn, isSameCivilDate, shiftDays } from '@/day/boundaries'
-import { buildWindows, windowAt, type PrayerWindow, type WindowName } from '@/prayer/windows'
+import {
+  buildWindows,
+  nextPrayerWindow,
+  windowAt,
+  type PrayerWindow,
+  type WindowName,
+} from '@/prayer/windows'
 
 import { matchesDay, readingsDiverge } from './day-match'
 import { isQuiet } from './quiet-hours'
@@ -18,10 +24,17 @@ import type {
 /** Apple keeps roughly 64 pending local notifications. Leave headroom. */
 const MAX_PENDING_NOTIFICATIONS = 60
 
+/**
+ * Post-prayer adhkar belong to the minutes after the prayer. Inside this grace
+ * they lead the screen, which is the promise onboarding makes; after it the
+ * window item returns and they stop being noise five hours later.
+ */
+const AFTER_PRAYER_GRACE_MS = 60 * 60_000
+
 const REASON_RANK: Record<PlanReason, number> = {
   'active-event': 0,
-  'current-window': 1,
-  'after-prayer': 2,
+  'after-prayer': 1,
+  'current-window': 2,
   'before-prayer': 3,
   today: 4,
   upcoming: 5,
@@ -105,8 +118,17 @@ function reasonFor(item: Item, signals: Signals, window: PrayerWindow | null): P
       const prayed = Object.keys(signals.prayedToday)
 
       if (trigger.when === 'after') {
-        const done = trigger.prayer === 'any' ? prayed.length > 0 : prayed.includes(trigger.prayer)
-        return done ? 'after-prayer' : null
+        const marks =
+          trigger.prayer === 'any'
+            ? Object.values(signals.prayedToday)
+            : [signals.prayedToday[trigger.prayer]]
+        const latest = marks
+          .filter((mark): mark is Date => mark instanceof Date)
+          .sort((a, b) => b.getTime() - a.getTime())[0]
+        if (!latest) return null
+        return signals.now.getTime() - latest.getTime() <= AFTER_PRAYER_GRACE_MS
+          ? 'after-prayer'
+          : null
       }
 
       if (!window) return null
@@ -219,7 +241,8 @@ function scheduleNotifications(signals: Signals, items: Item[]): ScheduledNotifi
  */
 export function plan(signals: Signals): Plan {
   const items = availableItems(signals)
-  const window = windowAt(signals.now, buildWindows(signals.prayerTimes))
+  const windows = buildWindows(signals.prayerTimes)
+  const window = windowAt(signals.now, windows)
 
   const relevant: PlannedItem[] = items.flatMap((item) => {
     const reason = reasonFor(item, signals, window)
@@ -239,10 +262,34 @@ export function plan(signals: Signals): Plan {
   // to prepare for, not something to do at this moment.
   const [rightNow = null] = ranked.filter((entry) => entry.reason !== 'today')
 
+  const now = ranked.filter((entry) => entry.reason !== 'today')
+
+  const nextWindow = nextPrayerWindow(signals.now, windows)
+  const nextPrayer = nextWindow ? PRAYER_FOR_WINDOW[nextWindow.name] : undefined
+  const asks = (when: 'before' | 'after'): string[] =>
+    items
+      .filter(
+        (item) =>
+          item.trigger.kind === 'prayer' &&
+          item.trigger.when === when &&
+          (item.trigger.prayer === nextPrayer || item.trigger.prayer === 'any'),
+      )
+      .map((item) => item.id)
+
   return {
     today: {
       hijri: signals.today.hijri,
       window: window?.name ?? null,
+      now,
+      next:
+        nextWindow && nextPrayer
+          ? {
+              prayer: nextPrayer,
+              startsAt: nextWindow.startsAt,
+              before: asks('before'),
+              after: asks('after'),
+            }
+          : null,
       rightNow,
       context: ranked.filter(
         (entry) => entry.reason === 'active-event' && entry.itemId !== rightNow?.itemId,

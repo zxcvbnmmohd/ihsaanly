@@ -11,12 +11,28 @@ import { OnboardingFlow } from '@/onboarding/flow'
 import { useOnboarding } from '@/onboarding/store'
 import { useStrings } from '@/strings'
 import { colors } from '@/theme/colors'
-import { applyThemePreference, getThemePreference, useEffectiveColorScheme } from '@/theme/store'
+import {
+  applyThemePreference,
+  getThemePreference,
+  useEffectiveColorScheme,
+  usePalette,
+} from '@/theme/store'
 
 import '../../global.css'
 
 setContentLanguage(languageOf(getLocale()))
 applyThemePreference(getThemePreference())
+
+/**
+ * Today is the app, so it is where the app opens.
+ *
+ * Verified on a device: neither trigger order nor `anchor` decides this. The
+ * URL "/" resolves to the alphabetically first group that has an index, which
+ * was (library). The group holding Today is named (home) so that it sorts
+ * first. Parenthesised groups never appear in a URL, so this is invisible
+ * outside the filesystem. `anchor` stays because it governs back behaviour.
+ */
+export const unstable_settings = { anchor: '(home)' }
 
 /**
  * Expo Router renders this instead of a white screen when a render throws.
@@ -50,6 +66,7 @@ export function ErrorBoundary({ error, retry }: ErrorBoundaryProps): ReactElemen
 export default function RootLayout(): ReactElement {
   const strings = useStrings()
   const colorScheme = useEffectiveColorScheme()
+  const palette = usePalette()
   const onboarding = useOnboarding()
 
   // Onboarding replaces the tab bar rather than sitting over it: there is
@@ -66,8 +83,8 @@ export default function RootLayout(): ReactElement {
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
-      <NativeTabs>
-        <NativeTabs.Trigger name="(today)">
+      <NativeTabs tintColor={palette.accent}>
+        <NativeTabs.Trigger name="(home)">
           <NativeTabs.Trigger.Icon sf="sun.max.fill" md="today" />
           <NativeTabs.Trigger.Label>{strings.tabs.today}</NativeTabs.Trigger.Label>
         </NativeTabs.Trigger>

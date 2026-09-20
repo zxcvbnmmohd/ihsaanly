@@ -1,7 +1,8 @@
 import type { ReactElement } from 'react'
 
-import { Row } from '@/components/row'
+import { usePalette } from '@/theme/store'
 import { Screen } from '@/components/screen'
+import { SwitchRow } from '@/components/switch-row'
 import type { UserState } from '@/plan/user-state'
 import { useStrings } from '@/strings'
 
@@ -17,20 +18,25 @@ export function TrackingScreen({
   onChange,
 }: TrackingScreenProps): ReactElement {
   const strings = useStrings()
+  const palette = usePalette()
   return (
     <Screen className="gap-3 p-4">
-      <Row
+      <SwitchRow
         title={strings.tracking.travelling}
         detail={strings.tracking.travellingDetail}
-        selected={userState.travelling}
-        onPress={() => onChange({ travelling: !userState.travelling })}
+        value={userState.travelling}
+        onValueChange={(travelling) => onChange({ travelling })}
+        accent={palette.accent}
+        knob={palette.knob}
       />
       {showPause ? (
-        <Row
+        <SwitchRow
           title={strings.tracking.paused}
           detail={strings.tracking.pausedDetail}
-          selected={userState.trackingPaused}
-          onPress={() => onChange({ trackingPaused: !userState.trackingPaused })}
+          value={userState.trackingPaused}
+          onValueChange={(trackingPaused) => onChange({ trackingPaused })}
+          accent={palette.accent}
+          knob={palette.knob}
         />
       ) : null}
     </Screen>

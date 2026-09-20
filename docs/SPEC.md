@@ -377,7 +377,10 @@ Native-first. `@expo/ui` gives SwiftUI primitives on iOS and Jetpack Compose on 
 
 Custom surface area is deliberately tiny: **one accent colour** and **one Arabic typeface**.
 Everything else is system type, system materials, system spacing. Nothing on the home screen
-is decorative. No gradients, no mosque imagery, no gold.
+is decorative. No gradients, no mosque imagery, no gold. **Superseded**
+2026-09-20: the home screen carries the brand wash and accent, as every
+tab does. What remains is about meaning, not ornament: no clock times, no
+streaks, no scores, nothing negative, and still no mosque imagery or gold.
 
 ---
 

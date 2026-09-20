@@ -66,10 +66,10 @@ export const colors = {
 }
 
 /**
- * Onboarding's warm editorial palette, and the only literal colours in the
- * app. LinearGradient and the star artwork need strings, and PlatformColor
- * cannot express a brand hue. Nothing on Today uses this; the spec keeps the
- * home screen undecorated.
+ * The brand palette, and the only literal colours in the app. A gradient and a
+ * brand hue cannot be expressed as PlatformColor, which has no notion of either.
+ * Text, separators and surfaces still come from the semantic `colors` above, so
+ * light, dark and contrast settings stay the OS's business.
  */
 export interface Palette {
   wash: readonly [string, string]

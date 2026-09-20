@@ -1,10 +1,11 @@
 import type { ReactElement } from 'react'
 import { Text, useColorScheme } from 'react-native'
 
-import { Row } from '@/components/row'
+import { ChoiceRow } from '@/components/choice-row'
 import { Screen } from '@/components/screen'
 import { useStrings } from '@/strings'
 import { colors } from '@/theme/colors'
+import { usePalette } from '@/theme/store'
 import { THEME_PREFERENCES, type ThemePreference } from '@/theme/store'
 
 export interface AppearanceScreenProps {
@@ -14,16 +15,18 @@ export interface AppearanceScreenProps {
 
 export function AppearanceScreen({ preference, onSelect }: AppearanceScreenProps): ReactElement {
   const strings = useStrings()
+  const palette = usePalette()
   useColorScheme()
 
   return (
     <Screen className="gap-4 p-4">
       {THEME_PREFERENCES.map((option) => (
-        <Row
+        <ChoiceRow
           key={option}
           title={strings.appearance[option]}
           selected={preference === option}
           onPress={() => onSelect(option)}
+          accent={palette.accent}
         />
       ))}
 

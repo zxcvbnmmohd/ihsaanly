@@ -1,11 +1,13 @@
 import type { ReactElement } from 'react'
 import { Text, useColorScheme, View } from 'react-native'
 
-import { Row } from '@/components/row'
 import { Screen } from '@/components/screen'
+import { SwitchRow } from '@/components/switch-row'
+import { ChoiceRow } from '@/components/choice-row'
 import type { NotificationPreferences, QuietHours } from '@/plan/notification-preferences'
 import { useStrings, type Strings } from '@/strings'
 import { colors } from '@/theme/colors'
+import { usePalette } from '@/theme/store'
 
 export const QUIET_HOUR_PRESETS: (QuietHours | null)[] = [
   null,
@@ -45,35 +47,43 @@ export function NotificationsScreen({
   onChange,
 }: NotificationsScreenProps): ReactElement {
   const strings = useStrings()
+  const palette = usePalette()
   useColorScheme()
 
   return (
     <Screen className="gap-8 p-4">
       <View className="gap-3">
-        <Row
+        <SwitchRow
           title={strings.notifications.windows}
-          selected={preferences.windows}
-          onPress={() => onChange({ windows: !preferences.windows })}
+          value={preferences.windows}
+          onValueChange={(windows) => onChange({ windows })}
+          accent={palette.accent}
+          knob={palette.knob}
         />
-        <Row
+        <SwitchRow
           title={strings.notifications.lookAhead}
-          selected={preferences.lookAhead}
-          onPress={() => onChange({ lookAhead: !preferences.lookAhead })}
+          value={preferences.lookAhead}
+          onValueChange={(lookAhead) => onChange({ lookAhead })}
+          accent={palette.accent}
+          knob={palette.knob}
         />
-        <Row
+        <SwitchRow
           title={strings.notifications.prayers}
           detail={strings.notifications.prayersDetail}
-          selected={preferences.prayers}
-          onPress={() => onChange({ prayers: !preferences.prayers })}
+          value={preferences.prayers}
+          onValueChange={(prayers) => onChange({ prayers })}
+          accent={palette.accent}
+          knob={palette.knob}
         />
       </View>
 
       <Section title={strings.notifications.quietHours}>
         {QUIET_HOUR_PRESETS.map((preset) => (
-          <Row
+          <ChoiceRow
             key={quietLabel(preset, strings)}
             title={quietLabel(preset, strings)}
             selected={quietLabel(preferences.quietHours, strings) === quietLabel(preset, strings)}
+            accent={palette.accent}
             onPress={() => onChange({ quietHours: preset })}
           />
         ))}
@@ -81,10 +91,11 @@ export function NotificationsScreen({
 
       <Section title={strings.notifications.perDay}>
         {PER_DAY_OPTIONS.map((count) => (
-          <Row
+          <ChoiceRow
             key={count}
             title={String(count)}
             selected={preferences.maxPerDay === count}
+            accent={palette.accent}
             onPress={() => onChange({ maxPerDay: count })}
           />
         ))}

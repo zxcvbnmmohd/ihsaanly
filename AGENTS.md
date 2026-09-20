@@ -206,12 +206,38 @@ go through the `count` helper in `ar.ts`, which handles singular, dual, the
 3-to-10 plural and the 11-and-up singular; never interpolate a bare number
 next to a noun in Arabic copy.
 
-### Onboarding may use literal colours; nothing else may
+### The brand palette is app-wide; it is still the only literal colour
 
-`palettes` in `src/theme/colors.ts` are the only hex values in the app.
-`LinearGradient` and the star artwork need strings, and `PlatformColor` cannot
-express a brand hue. Pick one with `paletteFor(useColorScheme())`. Today stays
-undecorated, as the spec asks, so nothing there reads a palette.
+`palettes` in `src/theme/colors.ts` are the only hex values in the app. A
+gradient and a brand hue cannot be expressed as `PlatformColor`, which has no
+notion of either. Read them with `usePalette()` from `src/theme/store.ts`,
+which resolves against the scheme the app is actually rendering in.
+
+Text, separators and surfaces still come from the semantic `colors`, so light,
+dark and contrast settings remain the OS's business. Use the accent for
+selection, marks, section captions and primary actions; never for body text.
+
+The SPEC's "nothing on the home screen is decorative" rule was dropped
+deliberately on 2026-09-20 at the user's direction. Today carries the wash and
+the accent like every other tab.
+
+### The tab bar is native and branded, never reimplemented
+
+`NativeTabs` stays a UIKit tab bar on iOS and a Material one on Android. Brand
+it only through its own props: `tintColor` is enough. Do not set
+`indicatorColor` to the accent, which fills the Material indicator and hides
+the icon inside it. Never replace it with a JavaScript tab bar.
+
+### The opening tab is decided by group name, not by trigger order
+
+Verified on a device: neither the order of `NativeTabs.Trigger` children nor
+`unstable_settings.anchor` decides which tab opens. The URL `/` resolves to the
+alphabetically first route group that has an index, so with `(library)`,
+`(more)` and `(today)` the app opened on Library. The group holding Today is
+named `(home)` so that it sorts first. Parenthesised groups never appear in a
+URL, so the rename is invisible outside the filesystem. `anchor` stays because
+it governs back behaviour. Do not rename these groups without checking which
+one now sorts first.
 
 ### The theme override recreates the Android activity
 

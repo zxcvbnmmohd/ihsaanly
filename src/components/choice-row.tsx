@@ -6,7 +6,7 @@ import { colors } from '@/theme/colors'
 
 interface ChoiceRowProps {
   title: string
-  detail: string
+  detail?: string | null
   selected: boolean
   onPress: () => void
   /** Ring colour when selected. Defaults to the system tint. */
@@ -37,9 +37,11 @@ export function ChoiceRow({
           <Text className="text-base font-semibold" style={{ color: colors.label }}>
             {title}
           </Text>
-          <Text className="text-sm leading-snug" style={{ color: colors.secondaryLabel }}>
-            {detail}
-          </Text>
+          {detail ? (
+            <Text className="text-sm leading-snug" style={{ color: colors.secondaryLabel }}>
+              {detail}
+            </Text>
+          ) : null}
         </View>
       </Surface>
     </Pressable>

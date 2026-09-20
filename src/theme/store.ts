@@ -2,6 +2,7 @@ import { Appearance, Platform, useColorScheme } from 'react-native'
 import { z } from 'zod'
 
 import { createPreferenceStore } from '@/storage/preference-store'
+import { paletteFor, type Palette } from '@/theme/colors'
 
 import { ThemeOverride } from '../../modules/theme-override'
 
@@ -48,4 +49,9 @@ export function useEffectiveColorScheme(): 'light' | 'dark' {
   const system = useColorScheme()
   if (preference !== 'system') return preference
   return system === 'dark' ? 'dark' : 'light'
+}
+
+/** The brand palette for the scheme the app is actually rendering in. */
+export function usePalette(): Palette {
+  return paletteFor(useEffectiveColorScheme())
 }

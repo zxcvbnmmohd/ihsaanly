@@ -49,3 +49,15 @@ function migrate(connection: SQLite.SQLiteDatabase): void {
 export const database = SQLite.openDatabaseSync('ihsaanly.db', undefined, databaseDirectory())
 
 migrate(database)
+
+/**
+ * Everything, in one transaction. The only deletion in the app, and only at
+ * the user's explicit request from the Data screen. Callers reload the app
+ * afterwards, because every preference store caches its value in memory.
+ */
+export function wipe(): void {
+  database.withTransactionSync(() => {
+    database.execSync('DELETE FROM events')
+    database.execSync('DELETE FROM preferences')
+  })
+}

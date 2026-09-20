@@ -14,6 +14,13 @@ Work is tracked as issues on the repository. The product specification is issue 
 
 ### Added
 
+- **About and Delete my data.** More gains an About screen with the version,
+  the content review status and a plain privacy statement. The Data screen
+  gains Delete my data, with a confirmation, which clears everything on the
+  device and starts the app over. The Location screen shows the chosen place
+  on the map. Pausing prayer tracking now stops missed prayers accruing and
+  hides the prayer strip, as the specification always said. Moon-sighting
+  authorities moved to the foot of the Hijri date screen.
 - **Paths for each starting point.** Onboarding offers a third preset, "Just
   starting", of five things to carry from day one, and says who each preset
   is for. Today shows one "Try one more" card a week for an item not yet on

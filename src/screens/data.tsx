@@ -11,6 +11,7 @@ export interface DataScreenProps {
   onExport: () => void
   onImport: () => void
   onDiagnostics: () => void
+  onDelete: () => void
 }
 
 export function DataScreen({
@@ -18,6 +19,7 @@ export function DataScreen({
   onExport,
   onImport,
   onDiagnostics,
+  onDelete,
 }: DataScreenProps): ReactElement {
   const strings = useStrings()
   useColorScheme()
@@ -35,6 +37,8 @@ export function DataScreen({
         detail={strings.data.diagnosticsDetail}
         onPress={onDiagnostics}
       />
+
+      <Row title={strings.data.delete} detail={strings.data.deleteDetail} onPress={onDelete} />
 
       {message ? (
         <Text className="text-sm" style={{ color: colors.label }}>

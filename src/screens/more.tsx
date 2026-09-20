@@ -18,7 +18,7 @@ export interface MoreScreenProps {
   hijriHref: Href
   trackingLabel: string
   trackingHref: Href
-  moonSightingHref: Href
+  aboutHref: Href
   notificationsHref: Href
   eventsHref: Href
   historyHref: Href
@@ -40,7 +40,7 @@ export function MoreScreen({
   hijriHref,
   trackingLabel,
   trackingHref,
-  moonSightingHref,
+  aboutHref,
   notificationsHref,
   eventsHref,
   historyHref,
@@ -64,7 +64,6 @@ export function MoreScreen({
           <Row href={locationHref} title={strings.location.title} detail={locationLabel} />
           <Row href={calculationHref} title={strings.calculation.title} detail={calculationLabel} />
           <Row href={hijriHref} title={strings.hijri.title} detail={hijriLabel} />
-          <Row href={moonSightingHref} title={strings.moonSighting.title} detail={null} />
         </Group>
 
         <Group title={strings.more.app} accent={palette.accent}>
@@ -73,6 +72,7 @@ export function MoreScreen({
           <Row href={eventsHref} title={strings.events.title} detail={null} />
           <Row href={languageHref} title={strings.language.title} detail={languageLabel} />
           <Row href={appearanceHref} title={strings.appearance.title} detail={appearanceLabel} />
+          <Row href={aboutHref} title={strings.about.title} detail={null} />
         </Group>
 
         <Group title={strings.more.practice} accent={palette.accent}>

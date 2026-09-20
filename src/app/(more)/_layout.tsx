@@ -20,7 +20,7 @@ export default function MoreLayout(): ReactElement {
       <Stack.Screen name="data" options={{ title: strings.data.title }} />
       <Stack.Screen name="language" options={{ title: strings.language.title }} />
       <Stack.Screen name="appearance" options={{ title: strings.appearance.title }} />
-      <Stack.Screen name="moon-sighting" options={{ title: strings.moonSighting.title }} />
+      <Stack.Screen name="about" options={{ title: strings.about.title }} />
     </Stack>
   )
 }

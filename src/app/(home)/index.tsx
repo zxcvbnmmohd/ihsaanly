@@ -188,7 +188,9 @@ export default function TodayRoute(): ReactElement {
       tomorrow={ahead.tomorrow.flatMap((entry) => toEntry(entry, strings, false) ?? [])}
       later={ahead.later.flatMap((entry) => toEntry(entry, strings) ?? [])}
       prayers={
-        place ? PRAYERS.map((prayer) => ({ prayer, done: marks[prayer] !== undefined })) : []
+        place && !signals?.userState.trackingPaused
+          ? PRAYERS.map((prayer) => ({ prayer, done: marks[prayer] !== undefined }))
+          : []
       }
       qada={Object.entries(qada).map(([prayer, count]) => ({
         prayer: prayer as Prayer,

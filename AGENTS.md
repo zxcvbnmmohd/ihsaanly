@@ -259,6 +259,18 @@ net (which may go negative while a backlog is paid down) plus the
 positives; the clamp lives next to the addition. Still a count per prayer,
 never a dated list, and the word "missed" appears on no screen.
 
+### Deleting data reloads the app
+
+`wipe()` in `src/storage/database.ts` is the only deletion in the app and runs
+only from the Data screen after a confirm dialog. Every preference store keeps
+its value in memory once read, so the route calls `reloadAppAsync` straight
+after; without that the onboarding gate would still read "completed" until the
+next launch. The tracking pause is enforced in `rollover`
+(`src/prayer/marks.ts`): paused days pass unrecorded and the cursor still
+advances, so resuming never backfills a debt. Today hides the prayer strip
+while paused. Moon-sighting authorities live at the foot of the Hijri screen;
+there is no separate route.
+
 ### Exact alarms are deliberately not requested
 
 `SCHEDULE_EXACT_ALARM` is a restricted permission that invites a Play Store

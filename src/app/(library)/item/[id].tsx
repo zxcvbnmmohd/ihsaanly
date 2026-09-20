@@ -151,6 +151,10 @@ export default function ItemRoute(): ReactElement {
           item
             ? {
                 ruling: item.ruling,
+                rulingHref: `/glossary?term=${item.ruling}`,
+                reviewed: item.reviewed,
+                why: resolveText(item.why),
+                how: item.how.flatMap((step) => resolveText(step) ?? []),
                 repeat: item.repeat,
                 arabic: item.arabic,
                 transliteration: resolveText(item.transliteration),

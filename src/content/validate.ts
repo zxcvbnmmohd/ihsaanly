@@ -60,6 +60,11 @@ function releaseWarningsFor(document: ContentDocument): string[] {
     warnings.push(`${citation} is cited with different narrations — confirm both are correct`),
   )
 
+  const unreviewed = document.items.filter((item) => !item.reviewed).map((item) => item.id)
+  if (unreviewed.length > 0) {
+    warnings.push(`${unreviewed.length} items await review: ${unreviewed.join(', ')}`)
+  }
+
   if (document.items.some((item) => item.audio === null)) {
     warnings.push('some items have no recitation')
   }

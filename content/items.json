@@ -44,13 +44,29 @@
       "defaultOn": true,
       "note": null,
       "audio": null,
-      "audioTranslation": null
+      "audioTranslation": null,
+      "why": {
+        "en": "A sentence at the door that hands the day over to Allah before it starts. The Prophet ﷺ taught that whoever says it is guided, provided for and protected as they go out."
+      },
+      "how": [
+        {
+          "en": "Pause at the door as you leave."
+        },
+        {
+          "en": "Say the words once, quietly or aloud."
+        },
+        {
+          "en": "Step out."
+        }
+      ],
+      "reviewed": false
     },
     {
       "id": "dua-entering-masjid",
       "category": "masjid",
       "title": {
-        "en": "Entering the masjid"
+        "en": "Entering the masjid",
+        "ar": "دعاء دخول المسجد"
       },
       "ruling": "sunnah",
       "arabic": "اللَّهُمَّ افْتَحْ لِي أَبْوَابَ رَحْمَتِكَ",
@@ -80,13 +96,26 @@
       "defaultOn": true,
       "note": null,
       "audio": null,
-      "audioTranslation": null
+      "audioTranslation": null,
+      "why": {
+        "en": "The masjid is a place of mercy, so you ask for mercy as you walk in. It also marks the change from the street to the prayer."
+      },
+      "how": [
+        {
+          "en": "Step in with your right foot."
+        },
+        {
+          "en": "Say the dua as you enter."
+        }
+      ],
+      "reviewed": false
     },
     {
       "id": "dua-travel",
       "category": "travel",
       "title": {
-        "en": "Setting out on a journey"
+        "en": "Setting out on a journey",
+        "ar": "دعاء السفر"
       },
       "ruling": "sunnah",
       "arabic": "سُبْحَانَ الَّذِي سَخَّرَ لَنَا هَذَا وَمَا كُنَّا لَهُ مُقْرِنِينَ وَإِنَّا إِلَى رَبِّنَا لَمُنْقَلِبُونَ",
@@ -116,13 +145,29 @@
       "defaultOn": true,
       "note": null,
       "audio": null,
-      "audioTranslation": null
+      "audioTranslation": null,
+      "why": {
+        "en": "The travel dua thanks Allah for the means of travel and asks for an easy road and a safe return. It is said once the journey is actually under way."
+      },
+      "how": [
+        {
+          "en": "Once seated and moving, say Allahu Akbar three times."
+        },
+        {
+          "en": "Say the dua."
+        },
+        {
+          "en": "Ask for ease, safety and a good return in your own words if you like."
+        }
+      ],
+      "reviewed": false
     },
     {
       "id": "dua-sleeping",
       "category": "sleep",
       "title": {
-        "en": "Going to sleep"
+        "en": "Going to sleep",
+        "ar": "دعاء النوم"
       },
       "ruling": "sunnah",
       "arabic": "بِاسْمِكَ اللَّهُمَّ أَمُوتُ وَأَحْيَا",
@@ -152,13 +197,26 @@
       "defaultOn": true,
       "note": null,
       "audio": null,
-      "audioTranslation": null
+      "audioTranslation": null,
+      "why": {
+        "en": "The last words of the day, given to Allah. Saying them makes sleep itself an act of remembrance."
+      },
+      "how": [
+        {
+          "en": "Lie down on your right side if you can."
+        },
+        {
+          "en": "Say the words once."
+        }
+      ],
+      "reviewed": false
     },
     {
       "id": "dua-waking",
       "category": "sleep",
       "title": {
-        "en": "Waking up"
+        "en": "Waking up",
+        "ar": "دعاء الاستيقاظ"
       },
       "ruling": "sunnah",
       "arabic": "الْحَمْدُ لِلَّهِ الَّذِي أَحْيَانَا بَعْدَ مَا أَمَاتَنَا وَإِلَيْهِ النُّشُورُ",
@@ -188,13 +246,23 @@
       "defaultOn": false,
       "note": null,
       "audio": null,
-      "audioTranslation": null
+      "audioTranslation": null,
+      "why": {
+        "en": "Waking is a small return to life, and the first words of the day thank the One who gave it back."
+      },
+      "how": [
+        {
+          "en": "Say the words as soon as you are awake, before anything else."
+        }
+      ],
+      "reviewed": false
     },
     {
       "id": "dua-eating",
       "category": "food",
       "title": {
-        "en": "Before eating"
+        "en": "Before eating",
+        "ar": "دعاء الطعام"
       },
       "ruling": "sunnah",
       "arabic": "بِسْمِ اللَّهِ",
@@ -224,13 +292,26 @@
       "defaultOn": true,
       "note": null,
       "audio": null,
-      "audioTranslation": null
+      "audioTranslation": null,
+      "why": {
+        "en": "Naming Allah over food is the difference between eating and eating with gratitude. If you forget and remember mid-meal, there is a form for that too."
+      },
+      "how": [
+        {
+          "en": "Say Bismillah before the first bite."
+        },
+        {
+          "en": "If you forget, say: Bismillahi awwalahu wa akhirahu (in the name of Allah at its beginning and its end)."
+        }
+      ],
+      "reviewed": false
     },
     {
       "id": "tasbih-after-prayer",
       "category": "dhikr",
       "title": {
-        "en": "Tasbih after prayer"
+        "en": "Tasbih after prayer",
+        "ar": "التسبيح بعد الصلاة"
       },
       "ruling": "sunnah",
       "arabic": "سُبْحَانَ اللَّهِ",
@@ -261,13 +342,32 @@
       "defaultOn": true,
       "note": null,
       "audio": null,
-      "audioTranslation": null
+      "audioTranslation": null,
+      "why": {
+        "en": "Thirty-three each of Subhan Allah, Alhamdulillah and Allahu Akbar after every prayer, completed with one phrase to make a hundred. The Prophet ﷺ said sins are forgiven for it, however many."
+      },
+      "how": [
+        {
+          "en": "After the prayer, say Subhan Allah 33 times."
+        },
+        {
+          "en": "Say Alhamdulillah 33 times."
+        },
+        {
+          "en": "Say Allahu Akbar 33 times."
+        },
+        {
+          "en": "Complete the hundred with: La ilaha illa Allah wahdahu la sharika lah, lahu al-mulk wa lahu al-hamd wa huwa ala kulli shay'in qadir."
+        }
+      ],
+      "reviewed": false
     },
     {
       "id": "ayat-al-kursi-after-prayer",
       "category": "dhikr",
       "title": {
-        "en": "Ayat al-Kursi after prayer"
+        "en": "Ayat al-Kursi after prayer",
+        "ar": "آية الكرسي بعد الصلاة"
       },
       "ruling": "sunnah",
       "arabic": null,
@@ -302,13 +402,23 @@
       "defaultOn": false,
       "note": null,
       "audio": null,
-      "audioTranslation": null
+      "audioTranslation": null,
+      "why": {
+        "en": "One verse, recited after each prayer. The Prophet ﷺ said nothing stands between the one who recites it after prayer and entering Paradise except death."
+      },
+      "how": [
+        {
+          "en": "After the tasbih, recite Ayat al-Kursi (Qur'an 2:255) once."
+        }
+      ],
+      "reviewed": false
     },
     {
       "id": "siwak-before-prayer",
       "category": "prayer",
       "title": {
-        "en": "Siwak before prayer"
+        "en": "Siwak before prayer",
+        "ar": "السواك قبل الصلاة"
       },
       "ruling": "mustahabb",
       "arabic": null,
@@ -335,13 +445,23 @@
       "defaultOn": false,
       "note": null,
       "audio": null,
-      "audioTranslation": null
+      "audioTranslation": null,
+      "why": {
+        "en": "Cleaning the teeth before standing to pray. A toothbrush serves the same purpose where there is no siwak."
+      },
+      "how": [
+        {
+          "en": "Before the prayer, clean the teeth with a siwak or a brush."
+        }
+      ],
+      "reviewed": false
     },
     {
       "id": "sunnah-before-fajr",
       "category": "prayer",
       "title": {
-        "en": "Two rak’ah before Fajr"
+        "en": "Two rak’ah before Fajr",
+        "ar": "ركعتا الفجر"
       },
       "ruling": "sunnah-muakkadah",
       "arabic": null,
@@ -368,13 +488,29 @@
       "defaultOn": true,
       "note": null,
       "audio": null,
-      "audioTranslation": null
+      "audioTranslation": null,
+      "why": {
+        "en": "Two short rak'ah before the Fajr prayer. Of all the voluntary prayers, this is the one the Prophet ﷺ never left, even when travelling."
+      },
+      "how": [
+        {
+          "en": "After the Fajr adhan and before the obligatory prayer, pray two rak'ah."
+        },
+        {
+          "en": "Keep them short."
+        },
+        {
+          "en": "Then pray Fajr."
+        }
+      ],
+      "reviewed": false
     },
     {
       "id": "sunnah-after-dhuhr",
       "category": "prayer",
       "title": {
-        "en": "Sunnah around Dhuhr"
+        "en": "Sunnah around Dhuhr",
+        "ar": "سنة الظهر"
       },
       "ruling": "sunnah-muakkadah",
       "arabic": null,
@@ -401,13 +537,23 @@
       "defaultOn": true,
       "note": null,
       "audio": null,
-      "audioTranslation": null
+      "audioTranslation": null,
+      "why": {
+        "en": "Two rak'ah after the Dhuhr prayer, part of the twelve daily rawatib for which the Prophet ﷺ promised a house in Paradise."
+      },
+      "how": [
+        {
+          "en": "After the Dhuhr prayer and its dhikr, pray two rak'ah."
+        }
+      ],
+      "reviewed": false
     },
     {
       "id": "morning-adhkar",
       "category": "adhkar",
       "title": {
-        "en": "Morning adhkar"
+        "en": "Morning adhkar",
+        "ar": "أذكار الصباح"
       },
       "ruling": "sunnah",
       "arabic": null,
@@ -433,13 +579,29 @@
       "defaultOn": true,
       "note": null,
       "audio": null,
-      "audioTranslation": null
+      "audioTranslation": null,
+      "why": {
+        "en": "A set of remembrances said between Fajr and sunrise, or in the morning generally. They frame the day before it fills with everything else."
+      },
+      "how": [
+        {
+          "en": "After Fajr, sit a moment."
+        },
+        {
+          "en": "Say the morning adhkar: Ayat al-Kursi, the three Quls, the sayyid al-istighfar, and the rest."
+        },
+        {
+          "en": "If you know only one or two, say those."
+        }
+      ],
+      "reviewed": false
     },
     {
       "id": "evening-adhkar",
       "category": "adhkar",
       "title": {
-        "en": "Evening adhkar"
+        "en": "Evening adhkar",
+        "ar": "أذكار المساء"
       },
       "ruling": "sunnah",
       "arabic": null,
@@ -465,13 +627,29 @@
       "defaultOn": true,
       "note": null,
       "audio": null,
-      "audioTranslation": null
+      "audioTranslation": null,
+      "why": {
+        "en": "The evening counterpart, said between Asr and Maghrib or in the evening generally. The same protection and gratitude for the night as for the day."
+      },
+      "how": [
+        {
+          "en": "After Asr, sit a moment."
+        },
+        {
+          "en": "Say the evening adhkar."
+        },
+        {
+          "en": "If you know only one or two, say those."
+        }
+      ],
+      "reviewed": false
     },
     {
       "id": "fast-monday",
       "category": "fasting",
       "title": {
-        "en": "Fasting on Monday"
+        "en": "Fasting on Monday",
+        "ar": "صيام الاثنين"
       },
       "ruling": "sunnah",
       "arabic": null,
@@ -497,13 +675,29 @@
       "defaultOn": false,
       "note": null,
       "audio": null,
-      "audioTranslation": null
+      "audioTranslation": null,
+      "why": {
+        "en": "The Prophet ﷺ fasted Mondays and Thursdays and said deeds are presented on those days. Monday is also the day he was born."
+      },
+      "how": [
+        {
+          "en": "Decide the night before to fast."
+        },
+        {
+          "en": "Eat before Fajr if you can."
+        },
+        {
+          "en": "Fast from Fajr to Maghrib."
+        }
+      ],
+      "reviewed": false
     },
     {
       "id": "fast-thursday",
       "category": "fasting",
       "title": {
-        "en": "Fasting on Thursday"
+        "en": "Fasting on Thursday",
+        "ar": "صيام الخميس"
       },
       "ruling": "sunnah",
       "arabic": null,
@@ -529,13 +723,29 @@
       "defaultOn": false,
       "note": null,
       "audio": null,
-      "audioTranslation": null
+      "audioTranslation": null,
+      "why": {
+        "en": "Thursday is the other weekly fast the Prophet ﷺ kept. One day a week is a manageable habit; two is his own."
+      },
+      "how": [
+        {
+          "en": "Decide the night before to fast."
+        },
+        {
+          "en": "Eat before Fajr if you can."
+        },
+        {
+          "en": "Fast from Fajr to Maghrib."
+        }
+      ],
+      "reviewed": false
     },
     {
       "id": "fast-white-days",
       "category": "fasting",
       "title": {
-        "en": "Fasting the White Days"
+        "en": "Fasting the White Days",
+        "ar": "صيام الأيام البيض"
       },
       "ruling": "sunnah",
       "arabic": null,
@@ -563,13 +773,26 @@
         "en": "The hadith establishes fasting three days of each month. Scholars differ on whether these must be the thirteenth, fourteenth and fifteenth specifically."
       },
       "audio": null,
-      "audioTranslation": null
+      "audioTranslation": null,
+      "why": {
+        "en": "Three days a month, on the 13th, 14th and 15th when the moon is full. The Prophet ﷺ compared fasting three days each month to fasting the whole year."
+      },
+      "how": [
+        {
+          "en": "Watch for the middle of the Islamic month; this app shows it a few days ahead."
+        },
+        {
+          "en": "Fast the 13th, 14th and 15th, or any three days of the month."
+        }
+      ],
+      "reviewed": false
     },
     {
       "id": "fast-ashura",
       "category": "fasting",
       "title": {
-        "en": "Fasting on Ashura"
+        "en": "Fasting on Ashura",
+        "ar": "صيام عاشوراء"
       },
       "ruling": "sunnah",
       "arabic": null,
@@ -595,13 +818,26 @@
       "defaultOn": false,
       "note": null,
       "audio": null,
-      "audioTranslation": null
+      "audioTranslation": null,
+      "why": {
+        "en": "The 10th of Muharram. The Prophet ﷺ said fasting it expiates the sins of the year before, and recommended adding the 9th."
+      },
+      "how": [
+        {
+          "en": "Fast the 10th of Muharram."
+        },
+        {
+          "en": "Add the 9th if you can."
+        }
+      ],
+      "reviewed": false
     },
     {
       "id": "fast-arafah",
       "category": "fasting",
       "title": {
-        "en": "Fasting on the day of Arafah"
+        "en": "Fasting on the day of Arafah",
+        "ar": "صيام يوم عرفة"
       },
       "ruling": "sunnah",
       "arabic": null,
@@ -629,13 +865,26 @@
         "en": "Scholars differ on whether this follows the local ninth of Dhul Hijjah or the day of standing at Arafah in Makkah when the two fall differently."
       },
       "audio": null,
-      "audioTranslation": null
+      "audioTranslation": null,
+      "why": {
+        "en": "The 9th of Dhul Hijjah, the day the pilgrims stand at Arafah. For those not on Hajj, fasting it expiates two years of sins."
+      },
+      "how": [
+        {
+          "en": "Fast the 9th of Dhul Hijjah."
+        },
+        {
+          "en": "Not for pilgrims; they do not fast that day."
+        }
+      ],
+      "reviewed": false
     },
     {
       "id": "fast-shawwal",
       "category": "fasting",
       "title": {
-        "en": "Six days of Shawwal"
+        "en": "Six days of Shawwal",
+        "ar": "صيام ست من شوال"
       },
       "ruling": "sunnah",
       "arabic": null,
@@ -661,13 +910,23 @@
       "defaultOn": false,
       "note": null,
       "audio": null,
-      "audioTranslation": null
+      "audioTranslation": null,
+      "why": {
+        "en": "Six days of fasting in the month after Ramadan. With Ramadan they add up to what the Prophet ﷺ called fasting the whole year."
+      },
+      "how": [
+        {
+          "en": "Any six days of Shawwal, together or apart, after the day of Eid."
+        }
+      ],
+      "reviewed": false
     },
     {
       "id": "duha-prayer",
       "category": "prayer",
       "title": {
-        "en": "Duha prayer"
+        "en": "Duha prayer",
+        "ar": "صلاة الضحى"
       },
       "ruling": "sunnah",
       "arabic": null,
@@ -693,13 +952,23 @@
       "defaultOn": false,
       "note": null,
       "audio": null,
-      "audioTranslation": null
+      "audioTranslation": null,
+      "why": {
+        "en": "A short voluntary prayer in the mid-morning. The Prophet ﷺ said the charity owed by every joint of the body is discharged by two rak'ah of Duha."
+      },
+      "how": [
+        {
+          "en": "When the sun is well up and before midday, pray two rak'ah or more."
+        }
+      ],
+      "reviewed": false
     },
     {
       "id": "qasr-while-travelling",
       "category": "travel",
       "title": {
-        "en": "Shortening the prayer"
+        "en": "Shortening the prayer",
+        "ar": "قصر الصلاة في السفر"
       },
       "ruling": "sunnah",
       "arabic": null,
@@ -724,6 +993,554 @@
       "note": {
         "en": "Scholars differ on whether shortening on a journey is obligatory or a concession that may be taken or left."
       },
+      "audio": null,
+      "audioTranslation": null,
+      "why": {
+        "en": "On a journey the four-rak'ah prayers are shortened to two. It is a gift, not a compromise, and the Prophet ﷺ always took it."
+      },
+      "how": [
+        {
+          "en": "While travelling, pray Dhuhr, Asr and Isha as two rak'ah each."
+        },
+        {
+          "en": "Fajr and Maghrib stay as they are."
+        }
+      ],
+      "reviewed": false
+    },
+    {
+      "id": "sunnah-before-dhuhr",
+      "category": "prayer",
+      "title": {
+        "en": "Before Dhuhr",
+        "ar": "سنة الظهر القبلية"
+      },
+      "ruling": "sunnah-muakkadah",
+      "arabic": null,
+      "transliteration": null,
+      "translation": null,
+      "repeat": 1,
+      "evidence": [
+        {
+          "type": "hadith",
+          "collection": "Sahih al-Bukhari",
+          "reference": "1180",
+          "grading": "sahih",
+          "gradedBy": null,
+          "text": {
+            "en": "I memorised ten rak'ah from the Prophet ﷺ: two before Dhuhr and two after it, two after Maghrib in his house, two after Isha in his house, and two before the Fajr prayer."
+          }
+        }
+      ],
+      "trigger": {
+        "kind": "prayer",
+        "prayer": "dhuhr",
+        "when": "before"
+      },
+      "defaultOn": true,
+      "note": null,
+      "why": {
+        "en": "Two or four rak'ah before the Dhuhr prayer, the largest part of the daily rawatib. They settle you before the obligatory prayer rather than rushing into it."
+      },
+      "how": [
+        {
+          "en": "After the Dhuhr adhan and before the obligatory prayer, pray two rak'ah, or four as two pairs."
+        },
+        {
+          "en": "Then pray Dhuhr."
+        }
+      ],
+      "reviewed": false,
+      "audio": null,
+      "audioTranslation": null
+    },
+    {
+      "id": "sunnah-after-maghrib",
+      "category": "prayer",
+      "title": {
+        "en": "After Maghrib",
+        "ar": "سنة المغرب"
+      },
+      "ruling": "sunnah-muakkadah",
+      "arabic": null,
+      "transliteration": null,
+      "translation": null,
+      "repeat": 1,
+      "evidence": [
+        {
+          "type": "hadith",
+          "collection": "Sahih al-Bukhari",
+          "reference": "1180",
+          "grading": "sahih",
+          "gradedBy": null,
+          "text": {
+            "en": "I memorised ten rak'ah from the Prophet ﷺ: two before Dhuhr and two after it, two after Maghrib in his house, two after Isha in his house, and two before the Fajr prayer."
+          }
+        }
+      ],
+      "trigger": {
+        "kind": "prayer",
+        "prayer": "maghrib",
+        "when": "after"
+      },
+      "defaultOn": true,
+      "note": null,
+      "why": {
+        "en": "Two rak'ah after the Maghrib prayer. The Prophet ﷺ prayed them at home, which is where most people are at that hour anyway."
+      },
+      "how": [
+        {
+          "en": "After the Maghrib prayer and its dhikr, pray two rak'ah."
+        }
+      ],
+      "reviewed": false,
+      "audio": null,
+      "audioTranslation": null
+    },
+    {
+      "id": "sunnah-after-isha",
+      "category": "prayer",
+      "title": {
+        "en": "After Isha",
+        "ar": "سنة العشاء"
+      },
+      "ruling": "sunnah-muakkadah",
+      "arabic": null,
+      "transliteration": null,
+      "translation": null,
+      "repeat": 1,
+      "evidence": [
+        {
+          "type": "hadith",
+          "collection": "Sahih al-Bukhari",
+          "reference": "1180",
+          "grading": "sahih",
+          "gradedBy": null,
+          "text": {
+            "en": "I memorised ten rak'ah from the Prophet ﷺ: two before Dhuhr and two after it, two after Maghrib in his house, two after Isha in his house, and two before the Fajr prayer."
+          }
+        }
+      ],
+      "trigger": {
+        "kind": "prayer",
+        "prayer": "isha",
+        "when": "after"
+      },
+      "defaultOn": true,
+      "note": null,
+      "why": {
+        "en": "Two rak'ah after the Isha prayer, the last of the rawatib, usually prayed at home before Witr."
+      },
+      "how": [
+        {
+          "en": "After the Isha prayer and its dhikr, pray two rak'ah."
+        }
+      ],
+      "reviewed": false,
+      "audio": null,
+      "audioTranslation": null
+    },
+    {
+      "id": "witr",
+      "category": "prayer",
+      "title": {
+        "en": "Witr",
+        "ar": "الوتر"
+      },
+      "ruling": "sunnah-muakkadah",
+      "arabic": null,
+      "transliteration": null,
+      "translation": null,
+      "repeat": 1,
+      "evidence": [
+        {
+          "type": "hadith",
+          "collection": "Sahih al-Bukhari",
+          "reference": "998",
+          "grading": "sahih",
+          "gradedBy": null,
+          "text": {
+            "en": "Make Witr the last of your prayer at night."
+          }
+        }
+      ],
+      "trigger": {
+        "kind": "prayer",
+        "prayer": "isha",
+        "when": "after"
+      },
+      "defaultOn": true,
+      "note": null,
+      "why": {
+        "en": "An odd number of rak'ah, often one or three, as the last prayer of the night. The Prophet ﷺ never left it, at home or on a journey, and told us to make it the last thing we pray."
+      },
+      "how": [
+        {
+          "en": "Any time after Isha and before Fajr, pray one rak'ah, or three."
+        },
+        {
+          "en": "If you fear you will not wake, pray it before sleeping."
+        },
+        {
+          "en": "Make it the last prayer of your night."
+        }
+      ],
+      "reviewed": false,
+      "audio": null,
+      "audioTranslation": null
+    },
+    {
+      "id": "dua-entering-home",
+      "category": "home",
+      "title": {
+        "en": "Coming home",
+        "ar": "دعاء دخول المنزل"
+      },
+      "ruling": "sunnah",
+      "arabic": "بِسْمِ اللَّهِ",
+      "transliteration": {
+        "en": "Bismillāh"
+      },
+      "translation": {
+        "en": "In the name of Allah."
+      },
+      "repeat": 1,
+      "evidence": [
+        {
+          "type": "hadith",
+          "collection": "Sahih Muslim",
+          "reference": "2018",
+          "grading": "sahih",
+          "gradedBy": null,
+          "text": {
+            "en": "When a man enters his house and mentions Allah on entering and on eating, Shaytan says to his companions: you have no lodging here and no supper."
+          }
+        }
+      ],
+      "trigger": {
+        "kind": "event",
+        "event": "entering-home"
+      },
+      "defaultOn": true,
+      "note": null,
+      "why": {
+        "en": "Mentioning Allah as you come in, and greeting whoever is there, keeps the home a place He is remembered in. The Prophet ﷺ said Shaytan finds no place to stay in such a house."
+      },
+      "how": [
+        {
+          "en": "Say Bismillah as you step in."
+        },
+        {
+          "en": "Greet those inside with as-salamu alaykum, even if the house is empty."
+        }
+      ],
+      "reviewed": false,
+      "audio": null,
+      "audioTranslation": null
+    },
+    {
+      "id": "takbir-ascending",
+      "category": "travel",
+      "title": {
+        "en": "Going up",
+        "ar": "التكبير عند الصعود"
+      },
+      "ruling": "sunnah",
+      "arabic": "اللَّهُ أَكْبَرُ",
+      "transliteration": {
+        "en": "Allāhu akbar"
+      },
+      "translation": {
+        "en": "Allah is the greatest."
+      },
+      "repeat": 1,
+      "evidence": [
+        {
+          "type": "hadith",
+          "collection": "Sahih al-Bukhari",
+          "reference": "2993",
+          "grading": "sahih",
+          "gradedBy": null,
+          "text": {
+            "en": "When we went up we said Allahu Akbar, and when we came down we said Subhan Allah."
+          }
+        }
+      ],
+      "trigger": {
+        "kind": "event",
+        "event": "ascending"
+      },
+      "defaultOn": true,
+      "note": null,
+      "why": {
+        "en": "Allahu Akbar as you climb: a hill, a staircase, a lift. The companions did it on every rise of the road, and it turns an ordinary climb into remembrance."
+      },
+      "how": [
+        {
+          "en": "As you start going up, say Allahu Akbar."
+        }
+      ],
+      "reviewed": false,
+      "audio": null,
+      "audioTranslation": null
+    },
+    {
+      "id": "tasbih-descending",
+      "category": "travel",
+      "title": {
+        "en": "Going down",
+        "ar": "التسبيح عند النزول"
+      },
+      "ruling": "sunnah",
+      "arabic": "سُبْحَانَ اللَّهِ",
+      "transliteration": {
+        "en": "Subḥāna-llāh"
+      },
+      "translation": {
+        "en": "Glory be to Allah."
+      },
+      "repeat": 1,
+      "evidence": [
+        {
+          "type": "hadith",
+          "collection": "Sahih al-Bukhari",
+          "reference": "2993",
+          "grading": "sahih",
+          "gradedBy": null,
+          "text": {
+            "en": "When we went up we said Allahu Akbar, and when we came down we said Subhan Allah."
+          }
+        }
+      ],
+      "trigger": {
+        "kind": "event",
+        "event": "descending"
+      },
+      "defaultOn": true,
+      "note": null,
+      "why": {
+        "en": "Subhan Allah as you descend, the pair to the takbir on the way up."
+      },
+      "how": [
+        {
+          "en": "As you start going down, say Subhan Allah."
+        }
+      ],
+      "reviewed": false,
+      "audio": null,
+      "audioTranslation": null
+    },
+    {
+      "id": "dua-riding",
+      "category": "travel",
+      "title": {
+        "en": "Setting off in a vehicle",
+        "ar": "دعاء الركوب"
+      },
+      "ruling": "sunnah",
+      "arabic": "بِسْمِ اللَّهِ، الْحَمْدُ لِلَّهِ، سُبْحَانَ الَّذِي سَخَّرَ لَنَا هَذَا وَمَا كُنَّا لَهُ مُقْرِنِينَ وَإِنَّا إِلَى رَبِّنَا لَمُنْقَلِبُونَ",
+      "transliteration": {
+        "en": "Bismillāh, al-ḥamdu lillāh, subḥāna-lladhī sakhkhara lanā hādhā wa mā kunnā lahu muqrinīn, wa innā ilā Rabbinā lamunqalibūn"
+      },
+      "translation": {
+        "en": "In the name of Allah, praise be to Allah. Glory to Him who has subjected this to us, and we could never have accomplished it by ourselves; and to our Lord we shall surely return."
+      },
+      "repeat": 1,
+      "evidence": [
+        {
+          "type": "quran",
+          "surah": 43,
+          "ayah": 13,
+          "text": {
+            "en": "Glory to Him who has subjected this to us, and we could never have accomplished it by ourselves; and to our Lord we shall surely return."
+          }
+        },
+        {
+          "type": "hadith",
+          "collection": "Sunan Abi Dawud",
+          "reference": "2602",
+          "grading": "sahih",
+          "gradedBy": "al-Albani",
+          "text": {
+            "en": "When the Prophet ﷺ mounted his camel to set out on a journey, he would say Allahu Akbar three times, then: Glory to Him who has subjected this to us..."
+          }
+        }
+      ],
+      "trigger": {
+        "kind": "event",
+        "event": "driving"
+      },
+      "defaultOn": true,
+      "note": null,
+      "why": {
+        "en": "The words the Prophet ﷺ said on mounting his camel, which fit a car, a bus or a train exactly as well: this was put at our service, and we could not have done it ourselves."
+      },
+      "how": [
+        {
+          "en": "Once seated, say Bismillah."
+        },
+        {
+          "en": "Say Alhamdulillah."
+        },
+        {
+          "en": "Say the verse: Subhan alladhi sakhkhara lana hadha wa ma kunna lahu muqrinin, wa inna ila Rabbina lamunqalibun."
+        }
+      ],
+      "reviewed": false,
+      "audio": null,
+      "audioTranslation": null
+    },
+    {
+      "id": "adhkar-before-sleep",
+      "category": "sleep",
+      "title": {
+        "en": "Before sleep: Ayat al-Kursi and the Quls",
+        "ar": "أذكار النوم"
+      },
+      "ruling": "sunnah",
+      "arabic": null,
+      "transliteration": null,
+      "translation": null,
+      "repeat": 1,
+      "evidence": [
+        {
+          "type": "hadith",
+          "collection": "Sahih al-Bukhari",
+          "reference": "5017",
+          "grading": "sahih",
+          "gradedBy": null,
+          "text": {
+            "en": "Every night when the Prophet ﷺ went to bed he cupped his hands, blew into them, recited Qul huwa Allahu ahad, Qul a'udhu bi Rabbi al-falaq and Qul a'udhu bi Rabbi an-nas, then wiped whatever he could of his body, beginning with his head and face and the front of his body, three times."
+          }
+        },
+        {
+          "type": "hadith",
+          "collection": "Sahih al-Bukhari",
+          "reference": "2311",
+          "grading": "sahih",
+          "gradedBy": null,
+          "text": {
+            "en": "When you go to your bed, recite Ayat al-Kursi; a guardian from Allah will stay with you and no devil will approach you until morning."
+          }
+        }
+      ],
+      "trigger": {
+        "kind": "event",
+        "event": "sleeping"
+      },
+      "defaultOn": true,
+      "note": null,
+      "why": {
+        "en": "A short set the Prophet ﷺ recited every night: Ayat al-Kursi, and the three short surahs beginning with Qul, blown into the hands and wiped over the body. He said a guardian stays with the one who recites Ayat al-Kursi until morning."
+      },
+      "how": [
+        {
+          "en": "Recite Ayat al-Kursi (Qur'an 2:255)."
+        },
+        {
+          "en": "Cup your hands, blow into them, and recite al-Ikhlas, al-Falaq and an-Nas."
+        },
+        {
+          "en": "Wipe your hands over as much of your body as you can reach, starting with the head and face."
+        },
+        {
+          "en": "Do the hands three times."
+        }
+      ],
+      "reviewed": false,
+      "audio": null,
+      "audioTranslation": null
+    },
+    {
+      "id": "ramadan-nights",
+      "category": "prayer",
+      "title": {
+        "en": "Standing in prayer in Ramadan",
+        "ar": "قيام رمضان"
+      },
+      "ruling": "sunnah",
+      "arabic": null,
+      "transliteration": null,
+      "translation": null,
+      "repeat": 1,
+      "evidence": [
+        {
+          "type": "hadith",
+          "collection": "Sahih al-Bukhari",
+          "reference": "37",
+          "grading": "sahih",
+          "gradedBy": null,
+          "text": {
+            "en": "Whoever stands in prayer in Ramadan out of faith and seeking reward, his previous sins are forgiven."
+          }
+        }
+      ],
+      "trigger": {
+        "kind": "day",
+        "day": "ramadan"
+      },
+      "defaultOn": true,
+      "note": null,
+      "why": {
+        "en": "The night prayer of Ramadan, prayed in congregation as Taraweeh or alone at home. The Prophet ﷺ promised forgiveness of past sins to whoever stands in it out of faith."
+      },
+      "how": [
+        {
+          "en": "After Isha, pray Taraweeh at the masjid or some rak'ah at home."
+        },
+        {
+          "en": "Any amount counts; keep what you can keep every night."
+        }
+      ],
+      "reviewed": false,
+      "audio": null,
+      "audioTranslation": null
+    },
+    {
+      "id": "dhul-hijjah-ten",
+      "category": "fasting",
+      "title": {
+        "en": "The first ten days of Dhul Hijjah",
+        "ar": "عشر ذي الحجة"
+      },
+      "ruling": "sunnah",
+      "arabic": null,
+      "transliteration": null,
+      "translation": null,
+      "repeat": 1,
+      "evidence": [
+        {
+          "type": "hadith",
+          "collection": "Sahih al-Bukhari",
+          "reference": "969",
+          "grading": "sahih",
+          "gradedBy": null,
+          "text": {
+            "en": "There are no days in which righteous deeds are more beloved to Allah than these ten days."
+          }
+        }
+      ],
+      "trigger": {
+        "kind": "day",
+        "day": "dhul-hijjah"
+      },
+      "defaultOn": true,
+      "note": null,
+      "why": {
+        "en": "The ten days leading to Eid al-Adha, which the Prophet ﷺ said hold deeds more beloved to Allah than on any other days. Fasting, dhikr and charity all count; the 9th is Arafah."
+      },
+      "how": [
+        {
+          "en": "Say Allahu Akbar, la ilaha illa Allah, Allahu Akbar, wa lillahi al-hamd through the days."
+        },
+        {
+          "en": "Fast whichever of the first nine days you can."
+        },
+        {
+          "en": "Give something in charity."
+        }
+      ],
+      "reviewed": false,
       "audio": null,
       "audioTranslation": null
     }

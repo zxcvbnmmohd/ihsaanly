@@ -227,6 +227,20 @@ notification fires at the moment a prayer is marked: the user is in the app.
 `maxPerDay` counts pending entries only, so a replan after a delivery can
 re-grant that day's budget; the drift is bounded to one day and accepted.
 
+### Every item carries `why`, `how` and `reviewed`
+
+`content/items.json` items have `why` (one plain paragraph), `how` (ordered
+steps, may be empty) and `reviewed` (boolean). The first two exist for the
+primary audience, who cannot act on a ruling label and a hadith number.
+`reviewed: false` is the honest state of every item drafted in-repo; the
+validator lists them on every build and item detail shows "Awaiting review".
+Flipping one to `true` is the content reviewer's act, never the implementer's.
+`why` and `how` are English-only until reviewed; `resolveText` returns null for
+a missing language, so Arabic readers see the section omitted rather than
+English. `content/glossary.json` defines every `Ruling` value by id (a test
+enforces it) plus the recurring terms; a ruling label on item detail links to
+`/glossary?term=<ruling>`.
+
 ### Exact alarms are deliberately not requested
 
 `SCHEDULE_EXACT_ALARM` is a restricted permission that invites a Play Store

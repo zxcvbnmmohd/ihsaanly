@@ -14,6 +14,13 @@ Work is tracked as issues on the repository. The product specification is issue 
 
 ### Added
 
+- **Content that teaches.** Every item now opens with a plain "Why" and
+  numbered "How" steps, and its ruling label links to a glossary of the words
+  the app uses, in English and Arabic. Eleven new items: the rawatib before
+  Dhuhr and after Maghrib and Isha, Witr, coming home, going up and down,
+  setting off in a vehicle, the adhkar before sleep, night prayer in Ramadan
+  and the first ten days of Dhul Hijjah. Every item has an Arabic title. All
+  32 items are marked awaiting review, and say so on screen.
 - **Reminders that land and last.** Tapping a reminder opens its item; Done
   and Later actions work from the notification shade, including while the app
   is closed on Android. The schedule now covers a week, so reminders no longer

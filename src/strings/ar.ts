@@ -260,6 +260,8 @@ export const ar: Strings = {
     known: 'محفوظ',
     emptyOnToday: 'لا شيء في «اليوم» بعد. افتح أي عنصر وفعّله.',
     emptyKnown: 'لم تحدد شيئًا كمحفوظ بعد. تدرّب على عنصر ثم قل إنك حفظته.',
+    terms: 'معاني الكلمات',
+    termsDetail: 'السنة والرواتب والأذكار والقضاء وغيرها، في جملة لكل منها.',
   },
   category: {
     adhkar: 'الأذكار',
@@ -289,11 +291,17 @@ export const ar: Strings = {
     sharedFrom: 'من تطبيق إحسانلي',
     transliteration: 'النقل الصوتي',
     translation: 'الترجمة',
+    why: 'لماذا',
+    how: 'كيف',
+    unreviewed: 'بانتظار المراجعة',
     evidence: 'الدليل',
     note: 'اختلف العلماء',
     repeat: (times: number): string => `كرِّر ${count(times, 'مرة واحدة', 'مرتين', 'مرات', 'مرة')}`,
     gradedBy: (grader: string): string => `حكم عليه ${grader}`,
     quranReference: (surah: number, ayah: number): string => `القرآن ${surah}:${ayah}`,
+  },
+  glossary: {
+    title: 'الكلمات',
   },
   ruling: {
     fard: 'فرض',

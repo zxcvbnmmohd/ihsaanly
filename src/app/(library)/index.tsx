@@ -55,6 +55,7 @@ export default function LibraryRoute(): ReactElement {
         known: matching.filter((item) => known.includes(item.id)).length,
       }}
       sections={sections}
+      glossaryHref="/glossary"
       onQueryChange={(query) => setThing((current) => ({ ...current, query }))}
       onFilterChange={(filter) => setThing((current) => ({ ...current, filter }))}
     />

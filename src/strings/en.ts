@@ -243,6 +243,8 @@ export const en = {
     known: 'Known',
     emptyOnToday: 'Nothing is on Today yet. Open any item and turn it on.',
     emptyKnown: 'Nothing marked known yet. Practise an item and say when you have it.',
+    terms: 'What the words mean',
+    termsDetail: 'Sunnah, rawatib, adhkar, qada and the rest, in a sentence each.',
   },
   category: {
     adhkar: 'Adhkar',
@@ -272,11 +274,17 @@ export const en = {
     sharedFrom: 'Shared from Ihsaanly',
     transliteration: 'Transliteration',
     translation: 'Translation',
+    why: 'Why',
+    how: 'How',
+    unreviewed: 'Awaiting review',
     evidence: 'Evidence',
     note: 'Scholars differ',
     repeat: (times: number): string => `Repeat ${times} times`,
     gradedBy: (grader: string): string => `graded by ${grader}`,
     quranReference: (surah: number, ayah: number): string => `Qur\u2019an ${surah}:${ayah}`,
+  },
+  glossary: {
+    title: 'Words',
   },
   ruling: {
     fard: 'Obligatory',

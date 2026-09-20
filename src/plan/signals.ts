@@ -85,11 +85,23 @@ export interface TodayModel {
   next: NextPrayer | null
 }
 
-export interface ScheduledNotification {
+/** An item reminder carries the window it belongs to, so the words and a snooze can respect its end. */
+export interface ItemNotification {
+  kind: 'item'
   itemId: string
   at: Date
   reason: PlanReason
+  window: { closes: Prayer; endsAt: Date } | null
 }
+
+/** One per prayer window opening, only when the user asked for them. */
+export interface PrayerNotification {
+  kind: 'prayer'
+  prayer: Prayer
+  at: Date
+}
+
+export type ScheduledNotification = ItemNotification | PrayerNotification
 
 export interface Plan {
   today: TodayModel

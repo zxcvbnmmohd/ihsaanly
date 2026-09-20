@@ -229,7 +229,12 @@ export const notificationsFixture: NotificationsScreenProps = {
     perItem: {},
     maxPerDay: 3,
   },
+  permission: 'granted',
+  items: [{ id: 'morning-adhkar', title: 'Morning adhkar', on: true }],
   onChange: noop,
+  onToggleItem: noop,
+  onOpenSettings: noop,
+  onSendTest: noop,
 }
 
 export const onboardingFixture: OnboardingScreenProps = {

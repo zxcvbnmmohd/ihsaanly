@@ -25,6 +25,18 @@ import type {
 const MAX_PENDING_NOTIFICATIONS = 60
 
 /**
+ * The look-ahead goes out the evening before, which is also when the evening
+ * adhkar open. Shifting it keeps the two from arriving as one stacked pair.
+ */
+const LOOK_AHEAD_OFFSET_MS = 20 * 60_000
+
+/** The prayer whose arrival closes each adhkar window. */
+const WINDOW_CLOSES: Record<'morning' | 'evening', Prayer> = {
+  morning: 'dhuhr',
+  evening: 'maghrib',
+}
+
+/**
  * Post-prayer adhkar belong to the minutes after the prayer. Inside this grace
  * they lead the screen, which is the promise onboarding makes; after it the
  * window item returns and they stop being noise five hours later.
@@ -239,29 +251,50 @@ function scheduleNotifications(signals: Signals, items: Item[]): ScheduledNotifi
   const perDay = new Map<string, number>()
   const scheduled: ScheduledNotification[] = []
 
-  const take = (at: Date, itemId: string, reason: PlanReason): void => {
-    if (isQuiet(at, signals.timeZone, notifications.quietHours)) return
+  /**
+   * Item reminders spend the daily budget. Prayer reminders do not: they are a
+   * separate opt-in of five a day, and letting them consume a budget of three
+   * would silently switch the adhkar off the moment they were turned on.
+   */
+  const admit = (at: Date, budgeted: boolean): boolean => {
+    if (isQuiet(at, signals.timeZone, notifications.quietHours)) return false
+    if (scheduled.length >= MAX_PENDING_NOTIFICATIONS) return false
+    if (!budgeted) return true
 
     const day = civilDateIn(at, signals.timeZone)
     const key = `${day.year}-${day.month}-${day.day}`
     const used = perDay.get(key) ?? 0
-    if (used >= notifications.maxPerDay) return
-    if (scheduled.length >= MAX_PENDING_NOTIFICATIONS) return
+    if (used >= notifications.maxPerDay) return false
     perDay.set(key, used + 1)
-    scheduled.push({ itemId, at, reason })
+    return true
   }
 
   futureWindows(signals).forEach((window) => {
+    const prayer = PRAYER_FOR_WINDOW[window.name]
+    if (prayer && notifications.prayers && admit(window.startsAt, false)) {
+      scheduled.push({ kind: 'prayer', prayer, at: window.startsAt })
+    }
+
     const name = WINDOW_FOR[window.name]
     if (name) {
       items
         .filter((item) => item.trigger.kind === 'window' && item.trigger.window === name)
         .filter((item) => isRemindable(item, signals, 'windows'))
-        .forEach((item) => take(window.startsAt, item.id, 'current-window'))
+        .forEach((item) => {
+          if (!admit(window.startsAt, true)) return
+          scheduled.push({
+            kind: 'item',
+            itemId: item.id,
+            at: window.startsAt,
+            reason: 'current-window',
+            window: { closes: WINDOW_CLOSES[name], endsAt: window.endsAt },
+          })
+        })
     }
 
     // Look-ahead goes out the evening before, while there is still time to prepare.
     if (window.name !== 'asr') return
+    const at = new Date(window.startsAt.getTime() + LOOK_AHEAD_OFFSET_MS)
     const eve = civilDateIn(window.startsAt, signals.timeZone)
     const tomorrow = signals.upcoming.find((day) => isSameCivilDate(day.civil, shiftDays(eve, 1)))
     if (!tomorrow) return
@@ -269,7 +302,10 @@ function scheduleNotifications(signals: Signals, items: Item[]): ScheduledNotifi
     items
       .filter((item) => item.trigger.kind === 'day' && matchesDay(item.trigger.day, tomorrow))
       .filter((item) => isRemindable(item, signals, 'lookAhead'))
-      .forEach((item) => take(window.startsAt, item.id, 'upcoming'))
+      .forEach((item) => {
+        if (!admit(at, true)) return
+        scheduled.push({ kind: 'item', itemId: item.id, at, reason: 'upcoming', window: null })
+      })
   })
 
   return scheduled

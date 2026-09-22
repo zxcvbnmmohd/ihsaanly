@@ -625,8 +625,21 @@ portrait` and no width cap means edge-to-edge rows on a 12.9" screen, and it add
       **Done 2026-09-22:** the doc lists what lint lists, and says the rule is the list rather than the folder.
       The stale `preview.2` line was corrected while there.
 - [ ] **P3 — AI** A theme change on Android recreates the activity and lands on Today,
-      losing the Appearance screen the user was on (documented consequence in
-      `AGENTS.md`). Consider restoring the route after recreation.
+      losing the Appearance screen the user was on. **Reproduced precisely 2026-09-22, and
+      one fix tried and reverted.**
+      It only happens when night mode actually flips: System to Light on an already-light
+      system keeps the screen, because `AppCompatDelegate` has nothing to recreate for.
+      Light to Dark loses it.
+      Tried: Appearance putting itself back with `router.replace('/appearance')` on a timer,
+      on the grounds that it is the only screen that can change the theme and therefore the
+      only route that can be lost. It does not work at 400ms or at 1500ms, so this is not a
+      timing problem — the router held by the pre-recreation JavaScript no longer drives the
+      tree that comes back. Reverted rather than shipped.
+      What is left to try is persisting the intended route and reading it when the new root
+      mounts, which is also uncertain: the note on the Dark-to-System bug above records that
+      a mount effect in `_layout.tsx` did not fire. Worth an hour with a native log before
+      any more JavaScript is written against it. Low stakes — a theme is chosen rarely and
+      the app is still usable — so it stays a P3.
 
 ## Human Must Do
 

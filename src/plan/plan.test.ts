@@ -54,6 +54,7 @@ function makeItem(id: string, trigger: Trigger, overrides: Partial<Item> = {}): 
     defaultOn: true,
     note: null,
     why: null,
+    reminder: null,
     how: [],
     reviewed: true,
     audio: null,

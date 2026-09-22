@@ -43,7 +43,7 @@ decisions, hardware or people. **Mixed** = AI does the wiring once you supply th
 | -------------- | ---: | ---: | ----: |
 | P0 Blockers    |    8 |    4 |    12 |
 | P1 Must Have   |   21 |   12 |    33 |
-| P2 Should Have |   22 |   13 |    35 |
+| P2 Should Have |   23 |   12 |    35 |
 | P3 Could Have  |    8 |    5 |    13 |
 | P4 Future      |    0 |    7 |     7 |
 
@@ -513,30 +513,20 @@ decisions, hardware or people. **Mixed** = AI does the wiring once you supply th
       say ("Ayat al-Kursi, the three Quls, the sayyid al-istighfar") but contain none of
       the texts, and only one hadith excerpt. The primary audience cannot act on that.
       Decide whether to add the adhkar texts as sub-items or link to them.
-- [ ] **P2 — Mixed** Feature: reminders should teach, not just announce. Today every body
-      is a bare status line from `src/strings/en.ts:81-86` — "Now, until the window
-      closes.", "Open until Dhuhr.", "Tomorrow.", "The window is open." The wanted shape
-      names the moment and gives one gentle sentence of why, for example a sunrise
-      reminder that says the Prophet ﷺ sat in remembrance after the morning prayer until
-      sunrise, and invites the reader to do the same. It fits the product's own promise
-      to teach rather than score. Suggested implementation, smallest version that works:
-  - Add `reminder: LocalisedText.nullable()` to the item schema in
-    `src/content/schema.ts:89-106`, beside `why`. Same shape, so i18n comes free
-    through `resolveText`, and Arabic that has not been reviewed falls back to the
-    generic body instead of showing English, as `resolveText` returning null already does.
-  - In `src/notifications/content.ts:38-44` prefer `resolveText(item.reminder)` for the
-    body and keep the current `strings.notifications.body.*` line as the fallback.
-    Title stays the item name, or becomes the moment name if the reviewer prefers that.
-  - Prayer-window and test notifications take the same treatment from new keys in
-    `src/strings/{en,ar}.ts`, not from content, since they are interface copy.
-  - Add the new field to the unreviewed-content warnings in
-    `scripts/validate-content.ts` so drafted sentences are listed like `why` is.
-  - Android already uses `BigTextStyle` (confirmed in the device walkthrough), so a
-    three-line body expands correctly; iOS shows two lines until the notification is
-    expanded, so put the point in the first sentence.
-  - The sentences themselves are content, so they need the same reviewer sign-off as
-    everything else, and the Arabic needs the qualified speaker. AI can draft all 32
-    in English and wire the plumbing; the reviewer approves.
+- [x] **P2 — Mixed** Feature: reminders should teach, not just announce. Every body was a
+      bare status line — "Now, until the window closes.", "Open until Dhuhr.", "Tomorrow.",
+      "The window is open." **Built 2026-09-22, exactly as planned below.**
+      `reminder: LocalisedText.nullable()` sits beside `why` in the item schema, so i18n
+      comes free through `resolveText` and an Arabic reader gets the interface sentence
+      rather than an English one when the Arabic has not been written — a test pins that
+      fallback. `src/notifications/content.ts` prefers the item's own sentence over the
+      status line, which stays for items that have none. The prayer-window body is interface
+      copy, so it became a sentence in both `en.ts` and `ar.ts` rather than content.
+      All 32 English sentences are drafted: the moment named, then one gentle line of why,
+      point first because iOS shows two lines until the notification is expanded. They are
+      content, so `reviewed: false` covers them and the validator lists any item that has
+      none. **The sentences need the content reviewer's sign-off, and the Arabic needs the
+      qualified speaker** — the plumbing is done, the words are a draft.
 
 ## Human Must Do
 

@@ -44,6 +44,7 @@ const documentWith = (evidence: unknown, overrides: Fixture = {}): TestDocument 
       defaultOn: true,
       note: null,
       why: null,
+      reminder: null,
       how: [],
       reviewed: true,
       audio: null,

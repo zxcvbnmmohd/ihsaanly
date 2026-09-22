@@ -100,6 +100,12 @@ const Item = z
     why: LocalisedText.nullable(),
     /** Ordered steps for doing it. Empty when the text itself is the whole act. */
     how: z.array(LocalisedText),
+    /**
+     * The notification body: the moment named, and one gentle sentence of why.
+     * Never a status line and never a score. Put the point in the first
+     * sentence — iOS shows two lines until the notification is expanded.
+     */
+    reminder: LocalisedText.nullable(),
     /** Signed off by the content reviewer. Unreviewed items ship only in development. */
     reviewed: z.boolean(),
     audio: z.string().min(1).nullable(),

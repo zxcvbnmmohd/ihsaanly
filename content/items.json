@@ -48,6 +48,9 @@
       "why": {
         "en": "A sentence at the door that hands the day over to Allah before it starts. The Prophet ﷺ taught that whoever says it is guided, provided for and protected as they go out."
       },
+      "reminder": {
+        "en": "Said at the door, before the day takes over. It is short enough to become the thing you do without thinking about it."
+      },
       "how": [
         {
           "en": "Pause at the door as you leave."
@@ -100,6 +103,9 @@
       "why": {
         "en": "The masjid is a place of mercy, so you ask for mercy as you walk in. It also marks the change from the street to the prayer."
       },
+      "reminder": {
+        "en": "A word of asking as you step through, before you look for a place in the row."
+      },
       "how": [
         {
           "en": "Step in with your right foot."
@@ -148,6 +154,9 @@
       "audioTranslation": null,
       "why": {
         "en": "The travel dua thanks Allah for the means of travel and asks for an easy road and a safe return. It is said once the journey is actually under way."
+      },
+      "reminder": {
+        "en": "Said once you are settled and moving, at the start of the road rather than in the rush of leaving."
       },
       "how": [
         {
@@ -201,6 +210,9 @@
       "why": {
         "en": "The last words of the day, given to Allah. Saying them makes sleep itself an act of remembrance."
       },
+      "reminder": {
+        "en": "The last words of the day, after the phone is down. It takes less time than lying there deciding to sleep."
+      },
       "how": [
         {
           "en": "Lie down on your right side if you can."
@@ -250,6 +262,9 @@
       "why": {
         "en": "Waking is a small return to life, and the first words of the day thank the One who gave it back."
       },
+      "reminder": {
+        "en": "The first words of the day, before anything else asks for your attention."
+      },
       "how": [
         {
           "en": "Say the words as soon as you are awake, before anything else."
@@ -295,6 +310,9 @@
       "audioTranslation": null,
       "why": {
         "en": "Naming Allah over food is the difference between eating and eating with gratitude. If you forget and remember mid-meal, there is a form for that too."
+      },
+      "reminder": {
+        "en": "Before the first bite. A pause of two seconds that turns a meal into something noticed."
       },
       "how": [
         {
@@ -345,6 +363,9 @@
       "audioTranslation": null,
       "why": {
         "en": "Thirty-three each of Subhan Allah, Alhamdulillah and Allahu Akbar after every prayer, completed with one phrase to make a hundred. The Prophet ﷺ said sins are forgiven for it, however many."
+      },
+      "reminder": {
+        "en": "Said sitting, before you stand and the moment has gone. Thirty-three, thirty-three, thirty-four."
       },
       "how": [
         {
@@ -406,6 +427,9 @@
       "why": {
         "en": "One verse, recited after each prayer. The Prophet ﷺ said nothing stands between the one who recites it after prayer and entering Paradise except death."
       },
+      "reminder": {
+        "en": "Recited once you have finished, while you are still sitting where you prayed."
+      },
       "how": [
         {
           "en": "After the tasbih, recite Ayat al-Kursi (Qur'an 2:255) once."
@@ -449,6 +473,9 @@
       "why": {
         "en": "Cleaning the teeth before standing to pray. A toothbrush serves the same purpose where there is no siwak."
       },
+      "reminder": {
+        "en": "Cleaning the teeth before standing to pray. A toothbrush does the same work where there is no siwak."
+      },
       "how": [
         {
           "en": "Before the prayer, clean the teeth with a siwak or a brush."
@@ -491,6 +518,9 @@
       "audioTranslation": null,
       "why": {
         "en": "Two short rak'ah before the Fajr prayer. Of all the voluntary prayers, this is the one the Prophet ﷺ never left, even when travelling."
+      },
+      "reminder": {
+        "en": "Two short rak’ah once Fajr has entered, before the fard. The Prophet ﷺ kept to these more closely than any other voluntary prayer."
       },
       "how": [
         {
@@ -541,6 +571,9 @@
       "why": {
         "en": "Two rak'ah after the Dhuhr prayer, part of the twelve daily rawatib for which the Prophet ﷺ promised a house in Paradise."
       },
+      "reminder": {
+        "en": "Prayed after the fard, while you are still standing where you prayed."
+      },
       "how": [
         {
           "en": "After the Dhuhr prayer and its dhikr, pray two rak'ah."
@@ -582,6 +615,9 @@
       "audioTranslation": null,
       "why": {
         "en": "A set of remembrances said between Fajr and sunrise, or in the morning generally. They frame the day before it fills with everything else."
+      },
+      "reminder": {
+        "en": "The morning remembrance, kept between Fajr and sunrise. The Prophet ﷺ would sit in remembrance after the morning prayer until the sun had risen."
       },
       "how": [
         {
@@ -631,6 +667,9 @@
       "why": {
         "en": "The evening counterpart, said between Asr and Maghrib or in the evening generally. The same protection and gratitude for the night as for the day."
       },
+      "reminder": {
+        "en": "The evening remembrance, from Asr until the light goes."
+      },
       "how": [
         {
           "en": "After Asr, sit a moment."
@@ -679,6 +718,9 @@
       "why": {
         "en": "The Prophet ﷺ fasted Mondays and Thursdays and said deeds are presented on those days. Monday is also the day he was born."
       },
+      "reminder": {
+        "en": "Monday was one of the two days the Prophet ﷺ returned to, week after week, through the year."
+      },
       "how": [
         {
           "en": "Decide the night before to fast."
@@ -726,6 +768,9 @@
       "audioTranslation": null,
       "why": {
         "en": "Thursday is the other weekly fast the Prophet ﷺ kept. One day a week is a manageable habit; two is his own."
+      },
+      "reminder": {
+        "en": "Thursday, with Monday, was a fast he ﷺ kept regularly rather than occasionally."
       },
       "how": [
         {
@@ -777,6 +822,9 @@
       "why": {
         "en": "Three days a month, on the 13th, 14th and 15th when the moon is full. The Prophet ﷺ compared fasting three days each month to fasting the whole year."
       },
+      "reminder": {
+        "en": "The thirteenth, fourteenth and fifteenth, when the moon is full. Three days a month, spaced so they never pile up."
+      },
       "how": [
         {
           "en": "Watch for the middle of the Islamic month; this app shows it a few days ahead."
@@ -821,6 +869,9 @@
       "audioTranslation": null,
       "why": {
         "en": "The 10th of Muharram. The Prophet ﷺ said fasting it expiates the sins of the year before, and recommended adding the 9th."
+      },
+      "reminder": {
+        "en": "The tenth of Muharram. It is one day, and it is easier decided tonight than at dawn."
       },
       "how": [
         {
@@ -869,6 +920,9 @@
       "why": {
         "en": "The 9th of Dhul Hijjah, the day the pilgrims stand at Arafah. For those not on Hajj, fasting it expiates two years of sins."
       },
+      "reminder": {
+        "en": "The ninth of Dhul Hijjah, for those who are not standing at Arafah."
+      },
       "how": [
         {
           "en": "Fast the 9th of Dhul Hijjah."
@@ -914,6 +968,9 @@
       "why": {
         "en": "Six days of fasting in the month after Ramadan. With Ramadan they add up to what the Prophet ﷺ called fasting the whole year."
       },
+      "reminder": {
+        "en": "Six days, any six, anywhere in the month. They do not need to be kept together."
+      },
       "how": [
         {
           "en": "Any six days of Shawwal, together or apart, after the day of Eid."
@@ -956,6 +1013,9 @@
       "why": {
         "en": "A short voluntary prayer in the mid-morning. The Prophet ﷺ said the charity owed by every joint of the body is discharged by two rak'ah of Duha."
       },
+      "reminder": {
+        "en": "Prayed once the sun is well up and before Dhuhr. Two rak’ah are enough for it to count."
+      },
       "how": [
         {
           "en": "When the sun is well up and before midday, pray two rak'ah or more."
@@ -997,6 +1057,9 @@
       "audioTranslation": null,
       "why": {
         "en": "On a journey the four-rak'ah prayers are shortened to two. It is a gift, not a compromise, and the Prophet ﷺ always took it."
+      },
+      "reminder": {
+        "en": "While you are travelling, the four-rak’ah prayers may be prayed as two."
       },
       "how": [
         {
@@ -1041,6 +1104,9 @@
       "note": null,
       "why": {
         "en": "Two or four rak'ah before the Dhuhr prayer, the largest part of the daily rawatib. They settle you before the obligatory prayer rather than rushing into it."
+      },
+      "reminder": {
+        "en": "Prayed after Dhuhr has entered and before the fard."
       },
       "how": [
         {
@@ -1088,6 +1154,9 @@
       "why": {
         "en": "Two rak'ah after the Maghrib prayer. The Prophet ﷺ prayed them at home, which is where most people are at that hour anyway."
       },
+      "reminder": {
+        "en": "Two rak’ah after the fard, before the evening moves on to something else."
+      },
       "how": [
         {
           "en": "After the Maghrib prayer and its dhikr, pray two rak'ah."
@@ -1131,6 +1200,9 @@
       "why": {
         "en": "Two rak'ah after the Isha prayer, the last of the rawatib, usually prayed at home before Witr."
       },
+      "reminder": {
+        "en": "Two rak’ah after the fard, while you are still there."
+      },
       "how": [
         {
           "en": "After the Isha prayer and its dhikr, pray two rak'ah."
@@ -1173,6 +1245,9 @@
       "note": null,
       "why": {
         "en": "An odd number of rak'ah, often one or three, as the last prayer of the night. The Prophet ﷺ never left it, at home or on a journey, and told us to make it the last thing we pray."
+      },
+      "reminder": {
+        "en": "The last prayer of the night, an odd number of rak’ah. If you are not sure of waking, it can be prayed before you sleep."
       },
       "how": [
         {
@@ -1226,6 +1301,9 @@
       "why": {
         "en": "Mentioning Allah as you come in, and greeting whoever is there, keeps the home a place He is remembered in. The Prophet ﷺ said Shaytan finds no place to stay in such a house."
       },
+      "reminder": {
+        "en": "Said as you come through the door, before the house takes over."
+      },
       "how": [
         {
           "en": "Say Bismillah as you step in."
@@ -1275,6 +1353,9 @@
       "why": {
         "en": "Allahu Akbar as you climb: a hill, a staircase, a lift. The companions did it on every rise of the road, and it turns an ordinary climb into remembrance."
       },
+      "reminder": {
+        "en": "Said going up — a staircase, a hill, a lift. A small word for a small climb."
+      },
       "how": [
         {
           "en": "As you start going up, say Allahu Akbar."
@@ -1320,6 +1401,9 @@
       "note": null,
       "why": {
         "en": "Subhan Allah as you descend, the pair to the takbir on the way up."
+      },
+      "reminder": {
+        "en": "Said going down, as the takbir is said going up."
       },
       "how": [
         {
@@ -1374,6 +1458,9 @@
       "note": null,
       "why": {
         "en": "The words the Prophet ﷺ said on mounting his camel, which fit a car, a bus or a train exactly as well: this was put at our service, and we could not have done it ourselves."
+      },
+      "reminder": {
+        "en": "Said once you are seated and the vehicle is moving."
       },
       "how": [
         {
@@ -1433,6 +1520,9 @@
       "why": {
         "en": "A short set the Prophet ﷺ recited every night: Ayat al-Kursi, and the three short surahs beginning with Qul, blown into the hands and wiped over the body. He said a guardian stays with the one who recites Ayat al-Kursi until morning."
       },
+      "reminder": {
+        "en": "Ayat al-Kursi and the three Quls, last thing. About a minute, and the day is closed."
+      },
       "how": [
         {
           "en": "Recite Ayat al-Kursi (Qur'an 2:255)."
@@ -1484,6 +1574,9 @@
       "why": {
         "en": "The night prayer of Ramadan, prayed in congregation as Taraweeh or alone at home. The Prophet ﷺ promised forgiveness of past sins to whoever stands in it out of faith."
       },
+      "reminder": {
+        "en": "The night prayer in Ramadan, in the masjid or at home — however many rak’ah you can keep to."
+      },
       "how": [
         {
           "en": "After Isha, pray Taraweeh at the masjid or some rak'ah at home."
@@ -1528,6 +1621,9 @@
       "note": null,
       "why": {
         "en": "The ten days leading to Eid al-Adha, which the Prophet ﷺ said hold deeds more beloved to Allah than on any other days. Fasting, dhikr and charity all count; the 9th is Arafah."
+      },
+      "reminder": {
+        "en": "The first ten days of Dhul Hijjah. Ordinary good deeds are especially weighty in them."
       },
       "how": [
         {

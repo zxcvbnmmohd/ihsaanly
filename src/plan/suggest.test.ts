@@ -38,6 +38,7 @@ function item(id: string, trigger: Trigger, overrides: Partial<Item> = {}): Item
     defaultOn: false,
     note: null,
     why: null,
+    reminder: null,
     how: [],
     reviewed: true,
     audio: null,

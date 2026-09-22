@@ -1,51 +1,47 @@
 import type { ReactElement } from 'react'
-import { useHijriOffset } from '@/hijri/store'
-import { supportedLanguageOf } from '@/i18n/locale'
-import { useLocale } from '@/i18n/store'
-import { useUserState } from '@/plan/user-state-store'
-import { usePlace } from '@/location/store'
-import { useQada } from '@/prayer/marks'
-import { useCalculationPreferences } from '@/prayer/store'
+import { Stack } from 'expo-router/stack'
+import { useState } from 'react'
+import { useColorScheme } from 'react-native'
+
+import { filterGroups, useMoreGroups } from '@/more/rows'
 import { MoreScreen } from '@/screens/more'
 import { useStrings } from '@/strings'
-import { useThemePreference } from '@/theme/store'
+import { colors } from '@/theme/colors'
+import { usePalette } from '@/theme/store'
+
+interface Thing {
+  query: string
+}
 
 export default function MoreRoute(): ReactElement {
+  const [thing, setThing] = useState<Thing>({ query: '' })
   const strings = useStrings()
-  const place = usePlace()
-  const calculation = useCalculationPreferences()
-  const hijriOffset = useHijriOffset()
-  const userState = useUserState()
-  const locale = useLocale()
-  const theme = useThemePreference()
-  const owed = Object.values(useQada()).reduce((sum, count) => sum + (count ?? 0), 0)
-
-  const tracking = [
-    userState.travelling ? strings.tracking.travelling : null,
-    userState.trackingPaused ? strings.tracking.paused : null,
-  ].filter(Boolean)
+  const palette = usePalette()
+  const groups = useMoreGroups()
+  useColorScheme()
 
   return (
-    <MoreScreen
-      locationHref="/location"
-      locationLabel={place?.label ?? strings.location.notSet}
-      calculationHref="/calculation"
-      calculationLabel={strings.asr[calculation.asr]}
-      hijriHref="/hijri"
-      hijriLabel={strings.hijri.offsetLabel(hijriOffset)}
-      trackingHref="/tracking"
-      aboutHref="/about"
-      notificationsHref="/notifications"
-      eventsHref="/events"
-      historyHref="/history"
-      qadaHref="/qada"
-      qadaLabel={owed > 0 ? strings.qada.summary(owed) : strings.qada.none}
-      dataHref="/data"
-      languageHref="/language"
-      languageLabel={strings.language.names[supportedLanguageOf(locale)]}
-      appearanceHref="/appearance"
-      appearanceLabel={strings.appearance[theme]}
-      trackingLabel={tracking.length > 0 ? tracking.join(', ') : strings.tracking.title}
-    />
+    <>
+      {/* One native search bar, opened from a button in the app bar on both
+          platforms: Material's search action on Android, and on iOS 26 a
+          magnifier in the navigation bar that expands into the field when
+          pressed (`integratedButton`). Kept out of any bottom toolbar so it
+          never competes with the tab bar. Older iOS shows an inline field. */}
+      <Stack.SearchBar
+        placeholder={strings.more.search}
+        placement="integratedButton"
+        allowToolbarIntegration={false}
+        autoCapitalize="none"
+        tintColor={palette.accent}
+        textColor={colors.label}
+        hintTextColor={colors.secondaryLabel}
+        headerIconColor={colors.label}
+        // Typed as string, but Android's SearchView hands over null on mount and on close.
+        onChangeText={(event) => setThing({ query: event.nativeEvent.text ?? '' })}
+        onCancelButtonPress={() => setThing({ query: '' })}
+        onClose={() => setThing({ query: '' })}
+      />
+      <MoreScreen groups={filterGroups(groups, thing.query)} />
+    </>
   )
 }

@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "ihsaanly",
+    "name": "Ihsaanly",
     "slug": "ihsaanly",
     "scheme": "ihsaanly",
     "version": "1.0.0",
@@ -11,12 +11,20 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.ihsaanly.app",
       "infoPlist": {
-        "UIBackgroundModes": ["location", "audio"]
+        "UIBackgroundModes": ["location"]
+      },
+      "config": {
+        "usesNonExemptEncryption": false
       }
     },
     "android": {
       "package": "com.ihsaanly.app",
-      "predictiveBackGestureEnabled": true
+      "predictiveBackGestureEnabled": true,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "monochromeImage": "./assets/images/adaptive-icon-mono.png",
+        "backgroundColor": "#f7f0e9"
+      }
     },
     "experiments": {
       "typedRoutes": true,
@@ -47,7 +55,12 @@
       "expo-router",
       "expo-status-bar",
       "expo-image",
-      ["expo-font", { "fonts": ["./assets/fonts/Amiri-Regular.ttf"] }],
+      [
+        "expo-font",
+        {
+          "fonts": ["./assets/fonts/Amiri-Regular.ttf"]
+        }
+      ],
       "expo-sqlite",
       [
         "expo-location",
@@ -57,9 +70,36 @@
           "locationAlwaysAndWhenInUsePermission": "Ihsaanly can notice when you leave home so it can offer the dua for it. This is optional, off by default, and your location is never sent anywhere."
         }
       ],
-      "expo-notifications",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/notification-icon.png",
+          "color": "#a94a32"
+        }
+      ],
       "expo-sharing",
-      "expo-audio"
-    ]
+      [
+        "expo-audio",
+        {
+          "recordAudioAndroid": false,
+          "microphonePermission": false,
+          "enableBackgroundRecording": false,
+          "enableBackgroundPlayback": false
+        }
+      ],
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/splash-icon.png",
+          "imageWidth": 180,
+          "resizeMode": "contain",
+          "backgroundColor": "#f7f0e9",
+          "dark": {
+            "backgroundColor": "#1b1411"
+          }
+        }
+      ]
+    ],
+    "icon": "./assets/images/icon.png"
   }
 }

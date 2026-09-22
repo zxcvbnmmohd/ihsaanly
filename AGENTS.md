@@ -131,7 +131,8 @@ check here before "fixing" something that looks wrong.
 
 ### On a preview SDK
 
-`expo` is on `58.0.0-preview.2` with `react-native@0.88.0-rc.0`. Treat upstream
+`expo` is on `58.0.0-preview.4` with `react-native@0.88.0-rc.1`, and upstream
+moves faster than this file: check `package.json` rather than trusting this line. Treat upstream
 release notes for SDK 58 as provisional, and expect `expo-doctor` to be the
 source of truth for which versions of native modules may be installed. Never
 bump `react`, `react-native`, `react-native-screens`, `react-native-reanimated`,

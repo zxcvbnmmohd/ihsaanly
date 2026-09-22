@@ -1,0 +1,31 @@
+import type { Diagnostics } from './export'
+
+/**
+ * What the preview screen shows before a diagnostic report is sent. Derived
+ * rather than stored, and kept pure so a test can pin exactly what a person is
+ * told is about to leave their device.
+ */
+export interface DiagnosticsSummary {
+  version: string
+  device: string
+  coordinates: { latitude: number; longitude: number } | null
+  records: number
+  settings: number
+  hasError: boolean
+}
+
+export function summarise(diagnostics: Diagnostics): DiagnosticsSummary {
+  return {
+    version: diagnostics.app.version,
+    device: `${diagnostics.app.device} · ${diagnostics.app.platform} ${diagnostics.app.osVersion}`,
+    coordinates: diagnostics.coordinates,
+    records: diagnostics.data.events.length,
+    settings: Object.keys(diagnostics.data.preferences).length,
+    hasError: diagnostics.lastStorageError !== null,
+  }
+}
+
+/** Shows exactly what the bundle carries; the rounding happened when it was built. */
+export function formatCoordinates(at: { latitude: number; longitude: number }): string {
+  return `${at.latitude}, ${at.longitude}`
+}

@@ -1,6 +1,7 @@
 #!/bin/sh
 # Versioned git hook — no husky or lint-staged needed. Enable once per clone:
 #   git config core.hooksPath .githooks
+# package.json's postinstall does that, so a fresh clone gets it from `bun install`.
 set -e
 
 staged() {
@@ -16,3 +17,8 @@ echo "$formattable" | xargs bunx prettier --write --log-level warn
 echo "$formattable" | xargs git add
 
 bunx tsc --noEmit
+
+# Content is JSON that the app trusts at runtime; a broken item must not reach
+# a commit just because it type-checks. Both of these are under a second.
+bun test
+bun run validate:content

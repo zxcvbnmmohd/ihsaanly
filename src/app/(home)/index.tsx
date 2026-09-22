@@ -1,192 +1,246 @@
-import { Asset } from 'expo-asset';
-import { File } from 'expo-file-system';
-import * as Haptics from 'expo-haptics';
-import { SymbolView } from 'expo-symbols';
-import { widgetsDirectory } from 'expo-widgets';
-import { useEffect, useRef, useState } from 'react';
-import { Platform, Pressable, ScrollView, Text, useColorScheme, View } from 'react-native';
+import { useEffect, useState, type ReactElement } from 'react'
 
-import { Surface } from '@/components/surface';
-import { colors } from '@/theme/colors';
-import CounterWidget from '@/widgets/counter-widget';
-import DeliveryActivity, { type DeliveryProps } from '@/widgets/delivery-activity';
+import { itemById, resolveText } from '@/content'
+import { requestDeviceLocation } from '@/location/device'
+import { setPlace, usePlace } from '@/location/store'
+import type { NextPrayer, PlannedItem } from '@/plan/signals'
+import { useNotificationSync } from '@/notifications/use-sync'
+import { useWidgetSnapshot } from '@/widgets/use-snapshot'
+import { useOnboarding } from '@/onboarding/store'
+import { setEnabledItems, useEnabledItems } from '@/plan/enabled-store'
+import { plan } from '@/plan/plan'
+import { suggest, SUGGESTION_INTERVAL_MS, type Phase } from '@/plan/suggest'
+import { setSuggestion, useSuggestion } from '@/plan/suggestion-store'
+import { useSignals } from '@/plan/use-plan'
+import { markMadeUp, markPrayer, unmarkPrayer, useQada, useTodayMarks } from '@/prayer/marks'
+import { PRAYERS, type Prayer } from '@/prayer/qada'
+import { useCalculationPreferences } from '@/prayer/store'
+import { prayerTimesAcross } from '@/prayer/times'
+import { buildWindows } from '@/prayer/windows'
+import type { LocationProblem } from '@/screens/onboarding'
+import {
+  TodayScreen,
+  type NextPrayerEntry,
+  type SuggestionEntry,
+  type TodayEntry,
+} from '@/screens/today'
+import { useStrings, type Strings } from '@/strings'
+import { useNow } from '@/time/use-now'
 
-// Fake delivery stages the Live Activity steps through automatically. One stage
-// advances every ADVANCE_MS: Preparing -> +5 min On the way -> +5 min Delivered.
-const STAGES: DeliveryProps['status'][] = ['Preparing', 'On the way', 'Delivered'];
-const ADVANCE_MS = 5 * 60 * 1000;
-// The widget counts down to the arrival time and fills its progress bar across
-// this window on its own. Derive it from ADVANCE_MS so the countdown always hits
-// 0 exactly when the final stage lands.
-const ETA_MS = ADVANCE_MS * (STAGES.length - 1);
-const DELIVERED_LINGER_MS = 3 * 1000;
-
-// Widgets run in a separate process, so any image the widget renders has to
-// live in the shared app group container (`widgetsDirectory`).
-async function ensureImageInSharedStorage(fileName: string, assetModule: number): Promise<string> {
-  const file = new File(widgetsDirectory, fileName);
-  if (!file.exists) {
-    const asset = await Asset.fromModule(assetModule).downloadAsync();
-    await new File(asset.localUri!).copy(file);
-  }
-  return file.uri;
+function caveatLabel(caveat: PlannedItem['caveat'], strings: Strings): string | null {
+  if (caveat === 'confirm-locally') return strings.plan.confirmLocally
+  if (caveat === 'expected') return strings.plan.expected
+  return null
 }
 
-export default function Home() {
-  useColorScheme(); // re-resolve Android Material colors on theme change
-  const [count, setCount] = useState(0);
-  const [imageUris, setImageUris] = useState<{ logoUri: string; gridUri: string }>();
-  const [deliveryRunning, setDeliveryRunning] = useState(false);
-  const activityRef = useRef<ReturnType<typeof DeliveryActivity.start> | null>(null);
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+function whenLabel(planned: PlannedItem, strings: Strings): string | null {
+  if (planned.reason !== 'upcoming') return null
+  return planned.daysAway === 1 ? strings.plan.tomorrow : strings.plan.inDays(planned.daysAway ?? 0)
+}
+
+function detailFor(planned: PlannedItem, strings: Strings, showWhen: boolean): string | null {
+  const parts = [
+    showWhen ? whenLabel(planned, strings) : null,
+    planned.optional ? strings.plan.optional : null,
+    caveatLabel(planned.caveat, strings),
+  ].filter((part): part is string => part !== null)
+
+  return parts.length > 0 ? parts.join(' · ') : null
+}
+
+/** A rough distance, never a clock time: the app says how the day feels, not when it ticks. */
+function distanceLabel(minutes: number, strings: Strings): string {
+  if (minutes < 45) return strings.plan.soon
+  if (minutes < 90) return strings.plan.inAboutAnHour
+  return strings.plan.inAboutHours(Math.round(minutes / 60))
+}
+
+function itemEntry(id: string): TodayEntry | null {
+  const item = itemById(id)
+  return item
+    ? { id, title: resolveText(item.title) ?? id, detail: null, href: `/item/${id}` }
+    : null
+}
+
+function toNext(next: NextPrayer | null, now: Date, strings: Strings): NextPrayerEntry | null {
+  if (!next) return null
+  return {
+    prayer: next.prayer,
+    distance: distanceLabel((next.startsAt.getTime() - now.getTime()) / 60_000, strings),
+    before: next.before.flatMap((id) => itemEntry(id) ?? []),
+    after: next.after.flatMap((id) => itemEntry(id) ?? []),
+  }
+}
+
+function toEntry(planned: PlannedItem, strings: Strings, showWhen = true): TodayEntry | null {
+  const item = itemById(planned.itemId)
+  if (!item) return null
+
+  return {
+    id: planned.itemId,
+    title: resolveText(item.title) ?? item.id,
+    detail: detailFor(planned, strings, showWhen),
+    href: `/item/${item.id}`,
+  }
+}
+
+/**
+ * The plan returns today's all-day items and the look-ahead in one list. They
+ * are different questions — what to do today, and what to prepare for — so
+ * they are split here rather than shown under one caption that reads as
+ * "not now".
+ */
+function split(entries: PlannedItem[]): {
+  allDay: PlannedItem[]
+  tomorrow: PlannedItem[]
+  later: PlannedItem[]
+} {
+  return {
+    allDay: entries.filter((entry) => entry.reason === 'today'),
+    tomorrow: soonestEach(
+      entries.filter((entry) => entry.reason === 'upcoming' && entry.daysAway === 1),
+    ),
+    later: soonestEach(
+      entries.filter((entry) => entry.reason === 'upcoming' && (entry.daysAway ?? 0) > 1),
+    ),
+  }
+}
+
+/**
+ * The White Days are three consecutive days, so the look-ahead returns the
+ * same item once per day. Three identical rows say nothing the first does, and
+ * they collide as React keys, so only the soonest is kept.
+ */
+function soonestEach(entries: PlannedItem[]): PlannedItem[] {
+  const soonest = new Map<string, PlannedItem>()
+
+  for (const entry of entries) {
+    const seen = soonest.get(entry.itemId)
+    if (!seen || (entry.daysAway ?? 0) < (seen.daysAway ?? 0)) soonest.set(entry.itemId, entry)
+  }
+
+  return [...soonest.values()].sort((a, b) => (a.daysAway ?? 0) - (b.daysAway ?? 0))
+}
+
+interface Thing {
+  locating: boolean
+  problem: LocationProblem
+}
+
+export default function TodayRoute(): ReactElement {
+  const [thing, setThing] = useState<Thing>({ locating: false, problem: null })
+  const place = usePlace()
+  const preferences = useCalculationPreferences()
+  const now = useNow()
+  const signals = useSignals()
+  const planned = signals ? plan(signals) : null
+  useNotificationSync(planned)
+  useWidgetSnapshot(planned)
+  const marks = useTodayMarks(place?.timeZone ?? 'UTC', now)
+  const qada = useQada()
+  const strings = useStrings()
+  const ahead = split(planned?.today.comingUp ?? [])
+  const onboarding = useOnboarding()
+  const suggestion = useSuggestion()
+  const enabled = useEnabledItems()
+
+  // Three weeks of settling before fasting is offered; missing means an
+  // install from before the date was recorded, treated as early.
+  const phase: Phase =
+    onboarding.completedAt &&
+    now.getTime() - new Date(onboarding.completedAt).getTime() > 3 * SUGGESTION_INTERVAL_MS
+      ? 'settled'
+      : 'early'
+  const suggestedId = signals ? suggest(signals, suggestion, phase) : null
 
   useEffect(() => {
-    if (process.env.EXPO_OS !== 'ios') return;
-    Promise.all([
-      ensureImageInSharedStorage('logo.png', require('../../../assets/images/logo.png')),
-      ensureImageInSharedStorage(
-        'background-grid.png',
-        require('../../../assets/images/background-grid.png'),
-      ),
-    ]).then(([logoUri, gridUri]) => {
-      setImageUris({ logoUri, gridUri });
-      CounterWidget.updateSnapshot({ count: 0, logoUri, gridUri });
-    });
-  }, []);
-
-  const increment = () => {
-    const nextCount = count + 1;
-    setCount(nextCount);
-    if (process.env.EXPO_OS === 'ios') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    // Snapshot props replace the previous ones entirely, so the image URIs must
-    // be included in every update — otherwise this blanks them out.
-    if (imageUris) CounterWidget.updateSnapshot({ count: nextCount, ...imageUris });
-  };
-
-  const propsForStage = (
-    stage: number,
-    startEpochMs: number,
-    etaEpochMs: number,
-  ): DeliveryProps => {
-    // Clamp rather than index blindly: the interval below increments `stage`
-    // before it checks whether it has reached the end, so an off-by-one here
-    // would push `status: undefined` into a Live Activity that is already live.
-    const index = Math.min(Math.max(stage, 0), STAGES.length - 1);
-    return {
-      orderId: '1234',
-      status: STAGES[index]!,
-      stage: index,
-      startEpochMs,
-      etaEpochMs,
-      logoUri: imageUris?.logoUri,
-    };
-  };
-
-  const startDelivery = () => {
-    if (!imageUris || deliveryRunning) return; // need the shared logo first
-    try {
-      const startEpochMs = Date.now();
-      const etaEpochMs = startEpochMs + ETA_MS;
-      activityRef.current = DeliveryActivity.start(propsForStage(0, startEpochMs, etaEpochMs));
-      setDeliveryRunning(true);
-      let stage = 0;
-      intervalRef.current = setInterval(() => {
-        stage += 1;
-        // Advance via update() — including the final 'Delivered' stage, since
-        // end()'s content argument isn't reliably rendered on its own.
-        activityRef.current?.update(propsForStage(stage, startEpochMs, etaEpochMs));
-        if (stage >= STAGES.length - 1) {
-          if (intervalRef.current) clearInterval(intervalRef.current);
-          intervalRef.current = null;
-          setDeliveryRunning(false);
-          setTimeout(() => {
-            activityRef.current?.end('default');
-            activityRef.current = null;
-          }, DELIVERED_LINGER_MS);
-        }
-      }, ADVANCE_MS);
-    } catch (e) {
-      // Live Activities require iOS 16.2+ and the user to have them enabled.
-      console.warn('Could not start Live Activity', e);
+    if (suggestedId && suggestedId !== suggestion.itemId) {
+      setSuggestion({ ...suggestion, shownAt: now.toISOString(), itemId: suggestedId })
     }
-  };
+  }, [suggestedId, suggestion, now])
 
-  useEffect(
-    () => () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-      activityRef.current?.end('immediate');
-    },
-    [],
-  );
+  const suggested = ((): SuggestionEntry | null => {
+    const item = suggestedId ? itemById(suggestedId) : undefined
+    if (!item) return null
+    return {
+      id: item.id,
+      title: resolveText(item.title) ?? item.id,
+      why: resolveText(item.why) ?? resolveText(item.translation),
+      href: `/item/${item.id}`,
+    }
+  })()
+
+  /** The empty state asks for the permission itself rather than sending someone
+   * to settings to find it. Declining is a named outcome, not a failure. */
+  const useMyLocation = (): void => {
+    setThing({ locating: true, problem: null })
+    requestDeviceLocation()
+      .then((located) => {
+        if (located.status === 'ok') {
+          setPlace(located.place)
+          setThing({ locating: false, problem: null })
+          return
+        }
+        setThing({ locating: false, problem: located.status })
+      })
+      .catch(() => {
+        // Whatever the platform threw, the button must not stay on "Finding you".
+        setThing({ locating: false, problem: 'unavailable' })
+      })
+  }
+
+  const togglePrayer = (prayer: Prayer): void => {
+    if (!place) return
+
+    if (marks[prayer]) {
+      unmarkPrayer(prayer, now, place.timeZone)
+      return
+    }
+
+    const windows = buildWindows(prayerTimesAcross(place, now, preferences))
+    const current = windows.filter((entry) => entry.name === prayer && entry.startsAt <= now).pop()
+
+    markPrayer(prayer, now, place.timeZone, current)
+  }
 
   return (
-    <ScrollView
-      contentInsetAdjustmentBehavior="automatic"
-      contentContainerClassName="gap-4 p-4 pb-16">
-      <Surface style={{ borderRadius: 24 }}>
-        <View className="items-center gap-3 p-6">
-          <Text
-            selectable
-            className="text-6xl font-bold"
-            style={{ color: colors.label, fontVariant: ['tabular-nums'] }}>
-            {count}
-          </Text>
-          <Text className="text-center text-sm" style={{ color: colors.secondaryLabel }}>
-            Add “Counter Widget” to your home screen, then tap to update it.
-          </Text>
-          <ActionButton label="Increment" icon="plus" onPress={increment} />
-        </View>
-      </Surface>
-
-      <Surface style={{ borderRadius: 24 }}>
-        <View className="gap-3 p-6">
-          <Text className="text-lg font-semibold" style={{ color: colors.label }}>
-            Live Activity
-          </Text>
-          <Text className="text-sm" style={{ color: colors.secondaryLabel }}>
-            Auto-advances through delivery stages on the Lock Screen and Dynamic Island, then
-            dismisses itself.
-          </Text>
-          <ActionButton
-            label={deliveryRunning ? 'Delivery in progress…' : 'Start delivery'}
-            icon="shippingbox.fill"
-            disabled={deliveryRunning || !imageUris}
-            onPress={startDelivery}
-          />
-        </View>
-      </Surface>
-    </ScrollView>
-  );
+    <TodayScreen
+      hasLocation={place !== null}
+      locating={thing.locating}
+      locationProblem={thing.problem}
+      onUseMyLocation={useMyLocation}
+      window={planned?.today.window ?? null}
+      hijri={planned?.today.hijri ?? null}
+      placeLabel={place ? (place.label.split(',')[0]?.trim() ?? place.label) : null}
+      now={planned?.today.now.flatMap((entry) => toEntry(entry, strings) ?? []) ?? []}
+      next={toNext(planned?.today.next ?? null, now, strings)}
+      allDay={ahead.allDay.flatMap((entry) => toEntry(entry, strings, false) ?? [])}
+      tomorrow={ahead.tomorrow.flatMap((entry) => toEntry(entry, strings, false) ?? [])}
+      later={ahead.later.flatMap((entry) => toEntry(entry, strings) ?? [])}
+      prayers={
+        place && !signals?.userState.trackingPaused
+          ? PRAYERS.map((prayer) => ({ prayer, done: marks[prayer] !== undefined }))
+          : []
+      }
+      qada={Object.entries(qada).map(([prayer, count]) => ({
+        prayer: prayer as Prayer,
+        count: count ?? 0,
+      }))}
+      onMarkPrayer={togglePrayer}
+      onMakeUp={onMakeUpFor(place?.timeZone, now)}
+      suggestion={suggested}
+      onAddSuggestion={(id) => setEnabledItems([...enabled, id])}
+      onDismissSuggestion={(id) =>
+        setSuggestion({ ...suggestion, dismissed: [...suggestion.dismissed, id] })
+      }
+      qadaHref="/qada"
+      locationHref="/location"
+    />
+  )
 }
 
-function ActionButton({
-  label,
-  icon,
-  onPress,
-  disabled,
-}: {
-  label: string;
-  icon: string;
-  onPress: () => void;
-  disabled?: boolean;
-}) {
-  useColorScheme();
-  return (
-    <Pressable
-      onPress={onPress}
-      disabled={disabled}
-      className="flex-row items-center justify-center gap-2 self-stretch rounded-full px-5 py-3 active:opacity-70"
-      style={{
-        backgroundColor: colors.tint,
-        borderCurve: 'continuous',
-        opacity: disabled ? 0.4 : 1,
-      }}>
-      {Platform.OS === 'ios' && (
-        <SymbolView name={icon as never} size={18} tintColor={colors.onTint as string} />
-      )}
-      <Text className="text-base font-semibold" style={{ color: colors.onTint }}>
-        {label}
-      </Text>
-    </Pressable>
-  );
+function onMakeUpFor(timeZone: string | undefined, now: Date): (prayer: Prayer) => void {
+  return (prayer) => {
+    if (timeZone) markMadeUp(prayer, now, timeZone)
+  }
 }

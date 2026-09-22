@@ -1,0 +1,125 @@
+{
+  "schemaVersion": 1,
+  "terms": [
+    {
+      "id": "fard",
+      "term": { "en": "Fard", "ar": "فرض" },
+      "definition": {
+        "en": "Obligatory. Something every Muslim must do, such as the five daily prayers. Leaving it is a sin; making it up later is called qada.",
+        "ar": "واجب على كل مسلم، كالصلوات الخمس. تركه إثم، وأداؤه بعد وقته يُسمّى قضاء."
+      }
+    },
+    {
+      "id": "wajib",
+      "term": { "en": "Wajib", "ar": "واجب" },
+      "definition": {
+        "en": "Also obligatory. Some scholars use it for duties established by slightly less certain evidence than fard; in practice you treat both the same.",
+        "ar": "واجب أيضًا. يستعمله بعض العلماء لما ثبت بدليل أقل قطعية من الفرض، وفي العمل يُعامَلان سواء."
+      }
+    },
+    {
+      "id": "sunnah-muakkadah",
+      "term": { "en": "Emphasised sunnah", "ar": "سنة مؤكدة" },
+      "definition": {
+        "en": "A practice the Prophet ﷺ kept to almost without exception, such as the two rak'ah before Fajr. Not obligatory, but the closest thing to it.",
+        "ar": "ما داوم عليه النبي ﷺ ولم يكن يتركه إلا نادرًا، كركعتَي الفجر. ليس واجبًا، لكنه أقرب شيء إليه."
+      }
+    },
+    {
+      "id": "sunnah",
+      "term": { "en": "Sunnah", "ar": "سنة" },
+      "definition": {
+        "en": "What the Prophet ﷺ did, said or approved. Doing a sunnah is rewarded; leaving it is not a sin. This whole app is about the sunnahs that fit into an ordinary day.",
+        "ar": "ما فعله النبي ﷺ أو قاله أو أقرّه. فعل السنة مأجور، وتركها ليس إثمًا. هذا التطبيق كله عن السنن التي تتسع لها أيام الناس."
+      }
+    },
+    {
+      "id": "mustahabb",
+      "term": { "en": "Recommended", "ar": "مستحب" },
+      "definition": {
+        "en": "Liked and rewarded, but done less consistently by the Prophet ﷺ than an emphasised sunnah. A good thing to add once the rest feels settled.",
+        "ar": "محبوب ومأجور، لكن لم يداوم عليه النبي ﷺ مداومته على السنة المؤكدة. إضافة حسنة بعد أن يستقر ما سواه."
+      }
+    },
+    {
+      "id": "mubah",
+      "term": { "en": "Permissible", "ar": "مباح" },
+      "definition": {
+        "en": "Neither rewarded nor blamed in itself. Listed only so a ruling is never left blank.",
+        "ar": "لا ثواب فيه ولا عتاب في ذاته. يُذكر هنا كي لا يبقى حكم بلا بيان."
+      }
+    },
+    {
+      "id": "rawatib",
+      "term": { "en": "Rawatib", "ar": "الرواتب" },
+      "definition": {
+        "en": "The regular voluntary prayers attached to the five obligatory ones: two before Fajr, four before and two after Dhuhr, two after Maghrib, two after Isha. Twelve in all.",
+        "ar": "النوافل المرتبطة بالصلوات الخمس: ركعتان قبل الفجر، وأربع قبل الظهر وركعتان بعده، وركعتان بعد المغرب، وركعتان بعد العشاء. اثنتا عشرة ركعة."
+      }
+    },
+    {
+      "id": "adhkar",
+      "term": { "en": "Adhkar", "ar": "الأذكار" },
+      "definition": {
+        "en": "Plural of dhikr: set phrases of remembrance and praise. The morning and evening adhkar are collections said after Fajr and after Asr.",
+        "ar": "جمع ذِكر: ألفاظ مأثورة من الثناء والتذكّر. أذكار الصباح والمساء مجموعات تُقال بعد الفجر وبعد العصر."
+      }
+    },
+    {
+      "id": "dhikr",
+      "term": { "en": "Dhikr", "ar": "ذِكر" },
+      "definition": {
+        "en": "Remembering Allah with the tongue and heart: Subhan Allah, Alhamdulillah, Allahu Akbar and the like. Can be said anywhere, in any state.",
+        "ar": "ذكر الله باللسان والقلب: سبحان الله، والحمد لله، والله أكبر، ونحوها. يُقال في أي مكان وعلى أي حال."
+      }
+    },
+    {
+      "id": "qada",
+      "term": { "en": "Qada", "ar": "قضاء" },
+      "definition": {
+        "en": "Making up an obligatory prayer after its time has passed. This app keeps a count, never a list of dates: the point is to catch up, not to keep score.",
+        "ar": "أداء الصلاة الواجبة بعد خروج وقتها. يحتفظ التطبيق بعدد لا بقائمة تواريخ: الغاية اللحاق، لا إحصاء التقصير."
+      }
+    },
+    {
+      "id": "window",
+      "term": { "en": "Window", "ar": "الوقت" },
+      "definition": {
+        "en": "The span between one prayer time and the next. This app never shows a clock time; it tells you which window you are in and roughly how long until the next prayer.",
+        "ar": "المدة بين وقت صلاة والتي تليها. لا يعرض التطبيق ساعة أبدًا؛ بل يخبرك في أي وقت أنت وكم بقي تقريبًا للصلاة التالية."
+      }
+    },
+    {
+      "id": "white-days",
+      "term": { "en": "The White Days", "ar": "الأيام البيض" },
+      "definition": {
+        "en": "The 13th, 14th and 15th of every Islamic month, when the moon is full and the nights are bright. The Prophet ﷺ recommended fasting them.",
+        "ar": "الثالث عشر والرابع عشر والخامس عشر من كل شهر هجري، حين يكتمل القمر وتبيضّ الليالي. حثّ النبي ﷺ على صيامها."
+      }
+    },
+    {
+      "id": "witr",
+      "term": { "en": "Witr", "ar": "الوتر" },
+      "definition": {
+        "en": "An odd-numbered prayer, often one or three rak'ah, offered after Isha and before Fajr as the last prayer of the night.",
+        "ar": "صلاة بعدد فردي من الركعات، ركعة أو ثلاث غالبًا، تُصلّى بعد العشاء وقبل الفجر، آخر صلاة الليل."
+      }
+    },
+    {
+      "id": "duha",
+      "term": { "en": "Duha", "ar": "الضحى" },
+      "definition": {
+        "en": "A voluntary prayer of two or more rak'ah in the mid-morning, after the sun has risen well and before it reaches its height.",
+        "ar": "نافلة من ركعتين أو أكثر في الضحى، بعد ارتفاع الشمس وقبل الزوال."
+      }
+    },
+    {
+      "id": "siwak",
+      "term": { "en": "Siwak", "ar": "السواك" },
+      "definition": {
+        "en": "A teeth-cleaning twig, usually from the arak tree. Cleaning the teeth before prayer is recommended; a toothbrush serves the purpose too.",
+        "ar": "عود لتنظيف الأسنان، من شجر الأراك غالبًا. تنظيف الأسنان قبل الصلاة مستحب، وفرشاة الأسنان تؤدي الغرض."
+      }
+    }
+  ]
+}

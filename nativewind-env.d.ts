@@ -1,3 +1,3 @@
 /// <reference types="react-native-css/types" />
 
-declare module '*.css';
+declare module '*.css'

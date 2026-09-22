@@ -1,0 +1,72 @@
+/**
+ * One `useState` per file, holding a single object typed by a local `State`
+ * interface, destructured as `state` / `setState`:
+ *
+ *   interface Thing {
+ *     query: string;
+ *     declined: boolean;
+ *   }
+ *
+ *   const [thing, setThing] = useState<Thing>({ query: '', declined: false });
+ *
+ * Scattered or loosely typed state hooks drift out of sync and hide what a
+ * component actually holds. The shape always has a name, even when it holds
+ * one field, so adding a second field never requires restructuring.
+ */
+const THING_TYPE = 'Thing'
+
+module.exports = {
+  meta: {
+    type: 'suggestion',
+    docs: { description: 'Require a single `useState<Thing>` per file' },
+    schema: [],
+    messages: {
+      multiple:
+        'Only one useState per file. Combine them into one object: interface Thing { … } and useState<Thing>({ … }).',
+      untyped: 'useState needs an explicit type argument: useState<Thing>({ … }).',
+      notThingInterface:
+        'useState must be typed by a local `Thing` interface, even for a single field: interface Thing { … } and useState<Thing>({ … }).',
+      naming: 'Destructure useState as `const [thing, setThing]`.',
+    },
+  },
+  create(context) {
+    let seen = 0
+
+    return {
+      'CallExpression[callee.name="useState"]'(node) {
+        seen += 1
+        if (seen > 1) {
+          context.report({ node, messageId: 'multiple' })
+          return
+        }
+
+        const typeArguments = node.typeArguments ?? node.typeParameters
+        const [argument] = typeArguments?.params ?? []
+
+        if (!argument) {
+          context.report({ node, messageId: 'untyped' })
+        } else if (
+          argument.type !== 'TSTypeReference' ||
+          argument.typeName.type !== 'Identifier' ||
+          argument.typeName.name !== THING_TYPE
+        ) {
+          context.report({ node, messageId: 'notThingInterface' })
+        }
+
+        const declarator = node.parent
+        if (declarator?.type !== 'VariableDeclarator' || declarator.id.type !== 'ArrayPattern') {
+          context.report({ node, messageId: 'naming' })
+          return
+        }
+
+        const [value, setter] = declarator.id.elements
+        const named = (element, expected) =>
+          element?.type === 'Identifier' && element.name === expected
+
+        if (!named(value, 'thing') || !named(setter, 'setThing')) {
+          context.report({ node, messageId: 'naming' })
+        }
+      },
+    }
+  },
+}

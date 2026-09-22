@@ -41,3 +41,7 @@ app-example
 # or commit them. Delete these two lines only if you move to a bare workflow.
 /ios/
 /android/
+
+# Local Expo modules build their own Gradle output
+modules/**/android/build/
+modules/**/android/.gradle/

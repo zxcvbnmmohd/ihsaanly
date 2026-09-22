@@ -1,22 +1,30 @@
 {
   "expo": {
-    "name": "ihsaanly",
+    "name": "Ihsaanly",
     "slug": "ihsaanly",
     "scheme": "ihsaanly",
     "version": "1.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "automatic",
+    "platforms": ["ios", "android"],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.ihsaanly.app"
+      "bundleIdentifier": "com.ihsaanly.app",
+      "infoPlist": {
+        "UIBackgroundModes": ["location"]
+      },
+      "config": {
+        "usesNonExemptEncryption": false
+      }
     },
     "android": {
       "package": "com.ihsaanly.app",
-      "predictiveBackGestureEnabled": true
-    },
-    "web": {
-      "bundler": "metro",
-      "output": "static"
+      "predictiveBackGestureEnabled": true,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "monochromeImage": "./assets/images/adaptive-icon-mono.png",
+        "backgroundColor": "#f7f0e9"
+      }
     },
     "experiments": {
       "typedRoutes": true,
@@ -28,20 +36,70 @@
         {
           "widgets": [
             {
-              "name": "CounterWidget",
-              "contentMarginsDisabled": true,
-              "displayName": "Counter Widget",
-              "description": "A sample counter home screen widget",
-              "supportedFamilies": ["systemSmall", "systemMedium"]
+              "name": "RightNowWidget",
+              "displayName": "Right now",
+              "description": "What the moment calls for.",
+              "supportedFamilies": ["systemSmall"]
+            },
+            {
+              "name": "QuickDuasWidget",
+              "displayName": "Quick duas",
+              "description": "The duas no sensor can find, one tap away.",
+              "supportedFamilies": ["systemMedium"]
             }
           ]
         }
       ],
+      "./plugins/with-android-manifest.js",
       "expo-asset",
       "expo-router",
       "expo-status-bar",
       "expo-image",
-      "expo-font"
-    ]
+      [
+        "expo-font",
+        {
+          "fonts": ["./assets/fonts/Amiri-Regular.ttf"]
+        }
+      ],
+      "expo-sqlite",
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Ihsaanly uses your location on this device to work out prayer windows. It is never sent anywhere.",
+          "isAndroidBackgroundLocationEnabled": true,
+          "locationAlwaysAndWhenInUsePermission": "Ihsaanly can notice when you leave home so it can offer the dua for it. This is optional, off by default, and your location is never sent anywhere."
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/notification-icon.png",
+          "color": "#a94a32"
+        }
+      ],
+      "expo-sharing",
+      [
+        "expo-audio",
+        {
+          "recordAudioAndroid": false,
+          "microphonePermission": false,
+          "enableBackgroundRecording": false,
+          "enableBackgroundPlayback": false
+        }
+      ],
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/splash-icon.png",
+          "imageWidth": 180,
+          "resizeMode": "contain",
+          "backgroundColor": "#f7f0e9",
+          "dark": {
+            "backgroundColor": "#1b1411"
+          }
+        }
+      ]
+    ],
+    "icon": "./assets/images/icon.png"
   }
 }

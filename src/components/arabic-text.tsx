@@ -16,6 +16,9 @@ export function ArabicText({ children, ...props }: TextProps): ReactElement {
   return (
     <Text
       {...props}
+      // Whatever the interface language, this text is Arabic; without it
+      // VoiceOver reads it with the interface voice.
+      accessibilityLanguage="ar"
       className="text-2xl leading-loose"
       style={{
         color: colors.label,

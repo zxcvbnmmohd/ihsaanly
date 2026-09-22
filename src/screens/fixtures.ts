@@ -164,6 +164,7 @@ export const itemFixture: ItemDetail = {
 }
 
 export const itemScreenFixture: ItemScreenProps = {
+  title: 'Morning adhkar',
   item: itemFixture,
   memoriseHref: '/item/memorise/dua-eating',
   done: false,

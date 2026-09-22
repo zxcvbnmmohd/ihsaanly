@@ -6,6 +6,8 @@ import { colors, type Palette } from '@/theme/colors'
 import { fonts } from '@/theme/fonts'
 
 interface CounterProps {
+  /** Names the dhikr, so the spoken control is not just a number. */
+  label: string
   count: number
   target: number
   onTap: () => void
@@ -16,6 +18,7 @@ interface CounterProps {
 
 /** One big target for a repeated dhikr: tap, count, and know when you are there. */
 export function Counter({
+  label,
   count,
   target,
   onTap,
@@ -30,6 +33,7 @@ export function Counter({
     <View className="items-center gap-3">
       <Pressable
         accessibilityRole="button"
+        accessibilityLabel={label}
         accessibilityValue={{ now: count, max: target, min: 0 }}
         onPress={onTap}
         disabled={complete}
@@ -43,6 +47,9 @@ export function Counter({
         }}>
         <Text
           className="text-5xl"
+          // The circle is a fixed 168pt, so the glyph is capped rather than
+          // letting the largest Dynamic Type sizes clip it.
+          maxFontSizeMultiplier={1.4}
           style={{
             color: complete ? palette.onAccent : colors.label,
             fontFamily: fonts.display,

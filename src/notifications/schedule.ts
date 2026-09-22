@@ -4,7 +4,8 @@ import { Platform } from 'react-native'
 import type { Strings } from '@/strings'
 
 import type { NotificationContent } from './content'
-import { PLAN_PREFIX, REMINDER_CATEGORY } from './payload'
+import { REMINDER_CATEGORY } from './payload'
+import { planSync } from './sync-plan'
 
 export type NotificationsApi = typeof import('expo-notifications')
 
@@ -109,6 +110,11 @@ async function prepare(api: NotificationsApi, strings: Strings): Promise<void> {
   }
 }
 
+/**
+ * Asks. Only ever called from something the user pressed — the "Allow
+ * reminders" button in onboarding, or the Reminders screen — because an app
+ * that asks for notifications unprompted is the one people mute on day one.
+ */
 export async function ensurePermission(strings: Strings): Promise<boolean> {
   const api = await notifications()
   if (!api) return false
@@ -121,6 +127,30 @@ export async function ensurePermission(strings: Strings): Promise<boolean> {
 
     const requested = await api.requestPermissionsAsync()
     return requested.granted
+  } catch {
+    return false
+  }
+}
+
+/**
+ * Checks, and never asks. This is what the background sync uses: someone who
+ * skipped the reminders step should not be prompted by opening Today, which is
+ * exactly what happened until this existed. Channels are still prepared, so a
+ * later grant has somewhere to deliver.
+ */
+export async function hasPermission(strings: Strings): Promise<boolean> {
+  const api = await notifications()
+  if (!api) return false
+
+  try {
+    const existing = await api.getPermissionsAsync()
+    if (!existing.granted) return false
+
+    // Only once there is something to deliver to. Channels and the action
+    // category cost nothing to declare, but declaring them for someone who has
+    // not granted anything is work on behalf of a decision not yet made.
+    await prepare(api, strings)
+    return true
   } catch {
     return false
   }
@@ -156,25 +186,17 @@ export async function sync(contents: NotificationContent[]): Promise<number> {
   if (!api) return 0
 
   try {
-    const future = contents.filter((content) => content.at.getTime() > Date.now())
-    const wanted = new Map(future.map((content) => [content.identifier, content]))
     const pending = await api.getAllScheduledNotificationsAsync()
-    const present = new Set<string>()
-
-    await Promise.all(
-      pending.map(async (request) => {
-        const id = request.identifier
-        if (!id.startsWith(PLAN_PREFIX)) return
-        if (wanted.has(id)) present.add(id)
-        else await api.cancelScheduledNotificationAsync(id)
-      }),
+    const { cancel, add } = planSync(
+      contents,
+      pending.map((request) => request.identifier),
+      Date.now(),
     )
 
-    await Promise.all(
-      future.filter((content) => !present.has(content.identifier)).map((c) => scheduleOne(api, c)),
-    )
+    await Promise.all(cancel.map((id) => api.cancelScheduledNotificationAsync(id)))
+    await Promise.all(add.map((content) => scheduleOne(api, content)))
 
-    return future.length
+    return contents.filter((content) => content.at.getTime() > Date.now()).length
   } catch {
     return 0
   }

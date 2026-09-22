@@ -46,9 +46,38 @@ function migrate(connection: SQLite.SQLiteDatabase): void {
   })
 }
 
-export const database = SQLite.openDatabaseSync('ihsaanly.db', undefined, databaseDirectory())
+let openError: string | null = null
 
-migrate(database)
+/** Surfaced in the diagnostic bundle, since a fallback session looks normal otherwise. */
+export function lastDatabaseError(): string | null {
+  return openError
+}
+
+/**
+ * This runs while the module is still being evaluated, which is before Expo
+ * Router has mounted anything — so a throw here is a white screen with no
+ * message rather than something the error boundary can catch. A device with a
+ * corrupt or unwritable database therefore falls back to one in memory: the app
+ * opens and works, it just forgets when it closes, and the reason travels in the
+ * diagnostic report.
+ *
+ * ponytail: no recovery beyond that. If opening an in-memory database fails too,
+ * the device has larger problems than this app can paper over.
+ */
+function connect(): SQLite.SQLiteDatabase {
+  try {
+    const connection = SQLite.openDatabaseSync('ihsaanly.db', undefined, databaseDirectory())
+    migrate(connection)
+    return connection
+  } catch (error) {
+    openError = `open: ${error instanceof Error ? error.message : String(error)}`
+    const memory = SQLite.openDatabaseSync(':memory:')
+    migrate(memory)
+    return memory
+  }
+}
+
+export const database = connect()
 
 /**
  * Everything, in one transaction. The only deletion in the app, and only at

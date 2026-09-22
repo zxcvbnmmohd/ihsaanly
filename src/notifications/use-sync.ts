@@ -6,7 +6,7 @@ import type { Plan } from '@/plan/signals'
 import { getStrings } from '@/strings'
 
 import { notificationContent, type NotificationContent } from './content'
-import { ensurePermission, sync } from './schedule'
+import { hasPermission, sync } from './schedule'
 
 function contentsFor(plan: Plan): NotificationContent[] {
   const strings = getStrings()
@@ -35,7 +35,7 @@ export function useNotificationSync(plan: Plan | null): void {
     let cancelled = false
 
     const run = async (): Promise<void> => {
-      const granted = await ensurePermission(getStrings())
+      const granted = await hasPermission(getStrings())
       if (!granted || cancelled) return
       await sync(contentsFor(plan))
     }

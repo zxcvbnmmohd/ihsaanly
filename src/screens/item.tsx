@@ -42,6 +42,8 @@ export interface RemindState {
 }
 
 export interface ItemScreenProps {
+  /** The item's name, for the counter's spoken label. */
+  title: string
   item: ItemDetail | null
   memoriseHref: Href | null
   done: boolean
@@ -78,6 +80,7 @@ function Labelled({ label, children }: LabelledProps): ReactElement {
 }
 
 export function ItemScreen({
+  title,
   item,
   memoriseHref,
   done,
@@ -181,6 +184,7 @@ export function ItemScreen({
 
       {counter && !done ? (
         <Counter
+          label={title}
           count={counter.count}
           target={counter.target}
           onTap={onTapCounter}

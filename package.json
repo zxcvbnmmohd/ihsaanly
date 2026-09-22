@@ -1,5 +1,6 @@
 {
   "scripts": {
+    "postinstall": "git config core.hooksPath .githooks",
     "start": "expo start",
     "ios": "expo run:ios",
     "android": "expo run:android",

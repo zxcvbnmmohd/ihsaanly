@@ -39,7 +39,10 @@ export function Stepper({ label, value, min = 0, onChange, palette }: StepperPro
         borderColor: palette.accent,
         opacity: disabled ? 0.35 : 1,
       }}>
-      <Text className="text-xl" style={{ color: palette.accent, lineHeight: 24 }}>
+      <Text
+        className="text-xl"
+        maxFontSizeMultiplier={1.4}
+        style={{ color: palette.accent, lineHeight: 24 }}>
         {glyph}
       </Text>
     </Pressable>

@@ -83,10 +83,22 @@ Enforced by lint, so a violation fails `bun run check`.
 - **Named exports only.** Files in `src/app/` default-export because Expo Router
   requires it. Nowhere else does.
 
-- **The domain layer stays pure.** `src/content`, `src/day`, `src/hijri/calendar`,
-  `src/prayer/{calculation,times,windows}` and `src/location/{place,cities}` may not
-  import React, React Native, native modules or storage. This is what keeps the
-  decision seam testable without a device, and lint enforces it.
+- **The domain layer stays pure.** It may not import React, React Native, native
+  modules or storage. This is what keeps the decision seam testable without a
+  device, and lint enforces it — `eslint.config.js` holds the list, which is
+  wider than the obvious one:
+
+  ```
+  src/content/**            src/day/**              src/hijri/calendar.ts
+  src/prayer/{calculation,times,windows,qada}.ts    src/location/{place,cities}.ts
+  src/plan/{plan,day-match,day-context,signals,user-state,quiet-hours,
+             notification-preferences,history,presets,suggest}.ts
+  src/data/bundle.ts        src/memorise/reveal.ts  src/i18n/locale.ts
+  src/assert-never.ts
+  ```
+
+  Adding a file to the domain means adding it there too; the rule is the list,
+  not the folder.
 
 - **Exhaustive unions end in `assertNever`.** Every `switch` over a union closes
   with `default: return assertNever(value)`, so adding a trigger kind or a window

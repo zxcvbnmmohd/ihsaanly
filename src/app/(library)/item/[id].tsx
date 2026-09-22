@@ -146,6 +146,7 @@ export default function ItemRoute(): ReactElement {
     <>
       <Stack.Screen options={{ title: title ?? strings.notFound.title }} />
       <ItemScreen
+        title={title ?? strings.notFound.title}
         memoriseHref={item && item.arabic ? `/item/memorise/${item.id}` : null}
         item={
           item

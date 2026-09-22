@@ -156,6 +156,27 @@ export async function hasPermission(strings: Strings): Promise<boolean> {
   }
 }
 
+/**
+ * What is actually queued, for the diagnostic bundle. Identifiers only: the
+ * title and body are the user's content, and "which reminder, for when" is what
+ * explains a reminder that did not arrive.
+ */
+export async function pendingReminders(): Promise<{ id: string; at: string | null }[]> {
+  const api = await notifications()
+  if (!api) return []
+
+  try {
+    const pending = await api.getAllScheduledNotificationsAsync()
+    return pending.map((request) => {
+      const trigger = request.trigger as { value?: unknown } | null
+      const value = typeof trigger?.value === 'number' ? new Date(trigger.value) : null
+      return { id: request.identifier, at: value ? value.toISOString() : null }
+    })
+  } catch {
+    return []
+  }
+}
+
 async function scheduleOne(api: NotificationsApi, content: NotificationContent): Promise<void> {
   await api.scheduleNotificationAsync({
     identifier: content.identifier,

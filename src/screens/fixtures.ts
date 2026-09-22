@@ -349,6 +349,7 @@ export const diagnosticsFixture: DiagnosticsScreenProps = {
     coordinates: { latitude: 51.501, longitude: -0.142 },
     records: 84,
     settings: 9,
+    reminders: { permission: 'granted', pending: 3 },
     hasError: false,
   },
   raw: '{\n  "format": "ihsaanly-diagnostics"\n}',

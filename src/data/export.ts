@@ -5,6 +5,7 @@ import { Platform } from 'react-native'
 import Constants from 'expo-constants'
 
 import { getNotificationPreferences } from '@/notifications/store'
+import { pendingReminders, permissionStatus, type PermissionStatus } from '@/notifications/schedule'
 import { getPlace } from '@/location/store'
 import type { NotificationPreferences } from '@/plan/notification-preferences'
 import { allActions, allPreferences, lastStorageError } from '@/storage/events'
@@ -43,8 +44,13 @@ export interface Diagnostics {
   app: { version: string; platform: string; osVersion: string; device: string }
   locale: string
   timeZone: string
+  /** Offset now, and whether that is the summer one — a whole class of window bugs. */
+  utcOffsetMinutes: number
+  daylightSaving: boolean
   coordinates: { latitude: number; longitude: number } | null
   notifications: NotificationPreferences
+  /** Whether reminders may be delivered at all, and what is queued right now. */
+  reminders: { permission: PermissionStatus; pending: { id: string; at: string | null }[] }
   lastStorageError: string | null
   data: ExportedData
 }
@@ -62,8 +68,20 @@ function approximate(place: { latitude: number; longitude: number }): {
   return { latitude: round(place.latitude), longitude: round(place.longitude) }
 }
 
-export function buildDiagnostics(): Diagnostics {
+/**
+ * True when the current offset is not the smaller of this year's two. A window
+ * that was an hour out is nearly always this, and the timezone name alone does
+ * not say which side of the change the device is on.
+ */
+function daylightSaving(now: Date): boolean {
+  const offsetIn = (month: number): number =>
+    -new Date(now.getFullYear(), month, 1).getTimezoneOffset()
+  return -now.getTimezoneOffset() > Math.min(offsetIn(0), offsetIn(6))
+}
+
+export async function buildDiagnostics(): Promise<Diagnostics> {
   const place = getPlace()
+  const now = new Date()
 
   return {
     format: 'ihsaanly-diagnostics',
@@ -76,8 +94,11 @@ export function buildDiagnostics(): Diagnostics {
     },
     locale: deviceLocaleTags()[0] ?? 'unknown',
     timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    utcOffsetMinutes: -now.getTimezoneOffset(),
+    daylightSaving: daylightSaving(now),
     coordinates: place ? approximate(place) : null,
     notifications: getNotificationPreferences(),
+    reminders: { permission: await permissionStatus(), pending: await pendingReminders() },
     lastStorageError: lastStorageError(),
     data: buildExport(),
   }

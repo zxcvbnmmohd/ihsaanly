@@ -45,7 +45,7 @@ decisions, hardware or people. **Mixed** = AI does the wiring once you supply th
 | P1 Must Have   |   21 |   12 |    33 |
 | P2 Should Have |   25 |   11 |    36 |
 | P3 Could Have  |    8 |    5 |    13 |
-| P4 Future      |    0 |    7 |     7 |
+| P4 Future      |    1 |    6 |     7 |
 
 ---
 
@@ -653,15 +653,20 @@ portrait` and no width cap means edge-to-edge rows on a 12.9" screen, and it add
       worth adding once there is a reason to ship JS without a store release.
 - [ ] **P4 — AI** Voice shortcuts (#20) and CarPlay/Android Auto (#21). Both blocked on
       recitations and, for #21, a platform entitlement. No code exists.
-- [ ] **P4 — AI** Diagnostic bundle completeness per issue #18. **Two of the three done
-      2026-09-22:** the pending-notification list and the permission state are in
-      `buildDiagnostics()` now, and both show in the preview rather than only the raw JSON,
-      because they are what separates "never granted" from "never queued" when a reminder
-      does not arrive. The clock's UTC offset and whether it is the summer one went in at the
-      same time, for the window that is an hour out. **Still missing:** rotating log capture
-      with stack traces — `lastStorageError()` holds one error, which is not a log — and the
-      database file itself, which is a decision about what belongs in a bundle a user is
-      shown first, not an oversight.
+- [x] **P4 — AI** Diagnostic bundle completeness per issue #18. **Done 2026-09-22.** The
+      pending-notification list and the permission state went in first — together they are
+      what separates "never granted" from "never queued" when a reminder does not arrive —
+      along with the clock's UTC offset and whether it is the summer one, for the window
+      that is an hour out. The rotating log followed: `src/storage/log.ts` keeps the last
+      fifty failures with truncated stacks, across launches, and `noteFailure` feeds it, so
+      a bundle explains the failure from an hour ago rather than only the one happening now.
+      The ring itself is pure in `src/storage/failure-entry.ts` and tested there; the store
+      is a capped array in the preferences table rather than a real file, because
+      `writePreference` is a synchronous SQLite write and can be called from inside a catch
+      block, which a file write cannot. The preview shows a count and the latest timestamp,
+      and says nothing at all when there is nothing to say.
+      **What issue #18 still names and this does not carry:** the database file itself. That
+      is a decision about what belongs in a bundle a user is shown first, not an oversight.
 - [ ] **P4 — AI** Widget deep links (tap on Quick duas opens the item) once widgets are
       live.
 
@@ -1005,7 +1010,7 @@ Data collected → why → where it goes → who receives it → optional:
 | 15  | Contextual events and geofencing       | **Done**        | Closed 2026-09-22; geofence accuracy still unverified on device, see #22                              | AI    |
 | 16  | Widgets                                | Partial         | Widgets never read the snapshot; no tap deep link; no Android widget; App Group needs paid membership | Mixed |
 | 17  | History                                | **Done**        | Closed 2026-09-22                                                                                     | AI    |
-| 18  | Export, import, diagnostics            | Partial 4/6     | Preview, permission state and pending list now ship; a rotating log and the database do not           | AI    |
+| 18  | Export, import, diagnostics            | Partial 5/6     | Only the database file itself is not carried, which is a decision rather than a gap                   | Mixed |
 | 19  | Second language and RTL                | Partial         | No `accessibilityLanguage`; Arabic unreviewed                                                         | Mixed |
 | 20  | Voice shortcuts                        | Not started     | Blocked by #14                                                                                        | Mixed |
 | 21  | CarPlay / Android Auto                 | Not started     | Blocked by #14, #20 and an entitlement                                                                | Human |

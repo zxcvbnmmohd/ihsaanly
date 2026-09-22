@@ -21,6 +21,7 @@ const diagnostics: Diagnostics = {
     maxPerDay: 3,
   },
   reminders: { permission: 'granted', pending: [] },
+  failures: [],
   lastStorageError: null,
   data: {
     format: 'ihsaanly-export',

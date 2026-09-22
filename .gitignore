@@ -44,3 +44,4 @@ app-example
 
 # Local Expo modules build their own Gradle output
 modules/**/android/build/
+modules/**/android/.gradle/

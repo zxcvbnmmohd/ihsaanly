@@ -623,8 +623,15 @@ portrait` and no width cap means edge-to-edge rows on a 12.9" screen, and it add
       worth adding once there is a reason to ship JS without a store release.
 - [ ] **P4 — AI** Voice shortcuts (#20) and CarPlay/Android Auto (#21). Both blocked on
       recitations and, for #21, a platform entitlement. No code exists.
-- [ ] **P4 — AI** Diagnostic bundle completeness per issue #18: rotating log capture,
-      pending-notification list and permission states are not in `buildDiagnostics()`.
+- [ ] **P4 — AI** Diagnostic bundle completeness per issue #18. **Two of the three done
+      2026-09-22:** the pending-notification list and the permission state are in
+      `buildDiagnostics()` now, and both show in the preview rather than only the raw JSON,
+      because they are what separates "never granted" from "never queued" when a reminder
+      does not arrive. The clock's UTC offset and whether it is the summer one went in at the
+      same time, for the window that is an hour out. **Still missing:** rotating log capture
+      with stack traces — `lastStorageError()` holds one error, which is not a log — and the
+      database file itself, which is a decision about what belongs in a bundle a user is
+      shown first, not an oversight.
 - [ ] **P4 — AI** Widget deep links (tap on Quick duas opens the item) once widgets are
       live.
 

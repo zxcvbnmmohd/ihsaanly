@@ -96,7 +96,7 @@ export function NotificationsScreen({
   useColorScheme()
 
   return (
-    <Screen className="gap-8 p-4">
+    <Screen palette={palette} className="gap-8 p-4">
       <View className="gap-3">
         <Row
           title={strings.notifications.permission}

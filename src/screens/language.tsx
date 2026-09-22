@@ -19,7 +19,7 @@ export function LanguageScreen({ language, onSelect }: LanguageScreenProps): Rea
   useColorScheme()
 
   return (
-    <Screen className="gap-4 p-4">
+    <Screen palette={palette} className="gap-4 p-4">
       {SUPPORTED_LANGUAGES.map((option) => (
         <ChoiceRow
           key={option}

@@ -6,6 +6,7 @@ import { Row } from '@/components/row'
 import { Screen } from '@/components/screen'
 import { TextField } from '@/components/text-field'
 import type { Place } from '@/location/place'
+import type { LocationProblem } from './onboarding'
 import { useStrings } from '@/strings'
 import { colors } from '@/theme/colors'
 import { usePalette } from '@/theme/store'
@@ -16,9 +17,12 @@ export interface LocationScreenProps {
   query: string
   results: Place[]
   showNoResults: boolean
-  problem: 'declined' | 'unavailable' | null
+  /** True while the device is being asked, so the row can say so rather than sit there. */
+  locating: boolean
+  problem: LocationProblem
   onQueryChange: (query: string) => void
   onUseDevice: () => void
+  onOpenSettings: () => void
   onSelect: (place: Place) => void
 }
 
@@ -28,9 +32,11 @@ export function LocationScreen({
   query,
   results,
   showNoResults,
+  locating,
   problem,
   onQueryChange,
   onUseDevice,
+  onOpenSettings,
   onSelect,
 }: LocationScreenProps): ReactElement {
   const strings = useStrings()
@@ -38,7 +44,7 @@ export function LocationScreen({
   useColorScheme()
 
   return (
-    <Screen className="gap-4 p-4">
+    <Screen palette={palette} className="gap-4 p-4">
       {place ? (
         <View className="gap-2">
           <PlaceMap
@@ -57,12 +63,23 @@ export function LocationScreen({
         {strings.location.explanation}
       </Text>
 
-      <Row title={strings.location.useDevice} detail={deviceLabel} onPress={onUseDevice} />
+      <Row
+        title={locating ? strings.location.locating : strings.location.useDevice}
+        detail={locating ? null : deviceLabel}
+        onPress={locating ? undefined : onUseDevice}
+      />
 
       {problem ? (
-        <Text className="text-sm" style={{ color: colors.secondaryLabel }}>
-          {problem === 'declined' ? strings.location.declined : strings.location.unavailable}
-        </Text>
+        <View className="gap-3">
+          <Text className="text-sm" style={{ color: colors.secondaryLabel }}>
+            {problem === 'declined' ? strings.location.declined : strings.location.unavailable}
+          </Text>
+          {/* Declining is answered in system settings, and hunting for it is the
+              part people give up on. The Reminders screen already offers this. */}
+          {problem === 'declined' ? (
+            <Row title={strings.notifications.openSettings} onPress={onOpenSettings} />
+          ) : null}
+        </View>
       ) : null}
 
       <TextField

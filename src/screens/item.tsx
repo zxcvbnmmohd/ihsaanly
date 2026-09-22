@@ -101,7 +101,7 @@ export function ItemScreen({
   }
 
   return (
-    <Screen className="gap-6 p-4">
+    <Screen palette={palette} className="gap-6 p-4">
       <View className="gap-2">
         <View className="flex-row flex-wrap items-center gap-2">
           <Link href={item.rulingHref} asChild>

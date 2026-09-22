@@ -48,7 +48,7 @@ export function CalculationScreen({ preferences, onChange }: CalculationScreenPr
   useColorScheme()
 
   return (
-    <Screen className="gap-8 p-4">
+    <Screen palette={palette} className="gap-8 p-4">
       <Text className="text-sm" style={{ color: colors.secondaryLabel }}>
         {strings.calculation.explanation}
       </Text>

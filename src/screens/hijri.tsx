@@ -27,7 +27,7 @@ export function HijriScreen({
   useColorScheme()
 
   return (
-    <Screen className="gap-6 p-4">
+    <Screen palette={palette} className="gap-6 p-4">
       <Text className="text-sm" style={{ color: colors.secondaryLabel }}>
         {strings.hijri.explanation}
       </Text>

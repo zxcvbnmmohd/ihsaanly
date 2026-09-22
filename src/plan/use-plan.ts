@@ -1,13 +1,11 @@
 import { useEffect } from 'react'
 
 import { items } from '@/content'
-import { civilDateIn, shiftDays } from '@/day/boundaries'
-import { toHijri } from '@/hijri/calendar'
 import { useHijriOffset } from '@/hijri/store'
 import { usePlace } from '@/location/store'
 import { useCalculationPreferences } from '@/prayer/store'
 import { runRollover, useTodayMarks } from '@/prayer/marks'
-import { prayerTimesAcross } from '@/prayer/times'
+import { prayerTimesAcross, prayerTimesFor } from '@/prayer/times'
 import { useEventSettings } from '@/events/store'
 import { useKnownItems } from '@/memorise/store'
 import { currentHomeTransition } from '@/events/geofence'
@@ -15,10 +13,11 @@ import { useNotificationPreferences } from '@/notifications/store'
 import { useNow } from '@/time/use-now'
 
 import { useCompletedToday } from './completions'
+import { dayContextFor } from './day-context'
 import { useEnabledItems } from './enabled-store'
 import { plan } from './plan'
 import { useUserState } from './user-state-store'
-import type { DayContext, Plan, Signals } from './signals'
+import type { Plan, Signals } from './signals'
 
 const LOOK_AHEAD_DAYS = 7
 
@@ -29,23 +28,6 @@ const LOOK_AHEAD_DAYS = 7
  * weekend away.
  */
 const HORIZON_DAYS = LOOK_AHEAD_DAYS + 1
-
-function dayContextFor(
-  instant: Date,
-  timeZone: string,
-  offsetDays: number,
-  hijriOffset: number,
-): DayContext {
-  const civil = shiftDays(civilDateIn(instant, timeZone), offsetDays)
-  const weekday = new Date(Date.UTC(civil.year, civil.month - 1, civil.day)).getUTCDay()
-
-  return {
-    civil,
-    hijri: toHijri(civil, hijriOffset),
-    hijriCalculated: toHijri(civil, 0),
-    weekday,
-  }
-}
 
 export function useSignals(): Signals | null {
   const place = usePlace()
@@ -66,14 +48,16 @@ export function useSignals(): Signals | null {
 
   if (!place) return null
 
+  const { maghrib } = prayerTimesFor(place, now, preferences)
+
   const signals: Signals = {
     now,
     timeZone: place.timeZone,
     items,
     prayerTimes: prayerTimesAcross(place, now, preferences, HORIZON_DAYS),
-    today: dayContextFor(now, place.timeZone, 0, hijriOffset),
+    today: dayContextFor(now, place.timeZone, 0, hijriOffset, maghrib),
     upcoming: Array.from({ length: LOOK_AHEAD_DAYS }, (_, index) =>
-      dayContextFor(now, place.timeZone, index + 1, hijriOffset),
+      dayContextFor(now, place.timeZone, index + 1, hijriOffset, null),
     ),
     prayedToday,
     completedToday,

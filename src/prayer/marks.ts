@@ -9,6 +9,7 @@ import {
   useMarksOn,
   useQadaCounts,
 } from '@/storage/events'
+import { noteFailure } from '@/storage/events'
 import { readPreference, writePreference } from '@/storage/preferences'
 
 import type { CalculationPreferences } from './calculation'
@@ -138,6 +139,8 @@ export function runRollover(
   try {
     rollover(place, preferences, now, paused)
   } catch (error) {
-    console.warn('rollover failed', error)
+    // Not a console line: on an installed app nobody is reading one. The
+    // diagnostic bundle is where a failure the user cannot see has to surface.
+    noteFailure('rollover', error)
   }
 }

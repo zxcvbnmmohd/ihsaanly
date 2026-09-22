@@ -3,7 +3,7 @@ import { useSyncExternalStore } from 'react'
 import type { ExportedEvent } from '@/data/bundle'
 import type { Prayer } from '@/prayer/qada'
 
-import { database } from './database'
+import { database, lastDatabaseError } from './database'
 
 export type EventKind =
   | 'prayer-performed'
@@ -26,16 +26,25 @@ const listeners = new Set<() => void>()
 let version = 0
 let lastError: string | null = null
 
-/** Kept for the diagnostic bundle in #18. */
+/** Kept for the diagnostic bundle in #18. A failed open outranks a failed query. */
 export function lastStorageError(): string | null {
-  return lastError
+  return lastDatabaseError() ?? lastError
+}
+
+/**
+ * Record a failure where the diagnostic bundle will find it. Exported because
+ * work outside this file fails the same way and a console line reaches nobody
+ * once the app is installed.
+ */
+export function noteFailure(label: string, error: unknown): void {
+  lastError = `${label}: ${error instanceof Error ? error.message : String(error)}`
 }
 
 function attempt<T>(label: string, work: () => T, fallback: T): T {
   try {
     return work()
   } catch (error) {
-    lastError = `${label}: ${error instanceof Error ? error.message : String(error)}`
+    noteFailure(label, error)
     return fallback
   }
 }

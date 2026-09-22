@@ -1,20 +1,25 @@
-import { Link, Stack } from 'expo-router';
-import { Text, View } from 'react-native';
+import type { ReactElement } from 'react'
+import { Link, Stack } from 'expo-router'
+import { Text, useColorScheme, View } from 'react-native'
 
-import { colors } from '@/theme/colors';
+import { useStrings } from '@/strings'
+import { colors } from '@/theme/colors'
 
-export default function NotFound() {
+export default function NotFound(): ReactElement {
+  const strings = useStrings()
+  useColorScheme()
+
   return (
     <>
-      <Stack.Screen options={{ title: 'Not found' }} />
+      <Stack.Screen options={{ title: strings.notFound.title }} />
       <View className="flex-1 items-center justify-center gap-3 p-6">
         <Text className="text-xl font-semibold" style={{ color: colors.label }}>
-          This screen doesn’t exist.
+          {strings.notFound.body}
         </Text>
         <Link href="/" className="text-base" style={{ color: colors.tint }}>
-          Go to home
+          {strings.tabs.today}
         </Link>
       </View>
     </>
-  );
+  )
 }

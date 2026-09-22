@@ -1,20 +1,14 @@
-import { Stack } from 'expo-router/stack';
+import type { ReactElement } from 'react'
+import { Stack } from 'expo-router/stack'
 
-import { colors } from '@/theme/colors';
+import { useStrings } from '@/strings'
+import { useStackScreenOptions } from '@/theme/stack'
 
-export default function HomeLayout() {
+export default function TodayLayout(): ReactElement {
+  const strings = useStrings()
   return (
-    <Stack
-      screenOptions={{
-        headerTransparent: true,
-        headerShadowVisible: false,
-        headerLargeTitleEnabled: true,
-        headerLargeTitleShadowVisible: false,
-        headerLargeStyle: { backgroundColor: 'transparent' },
-        headerTitleStyle: { color: colors.label },
-        headerBackButtonDisplayMode: 'minimal',
-      }}>
-      <Stack.Screen name="index" options={{ title: 'Ihsaanly' }} />
+    <Stack screenOptions={useStackScreenOptions()}>
+      <Stack.Screen name="index" options={{ title: strings.today.title }} />
     </Stack>
-  );
+  )
 }

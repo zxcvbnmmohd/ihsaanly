@@ -1,0 +1,39 @@
+# The same gate as `bun run check`, which AGENTS.md names as the thing to run
+# before calling work done. Nothing here needs EAS or store credentials: it is
+# lint, types, tests and the content validator, so it stays free and fast.
+name: check
+
+on:
+  push:
+    branches: [main, production]
+  pull_request:
+
+concurrency:
+  group: check-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: package.json
+
+      - run: bun install --frozen-lockfile
+
+      - name: Lint
+        run: bun run lint
+
+      - name: Typecheck
+        run: bun run typecheck
+
+      - name: Test
+        run: bun test
+
+      # Warns rather than fails while content is unreviewed, which is deliberate:
+      # see `releaseWarningsFor` in src/content/validate.ts.
+      - name: Validate content
+        run: bun run validate:content

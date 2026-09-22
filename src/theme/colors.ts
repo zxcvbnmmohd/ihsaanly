@@ -79,6 +79,11 @@ export interface Palette {
   knob: string
   /** Android cards: a warm veil over the wash instead of Material's grey surface-container. */
   surface: string
+  /**
+   * The Material tab indicator and press ripple. A tint rather than the accent
+   * itself: a solid accent fills the pill and swallows the icon inside it.
+   */
+  indicator: string
 }
 
 export const palettes: Record<'light' | 'dark', Palette> = {
@@ -88,6 +93,7 @@ export const palettes: Record<'light' | 'dark', Palette> = {
     onAccent: '#fff6f0',
     knob: '#fffaf6',
     surface: 'rgba(255, 250, 246, 0.78)',
+    indicator: 'rgba(169, 74, 50, 0.16)',
   },
   dark: {
     wash: ['#1b1411', '#3a241d'],
@@ -95,6 +101,7 @@ export const palettes: Record<'light' | 'dark', Palette> = {
     onAccent: '#1d120d',
     knob: '#fffaf6',
     surface: 'rgba(255, 246, 240, 0.08)',
+    indicator: 'rgba(226, 140, 111, 0.22)',
   },
 }
 

@@ -1,4 +1,5 @@
-import { Appearance, Platform, useColorScheme } from 'react-native'
+import { useSyncExternalStore } from 'react'
+import { Appearance, Platform } from 'react-native'
 import { z } from 'zod'
 
 import { createPreferenceStore } from '@/storage/preference-store'
@@ -40,15 +41,46 @@ export function setThemePreference(preference: ThemePreference): void {
 }
 
 /**
- * The scheme the app should render in. On Android the native Appearance
- * module reports the system scheme again right after an override, so the
- * preference is the source of truth and the OS is consulted only for System.
+ * Hoisted, never inline: `useSyncExternalStore` resubscribes whenever this
+ * identity changes.
+ */
+function subscribeToScheme(listener: () => void): () => void {
+  const subscription = Appearance.addChangeListener(listener)
+  return (): void => subscription.remove()
+}
+
+/**
+ * The device's own setting, asked of the system rather than of React Native's
+ * cache.
+ *
+ * `Appearance.setColorScheme('auto')` caches `getColorScheme()` the instant it
+ * is called, and on Android that reads a context `AppCompatDelegate` has not
+ * recreated yet — so the cache keeps the scheme being left behind. No change
+ * event follows, because as far as the OS is concerned nothing changed; only
+ * this app's override did. That is why Dark to System left the app dark under a
+ * light system. The native module reads the system configuration, which an
+ * override never touches, so it is right at exactly the moment the cache is not.
+ */
+function systemScheme(): 'light' | 'dark' {
+  if (Platform.OS === 'android' && ThemeOverride) {
+    return ThemeOverride.getSystemNightMode() === 'dark' ? 'dark' : 'light'
+  }
+  return Appearance.getColorScheme() === 'dark' ? 'dark' : 'light'
+}
+
+/**
+ * The scheme the app should render in. An explicit preference is its own
+ * answer; System asks the device.
+ *
+ * Through `useSyncExternalStore` rather than `useColorScheme` because this
+ * reads mutable state from outside React, which React Compiler would otherwise
+ * be free to memoise. The snapshot is a string, so referential stability is
+ * free.
  */
 export function useEffectiveColorScheme(): 'light' | 'dark' {
   const preference = useThemePreference()
-  const system = useColorScheme()
-  if (preference !== 'system') return preference
-  return system === 'dark' ? 'dark' : 'light'
+  const system = useSyncExternalStore(subscribeToScheme, systemScheme, systemScheme)
+  return preference === 'system' ? system : preference
 }
 
 /** The brand palette for the scheme the app is actually rendering in. */

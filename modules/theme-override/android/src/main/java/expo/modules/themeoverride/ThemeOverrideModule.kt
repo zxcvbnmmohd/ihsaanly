@@ -9,6 +9,8 @@ class ThemeOverrideModule : Module() {
   override fun definition() = ModuleDefinition {
     Name("ThemeOverride")
 
+    Function("getSystemNightMode") { NightMode.systemNightMode() }
+
     Function("setNightMode") { mode: String ->
       val context = appContext.reactContext ?: return@Function
       NightMode.write(context, mode)

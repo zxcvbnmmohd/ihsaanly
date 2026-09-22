@@ -54,6 +54,7 @@ function makeItem(id: string, trigger: Trigger, overrides: Partial<Item> = {}): 
     defaultOn: true,
     note: null,
     why: null,
+    reminder: null,
     how: [],
     reviewed: true,
     audio: null,
@@ -167,9 +168,17 @@ describe('items that come before a prayer', () => {
   const beforeFajr = makeItem('before-fajr', { kind: 'prayer', prayer: 'fajr', when: 'before' })
   const beforeAny = makeItem('siwak', { kind: 'prayer', prayer: 'any', when: 'before' })
 
-  it('appear in the window that leads into that prayer', () => {
-    const result = plan(makeSignals([beforeFajr], { now: startOf('isha') }))
+  it("appear in that prayer's own window", () => {
+    const result = plan(makeSignals([beforeFajr], { now: startOf('fajr') }))
     expect(result.today.rightNow?.reason).toBe('before-prayer')
+  })
+
+  it('stay out of the window that only leads into it', () => {
+    // The rawatib are prayed once the time has entered. Isha's window runs for
+    // hours before Fajr, and this used to put them under Right now throughout.
+    const result = plan(makeSignals([beforeFajr], { now: startOf('isha') }))
+    expect(result.today.rightNow).toBeNull()
+    expect(result.today.next?.before).toEqual(['before-fajr'])
   })
 
   it('stay hidden at every other hour', () => {
@@ -179,7 +188,7 @@ describe('items that come before a prayer', () => {
 
   it('disappear once that prayer is marked', () => {
     const result = plan(
-      makeSignals([beforeFajr], { now: startOf('isha'), prayedToday: { fajr: anchor } }),
+      makeSignals([beforeFajr], { now: startOf('fajr'), prayedToday: { fajr: anchor } }),
     )
     expect(result.today.rightNow).toBeNull()
   })

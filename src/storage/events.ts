@@ -4,6 +4,7 @@ import type { ExportedEvent } from '@/data/bundle'
 import type { Prayer } from '@/prayer/qada'
 
 import { database, lastDatabaseError } from './database'
+import { appendFailure } from './log'
 
 export type EventKind =
   | 'prayer-performed'
@@ -38,6 +39,7 @@ export function lastStorageError(): string | null {
  */
 export function noteFailure(label: string, error: unknown): void {
   lastError = `${label}: ${error instanceof Error ? error.message : String(error)}`
+  appendFailure(label, error)
 }
 
 function attempt<T>(label: string, work: () => T, fallback: T): T {
@@ -124,7 +126,7 @@ function readToggles(logDay: string, on: EventKind, off: EventKind): Partial<Rec
 }
 
 function readMarks(logDay: string): Partial<Record<Prayer, Date>> {
-  return readToggles(logDay, 'prayer-performed', 'prayer-unmarked') as Partial<Record<Prayer, Date>>
+  return readToggles(logDay, 'prayer-performed', 'prayer-unmarked')
 }
 
 interface Cached<T> {

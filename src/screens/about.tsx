@@ -15,6 +15,8 @@ export interface AboutScreenProps {
   reviewedBy: string | null
   /** Null where there is nothing to offer yet, which is iOS until the gift exists. */
   donate: { destination: string; onPress: () => void } | null
+  /** The licences worth reading in full, rather than only named in a paragraph. */
+  licences: { label: string; destination: string; onPress: () => void }[]
 }
 
 interface BlockProps {
@@ -44,6 +46,7 @@ export function AboutScreen({
   itemCount,
   reviewedBy,
   donate,
+  licences,
 }: AboutScreenProps): ReactElement {
   const strings = useStrings()
   const palette = usePalette()
@@ -82,6 +85,14 @@ export function AboutScreen({
         <Text className="text-base leading-relaxed" style={{ color: colors.label }}>
           {strings.about.licencesBody}
         </Text>
+        {licences.map((licence) => (
+          <Row
+            key={licence.destination}
+            title={licence.label}
+            detail={licence.destination}
+            onPress={licence.onPress}
+          />
+        ))}
       </Block>
     </Screen>
   )

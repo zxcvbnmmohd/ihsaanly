@@ -65,6 +65,11 @@ function releaseWarningsFor(document: ContentDocument): string[] {
     warnings.push(`${unreviewed.length} items await review: ${unreviewed.join(', ')}`)
   }
 
+  const noReminder = document.items.filter((item) => item.reminder === null).map((item) => item.id)
+  if (noReminder.length > 0) {
+    warnings.push(`${noReminder.length} items have no reminder sentence: ${noReminder.join(', ')}`)
+  }
+
   if (document.items.some((item) => item.audio === null)) {
     warnings.push('some items have no recitation')
   }

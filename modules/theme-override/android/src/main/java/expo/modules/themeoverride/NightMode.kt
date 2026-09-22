@@ -1,6 +1,8 @@
 package expo.modules.themeoverride
 
 import android.content.Context
+import android.content.res.Configuration
+import android.content.res.Resources
 import androidx.appcompat.app.AppCompatDelegate
 
 /**
@@ -17,6 +19,18 @@ object NightMode {
 
   fun write(context: Context, mode: String) {
     context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().putString(KEY, mode).apply()
+  }
+
+  /**
+   * The device's own night setting, read from the system Resources rather than
+   * the app's. AppCompatDelegate's override applies to this process only and
+   * never touches the system configuration, so this stays correct at the exact
+   * moment React Native's cached scheme does not: immediately after an override,
+   * before the activity has been recreated.
+   */
+  fun systemNightMode(): String {
+    val night = Resources.getSystem().configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+    return if (night == Configuration.UI_MODE_NIGHT_YES) "dark" else "light"
   }
 
   fun apply(mode: String) {

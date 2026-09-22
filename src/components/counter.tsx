@@ -56,9 +56,15 @@ export function Counter({
           {complete ? `${target}` : `/ ${target}`}
         </Text>
       </Pressable>
-      {count > 0 ? (
+      {/* Kept mounted and merely invisible: unmounting it moved the Done
+          button underneath on the very first tap, mid-interaction. */}
+      <View
+        pointerEvents={count > 0 ? 'auto' : 'none'}
+        accessibilityElementsHidden={count === 0}
+        importantForAccessibility={count > 0 ? 'auto' : 'no-hide-descendants'}
+        style={{ opacity: count > 0 ? 1 : 0 }}>
         <Button title={resetLabel} onPress={onReset} variant="secondary" color={palette.accent} />
-      ) : null}
+      </View>
     </View>
   )
 }

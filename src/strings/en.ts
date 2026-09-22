@@ -9,8 +9,13 @@ export const en = {
   },
   today: {
     title: 'Today',
+    nothingElse: 'Nothing else is asked of you today.',
     empty: 'Nothing here yet.',
-    needsLocation: 'Set your location so the app knows which part of the day you are in.',
+    needsLocationTitle: 'Where are you?',
+    needsLocation:
+      'Prayer windows, the Hijri date and everything the day asks of you follow from a rough location. It is worked out on this phone and never sent anywhere.',
+    chooseCity: 'Choose a city instead',
+    chooseCityDetail: 'No permission needed. Everything still works.',
   },
   plan: {
     rightNow: 'Right now',
@@ -102,6 +107,8 @@ export const en = {
       'Approximate. The phone notices a hundred metres or so from the door and up to a minute late, so treat it as a nudge rather than the moment.',
     setHome: 'Set home to my current place',
     homeUnset: 'Not set',
+    homeNeeded: 'Nothing is being watched yet \u2014 set home below.',
+    noPlaceYet: 'Set where you are first',
     manual: 'Tell the app instead',
     manualDetail: 'Raise a state yourself when no sensor can find it.',
   },
@@ -151,6 +158,23 @@ export const en = {
     deleteConfirm: 'Delete',
     cancel: 'Cancel',
   },
+  diagnostics: {
+    title: 'Diagnostic report',
+    explanation:
+      'This is what the report contains. Nothing is sent until you choose to send it, and you pick where it goes.',
+    version: 'App version',
+    device: 'Device',
+    coordinates: 'Approximate coordinates',
+    noCoordinates: 'None stored',
+    records: 'Practice records',
+    settings: 'Settings stored',
+    error: 'Recent error',
+    errorIncluded: 'One is included',
+    showRaw: 'Show the whole report',
+    hideRaw: 'Hide the whole report',
+    send: 'Send it',
+    cancel: 'Not now',
+  },
   about: {
     title: 'About',
     version: 'Version',
@@ -159,9 +183,12 @@ export const en = {
       `${count} items, drafted and awaiting review by a named scholar.`,
     contentReviewedBy: (name: string, count: number): string =>
       `${count} items, reviewed by ${name}.`,
+    donate: 'Donate',
+    donateBody:
+      'Optional, and it unlocks nothing. Every part of the app is free and stays free. Opens in your browser.',
     privacyTitle: 'Nothing leaves this phone',
     privacyBody:
-      'Ihsaanly has no account, no server and no analytics. Your location is used on the device to compute prayer times and is stored only here. Your practice record is stored only here. Nothing is sent anywhere unless you export it or share it yourself.',
+      'Ihsaanly has no account, no server and no analytics. Your location is used on the device to compute prayer times and is stored only here. Your practice record is stored only here. Nothing is sent anywhere unless you export it or share it yourself. Donate is the one link out of the app: it opens your browser, and that page is not part of Ihsaanly.',
     licences: 'Built with',
     licencesBody:
       'Expo and React Native, the adhan library for prayer times, Umm al-Qura calendar tables, city data from city-timezones, and Natural Earth for the map. Each is used under its own open licence, listed in the source repository.',
@@ -180,9 +207,13 @@ export const en = {
   },
   language: {
     title: 'Language',
-    restart: 'Arabic reads right to left. Switching to or from it restarts the app.',
+    restart:
+      'Arabic reads right to left. Switching to or from it restarts the app, or asks you to reopen it.',
     incomplete:
       'A language appears here only once its content is complete and reviewed. Nothing is machine-translated.',
+    reopenTitle: 'Reopen Ihsaanly',
+    reopenBody:
+      'Arabic reads right to left. Close Ihsaanly and open it again for the change to finish.',
     names: {
       en: 'English',
       ar: 'العربية',
@@ -203,6 +234,7 @@ export const en = {
   },
   tracking: {
     title: 'Tracking',
+    active: 'Active',
     travelling: 'Travelling',
     travellingDetail:
       'Shortening is offered, the regular sunnah prayers step aside, and fasting is offered rather than expected.',
@@ -341,6 +373,7 @@ export const en = {
   },
   more: {
     title: 'More',
+    search: 'Search settings',
     prayer: 'Prayer',
     app: 'App',
     practice: 'Your practice',

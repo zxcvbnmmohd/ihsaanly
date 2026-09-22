@@ -21,6 +21,8 @@ export default function EventsRoute(): ReactElement {
     if (settings.home) void startHomeMonitoring(settings.home)
   }
 
+  // The screen sends the user to Location when there is no place, so this
+  // guard is the type narrowing rather than a silent no-op.
   const setHome = (): void => {
     if (!place) return
     const home = { latitude: place.latitude, longitude: place.longitude, label: place.label }
@@ -31,6 +33,8 @@ export default function EventsRoute(): ReactElement {
   return (
     <EventsScreen
       settings={settings}
+      canSetHome={place !== null}
+      locationHref="/location"
       onToggleDetectHome={toggleDetectHome}
       onSetHome={setHome}
       onToggleManual={(event) =>

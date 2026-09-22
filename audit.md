@@ -356,7 +356,7 @@ decisions, hardware or people. **Mixed** = AI does the wiring once you supply th
       Material. `backgroundColor` is passed on Android only — iOS 26 draws its own tab bar
       and older iOS would lose its blur. Verified on the emulator in light and dark.
       Still the platform's own bars, shapes and behaviour; only the paint changed.
-- [ ] **P2 — Mixed** iOS declares a `fetch` background mode that nothing uses. It is not in
+- [ ] **P2 — Mixed, do it during the device pass** iOS declares a `fetch` background mode that nothing uses. It is not in
       `app.json`: `expo-task-manager`'s config plugin appends it unconditionally, with no
       option to opt out (`node_modules/expo-task-manager/plugin/src/withTaskManager.ts`).
       By the same standard that removed `"audio"`, it should go. Region monitoring wakes the
@@ -479,7 +479,7 @@ decisions, hardware or people. **Mixed** = AI does the wiring once you supply th
       for npm: `AGENTS.md` pins `nativewind`, `react-native-css` and `lightningcss` exactly
       and requires `npx expo install --fix` for Expo packages.
       **Done 2026-09-22:** monthly, `github-actions` only, with the reason npm is excluded in the file itself.
-- [ ] **P2 — AI** `CHANGELOG.md` — add a `## [1.0.0]` heading when the first store build
+- [ ] **P2 — AI, waits for your first build** `CHANGELOG.md` — add a `## [1.0.0]` heading when the first store build
       is cut, and record `app.json` version/build alongside.
 - [x] **P2 — AI** GitHub issues #2–#9, #11, #12, #15, #17 are fully implemented (see the
       issue table below) but still open. Close them with a comment pointing at the commit.
@@ -650,7 +650,7 @@ portrait` and no width cap means edge-to-edge rows on a 12.9" screen, and it add
       `src/memorise/reveal.ts`, `src/i18n/locale.ts`. Update the doc to match the lint.
       **Done 2026-09-22:** the doc lists what lint lists, and says the rule is the list rather than the folder.
       The stale `preview.2` line was corrected while there.
-- [ ] **P3 — AI** A theme change on Android recreates the activity and lands on Today,
+- [ ] **P3 — AI, needs native logging** A theme change on Android recreates the activity and lands on Today,
       losing the Appearance screen the user was on. **Reproduced precisely 2026-09-22, and
       one fix tried and reverted.**
       It only happens when night mode actually flips: System to Light on an already-light
@@ -685,12 +685,12 @@ portrait` and no width cap means edge-to-edge rows on a 12.9" screen, and it add
 
 ## AI / LLM Can Do
 
-- [ ] **P4 — AI** Android home-screen widget (Glance/AppWidgetProvider). `src/widgets/snapshot.ts`
+- [ ] **P4 — AI, moot while widgets are cut** Android home-screen widget (Glance/AppWidgetProvider). `src/widgets/snapshot.ts`
       is a deliberate no-op today; Android users get no widget. Issue #16 expected parity.
-- [ ] **P4 — AI** EAS Update (`runtimeVersion` policy + `updates.url`). Deliberately
+- [ ] **P4 — AI, no reason to yet** EAS Update (`runtimeVersion` policy + `updates.url`). Deliberately
       absent today (`expo.modules.updates.ENABLED=false` in the generated manifest). Only
       worth adding once there is a reason to ship JS without a store release.
-- [ ] **P4 — AI** Voice shortcuts (#20) and CarPlay/Android Auto (#21). Both blocked on
+- [ ] **P4 — AI, blocked on recitations** Voice shortcuts (#20) and CarPlay/Android Auto (#21). Both blocked on
       recitations and, for #21, a platform entitlement. No code exists.
 - [x] **P4 — AI** Diagnostic bundle completeness per issue #18. **Done 2026-09-22.** The
       pending-notification list and the permission state went in first — together they are
@@ -706,7 +706,7 @@ portrait` and no width cap means edge-to-edge rows on a 12.9" screen, and it add
       and says nothing at all when there is nothing to say.
       **What issue #18 still names and this does not carry:** the database file itself. That
       is a decision about what belongs in a bundle a user is shown first, not an oversight.
-- [ ] **P4 — AI** Widget deep links (tap on Quick duas opens the item) once widgets are
+- [ ] **P4 — AI, moot while widgets are cut** Widget deep links (tap on Quick duas opens the item) once widgets are
       live.
 
 ## Human Must Do
@@ -1185,7 +1185,7 @@ Human/legal verification required for each:
 - [ ] **P1 — Mixed** iOS donation. Deferred until the Apple Developer account exists,
       because it is a purchase product rather than a link. Apple's reviewers have refused
       external donation links in documented cases, which is why the two platforms differ.
-- [ ] **P2 — AI** Re-read Apple's guidelines immediately before submitting. The external
+- [ ] **P2 — AI, do it the day you submit** Re-read Apple's guidelines immediately before submitting. The external
       link position is under active litigation and could move.
 
 ---

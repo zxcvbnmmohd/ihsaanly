@@ -43,7 +43,7 @@ decisions, hardware or people. **Mixed** = AI does the wiring once you supply th
 | -------------- | ---: | ---: | ----: |
 | P0 Blockers    |    8 |    4 |    12 |
 | P1 Must Have   |   21 |   12 |    33 |
-| P2 Should Have |   24 |   12 |    36 |
+| P2 Should Have |   25 |   11 |    36 |
 | P3 Could Have  |    8 |    5 |    13 |
 | P4 Future      |    0 |    7 |     7 |
 
@@ -425,9 +425,25 @@ decisions, hardware or people. **Mixed** = AI does the wiring once you supply th
       paragraphs with no link. Once the policy is hosted, link to it, and link Amiri's OFL
       (`assets/fonts/OFL-Amiri.txt`) and Natural Earth attribution. No `Linking.openURL`
       exists in the app today, so this is new surface: allow-list the two URLs.
-- [ ] **P2 — AI** `eslint.config.js` uses the non-type-aware `tseslint` config, so
+- [x] **P2 — AI** `eslint.config.js` uses the non-type-aware `tseslint` config, so
       `@typescript-eslint/no-floating-promises` is not on. The one floating promise found
       (`data.tsx:29`) would have been caught. Enable the type-checked config for `src/`.
+      **Done 2026-09-22, and it earned its keep immediately.** Type-aware rules are on for
+      `src/**` only, so `eslint .` does not pay to type-check files `tsconfig` does not
+      include; `bun run lint` went from about two seconds to six. Four rules:
+      `no-floating-promises`, `await-thenable`, `no-misused-promises` (with
+      `checksVoidReturn: false`, since a void-returning prop given an async handler is the
+      ordinary React shape) and `no-unnecessary-type-assertion`.
+      It found three real defects on the first run, all of them silent failures:
+      `expo-file-system`'s `File.write()` returns a promise, and neither caller awaited it —
+      the share sheet could open on a file that was still being written, and the widget
+      snapshot's write could reject past a `try/catch` that only ever guarded the
+      synchronous part. `AccessibilityInfo.isReduceTransparencyEnabled()` had no rejection
+      handler. All three fixed; `writeSnapshot` returns its promise now.
+      `require-await` is deliberately **not** enabled: `TaskManagerTaskExecutor` and
+      expo-notifications' `handleNotification` both require a Promise-returning function
+      with nothing to await, so the rule fires on correct code and the fix it asks for does
+      not typecheck. The reason is in `eslint.config.js` so it is not re-litigated.
 - [x] **P2 — AI** `bun audit` reports two moderate transitive advisories:
       `decode-uri-component@0.2.2` via `expo-router > query-string` (DoS on malformed
       percent-encoding; only local deep links reach it) and `uuid@7.0.3` via

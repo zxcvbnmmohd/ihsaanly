@@ -111,7 +111,9 @@ export async function buildDiagnostics(): Promise<Diagnostics> {
  */
 async function share(name: string, contents: unknown): Promise<boolean> {
   const file = new File(Paths.cache, name)
-  file.write(JSON.stringify(contents, null, 2))
+  // `write` is a promise. Not awaiting it handed the share sheet a file that
+  // might still be empty.
+  await file.write(JSON.stringify(contents, null, 2))
 
   try {
     if (!(await Sharing.isAvailableAsync())) return false

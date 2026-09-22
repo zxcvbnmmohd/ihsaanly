@@ -20,12 +20,14 @@ function entryFor(id: string): WidgetEntry | null {
  * Widgets run in a separate process and can only read the shared container, so
  * they read this rather than opening the database.
  */
-export function writeSnapshot(plan: Plan, quickDuaIds: string[]): void {
+export function writeSnapshot(plan: Plan, quickDuaIds: string[]): Promise<void> {
   const snapshot: WidgetSnapshot = {
     writtenAt: Date.now(),
     rightNow: plan.today.rightNow ? entryFor(plan.today.rightNow.itemId) : null,
     quickDuas: quickDuaIds.flatMap((id) => entryFor(id) ?? []),
   }
 
-  new File(widgetsDirectory, SNAPSHOT).write(JSON.stringify(snapshot))
+  // Returned rather than dropped: `write` is a promise, and the caller's
+  // try/catch never saw a rejection from it.
+  return new File(widgetsDirectory, SNAPSHOT).write(JSON.stringify(snapshot))
 }

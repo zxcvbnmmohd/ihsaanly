@@ -124,7 +124,7 @@ function readToggles(logDay: string, on: EventKind, off: EventKind): Partial<Rec
 }
 
 function readMarks(logDay: string): Partial<Record<Prayer, Date>> {
-  return readToggles(logDay, 'prayer-performed', 'prayer-unmarked') as Partial<Record<Prayer, Date>>
+  return readToggles(logDay, 'prayer-performed', 'prayer-unmarked')
 }
 
 interface Cached<T> {

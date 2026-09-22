@@ -52,6 +52,7 @@ export function EventsScreen({
           onValueChange={onToggleDetectHome}
           accent={palette.accent}
           knob={palette.knob}
+          track={palette.wash[1]}
         />
         {watchingNothing ? (
           <Text className="px-1 text-sm" style={{ color: colors.secondaryLabel }}>
@@ -88,6 +89,7 @@ export function EventsScreen({
             onValueChange={() => onToggleManual(event)}
             accent={palette.accent}
             knob={palette.knob}
+            track={palette.wash[1]}
           />
         ))}
       </View>

@@ -43,7 +43,7 @@ decisions, hardware or people. **Mixed** = AI does the wiring once you supply th
 | -------------- | ---: | ---: | ----: |
 | P0 Blockers    |    8 |    4 |    12 |
 | P1 Must Have   |   21 |   12 |    33 |
-| P2 Should Have |   23 |   12 |    35 |
+| P2 Should Have |   24 |   12 |    36 |
 | P3 Could Have  |    8 |    5 |    13 |
 | P4 Future      |    0 |    7 |     7 |
 
@@ -338,6 +338,18 @@ decisions, hardware or people. **Mixed** = AI does the wiring once you supply th
 
 ## AI / LLM Can Do
 
+- [x] **P2 — AI** Android chrome was Material grey against a warm app (your side-by-side,
+      2026-09-22). The top app bar, the tab bar, the tab indicator, the press ripple and
+      every off-state switch came from Material 3's dynamic palette, which on this device is
+      derived from a lavender wallpaper — so the app's own chrome was a different colour
+      from the app. **Done:** the header and tab bar take `palette.wash[0]`, the top of the
+      gradient, so bar and screen read as one surface; the indicator and ripple take a new
+      `palette.indicator`, a 16% tint of the accent rather than the accent itself, because
+      filling the Material pill solid swallows the icon inside it; and `SwitchRow` now
+      passes both knob and off-track (`palette.wash[1]`) rather than leaving either to
+      Material. `backgroundColor` is passed on Android only — iOS 26 draws its own tab bar
+      and older iOS would lose its blur. Verified on the emulator in light and dark.
+      Still the platform's own bars, shapes and behaviour; only the paint changed.
 - [ ] **P2 — Mixed** iOS declares a `fetch` background mode that nothing uses. It is not in
       `app.json`: `expo-task-manager`'s config plugin appends it unconditionally, with no
       option to opt out (`node_modules/expo-task-manager/plugin/src/withTaskManager.ts`).

@@ -218,6 +218,7 @@ export function ItemScreen({
             onValueChange={onToggleOnToday}
             accent={palette.accent}
             knob={palette.knob}
+            track={palette.wash[1]}
           />
           {remind ? (
             <SwitchRow
@@ -227,6 +228,7 @@ export function ItemScreen({
               onValueChange={onToggleRemind}
               accent={palette.accent}
               knob={palette.knob}
+              track={palette.wash[1]}
             />
           ) : null}
         </View>

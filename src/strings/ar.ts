@@ -103,7 +103,7 @@ export const ar: Strings = {
       window: 'الآن، حتى ينتهي الوقت.',
       windowUntil: (closes: string): string => `مفتوح حتى ${closes}.`,
       tomorrow: 'غدًا.',
-      prayerWindow: 'دخل الوقت.',
+      prayerWindow: 'دخل الوقت. تبقى النافذة مفتوحة حتى الصلاة التالية.',
     },
   },
   event: {

@@ -20,7 +20,13 @@ export interface NotificationContent {
 
 /**
  * Words for one scheduled entry. Nothing here ever says the user failed at
- * something: a reminder names what is open and roughly for how long.
+ * something: a reminder names what is open, and where the item has one, teaches
+ * rather than announces.
+ *
+ * The item's own `reminder` wins over the generic status line. `resolveText`
+ * returns null for a language the content does not carry, so an Arabic reader
+ * gets the interface sentence rather than an English one — which is why the
+ * fallback stays rather than being replaced.
  */
 export function notificationContent(
   entry: ScheduledNotification,
@@ -37,11 +43,12 @@ export function notificationContent(
         identifier: identifierFor(entry),
         title: resolveText(item.title) ?? item.id,
         body:
-          reason === 'upcoming'
+          resolveText(item.reminder) ??
+          (reason === 'upcoming'
             ? strings.notifications.body.tomorrow
             : entry.window
               ? strings.notifications.body.windowUntil(strings.prayer[entry.window.closes])
-              : strings.notifications.body.window,
+              : strings.notifications.body.window),
         at: entry.at,
         channelId: 'reminders',
         categoryIdentifier: REMINDER_CATEGORY,

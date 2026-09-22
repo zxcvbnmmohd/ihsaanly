@@ -22,6 +22,7 @@ const item: Item = {
   defaultOn: true,
   note: null,
   why: null,
+  reminder: null,
   how: [],
   reviewed: true,
   audio: null,
@@ -29,6 +30,45 @@ const item: Item = {
 }
 
 describe('notification words', () => {
+  it("prefers the item's own sentence over the status line", () => {
+    const teaching: Item = {
+      ...item,
+      reminder: { en: 'The evening remembrance, from Asr until the light goes.' },
+    }
+    const content = notificationContent(
+      {
+        kind: 'item',
+        itemId: 'evening-adhkar',
+        at,
+        reason: 'current-window',
+        window: { closes: 'maghrib', endsAt },
+      },
+      [teaching],
+      en,
+    )
+
+    expect(content?.body).toBe('The evening remembrance, from Asr until the light goes.')
+  })
+
+  it('falls back to the status line for a language the content lacks', () => {
+    // resolveText returns null rather than English, so an Arabic reader gets
+    // interface copy instead of a sentence they cannot read.
+    const englishOnly: Item = { ...item, reminder: null }
+    const content = notificationContent(
+      {
+        kind: 'item',
+        itemId: 'evening-adhkar',
+        at,
+        reason: 'current-window',
+        window: { closes: 'maghrib', endsAt },
+      },
+      [englishOnly],
+      en,
+    )
+
+    expect(content?.body).toBe(en.notifications.body.windowUntil(en.prayer.maghrib))
+  })
+
   it('says until which prayer a window is open', () => {
     const content = notificationContent(
       {

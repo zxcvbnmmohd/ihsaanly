@@ -21,11 +21,12 @@ decisions, hardware or people. **Mixed** = AI does the wiring once you supply th
   search and filters; item detail with Done/counter/share/memorise; prayer marking and
   qada; Hijri date with offset; local reminders with shade actions; travel/pause; manual
   and geofenced events; history; export/import/diagnostics; About; Delete my data;
-  English + Arabic UI with RTL; iOS widgets (placeholder, see P1).
-- **Current state:** `bun run check` is fully green: lint clean, typecheck clean, 180
-  tests pass, content validates, `expo-doctor` 20/20. On Expo SDK 58 preview.4, React
-  Native 0.88.0-rc.1, React 19.3.0. Both platforms build and run: Android on an emulator,
-  iOS on the simulator.
+  English UI throughout with an Arabic draft and RTL. iOS widgets are **cut from v1**
+  (2026-09-22): they never read their own snapshot, and wiring them needs an App Group.
+- **Current state (2026-09-22):** `bun run check` fully green — lint, typecheck, 186
+  tests, content validation and `expo-doctor` 20/20. On Expo SDK 58 preview.5, React
+  Native 0.88.0-rc.1, React 19.3.0. Both platforms rebuilt from a clean prebuild and
+  running: Android on an emulator, iOS on the simulator.
 - **Overall release status:** **Not submittable yet, but the code side is close.** The
   icon, splash, adaptive and notification icons, `eas.json`, the diagnostics preview, the
   donation row and the rewritten legal documents are all in. What blocks submission is now
@@ -315,10 +316,31 @@ decisions, hardware or people. **Mixed** = AI does the wiring once you supply th
 
 ## Human Must Do
 
-- [ ] **P1 — Human** Arabic UI review. `src/strings/ar.ts` and the `ar` fields in
-      `content/items.json` and `content/glossary.json` are a one-pass draft, unreviewed by a
-      qualified speaker. `AGENTS.md` calls this a release condition. Either get the review
-      or ship English-only for v1 (AI can hide Arabic from the language picker).
+- [ ] **P1 — Human** Arabic: less written than "needs review" suggests. **Measured
+      2026-09-22**, and this changes the decision, so the numbers are here rather than an
+      adjective:
+
+      | Field | Arabic |
+      | --- | --- |
+      | item titles | 32 / 32 |
+      | glossary definitions | 15 / 15 |
+      | `why` | **0 / 32** |
+      | `how` steps | **0 / 68** |
+      | `reminder` | **0 / 32** |
+      | `note` | **0 / 3** |
+
+      `translation` and `transliteration` are English-only by design — an Arabic reader
+      needs neither for Arabic text. The other four are the teaching layer, and they do not
+      exist in Arabic at all: roughly 135 strings unwritten, not merely unchecked. So an
+      Arabic reader today gets an Arabic interface, Arabic titles and an Arabic glossary,
+      and every explanation silently omitted, because `resolveText` returns null rather than
+      falling back to English.
+      `src/strings/ar.ts` is a different matter: it is complete, a one-pass draft, and needs
+      a qualified speaker. `AGENTS.md` calls that a release condition.
+      So the choice is not "review the Arabic". It is: commission ~135 strings **and** a
+      review, or ship English-only for v1 and hide Arabic from the picker, which is a small
+      AI change once you decide.
+
 - [ ] **P1 — Human** App Store privacy labels. Per `MARKETING.md` and the code: "Data Not
       Collected" for everything automatic, plus disclosure that a user-initiated diagnostic
       report contains approximate location and religious-practice data. Human/legal
@@ -756,6 +778,16 @@ exercised. Screenshots are not committed.
 
 **Not tested on the emulator**: device GPS, geofence transitions, share sheet targets,
 import from a real file, notification actions with the app killed.
+
+## A caveat on every side-by-side before 2026-09-22
+
+The two devices did not hold the same data. iOS had an `enabledItems` row seeded by hand,
+because its simulator cannot be tapped through onboarding; Android had none and fell back
+to the 22 `defaultOn` items. So iOS showed 5 items on Today where Android showed 22, and at
+least one comparison ("After Isha appears on Android and not iOS") was that, not a bug.
+Corrected on 2026-09-22 by clearing the seeded row, and Android has since been taken
+through onboarding properly. Screenshots taken before that date are still worth reading for
+layout and colour, and not for what appears in a list.
 
 ## iOS simulator, 2026-09-21
 

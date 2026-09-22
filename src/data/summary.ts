@@ -13,6 +13,8 @@ export interface DiagnosticsSummary {
   settings: number
   /** Reminder permission, and how many are queued. */
   reminders: { permission: string; pending: number }
+  /** How many recorded failures ride along, and when the last one was. */
+  failures: { count: number; latest: string | null }
   hasError: boolean
 }
 
@@ -26,6 +28,10 @@ export function summarise(diagnostics: Diagnostics): DiagnosticsSummary {
     reminders: {
       permission: diagnostics.reminders.permission,
       pending: diagnostics.reminders.pending.length,
+    },
+    failures: {
+      count: diagnostics.failures.length,
+      latest: diagnostics.failures.at(-1)?.at ?? null,
     },
     hasError: diagnostics.lastStorageError !== null,
   }

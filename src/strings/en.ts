@@ -168,6 +168,8 @@ export const en = {
     noCoordinates: 'None stored',
     records: 'Practice records',
     settings: 'Settings stored',
+    failures: 'Recorded failures',
+    failuresDetail: (count: number): string => `${count} the app handled without telling you`,
     reminders: 'Reminders',
     remindersDetail: (permission: string, pending: number): string =>
       `${permission} · ${pending} queued`,

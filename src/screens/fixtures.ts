@@ -350,6 +350,7 @@ export const diagnosticsFixture: DiagnosticsScreenProps = {
     records: 84,
     settings: 9,
     reminders: { permission: 'granted', pending: 3 },
+    failures: { count: 2, latest: '2026-09-22T18:40:00.000Z' },
     hasError: false,
   },
   raw: '{\n  "format": "ihsaanly-diagnostics"\n}',

@@ -62,6 +62,12 @@ export function DiagnosticsScreen({
         />
         <Row title={strings.diagnostics.records} detail={String(summary.records)} />
         <Row title={strings.diagnostics.settings} detail={String(summary.settings)} />
+        {summary.failures.count > 0 ? (
+          <Row
+            title={strings.diagnostics.failures}
+            detail={strings.diagnostics.failuresDetail(summary.failures.count)}
+          />
+        ) : null}
         <Row
           title={strings.diagnostics.reminders}
           detail={strings.diagnostics.remindersDetail(

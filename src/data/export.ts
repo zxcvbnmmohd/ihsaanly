@@ -9,6 +9,8 @@ import { pendingReminders, permissionStatus, type PermissionStatus } from '@/not
 import { getPlace } from '@/location/store'
 import type { NotificationPreferences } from '@/plan/notification-preferences'
 import { allActions, allPreferences, lastStorageError } from '@/storage/events'
+import type { FailureEntry } from '@/storage/failure-entry'
+import { recentFailures } from '@/storage/log'
 import { deviceLocaleTags } from '@/i18n/device'
 
 import { EXPORT_VERSION, type ExportedData } from './bundle'
@@ -52,6 +54,8 @@ export interface Diagnostics {
   /** Whether reminders may be delivered at all, and what is queued right now. */
   reminders: { permission: PermissionStatus; pending: { id: string; at: string | null }[] }
   lastStorageError: string | null
+  /** The failures the user never saw, oldest first, across launches. */
+  failures: FailureEntry[]
   data: ExportedData
 }
 
@@ -100,6 +104,7 @@ export async function buildDiagnostics(): Promise<Diagnostics> {
     notifications: getNotificationPreferences(),
     reminders: { permission: await permissionStatus(), pending: await pendingReminders() },
     lastStorageError: lastStorageError(),
+    failures: recentFailures(),
     data: buildExport(),
   }
 }

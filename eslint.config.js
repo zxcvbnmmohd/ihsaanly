@@ -29,6 +29,9 @@ module.exports = [
     },
     languageOptions: {
       globals: { ...globals.node, ...globals.browser, __DEV__: 'readonly' },
+      // Pinned because a nested git worktree puts a second tsconfig.json inside
+      // the repo, and without this the parser cannot tell which root is meant.
+      parserOptions: { tsconfigRootDir: __dirname },
     },
     rules: {
       // RTL is free if logical directions are used from the first screen, and a
@@ -124,7 +127,7 @@ module.exports = [
       'src/hijri/calendar.ts',
       'src/prayer/{calculation,times,windows,qada}.ts',
       'src/location/{place,cities}.ts',
-      'src/plan/{plan,day-match,signals,user-state,quiet-hours,notification-preferences,history,presets,suggest}.ts',
+      'src/plan/{plan,day-match,day-context,signals,user-state,quiet-hours,notification-preferences,history,presets,suggest}.ts',
       'src/data/bundle.ts',
       'src/memorise/reveal.ts',
       'src/i18n/locale.ts',
@@ -149,5 +152,5 @@ module.exports = [
       ],
     },
   },
-  { ignores: ['dist/*', '.expo/*', 'expo-env.d.ts'] },
+  { ignores: ['dist/*', '.expo/*', 'expo-env.d.ts', '.kilo/**'] },
 ]

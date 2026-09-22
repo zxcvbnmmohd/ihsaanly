@@ -2,8 +2,9 @@
 
 ## Something is wrong
 
-**More → Your data → Send a diagnostic report.** It shows you what it contains
-before anything is sent, and it carries enough for us to reproduce what you saw.
+**More → Your data → Send a diagnostic report.** It lists what it contains
+before anything is sent, and lets you read the whole report first. It carries
+enough for us to reproduce what you saw.
 
 ## Common questions
 
@@ -32,9 +33,11 @@ ask. You almost certainly have an adhan app already.
 Tap it again.
 
 **Who checked the religious content?**
-Every item shows its source, grading and grader. The reviewer who approved the
-content is credited in the app.
+Every item shows its source and its grading, and names the grader where the
+collection does not carry its own. Once a reviewer has approved the content they
+are credited in the app, on the About screen; until then that screen says the
+content is awaiting review, and says so plainly.
 
 ## Contact
 
-TODO: support email address before submission.
+support@ihsaanly.com

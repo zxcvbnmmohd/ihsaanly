@@ -1,0 +1,11 @@
+# GitHub Pages serves this folder so the two legal documents have public URLs,
+# which both stores require at submission. The planning documents live in the
+# same folder and are not for publication, so they are excluded rather than
+# moved: the repository is the source of truth for them.
+title: Ihsaanly
+description: An offline-first Sunnah companion.
+theme: jekyll-theme-minimal
+
+exclude:
+  - PRD.md
+  - SPEC.md

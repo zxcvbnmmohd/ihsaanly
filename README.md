@@ -1,70 +1,73 @@
-# ihsaanly
+# Ihsaanly
 
-An Expo app on SDK 58 (preview), with Expo Router, NativeWind, and native
-platform UI — liquid glass on iOS, Material 3 on Android.
+An offline-first Sunnah companion. It tells you which sunnah, dua or adhkar the
+moment calls for, with the source on every item, and it keeps everything on the
+device.
+
+There is no account, no server and no analytics. It works with no permissions
+granted at all: decline location and pick a city instead.
 
 ## Getting started
 
 ```bash
 bun install
 git config core.hooksPath .githooks   # once per clone: enables the pre-commit hook
-bun run ios                           # or: bun run android
+bun run android                       # or: bun run ios
 ```
 
-`bun run start` launches the dev server for Expo Go, but this app includes
-`expo-widgets`, which Expo Go cannot load. The home screen widget and Live
-Activity only work in a development build, so prefer `bun run ios`.
+`expo-notifications`, `expo-sqlite`, `expo-location` and `expo-widgets` are not
+in Expo Go, so `bun run start` alone will not run this app. Use a development
+build.
 
 ## Scripts
 
-|                           |                                                                   |
-| ------------------------- | ----------------------------------------------------------------- |
-| `bun run ios` / `android` | Build and launch a development build                              |
-| `bun run start`           | Dev server (widgets unavailable)                                  |
-| `bun run check`           | Lint, typecheck, and `expo-doctor` — run before calling work done |
-| `bun run lint`            | ESLint (not `expo lint` — see AGENTS.md)                          |
-| `bun run format`          | Prettier, including Tailwind class sorting                        |
-| `bun run clean`           | Clear Metro and Expo caches, then restart                         |
+|                            |                                                                |
+| -------------------------- | -------------------------------------------------------------- |
+| `bun run ios` / `android`  | Build and launch a development build                           |
+| `bun run start`            | Dev server only, for an existing development build             |
+| `bun run check`            | Lint, typecheck, tests, content validation, `expo-doctor`      |
+| `bun run lint`             | ESLint (not `expo lint` — see AGENTS.md)                       |
+| `bun run test`             | Unit tests                                                     |
+| `bun run validate:content` | Checks `content/items.json` and lists what still awaits review |
+| `bun run format`           | Prettier, including Tailwind class sorting                     |
+| `bun run clean`            | Clear Metro and Expo caches, then restart                      |
 
 ## Layout
 
 ```
 src/
-  app/            Expo Router routes only — every file here is a screen
-    _layout.tsx     NativeTabs + theme provider + root ErrorBoundary
-    (home)/         Widget and Live Activity demo
-    (settings)/     Native controls via @expo/ui
-    +not-found.tsx
-  components/     Reusable UI (surface.tsx: glass / blur / Material surface)
-  theme/colors.ts Platform semantic colours — the only source of colour
-  widgets/        iOS home screen widget + Live Activity, built with @expo/ui SwiftUI
-assets/images/    Copied into the shared app group container for the widget to read
-global.css        Tailwind 4 entry point (CSS-first — there is no tailwind.config.js)
+  app/            Expo Router routes only. A route gathers data, owns hooks and
+                  navigation, and renders one screen component
+    (home)/       Today
+    (library)/    Library, item detail, memorisation, glossary
+    (more)/       Settings, history, qada, data, about
+  screens/        Pure presentational screens. Every prop type is exported, and
+                  fixtures.ts holds sample props for each one
+  components/     Reusable UI
+  content/        Item and glossary loading, search, validation
+  plan/           The decision function: what is relevant, and when
+  prayer/         Windows, calculation, marks, qada
+  hijri/ day/     The two day boundaries — Maghrib for the Hijri date, midnight
+                  for the prayer log
+  notifications/  Scheduling, payloads, responses
+  storage/        SQLite, preferences, the append-only event log
+  strings/        English and Arabic interface copy
+content/          The items and glossary, as data
+scripts/          Asset and content tooling, run by hand
 ```
 
-## Styling
+## The content is data
 
-Layout goes through Tailwind classes; colour goes through `@/theme/colors`, which
-resolves to real UIKit and Material 3 colours on-device. The reasoning, and the
-other non-obvious constraints in this project, are in [AGENTS.md](./AGENTS.md).
+`content/items.json` holds every item with its evidence: collection, reference,
+grading, and the grader where the collection does not carry its own. The build
+refuses content it cannot grade, and `bun run validate:content` lists everything
+still awaiting review. No release ships while `reviewedBy` is null.
 
-## The widgets
+## Before changing anything
 
-`expo-widgets` builds the iOS home screen widget and the delivery Live Activity
-from `@expo/ui` SwiftUI primitives, registered through the config plugin in
-[`app.json`](./app.json). Requires iOS 16+ and a development build.
+Read [AGENTS.md](./AGENTS.md). It records the decisions that look wrong until you
+know why: two styling systems, the native tab bar, the Maghrib boundary, why
+`expo-system-ui` and `expo-localization` are deliberately absent, and what a
+theme change does to the Android activity.
 
-- [`src/widgets/counter-widget.tsx`](./src/widgets/counter-widget.tsx) — home screen widget
-- [`src/widgets/delivery-activity.tsx`](./src/widgets/delivery-activity.tsx) — Lock Screen and Dynamic Island
-
-To see them: run `bun run ios`, long-press the home screen, tap **Edit** (or **+**),
-search for the app, and add **Counter Widget**. Tapping **Increment** in the app
-updates it. **Start delivery** kicks off a Live Activity that advances
-Preparing → On the way → Delivered on its own, then dismisses itself.
-
-Widgets run in a separate process and cannot read the app's asset bundle, so
-images are copied into `widgetsDirectory` (the shared app group container) and
-referenced by file URI — see `ensureImageInSharedStorage`.
-
-Docs: [Expo Widgets](https://docs.expo.dev/versions/latest/sdk/widgets/) ·
-[`@expo/ui`](https://docs.expo.dev/versions/latest/sdk/ui/)
+[audit.md](./audit.md) tracks what remains before this can be released.

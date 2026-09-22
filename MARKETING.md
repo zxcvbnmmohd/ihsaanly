@@ -44,8 +44,9 @@ sometimes differ.
 
 ## What actually differentiates it
 
-**Evidence on everything.** Every item carries its collection, reference, grading and
-grader, and says plainly when scholars differ. The build refuses to compile content that
+**Evidence on everything.** Every item carries its collection, reference and grading, and
+names the grader where the collection does not carry its own, and says plainly when
+scholars differ. The build refuses to compile content that
 cannot be graded. A named reviewer signs off before release and is credited in the app.
 Almost nobody in this category does this properly, and it cannot be copied quickly —
 it is content work and scholarly relationships, not features.
@@ -74,9 +75,16 @@ Not because we lack time — because doing them would make the product worse.
 
 ## How it sustains itself
 
-Free. Every religious item free permanently. An optional one-time payment that unlocks
-nothing — a gift, not a transaction. No advertising and no analytics, both of which
-would contradict the privacy proposition rather than merely complicate it.
+Free. Every part of the app free permanently. An optional donation that unlocks nothing —
+a gift, not a transaction. No advertising and no analytics, both of which would contradict
+the privacy proposition rather than merely complicate it.
+
+The mechanism differs by platform, because the two stores want opposite things. On Android
+a link opens `donate.ihsaanly.com` in the browser: Play's payments policy treats a
+contribution that reaches the recipient whole and unlocks nothing as peer-to-peer, outside
+its billing requirement. On iOS it will be a purchase instead, since Apple's reviewers have
+refused external donation links in documented cases even where the written guideline allows
+them. iOS is not built yet and waits on the developer account.
 
 ## Store copy — draft
 
@@ -87,8 +95,9 @@ would contradict the privacy proposition rather than merely complicate it.
 Ihsaanly shows you the sunnah that fits the moment — the morning adhkar after Fajr, the
 two rak'ah after Dhuhr, the dua as you leave the house, the fast that starts on Thursday.
 
-Every item shows where it comes from: the collection, the reference, the grading, and who
-graded it. Where scholars differ, it says so rather than picking for you.
+Every item shows where it comes from: the collection, the reference and the grading, and
+who graded it where that is not implied by the collection. Where scholars differ, it says
+so rather than picking for you.
 
 It is designed to be calm. Two or three notifications a day, not fifteen. No streaks, no
 scores, nothing that turns worship into a game. Dismiss anything without explaining
@@ -118,14 +127,16 @@ permission. Your practice is recorded on your device and stays there.
 - **Privacy labels:** Data is _not_ collected. One disclosure is required: a
   user-initiated diagnostic report can transmit religious practice data and
   approximate location. It must be declared even though it only happens on a tap.
-- **Privacy policy:** `docs/legal/privacy-policy.md` — needs hosting and a support email
+- **Privacy policy:** `docs/legal/privacy-policy.md` — support email filled in, still needs hosting
 - **Support page:** `docs/legal/support.md` — same
 
 ## Launch prerequisites
 
 Marketing cannot run ahead of these.
 
-1. A named reviewer has signed off on the content and consented to being credited.
+1. A named reviewer has signed off on the content and consented to being credited. Until
+   `reviewedBy` is set, no store copy may claim the content has been reviewed: the app's
+   own About screen says it is awaiting review, and the listing must not contradict it.
 2. Recitations exist, with permission to distribute them.
 3. The privacy declaration discloses that a user-initiated diagnostic bundle can carry
    religious practice data and approximate location.

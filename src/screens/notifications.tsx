@@ -119,6 +119,7 @@ export function NotificationsScreen({
           onValueChange={(windows) => onChange({ windows })}
           accent={palette.accent}
           knob={palette.knob}
+          track={palette.wash[1]}
         />
         <SwitchRow
           title={strings.notifications.lookAhead}
@@ -126,6 +127,7 @@ export function NotificationsScreen({
           onValueChange={(lookAhead) => onChange({ lookAhead })}
           accent={palette.accent}
           knob={palette.knob}
+          track={palette.wash[1]}
         />
         <SwitchRow
           title={strings.notifications.prayers}
@@ -134,6 +136,7 @@ export function NotificationsScreen({
           onValueChange={(prayers) => onChange({ prayers })}
           accent={palette.accent}
           knob={palette.knob}
+          track={palette.wash[1]}
         />
       </View>
 
@@ -149,6 +152,7 @@ export function NotificationsScreen({
               onValueChange={(on) => onToggleItem(item.id, on)}
               accent={palette.accent}
               knob={palette.knob}
+              track={palette.wash[1]}
             />
           ))}
         </Section>

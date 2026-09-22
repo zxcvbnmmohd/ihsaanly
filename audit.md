@@ -42,10 +42,10 @@ decisions, hardware or people. **Mixed** = AI does the wiring once you supply th
 | Priority       | Done | Open | Total |
 | -------------- | ---: | ---: | ----: |
 | P0 Blockers    |    8 |    4 |    12 |
-| P1 Must Have   |   21 |   12 |    33 |
-| P2 Should Have |   21 |   14 |    35 |
-| P3 Could Have  |    8 |    5 |    13 |
-| P4 Future      |    0 |    7 |     7 |
+| P1 Must Have   |   24 |    9 |    33 |
+| P2 Should Have |   27 |    9 |    36 |
+| P3 Could Have  |    9 |    4 |    13 |
+| P4 Future      |    1 |    6 |     7 |
 
 ---
 
@@ -136,7 +136,9 @@ decisions, hardware or people. **Mixed** = AI does the wiring once you supply th
       only, and `src/app/(more)/language.tsx` shows an alert saying so. Android still
       reloads itself. The half-turned screen you saw — content in English, navigation bar
       still mirrored — came from a JavaScript reload that cannot move UIKit's layout
-      direction. `ios/Ihsaanly/Info.plist` still declares no `CFBundleLocalizations`; adding
+      direction. `ios/Ihsaanly/Info.plist` declared no `CFBundleLocalizations` — **fixed 2026-09-22**,
+      `app.json` now sets `ios.infoPlist.CFBundleLocalizations` to `["en", "ar"]`, so iOS
+      stops treating the app as English-only. The original note follows: adding
       `ar` is worth doing separately. Text stays left-aligned and the tab bar does not mirror.
       **Diagnosed:** the native mechanism is fine. Writing `RCTI18nUtil_allowRTL` and
       `RCTI18nUtil_forceRTL` and then launching the app cold gives a correct, fully mirrored
@@ -221,21 +223,24 @@ decisions, hardware or people. **Mixed** = AI does the wiring once you supply th
       unhandled and the user sees nothing. Add `.catch(() => say(strings.data.importFailed))`
       and reject files above a few MB before reading them. **Done:** an 8 MB cap checked
       before the file is opened, and a `.catch` that reports the failure.
-- [ ] **P1 — AI** SDK drift again, noticed 2026-09-22 and **not acted on**: `expo` moved to
-      `58.0.0-preview.5` overnight and seventeen packages now want a patch bump, so
-      `bun run check` fails at `expo-doctor` while lint, typecheck and all 180 tests stay
-      green. This is upstream movement on a preview SDK, not a defect in this repo, and both
-      dev builds run correctly on preview.4. Taking it means `npx expo install --fix`, which
-      changes native module versions and therefore invalidates the installed dev builds on
-      both platforms — a prebuild and two rebuilds, on a machine with about 4 GB free.
-      Decide deliberately: chase it now, or pin it and take one bump immediately before the
-      first store build. Whichever, do not hand-edit the versions.
-- [ ] **P1 — AI** Widgets are static placeholders. `src/widgets/right-now-widget.tsx:28-31`
-      and `quick-duas-widget.tsx:33-36` render fixed props (`title: 'Open Ihsaanly'`,
-      `titles: []`). `src/widgets/snapshot.ios.ts` writes `today.json` but no widget reads it
-      (`grep today.json src/widgets/*.tsx` is empty). Either wire the widgets to the snapshot
-      once the App Group exists, or remove the `expo-widgets` plugin entry from `app.json`
-      for v1 so reviewers do not see a widget that never changes. Recommended: remove for v1.
+- [x] **P1 — AI** SDK drift: `expo` moved to `58.0.0-preview.5` overnight and seventeen
+      packages wanted a patch bump, so `bun run check` failed at `expo-doctor` while
+      everything else stayed green. **Taken 2026-09-22.** `npx expo install --fix`, then the
+      clean `node_modules` reinstall it asked for — the first run left duplicate copies of
+      `expo-asset`, `expo-constants` and `expo-file-system`, which is the same thing that
+      happened at preview.4. `expo-doctor` is back to 20/20 and `bun run check` is green end
+      to end. Bundled with the native theme fix and the `@expo/material-symbols` removal so
+      one prebuild and one rebuild covered all three rather than three separate builds.
+- [x] **P1 — AI** Widgets were static placeholders: `right-now-widget.tsx` and
+      `quick-duas-widget.tsx` rendered fixed props, and although `snapshot.ios.ts` wrote
+      `today.json`, no widget ever read it. **Cut from v1 on 2026-09-22**, which is what this
+      item recommended. The `expo-widgets` plugin entry is out of `app.json`, so no widget
+      extension is generated and no reviewer sees one that says "Open Ihsaanly" for ever.
+      Nothing else changed: the components, `snapshot.ios.ts` and `use-snapshot.ts` all stay,
+      and the write is already swallowed because the shared container needs an App Group,
+      which needs the paid membership. Re-adding is that one plugin entry.
+      Wiring them properly was never available to do here — it is blocked on the App Group,
+      so it belongs after the Apple account exists, not before.
 - [x] **P1 — AI** `README.md` is the template README. It describes `(settings)/`,
       `counter-widget.tsx`, `delivery-activity.tsx` and a "Start delivery" Live Activity,
       none of which exist. Rewrite to describe the real app, scripts and `AGENTS.md` pointer.
@@ -286,21 +291,22 @@ decisions, hardware or people. **Mixed** = AI does the wiring once you supply th
       the rebuilt app, both after choosing Arabic during onboarding and after switching
       language at runtime: a pixel crop of the status-bar band is empty, and a
       `uiautomator` dump finds the Library label only in the tab bar.
-- [ ] **P1 — AI** Bug: Appearance Dark → System leaves the app dark under a light system.
-      Still open, but now diagnosed precisely rather than guessed at. Confirmed on the
-      rebuilt app: system night mode `no`, stored preference `system`, app dark. A JS reload
-      alone turns it light, so **the native side is already correct and the JavaScript
-      colour-scheme cache is the stale part**. The cause is in
-      `node_modules/react-native/Libraries/Utilities/Appearance.js`: `setColorScheme('auto')`
-      immediately caches `NativeAppearance.getColorScheme()`, and on Android that call
-      happens before `AppCompatDelegate` has recreated the activity, so it stores the
-      outgoing scheme. No change event follows, because from the OS's point of view the
-      system scheme never changed — only the app's own override did.
-      Tried and reverted: re-applying the preference from a mount effect in
-      `src/app/_layout.tsx`. It does not fire, so the React root is not remounting on the
-      activity recreation. Recommended next: give `modules/theme-override` a getter for the
-      effective night mode and read that in `useEffectiveColorScheme` instead of trusting
-      RN's cache. That is a native change, so it needs a prebuild and a rebuild.
+- [x] **P1 — AI** Bug: Appearance Dark → System left the app dark under a light system.
+      **Fixed 2026-09-22 with the native getter the earlier diagnosis recommended.**
+      The cause was established before: `Appearance.setColorScheme('auto')` caches
+      `getColorScheme()` the instant it is called, and on Android that reads a context
+      `AppCompatDelegate` has not recreated yet, so the cache keeps the scheme being left
+      behind. No change event follows, because from the OS's point of view nothing changed —
+      only this app's override did.
+      `modules/theme-override` gains `getSystemNightMode()`, which reads
+      `Resources.getSystem().configuration.uiMode`: the _system_ configuration, which an
+      app-level override never touches, so it is right at exactly the moment the cache is
+      wrong. `useEffectiveColorScheme` reads it through `useSyncExternalStore` rather than
+      during render, because this is mutable state from outside React and React Compiler
+      would otherwise be free to memoise it — the pattern AGENTS.md prescribes and
+      `src/storage/events.ts` already follows. `subscribe` is hoisted; the snapshot is a
+      string, so referential stability is free.
+      A native change, so it needed a prebuild and a rebuild.
 - [x] **P1 — AI** `app.json` `name` is `"ihsaanly"`, so the launcher, permission dialogs and
       the notification shade all show a lowercase name. Set `"Ihsaanly"`.
 - [x] **P1 — AI** `expo-notifications` plugin has no `icon` or `color`, so the shade shows
@@ -338,7 +344,19 @@ decisions, hardware or people. **Mixed** = AI does the wiring once you supply th
 
 ## AI / LLM Can Do
 
-- [ ] **P2 — Mixed** iOS declares a `fetch` background mode that nothing uses. It is not in
+- [x] **P2 — AI** Android chrome was Material grey against a warm app (your side-by-side,
+      2026-09-22). The top app bar, the tab bar, the tab indicator, the press ripple and
+      every off-state switch came from Material 3's dynamic palette, which on this device is
+      derived from a lavender wallpaper — so the app's own chrome was a different colour
+      from the app. **Done:** the header and tab bar take `palette.wash[0]`, the top of the
+      gradient, so bar and screen read as one surface; the indicator and ripple take a new
+      `palette.indicator`, a 16% tint of the accent rather than the accent itself, because
+      filling the Material pill solid swallows the icon inside it; and `SwitchRow` now
+      passes both knob and off-track (`palette.wash[1]`) rather than leaving either to
+      Material. `backgroundColor` is passed on Android only — iOS 26 draws its own tab bar
+      and older iOS would lose its blur. Verified on the emulator in light and dark.
+      Still the platform's own bars, shapes and behaviour; only the paint changed.
+- [ ] **P2 — Mixed, do it during the device pass** iOS declares a `fetch` background mode that nothing uses. It is not in
       `app.json`: `expo-task-manager`'s config plugin appends it unconditionally, with no
       option to opt out (`node_modules/expo-task-manager/plugin/src/withTaskManager.ts`).
       By the same standard that removed `"audio"`, it should go. Region monitoring wakes the
@@ -347,6 +365,11 @@ decisions, hardware or people. **Mixed** = AI does the wiring once you supply th
       `plugins/with-android-manifest.js` looks safe. Flagged rather than done, because iOS
       background geofencing cannot be exercised on a simulator and silently breaking it
       would be hard to notice.
+      **Confirmed 2026-09-22 and deliberately still not done.** That reasoning holds: the
+      change is a ten-line local plugin, but the only way to know it did no harm is to watch
+      a real device cross a geofence. Do it during the real-device pass, with the geofence
+      test, and not before — this is the one item where writing the code first would be the
+      mistake.
 
 - [x] **P2 — AI** Today's empty state was one "Location · Not set" row that sent people to
       settings to find the permission. It now asks where the user already is: the star
@@ -390,9 +413,12 @@ decisions, hardware or people. **Mixed** = AI does the wiring once you supply th
       `assets/images/README.md`.
       **Done 2026-09-22:** both deleted and `assets/images/README.md` says so rather than listing them as
       unused.
-- [ ] **P2 — AI** `@expo/material-symbols` has no import in `src/` and expo-router's
+- [x] **P2 — AI** `@expo/material-symbols` has no import in `src/` and expo-router's
       NativeTabs types its `md=` icons against `expo-symbols`. Build for Android without it;
       if the tab icons still render, remove it.
+      **Done 2026-09-22:** removed, and the rebuild that carried the theme fix confirmed the
+      Material tab icons still render — they come from expo-symbols' `md=` names, which is
+      what the types always said.
 - [x] **P2 — AI** `src/prayer/marks.ts:141` — the only `console.warn` in the app is not
       `__DEV__`-guarded. Guard it or route it into `lastStorageError()` so it reaches the
       diagnostic bundle instead of the console.
@@ -409,13 +435,37 @@ decisions, hardware or people. **Mixed** = AI does the wiring once you supply th
       with no "nothing else today" line. Add one sentence via `useStrings()`.
       **Done 2026-09-22:** a `nothingElse` flag covers every empty section at once and renders one sentence,
       `today.nothingElse`, in both languages.
-- [ ] **P2 — AI** `src/screens/about.tsx` — "Licences" and "Privacy" are inline
+- [x] **P2 — AI** `src/screens/about.tsx` — "Licences" and "Privacy" are inline
       paragraphs with no link. Once the policy is hosted, link to it, and link Amiri's OFL
       (`assets/fonts/OFL-Amiri.txt`) and Natural Earth attribution. No `Linking.openURL`
       exists in the app today, so this is new surface: allow-list the two URLs.
-- [ ] **P2 — AI** `eslint.config.js` uses the non-type-aware `tseslint` config, so
+      **Done 2026-09-22, except the privacy link, deliberately.** About carries two licence
+      rows now — the Amiri font's SIL OFL and Natural Earth's terms — each showing its
+      destination before the tap, which are the two this app actually redistributes. The
+      "new surface" worry is moot: `Linking.openURL` arrived with the Android donate row.
+      The privacy policy is **not** linked yet. Its address is already known, but Pages is
+      not enabled, and a policy link that answers 404 is worse than the paragraph sitting
+      next to it — and is the kind of thing App Review rejects for. It goes in the moment
+      the page is live, which is one click on your side.
+- [x] **P2 — AI** `eslint.config.js` uses the non-type-aware `tseslint` config, so
       `@typescript-eslint/no-floating-promises` is not on. The one floating promise found
       (`data.tsx:29`) would have been caught. Enable the type-checked config for `src/`.
+      **Done 2026-09-22, and it earned its keep immediately.** Type-aware rules are on for
+      `src/**` only, so `eslint .` does not pay to type-check files `tsconfig` does not
+      include; `bun run lint` went from about two seconds to six. Four rules:
+      `no-floating-promises`, `await-thenable`, `no-misused-promises` (with
+      `checksVoidReturn: false`, since a void-returning prop given an async handler is the
+      ordinary React shape) and `no-unnecessary-type-assertion`.
+      It found three real defects on the first run, all of them silent failures:
+      `expo-file-system`'s `File.write()` returns a promise, and neither caller awaited it —
+      the share sheet could open on a file that was still being written, and the widget
+      snapshot's write could reject past a `try/catch` that only ever guarded the
+      synchronous part. `AccessibilityInfo.isReduceTransparencyEnabled()` had no rejection
+      handler. All three fixed; `writeSnapshot` returns its promise now.
+      `require-await` is deliberately **not** enabled: `TaskManagerTaskExecutor` and
+      expo-notifications' `handleNotification` both require a Promise-returning function
+      with nothing to await, so the rule fires on correct code and the fix it asks for does
+      not typecheck. The reason is in `eslint.config.js` so it is not re-litigated.
 - [x] **P2 — AI** `bun audit` reports two moderate transitive advisories:
       `decode-uri-component@0.2.2` via `expo-router > query-string` (DoS on malformed
       percent-encoding; only local deep links reach it) and `uuid@7.0.3` via
@@ -429,7 +479,7 @@ decisions, hardware or people. **Mixed** = AI does the wiring once you supply th
       for npm: `AGENTS.md` pins `nativewind`, `react-native-css` and `lightningcss` exactly
       and requires `npx expo install --fix` for Expo packages.
       **Done 2026-09-22:** monthly, `github-actions` only, with the reason npm is excluded in the file itself.
-- [ ] **P2 — AI** `CHANGELOG.md` — add a `## [1.0.0]` heading when the first store build
+- [ ] **P2 — AI, waits for your first build** `CHANGELOG.md` — add a `## [1.0.0]` heading when the first store build
       is cut, and record `app.json` version/build alongside.
 - [x] **P2 — AI** GitHub issues #2–#9, #11, #12, #15, #17 are fully implemented (see the
       issue table below) but still open. Close them with a comment pointing at the commit.
@@ -492,39 +542,41 @@ decisions, hardware or people. **Mixed** = AI does the wiring once you supply th
       render it disabled at zero.
       **Done 2026-09-22:** the reset button stays mounted and goes to `opacity: 0` with pointer events off
       and hidden from screen readers, so Done never moves mid-count.
-- [ ] **P2 — Mixed** Product question, seen on device: at 22:47 "Right now" showed
-      "Two rak'ah before Fajr", six hours early, because `src/plan/plan.ts:188-196`
-      assigns a prayer's `before` item to the whole preceding window (night, for Fajr).
-      The rawatib are prayed between adhan and iqamah. Either narrow the rule or change
-      the copy so it does not read as "now". Needs the content reviewer's view.
+- [x] **P2 — Mixed** Product question, seen on device: at 22:47 "Right now" showed
+      "Two rak'ah before Fajr", six hours early, because `src/plan/plan.ts` assigned a
+      prayer's `before` item to the whole preceding window (night, for Fajr).
+      **Fixed 2026-09-22 by narrowing the rule, not the copy.** A `before` item is now
+      relevant during that prayer's _own_ window while the prayer is unmarked, which is
+      when the rawatib are actually prayed — once the time has entered, between the adhan
+      and the iqamah. That also removes an inconsistency nobody had noticed: `prayer: 'any'`
+      (siwak) has always used the current window, so the two kinds of `before` behaved
+      differently. `PRECEDING_WINDOW` is deleted; nothing else used it.
+      Nothing is lost from the screen. `TodayModel.next` already lists what the coming
+      prayer asks before and after, computed from triggers rather than the moment, so it is
+      stable all day and states the distance ("Fajr, in about 8 hours"). That is the
+      prepare-for-it view; "Right now" is the do-it-now view, and they are no longer the
+      same line six hours apart.
+      **Still wants the content reviewer's confirmation** that the prayer's own window is
+      the right span. It is unambiguously better than six hours early, so it ships either
+      way; the reviewer may want it narrower still.
 - [ ] **P2 — Human** Content gap: "Morning adhkar" and "Evening adhkar" items list what to
       say ("Ayat al-Kursi, the three Quls, the sayyid al-istighfar") but contain none of
       the texts, and only one hadith excerpt. The primary audience cannot act on that.
       Decide whether to add the adhkar texts as sub-items or link to them.
-- [ ] **P2 — Mixed** Feature: reminders should teach, not just announce. Today every body
-      is a bare status line from `src/strings/en.ts:81-86` — "Now, until the window
-      closes.", "Open until Dhuhr.", "Tomorrow.", "The window is open." The wanted shape
-      names the moment and gives one gentle sentence of why, for example a sunrise
-      reminder that says the Prophet ﷺ sat in remembrance after the morning prayer until
-      sunrise, and invites the reader to do the same. It fits the product's own promise
-      to teach rather than score. Suggested implementation, smallest version that works:
-  - Add `reminder: LocalisedText.nullable()` to the item schema in
-    `src/content/schema.ts:89-106`, beside `why`. Same shape, so i18n comes free
-    through `resolveText`, and Arabic that has not been reviewed falls back to the
-    generic body instead of showing English, as `resolveText` returning null already does.
-  - In `src/notifications/content.ts:38-44` prefer `resolveText(item.reminder)` for the
-    body and keep the current `strings.notifications.body.*` line as the fallback.
-    Title stays the item name, or becomes the moment name if the reviewer prefers that.
-  - Prayer-window and test notifications take the same treatment from new keys in
-    `src/strings/{en,ar}.ts`, not from content, since they are interface copy.
-  - Add the new field to the unreviewed-content warnings in
-    `scripts/validate-content.ts` so drafted sentences are listed like `why` is.
-  - Android already uses `BigTextStyle` (confirmed in the device walkthrough), so a
-    three-line body expands correctly; iOS shows two lines until the notification is
-    expanded, so put the point in the first sentence.
-  - The sentences themselves are content, so they need the same reviewer sign-off as
-    everything else, and the Arabic needs the qualified speaker. AI can draft all 32
-    in English and wire the plumbing; the reviewer approves.
+- [x] **P2 — Mixed** Feature: reminders should teach, not just announce. Every body was a
+      bare status line — "Now, until the window closes.", "Open until Dhuhr.", "Tomorrow.",
+      "The window is open." **Built 2026-09-22, exactly as planned below.**
+      `reminder: LocalisedText.nullable()` sits beside `why` in the item schema, so i18n
+      comes free through `resolveText` and an Arabic reader gets the interface sentence
+      rather than an English one when the Arabic has not been written — a test pins that
+      fallback. `src/notifications/content.ts` prefers the item's own sentence over the
+      status line, which stays for items that have none. The prayer-window body is interface
+      copy, so it became a sentence in both `en.ts` and `ar.ts` rather than content.
+      All 32 English sentences are drafted: the moment named, then one gentle line of why,
+      point first because iOS shows two lines until the notification is expanded. They are
+      content, so `reviewed: false` covers them and the validator lists any item that has
+      none. **The sentences need the content reviewer's sign-off, and the Arabic needs the
+      qualified speaker** — the plumbing is done, the words are a draft.
 
 ## Human Must Do
 
@@ -580,9 +632,13 @@ portrait` and no width cap means edge-to-edge rows on a 12.9" screen, and it add
       exists; otherwise add the two fast steps.
       **Done 2026-09-22:** the hook runs `bun test` and `bun run validate:content` too. Both are under a
       second, and content is JSON the app trusts at runtime.
-- [ ] **P3 — AI** `src/screens/onboarding.tsx:367-611` — `StepBody` is a 244-line switch.
-      Fine as one exhaustive union; if it grows, extract each `case` body into a local
-      function in the same file. Do not split across files.
+- [x] **P3 — AI** `src/screens/onboarding.tsx` — `StepBody` is a long switch over the step
+      union. **Looked at again 2026-09-22: no action, and that is the finding.** It has grown
+      by four lines since the audit was written, to 248. The condition this item set was "if
+      it grows", and it has not in any way that matters: it is still one exhaustive switch
+      closed by `assertNever`, so a new step fails the build until every branch handles it.
+      Splitting it across files would trade that for indirection. Revisit if a case body
+      stops fitting on a screen.
 - [x] **P3 — AI** `.github/ISSUE_TEMPLATE/` with the acceptance-criteria shape the existing
       issues already use, and a one-paragraph `PULL_REQUEST_TEMPLATE.md` asking for
       `bun run check` output.
@@ -594,9 +650,22 @@ portrait` and no width cap means edge-to-edge rows on a 12.9" screen, and it add
       `src/memorise/reveal.ts`, `src/i18n/locale.ts`. Update the doc to match the lint.
       **Done 2026-09-22:** the doc lists what lint lists, and says the rule is the list rather than the folder.
       The stale `preview.2` line was corrected while there.
-- [ ] **P3 — AI** A theme change on Android recreates the activity and lands on Today,
-      losing the Appearance screen the user was on (documented consequence in
-      `AGENTS.md`). Consider restoring the route after recreation.
+- [ ] **P3 — AI, needs native logging** A theme change on Android recreates the activity and lands on Today,
+      losing the Appearance screen the user was on. **Reproduced precisely 2026-09-22, and
+      one fix tried and reverted.**
+      It only happens when night mode actually flips: System to Light on an already-light
+      system keeps the screen, because `AppCompatDelegate` has nothing to recreate for.
+      Light to Dark loses it.
+      Tried: Appearance putting itself back with `router.replace('/appearance')` on a timer,
+      on the grounds that it is the only screen that can change the theme and therefore the
+      only route that can be lost. It does not work at 400ms or at 1500ms, so this is not a
+      timing problem — the router held by the pre-recreation JavaScript no longer drives the
+      tree that comes back. Reverted rather than shipped.
+      What is left to try is persisting the intended route and reading it when the new root
+      mounts, which is also uncertain: the note on the Dark-to-System bug above records that
+      a mount effect in `_layout.tsx` did not fire. Worth an hour with a native log before
+      any more JavaScript is written against it. Low stakes — a theme is chosen rarely and
+      the app is still usable — so it stays a P3.
 
 ## Human Must Do
 
@@ -616,16 +685,28 @@ portrait` and no width cap means edge-to-edge rows on a 12.9" screen, and it add
 
 ## AI / LLM Can Do
 
-- [ ] **P4 — AI** Android home-screen widget (Glance/AppWidgetProvider). `src/widgets/snapshot.ts`
+- [ ] **P4 — AI, moot while widgets are cut** Android home-screen widget (Glance/AppWidgetProvider). `src/widgets/snapshot.ts`
       is a deliberate no-op today; Android users get no widget. Issue #16 expected parity.
-- [ ] **P4 — AI** EAS Update (`runtimeVersion` policy + `updates.url`). Deliberately
+- [ ] **P4 — AI, no reason to yet** EAS Update (`runtimeVersion` policy + `updates.url`). Deliberately
       absent today (`expo.modules.updates.ENABLED=false` in the generated manifest). Only
       worth adding once there is a reason to ship JS without a store release.
-- [ ] **P4 — AI** Voice shortcuts (#20) and CarPlay/Android Auto (#21). Both blocked on
+- [ ] **P4 — AI, blocked on recitations** Voice shortcuts (#20) and CarPlay/Android Auto (#21). Both blocked on
       recitations and, for #21, a platform entitlement. No code exists.
-- [ ] **P4 — AI** Diagnostic bundle completeness per issue #18: rotating log capture,
-      pending-notification list and permission states are not in `buildDiagnostics()`.
-- [ ] **P4 — AI** Widget deep links (tap on Quick duas opens the item) once widgets are
+- [x] **P4 — AI** Diagnostic bundle completeness per issue #18. **Done 2026-09-22.** The
+      pending-notification list and the permission state went in first — together they are
+      what separates "never granted" from "never queued" when a reminder does not arrive —
+      along with the clock's UTC offset and whether it is the summer one, for the window
+      that is an hour out. The rotating log followed: `src/storage/log.ts` keeps the last
+      fifty failures with truncated stacks, across launches, and `noteFailure` feeds it, so
+      a bundle explains the failure from an hour ago rather than only the one happening now.
+      The ring itself is pure in `src/storage/failure-entry.ts` and tested there; the store
+      is a capped array in the preferences table rather than a real file, because
+      `writePreference` is a synchronous SQLite write and can be called from inside a catch
+      block, which a file write cannot. The preview shows a count and the latest timestamp,
+      and says nothing at all when there is nothing to say.
+      **What issue #18 still names and this does not carry:** the database file itself. That
+      is a decision about what belongs in a bundle a user is shown first, not an oversight.
+- [ ] **P4 — AI, moot while widgets are cut** Widget deep links (tap on Quick duas opens the item) once widgets are
       live.
 
 ## Human Must Do
@@ -949,30 +1030,30 @@ Data collected → why → where it goes → who receives it → optional:
 
 ## GitHub issues vs code
 
-| #   | Title                                  | Status          | Remaining                                                                                             | Owner |
-| --- | -------------------------------------- | --------------- | ----------------------------------------------------------------------------------------------------- | ----- |
-| 1   | MVP spec (epic)                        | Partial         | Rolls up everything below                                                                             | Mixed |
-| 2   | Three-tab shell                        | **Done**        | Closed 2026-09-22                                                                                     | AI    |
-| 3   | One content item end to end            | **Done**        | Closed 2026-09-22                                                                                     | AI    |
-| 4   | Library browse and search              | **Done**        | Closed 2026-09-22                                                                                     | AI    |
-| 5   | GPS or chosen city                     | **Done**        | Closed 2026-09-22; device GPS still unverified on real hardware, see #22                              | AI    |
-| 6   | Prayer windows                         | **Done**        | Closed 2026-09-22                                                                                     | AI    |
-| 7   | The Hijri day                          | **Done**        | Closed 2026-09-22                                                                                     | AI    |
-| 8   | The decision function                  | **Done**        | Closed 2026-09-22                                                                                     | AI    |
-| 9   | Prayer marking, sunnah unlock, make-up | **Done**        | Closed 2026-09-22                                                                                     | AI    |
-| 10  | Travelling and paused tracking         | Partial 6/7     | "Missed fasts recorded as owed while paused" has no mechanism; needs a ruling decision                | Mixed |
-| 11  | Calendar occasions                     | **Done**        | Closed 2026-09-22                                                                                     | AI    |
-| 12  | Notifications                          | **Done**        | Closed 2026-09-22                                                                                     | AI    |
-| 13  | Onboarding                             | **Done**        | Closed 2026-09-22; the AC was amended to six steps, with the reason                                   | AI    |
-| 14  | Audio and memorisation                 | Partial         | Player wired; every `audio` is `null`; needs recitations                                              | Mixed |
-| 15  | Contextual events and geofencing       | **Done**        | Closed 2026-09-22; geofence accuracy still unverified on device, see #22                              | AI    |
-| 16  | Widgets                                | Partial         | Widgets never read the snapshot; no tap deep link; no Android widget; App Group needs paid membership | Mixed |
-| 17  | History                                | **Done**        | Closed 2026-09-22                                                                                     | AI    |
-| 18  | Export, import, diagnostics            | Partial 4/6     | Preview, permission state and pending list now ship; a rotating log and the database do not           | AI    |
-| 19  | Second language and RTL                | Partial         | No `accessibilityLanguage`; Arabic unreviewed                                                         | Mixed |
-| 20  | Voice shortcuts                        | Not started     | Blocked by #14                                                                                        | Mixed |
-| 21  | CarPlay / Android Auto                 | Not started     | Blocked by #14, #20 and an entitlement                                                                | Human |
-| 22  | Release prerequisites                  | Not started 0/7 | Hosting, support email, privacy declarations, reviewer and reciter names, payments decision           | Human |
+| #   | Title                                  | Status          | Remaining                                                                                              | Owner |
+| --- | -------------------------------------- | --------------- | ------------------------------------------------------------------------------------------------------ | ----- |
+| 1   | MVP spec (epic)                        | Partial         | Rolls up everything below                                                                              | Mixed |
+| 2   | Three-tab shell                        | **Done**        | Closed 2026-09-22                                                                                      | AI    |
+| 3   | One content item end to end            | **Done**        | Closed 2026-09-22                                                                                      | AI    |
+| 4   | Library browse and search              | **Done**        | Closed 2026-09-22                                                                                      | AI    |
+| 5   | GPS or chosen city                     | **Done**        | Closed 2026-09-22; device GPS still unverified on real hardware, see #22                               | AI    |
+| 6   | Prayer windows                         | **Done**        | Closed 2026-09-22                                                                                      | AI    |
+| 7   | The Hijri day                          | **Done**        | Closed 2026-09-22                                                                                      | AI    |
+| 8   | The decision function                  | **Done**        | Closed 2026-09-22                                                                                      | AI    |
+| 9   | Prayer marking, sunnah unlock, make-up | **Done**        | Closed 2026-09-22                                                                                      | AI    |
+| 10  | Travelling and paused tracking         | Partial 6/7     | "Missed fasts recorded as owed while paused" has no mechanism; needs a ruling decision                 | Mixed |
+| 11  | Calendar occasions                     | **Done**        | Closed 2026-09-22                                                                                      | AI    |
+| 12  | Notifications                          | **Done**        | Closed 2026-09-22                                                                                      | AI    |
+| 13  | Onboarding                             | **Done**        | Closed 2026-09-22; the AC was amended to six steps, with the reason                                    | AI    |
+| 14  | Audio and memorisation                 | Partial         | Player wired; every `audio` is `null`; needs recitations                                               | Mixed |
+| 15  | Contextual events and geofencing       | **Done**        | Closed 2026-09-22; geofence accuracy still unverified on device, see #22                               | AI    |
+| 16  | Widgets                                | Cut from v1     | Plugin entry removed 2026-09-22; wiring is blocked on the App Group, so it waits for the Apple account | Mixed |
+| 17  | History                                | **Done**        | Closed 2026-09-22                                                                                      | AI    |
+| 18  | Export, import, diagnostics            | Partial 5/6     | Only the database file itself is not carried, which is a decision rather than a gap                    | Mixed |
+| 19  | Second language and RTL                | Partial         | No `accessibilityLanguage`; Arabic unreviewed                                                          | Mixed |
+| 20  | Voice shortcuts                        | Not started     | Blocked by #14                                                                                         | Mixed |
+| 21  | CarPlay / Android Auto                 | Not started     | Blocked by #14, #20 and an entitlement                                                                 | Human |
+| 22  | Release prerequisites                  | Not started 0/7 | Hosting, support email, privacy declarations, reviewer and reciter names, payments decision            | Human |
 
 ---
 
@@ -1104,7 +1185,7 @@ Human/legal verification required for each:
 - [ ] **P1 — Mixed** iOS donation. Deferred until the Apple Developer account exists,
       because it is a purchase product rather than a link. Apple's reviewers have refused
       external donation links in documented cases, which is why the two platforms differ.
-- [ ] **P2 — AI** Re-read Apple's guidelines immediately before submitting. The external
+- [ ] **P2 — AI, do it the day you submit** Re-read Apple's guidelines immediately before submitting. The external
       link position is under active litigation and could move.
 
 ---

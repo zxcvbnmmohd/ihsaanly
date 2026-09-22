@@ -103,7 +103,7 @@ export const ar: Strings = {
       window: 'الآن، حتى ينتهي الوقت.',
       windowUntil: (closes: string): string => `مفتوح حتى ${closes}.`,
       tomorrow: 'غدًا.',
-      prayerWindow: 'دخل الوقت.',
+      prayerWindow: 'دخل الوقت. تبقى النافذة مفتوحة حتى الصلاة التالية.',
     },
   },
   event: {
@@ -219,6 +219,8 @@ export const ar: Strings = {
     noCoordinates: 'غير محفوظة',
     records: 'سجلات الممارسة',
     settings: 'الإعدادات المحفوظة',
+    failures: 'إخفاقات مسجّلة',
+    failuresDetail: (count: number): string => `${count} عالجها التطبيق دون إخبارك`,
     reminders: 'التذكيرات',
     remindersDetail: (permission: string, pending: number): string =>
       `${permission} · ${count(pending, 'مجدول واحد', 'مجدولان', 'مجدولة', 'مجدولة')}`,

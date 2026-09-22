@@ -38,7 +38,7 @@ function withTimeout<T>(work: Promise<T>): Promise<T> {
     timer = setTimeout(() => reject(new Error('location timed out')), FIX_TIMEOUT_MS)
   })
 
-  return Promise.race([work, expiry]).finally(() => clearTimeout(timer)) as Promise<T>
+  return Promise.race([work, expiry]).finally(() => clearTimeout(timer))
 }
 
 /**

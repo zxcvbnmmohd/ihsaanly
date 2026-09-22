@@ -28,6 +28,7 @@ export function TrackingScreen({
         onValueChange={(travelling) => onChange({ travelling })}
         accent={palette.accent}
         knob={palette.knob}
+        track={palette.wash[1]}
       />
       {showPause ? (
         <SwitchRow
@@ -37,6 +38,7 @@ export function TrackingScreen({
           onValueChange={(trackingPaused) => onChange({ trackingPaused })}
           accent={palette.accent}
           knob={palette.knob}
+          track={palette.wash[1]}
         />
       ) : null}
     </Screen>

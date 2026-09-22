@@ -2,7 +2,7 @@ import type { ReactElement } from 'react'
 import { DarkTheme, DefaultTheme, ThemeProvider } from 'expo-router/react-navigation'
 import { NativeTabs } from 'expo-router/native-tabs'
 import { StatusBar } from 'expo-status-bar'
-import { Text, View } from 'react-native'
+import { Platform, Text, View } from 'react-native'
 
 import { setContentLanguage } from '@/content'
 import { useNotificationResponse } from '@/notifications/use-response'
@@ -85,7 +85,18 @@ export default function RootLayout(): ReactElement {
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
-      <NativeTabs tintColor={palette.accent}>
+      {/*
+        iOS 26 draws its own tab bar background and ignores `backgroundColor`;
+        Android's is Material's grey surface, which sat under a warm app like a
+        different one, so it takes the top of the wash. The indicator and ripple
+        are a tint of the accent rather than the accent itself — filling the
+        Material pill with a solid accent swallows the icon inside it.
+      */}
+      <NativeTabs
+        tintColor={palette.accent}
+        backgroundColor={Platform.OS === 'android' ? palette.wash[0] : undefined}
+        indicatorColor={palette.indicator}
+        rippleColor={palette.indicator}>
         <NativeTabs.Trigger name="(home)">
           <NativeTabs.Trigger.Icon sf="sun.max.fill" md="today" />
           <NativeTabs.Trigger.Label>{strings.tabs.today}</NativeTabs.Trigger.Label>

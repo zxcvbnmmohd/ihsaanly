@@ -18,11 +18,13 @@ export function useWidgetSnapshot(plan: Plan | null): void {
   useEffect(() => {
     if (!plan) return
 
+    // The shared container needs an app group, which needs a paid Apple
+    // Developer membership. Until then this simply does nothing — which is why
+    // both the synchronous build and the write itself are swallowed.
     try {
-      writeSnapshot(plan, QUICK_DUA_IDS)
+      void writeSnapshot(plan, QUICK_DUA_IDS).catch(() => {})
     } catch {
-      // The shared container needs an app group, which needs a paid Apple
-      // Developer membership. Until then this simply does nothing.
+      // Building the snapshot threw before the write was even attempted.
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rightNow])

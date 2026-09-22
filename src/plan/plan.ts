@@ -66,15 +66,6 @@ const WINDOW_FOR: Partial<Record<WindowName, 'morning' | 'evening'>> = {
   asr: 'evening',
 }
 
-/** The window that leads into each prayer. */
-const PRECEDING_WINDOW: Record<Prayer, WindowName> = {
-  fajr: 'isha',
-  dhuhr: 'sunrise',
-  asr: 'dhuhr',
-  maghrib: 'asr',
-  isha: 'maghrib',
-}
-
 /** The prayer a window belongs to, where it has one. */
 const PRAYER_FOR_WINDOW: Partial<Record<WindowName, Prayer>> = {
   fajr: 'fajr',
@@ -185,15 +176,22 @@ function reasonFor(item: Item, signals: Signals, window: PrayerWindow | null): P
 
       if (!window) return null
 
-      // A prayer's "before" belongs to the window that leads into it, not to
-      // any moment the prayer happens to be unmarked.
-      if (trigger.prayer === 'any') {
-        const current = PRAYER_FOR_WINDOW[window.name]
-        return current && !prayed.includes(current) ? 'before-prayer' : null
-      }
+      // A prayer's "before" belongs to that prayer's own window, while the
+      // prayer is still unmarked. The rawatib are prayed once the time has
+      // entered, between the adhan and the iqamah — not through the hours
+      // leading up to it. Assigning them to the preceding window instead put
+      // "Two rak'ah before Fajr" under Right now at a quarter to eleven at
+      // night, six hours early, and made a named prayer behave differently
+      // from `any`, which has always used the current window.
+      //
+      // What the coming prayer asks for is still answered, by `next` on the
+      // model: it lists before and after from the triggers rather than from
+      // the moment, so it is stable all day and says how far off the prayer is.
+      const current = trigger.prayer === 'any' ? PRAYER_FOR_WINDOW[window.name] : trigger.prayer
+      if (!current) return null
+      if (trigger.prayer !== 'any' && PRAYER_FOR_WINDOW[window.name] !== trigger.prayer) return null
 
-      const approaching = PRECEDING_WINDOW[trigger.prayer] === window.name
-      return approaching && !prayed.includes(trigger.prayer) ? 'before-prayer' : null
+      return prayed.includes(current) ? null : 'before-prayer'
     }
 
     case 'day':

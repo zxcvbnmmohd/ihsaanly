@@ -340,6 +340,13 @@ export const aboutFixture: AboutScreenProps = {
   itemCount: 32,
   reviewedBy: null,
   donate: { destination: 'donate.ihsaanly.com', onPress: noop },
+  licences: [
+    {
+      label: 'Amiri font (SIL Open Font Licence)',
+      destination: 'scripts.sil.org/OFL',
+      onPress: noop,
+    },
+  ],
 }
 
 export const diagnosticsFixture: DiagnosticsScreenProps = {
@@ -350,6 +357,7 @@ export const diagnosticsFixture: DiagnosticsScreenProps = {
     records: 84,
     settings: 9,
     reminders: { permission: 'granted', pending: 3 },
+    failures: { count: 2, latest: '2026-09-22T18:40:00.000Z' },
     hasError: false,
   },
   raw: '{\n  "format": "ihsaanly-diagnostics"\n}',

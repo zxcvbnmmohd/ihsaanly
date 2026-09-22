@@ -16,6 +16,32 @@ module.exports = [
   js.configs.recommended,
   ...tseslint.configs.recommended,
   reactHooks.configs.flat['recommended-latest'],
+  // Type-aware rules for src/ only, where the cost of a project-wide parse buys
+  // something: no-floating-promises alone would have caught a fire-and-forget
+  // share that swallowed its own failure. Config and scripts stay untyped, so
+  // `eslint .` does not pay for a type-check of files tsconfig does not include.
+  {
+    files: ['src/**/*.ts', 'src/**/*.tsx'],
+    languageOptions: {
+      parserOptions: { projectService: true, tsconfigRootDir: __dirname },
+    },
+    rules: {
+      '@typescript-eslint/no-floating-promises': 'error',
+      '@typescript-eslint/await-thenable': 'error',
+      '@typescript-eslint/no-unnecessary-type-assertion': 'error',
+      '@typescript-eslint/no-misused-promises': [
+        'error',
+        // A void-returning prop given an async handler is the ordinary React
+        // shape, not a bug; an `if (somePromise)` is.
+        { checksVoidReturn: false },
+      ],
+      // `require-await` is deliberately absent. Two native APIs demand a
+      // Promise-returning function and neither body has anything to await:
+      // TaskManagerTaskExecutor for the geofence task, and expo-notifications'
+      // `handleNotification`. The rule would fire on every future one, and the
+      // fix it asks for does not typecheck.
+    },
+  },
   {
     plugins: {
       expo,

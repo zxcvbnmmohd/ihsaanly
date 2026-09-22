@@ -524,6 +524,7 @@ function StepBody(props: StepBodyProps): ReactElement {
             onValueChange={(windows) => props.onToggleNotification({ windows })}
             accent={palette.accent}
             knob={palette.knob}
+            track={palette.wash[1]}
           />
           <SwitchRow
             title={strings.notifications.lookAhead}
@@ -532,6 +533,7 @@ function StepBody(props: StepBodyProps): ReactElement {
             onValueChange={(lookAhead) => props.onToggleNotification({ lookAhead })}
             accent={palette.accent}
             knob={palette.knob}
+            track={palette.wash[1]}
           />
           <SwitchRow
             title={strings.notifications.prayers}
@@ -540,6 +542,7 @@ function StepBody(props: StepBodyProps): ReactElement {
             onValueChange={(prayers) => props.onToggleNotification({ prayers })}
             accent={palette.accent}
             knob={palette.knob}
+            track={palette.wash[1]}
           />
           <Text className="pt-1 text-xs leading-snug" style={{ color: colors.secondaryLabel }}>
             {quiet

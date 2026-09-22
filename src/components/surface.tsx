@@ -7,6 +7,8 @@ import { AccessibilityInfo, useColorScheme, View, type ViewProps } from 'react-n
 import { colors } from '@/theme/colors'
 import { usePalette } from '@/theme/store'
 
+const noop = (): void => {}
+
 const canUseGlass =
   process.env.EXPO_OS === 'ios' && isLiquidGlassAvailable() && isGlassEffectAPIAvailable()
 
@@ -40,7 +42,8 @@ export function Surface({ children, style, interactive = false }: SurfaceProps):
   useEffect(() => {
     const apply = (reduceTransparency: boolean): void => setThing({ reduceTransparency })
 
-    AccessibilityInfo.isReduceTransparencyEnabled().then(apply)
+    // A rejection leaves the default, which is the false already in state.
+    AccessibilityInfo.isReduceTransparencyEnabled().then(apply).catch(noop)
     const sub = AccessibilityInfo.addEventListener('reduceTransparencyChanged', apply)
     return (): void => sub.remove()
   }, [])

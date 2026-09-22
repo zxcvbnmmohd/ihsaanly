@@ -87,7 +87,7 @@ export const en = {
       window: 'Now, until the window closes.',
       windowUntil: (closes: string): string => `Open until ${closes}.`,
       tomorrow: 'Tomorrow.',
-      prayerWindow: 'The window is open.',
+      prayerWindow: 'The time has entered. The window stays open until the next prayer.',
     },
   },
   event: {
@@ -168,6 +168,8 @@ export const en = {
     noCoordinates: 'None stored',
     records: 'Practice records',
     settings: 'Settings stored',
+    failures: 'Recorded failures',
+    failuresDetail: (count: number): string => `${count} the app handled without telling you`,
     reminders: 'Reminders',
     remindersDetail: (permission: string, pending: number): string =>
       `${permission} · ${pending} queued`,

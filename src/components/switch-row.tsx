@@ -11,8 +11,10 @@ interface SwitchRowProps {
   onValueChange: (value: boolean) => void
   /** Track colour when on. Defaults to the system tint. */
   accent?: ColorValue
-  /** Knob colour when on, which Android would otherwise take from its own palette. */
+  /** Knob colour, which Android would otherwise take from its own palette. */
   knob?: ColorValue
+  /** Track colour when off. Defaults to the system separator. */
+  track?: ColorValue
 }
 
 /** An on/off setting, so the control is a switch rather than a checkmark. */
@@ -23,6 +25,7 @@ export function SwitchRow({
   onValueChange,
   accent = colors.tint,
   knob = colors.onTint,
+  track = colors.separator,
 }: SwitchRowProps): ReactElement {
   useColorScheme()
 
@@ -44,11 +47,17 @@ export function SwitchRow({
               </Text>
             ) : null}
           </View>
+          {/*
+            The knob is light in both states, as it is on iOS, so the track is
+            what carries on/off. Both are passed rather than left to Material,
+            whose dynamic colours are derived from the wallpaper and gave a
+            lavender knob on a lavender track — the one grey left on a warm screen.
+          */}
           <Switch
             value={value}
             onValueChange={onValueChange}
-            trackColor={{ true: accent, false: colors.separator }}
-            thumbColor={value ? knob : undefined}
+            trackColor={{ true: accent, false: track }}
+            thumbColor={knob}
           />
         </View>
       </Surface>

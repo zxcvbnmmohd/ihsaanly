@@ -1,5 +1,5 @@
 import { reloadAppAsync } from 'expo'
-import { I18nManager } from 'react-native'
+import { I18nManager, Platform } from 'react-native'
 import { z } from 'zod'
 
 import { setContentLanguage } from '@/content'
@@ -52,19 +52,26 @@ function chooseLocale(locale: SupportedLocale): void {
 
 /**
  * The user picks a language; the device decides which region's English.
- * Layout direction is read natively when the tree is built, so a change of
- * direction reloads the app rather than asking the user to.
+ *
+ * Returns true when the change needs the app reopened, which is iOS only.
+ * Android recreates the activity on a reload, so the new direction is picked up
+ * there. UIKit reads layout direction once, when the process starts, so a
+ * JavaScript reload flips the content and leaves the navigation bar mirrored the
+ * old way — a half-turned screen that looks like a bug, because it is one. An
+ * app cannot relaunch itself on iOS, so the caller says so instead.
  */
-export function chooseLanguage(language: SupportedLanguage): void {
+export function chooseLanguage(language: SupportedLanguage): boolean {
   const locale = localeForLanguage(language, deviceLocaleTags())
   const directionChanges = isRightToLeft(locale) !== I18nManager.isRTL
 
   chooseLocale(locale)
-  if (!directionChanges) return
+  if (!directionChanges) return false
+  if (Platform.OS === 'ios') return true
 
   // The RTL flags are written by native calls that are still in flight when
   // this returns; reloading at once has been seen to lose the second write.
   // ponytail: a fixed delay rather than a completion signal, which the API
   // does not offer.
   setTimeout(() => void reloadAppAsync('layout direction changed'), RELOAD_DELAY_MS)
+  return false
 }

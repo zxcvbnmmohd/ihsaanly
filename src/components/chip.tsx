@@ -19,6 +19,9 @@ export function Chip({ label, selected, onPress, palette }: ChipProps): ReactEle
       accessibilityRole="button"
       accessibilityState={{ selected }}
       onPress={onPress}
+      // px-3 py-2 is about 36pt tall; the slop carries it to the 44pt minimum
+      // without making the pill itself look heavy in a row of them.
+      hitSlop={6}
       className="rounded-full px-3 py-2"
       style={{ backgroundColor: selected ? palette.accent : colors.secondarySystemBackground }}>
       <Text

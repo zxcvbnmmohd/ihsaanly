@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'bun:test'
 
 import glossaryDocument from '../../content/glossary.json'
-import { termForRuling } from './glossary'
+import { terms } from './glossary'
 import { GlossaryDocument, Ruling } from './schema'
 
 describe('the glossary', () => {
@@ -10,7 +10,8 @@ describe('the glossary', () => {
   })
 
   it('explains every ruling the content can carry', () => {
-    Ruling.options.forEach((ruling) => expect(termForRuling(ruling)?.id).toBe(ruling))
+    const ids = new Set(terms.map((term) => term.id))
+    Ruling.options.forEach((ruling) => expect(ids.has(ruling)).toBe(true))
   })
 
   it('has every term in both shipped languages', () => {

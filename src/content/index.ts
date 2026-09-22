@@ -20,10 +20,6 @@ export function setContentLanguage(language: string): void {
   currentLanguage = language
 }
 
-export function contentLanguage(): string {
-  return currentLanguage
-}
-
 export function resolveText(
   field: Record<string, string> | null | undefined,
   locale: string = currentLanguage,

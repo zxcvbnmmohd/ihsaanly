@@ -1,6 +1,12 @@
 import type { AboutScreenProps } from './about'
 import type { AppearanceScreenProps } from './appearance'
 import type { CalculationScreenProps } from './calculation'
+import type { DataScreenProps } from './data'
+import type { DiagnosticsScreenProps } from './diagnostics'
+import type { EventsScreenProps } from './events'
+import type { HistoryScreenProps } from './history'
+import type { LanguageScreenProps } from './language'
+import type { MemoriseScreenProps } from './memorise'
 import type { GlossaryScreenProps } from './glossary'
 import type { HijriScreenProps } from './hijri'
 import type { ItemDetail, ItemScreenProps } from './item'
@@ -17,6 +23,9 @@ const noop = (): void => {}
 
 export const todayFixture: TodayScreenProps = {
   hasLocation: true,
+  locating: false,
+  locationProblem: null,
+  onUseMyLocation: noop,
   suggestion: {
     id: 'fast-monday',
     title: 'Fasting on Monday',
@@ -118,7 +127,6 @@ export const libraryFixture: LibraryScreenProps = {
     },
   ],
   glossaryHref: '/glossary',
-  onQueryChange: noop,
   onFilterChange: noop,
 }
 
@@ -128,7 +136,6 @@ export const emptyLibraryFixture: LibraryScreenProps = {
   counts: { all: 0, onToday: 0, known: 0 },
   sections: [],
   glossaryHref: '/glossary',
-  onQueryChange: noop,
   onFilterChange: noop,
 }
 
@@ -177,25 +184,19 @@ export const missingItemFixture: ItemDetail | null = null
 export const memoriseHrefFixture = '/item/memorise/dua-leaving-home'
 
 export const moreFixture: MoreScreenProps = {
-  locationLabel: 'Toronto, Ontario, Canada',
-  locationHref: '/location',
-  calculationLabel: 'Standard',
-  calculationHref: '/calculation',
-  hijriLabel: 'No change',
-  hijriHref: '/hijri',
-  trackingLabel: 'Tracking',
-  trackingHref: '/tracking',
-  aboutHref: '/about',
-  notificationsHref: '/notifications',
-  eventsHref: '/events',
-  historyHref: '/history',
-  qadaHref: '/qada',
-  qadaLabel: '2 prayers owed',
-  dataHref: '/data',
-  languageHref: '/language',
-  languageLabel: 'English',
-  appearanceHref: '/appearance',
-  appearanceLabel: 'System',
+  groups: [
+    {
+      title: 'Prayer',
+      rows: [
+        { href: '/location', title: 'Location', detail: 'Toronto, Ontario, Canada' },
+        { href: '/calculation', title: 'Prayer calculation', detail: 'Standard' },
+      ],
+    },
+    {
+      title: 'Your practice',
+      rows: [{ href: '/qada', title: 'To make up', detail: '2 prayers owed' }],
+    },
+  ],
 }
 
 export const hijriFixture: HijriScreenProps = {
@@ -209,6 +210,7 @@ export const locationFixture: LocationScreenProps = {
   place: null,
   deviceLabel: null,
   query: 'toron',
+  onQueryChange: noop,
   results: [
     {
       label: 'Toronto, Ontario, Canada',
@@ -219,9 +221,10 @@ export const locationFixture: LocationScreenProps = {
     },
   ],
   showNoResults: false,
+  locating: false,
   problem: null,
-  onQueryChange: noop,
   onUseDevice: noop,
+  onOpenSettings: noop,
   onSelect: noop,
 }
 
@@ -270,6 +273,7 @@ export const onboardingFixture: OnboardingScreenProps = {
   locating: false,
   problem: null,
   query: 'toron',
+  onQueryChange: noop,
   results: [
     {
       label: 'Toronto, Ontario, Canada',
@@ -295,7 +299,6 @@ export const onboardingFixture: OnboardingScreenProps = {
   startingCount: 5,
   onSelectLanguage: noop,
   onSelectTheme: noop,
-  onQueryChange: noop,
   onUseDevice: noop,
   onSelectPlace: noop,
   onSelectGender: noop,
@@ -335,4 +338,73 @@ export const aboutFixture: AboutScreenProps = {
   build: '12',
   itemCount: 32,
   reviewedBy: null,
+  donate: { destination: 'donate.ihsaanly.com', onPress: noop },
+}
+
+export const diagnosticsFixture: DiagnosticsScreenProps = {
+  summary: {
+    version: '1.0.0',
+    device: 'Google Pixel 10 Pro XL · android 37',
+    coordinates: { latitude: 51.501, longitude: -0.142 },
+    records: 84,
+    settings: 9,
+    hasError: false,
+  },
+  raw: '{\n  "format": "ihsaanly-diagnostics"\n}',
+  showingRaw: false,
+  message: null,
+  onToggleRaw: noop,
+  onSend: noop,
+  onCancel: noop,
+}
+
+export const dataFixture: DataScreenProps = {
+  message: null,
+  onExport: noop,
+  onImport: noop,
+  onDiagnostics: noop,
+  onDelete: noop,
+}
+
+export const eventsFixture: EventsScreenProps = {
+  canSetHome: true,
+  locationHref: '/location',
+  settings: {
+    detectHome: false,
+    home: null,
+    manual: ['travel'],
+  },
+  onToggleDetectHome: noop,
+  onSetHome: noop,
+  onToggleManual: noop,
+}
+
+export const historyFixture: HistoryScreenProps = {
+  daysActive: 42,
+  prayers: [
+    { subject: 'fajr', count: 38, typicalOffsetSeconds: -600 },
+    { subject: 'isha', count: 41, typicalOffsetSeconds: 900 },
+  ],
+  items: [{ subject: 'morning-adhkar', count: 24, typicalOffsetSeconds: null }],
+  labelFor: (subject) => subject,
+}
+
+export const languageFixture: LanguageScreenProps = {
+  language: 'en',
+  onSelect: noop,
+}
+
+export const memoriseFixture: MemoriseScreenProps = {
+  arabic: 'بِسْمِ اللَّهِ، تَوَكَّلْتُ عَلَى اللَّهِ',
+  transliteration: 'Bismillāh, tawakkaltu ʿalā Allāh',
+  translation: 'In the name of Allah, I place my trust in Allah.',
+  reveal: { transliteration: true, translation: false },
+  known: false,
+  hasAudio: false,
+  playing: false,
+  looping: false,
+  onHideOne: noop,
+  onTogglePlay: noop,
+  onToggleLoop: noop,
+  onToggleKnown: noop,
 }

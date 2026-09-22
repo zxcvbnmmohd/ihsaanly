@@ -43,13 +43,25 @@ export function Row({ title, detail, href, onPress, selected }: RowProps): React
     </Surface>
   )
 
+  // Without a role a screen reader reads the text and gives no hint that it does
+  // anything, which matters here more than anywhere: this is the row the whole
+  // app is built from. A row with neither destination nor handler is a plain
+  // display line, so it stays one rather than pretending to be a button.
   if (href) {
     return (
       <Link href={href} asChild>
-        <Pressable>{body}</Pressable>
+        <Pressable accessibilityRole="link" accessibilityState={{ selected }}>
+          {body}
+        </Pressable>
       </Link>
     )
   }
 
-  return <Pressable onPress={onPress}>{body}</Pressable>
+  if (!onPress) return body
+
+  return (
+    <Pressable accessibilityRole="button" accessibilityState={{ selected }} onPress={onPress}>
+      {body}
+    </Pressable>
+  )
 }

@@ -1,7 +1,8 @@
-import { useEffect, type ReactElement } from 'react'
+import { useEffect, useState, type ReactElement } from 'react'
 
 import { itemById, resolveText } from '@/content'
-import { usePlace } from '@/location/store'
+import { requestDeviceLocation } from '@/location/device'
+import { setPlace, usePlace } from '@/location/store'
 import type { NextPrayer, PlannedItem } from '@/plan/signals'
 import { useNotificationSync } from '@/notifications/use-sync'
 import { useWidgetSnapshot } from '@/widgets/use-snapshot'
@@ -16,6 +17,7 @@ import { PRAYERS, type Prayer } from '@/prayer/qada'
 import { useCalculationPreferences } from '@/prayer/store'
 import { prayerTimesAcross } from '@/prayer/times'
 import { buildWindows } from '@/prayer/windows'
+import type { LocationProblem } from '@/screens/onboarding'
 import {
   TodayScreen,
   type NextPrayerEntry,
@@ -120,7 +122,13 @@ function soonestEach(entries: PlannedItem[]): PlannedItem[] {
   return [...soonest.values()].sort((a, b) => (a.daysAway ?? 0) - (b.daysAway ?? 0))
 }
 
+interface Thing {
+  locating: boolean
+  problem: LocationProblem
+}
+
 export default function TodayRoute(): ReactElement {
+  const [thing, setThing] = useState<Thing>({ locating: false, problem: null })
   const place = usePlace()
   const preferences = useCalculationPreferences()
   const now = useNow()
@@ -162,6 +170,25 @@ export default function TodayRoute(): ReactElement {
     }
   })()
 
+  /** The empty state asks for the permission itself rather than sending someone
+   * to settings to find it. Declining is a named outcome, not a failure. */
+  const useMyLocation = (): void => {
+    setThing({ locating: true, problem: null })
+    requestDeviceLocation()
+      .then((located) => {
+        if (located.status === 'ok') {
+          setPlace(located.place)
+          setThing({ locating: false, problem: null })
+          return
+        }
+        setThing({ locating: false, problem: located.status })
+      })
+      .catch(() => {
+        // Whatever the platform threw, the button must not stay on "Finding you".
+        setThing({ locating: false, problem: 'unavailable' })
+      })
+  }
+
   const togglePrayer = (prayer: Prayer): void => {
     if (!place) return
 
@@ -179,6 +206,9 @@ export default function TodayRoute(): ReactElement {
   return (
     <TodayScreen
       hasLocation={place !== null}
+      locating={thing.locating}
+      locationProblem={thing.problem}
+      onUseMyLocation={useMyLocation}
       window={planned?.today.window ?? null}
       hijri={planned?.today.hijri ?? null}
       placeLabel={place ? (place.label.split(',')[0]?.trim() ?? place.label) : null}

@@ -2,6 +2,7 @@ import type { ReactElement, ReactNode } from 'react'
 import { LinearGradient } from 'expo-linear-gradient'
 import {
   ActivityIndicator,
+  Keyboard,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -456,7 +457,12 @@ function StepBody(props: StepBodyProps): ReactElement {
               title={cityOf(result.label)}
               detail={regionOf(result.label)}
               selected={props.place?.label === result.label}
-              onPress={() => props.onSelectPlace(result)}
+              onPress={() => {
+                // Otherwise the keyboard stays up over the place card the
+                // selection just revealed.
+                Keyboard.dismiss()
+                props.onSelectPlace(result)
+              }}
             />
           ))}
           {props.query.trim().length >= 2 && props.results.length === 0 ? (

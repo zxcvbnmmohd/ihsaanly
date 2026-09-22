@@ -43,7 +43,7 @@ decisions, hardware or people. **Mixed** = AI does the wiring once you supply th
 | -------------- | ---: | ---: | ----: |
 | P0 Blockers    |    8 |    4 |    12 |
 | P1 Must Have   |   21 |   12 |    33 |
-| P2 Should Have |   21 |   14 |    35 |
+| P2 Should Have |   22 |   13 |    35 |
 | P3 Could Have  |    8 |    5 |    13 |
 | P4 Future      |    0 |    7 |     7 |
 
@@ -492,11 +492,23 @@ decisions, hardware or people. **Mixed** = AI does the wiring once you supply th
       render it disabled at zero.
       **Done 2026-09-22:** the reset button stays mounted and goes to `opacity: 0` with pointer events off
       and hidden from screen readers, so Done never moves mid-count.
-- [ ] **P2 — Mixed** Product question, seen on device: at 22:47 "Right now" showed
-      "Two rak'ah before Fajr", six hours early, because `src/plan/plan.ts:188-196`
-      assigns a prayer's `before` item to the whole preceding window (night, for Fajr).
-      The rawatib are prayed between adhan and iqamah. Either narrow the rule or change
-      the copy so it does not read as "now". Needs the content reviewer's view.
+- [x] **P2 — Mixed** Product question, seen on device: at 22:47 "Right now" showed
+      "Two rak'ah before Fajr", six hours early, because `src/plan/plan.ts` assigned a
+      prayer's `before` item to the whole preceding window (night, for Fajr).
+      **Fixed 2026-09-22 by narrowing the rule, not the copy.** A `before` item is now
+      relevant during that prayer's _own_ window while the prayer is unmarked, which is
+      when the rawatib are actually prayed — once the time has entered, between the adhan
+      and the iqamah. That also removes an inconsistency nobody had noticed: `prayer: 'any'`
+      (siwak) has always used the current window, so the two kinds of `before` behaved
+      differently. `PRECEDING_WINDOW` is deleted; nothing else used it.
+      Nothing is lost from the screen. `TodayModel.next` already lists what the coming
+      prayer asks before and after, computed from triggers rather than the moment, so it is
+      stable all day and states the distance ("Fajr, in about 8 hours"). That is the
+      prepare-for-it view; "Right now" is the do-it-now view, and they are no longer the
+      same line six hours apart.
+      **Still wants the content reviewer's confirmation** that the prayer's own window is
+      the right span. It is unambiguously better than six hours early, so it ships either
+      way; the reviewer may want it narrower still.
 - [ ] **P2 — Human** Content gap: "Morning adhkar" and "Evening adhkar" items list what to
       say ("Ayat al-Kursi, the three Quls, the sayyid al-istighfar") but contain none of
       the texts, and only one hadith excerpt. The primary audience cannot act on that.

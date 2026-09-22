@@ -4,8 +4,10 @@ import { reloadAppAsync } from 'expo'
 import { useState, type ReactElement } from 'react'
 import { Alert } from 'react-native'
 
+import { router } from 'expo-router'
+
 import { eventsToAdd, parseExport } from '@/data/bundle'
-import { buildExport, shareDiagnostics, shareExport } from '@/data/export'
+import { buildExport, shareExport } from '@/data/export'
 import { DataScreen } from '@/screens/data'
 import { useStrings } from '@/strings'
 import { wipe } from '@/storage/database'
@@ -14,6 +16,8 @@ import { insertExportedEvents } from '@/storage/events'
 interface Thing {
   message: string | null
 }
+
+const MAX_IMPORT_BYTES = 8 * 1024 * 1024
 
 export default function DataRoute(): ReactElement {
   const strings = useStrings()
@@ -26,16 +30,28 @@ export default function DataRoute(): ReactElement {
   }
 
   const runImport = (): void => {
-    void DocumentPicker.getDocumentAsync({ type: 'application/json' }).then((result) => {
-      const asset = result.assets?.[0]
-      if (result.canceled || !asset) return
+    void DocumentPicker.getDocumentAsync({ type: 'application/json' })
+      .then((result) => {
+        const asset = result.assets?.[0]
+        if (result.canceled || !asset) return
 
-      const parsed = parseExport(new File(asset.uri).textSync())
-      if (!parsed) return say(strings.data.importFailed)
+        // The file is read whole and synchronously, so its size is checked before
+        // it is opened rather than after. An export of a lifetime of practice is
+        // orders of magnitude under this; anything above it is not one of ours.
+        const file = new File(asset.uri)
+        if ((file.size ?? 0) > MAX_IMPORT_BYTES) return say(strings.data.importFailed)
 
-      const added = insertExportedEvents(eventsToAdd(buildExport().events, parsed.events))
-      say(strings.data.imported(added))
-    })
+        const parsed = parseExport(file.textSync())
+        if (!parsed) return say(strings.data.importFailed)
+
+        const added = insertExportedEvents(eventsToAdd(buildExport().events, parsed.events))
+        say(strings.data.imported(added))
+      })
+      .catch(() => {
+        // An unreadable file throws rather than resolving, and without this the
+        // rejection is silent and the screen simply never answers.
+        say(strings.data.importFailed)
+      })
   }
 
   const confirmDelete = (): void => {
@@ -57,7 +73,7 @@ export default function DataRoute(): ReactElement {
       message={thing.message}
       onExport={() => runShare(shareExport)}
       onImport={runImport}
-      onDiagnostics={() => runShare(shareDiagnostics)}
+      onDiagnostics={() => router.push('/diagnostics')}
       onDelete={confirmDelete}
     />
   )

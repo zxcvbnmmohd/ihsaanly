@@ -42,8 +42,8 @@ decisions, hardware or people. **Mixed** = AI does the wiring once you supply th
 | Priority       | Done | Open | Total |
 | -------------- | ---: | ---: | ----: |
 | P0 Blockers    |    8 |    4 |    12 |
-| P1 Must Have   |   21 |   12 |    33 |
-| P2 Should Have |   25 |   11 |    36 |
+| P1 Must Have   |   23 |   10 |    33 |
+| P2 Should Have |   26 |   10 |    36 |
 | P3 Could Have  |    8 |    5 |    13 |
 | P4 Future      |    1 |    6 |     7 |
 
@@ -221,15 +221,14 @@ decisions, hardware or people. **Mixed** = AI does the wiring once you supply th
       unhandled and the user sees nothing. Add `.catch(() => say(strings.data.importFailed))`
       and reject files above a few MB before reading them. **Done:** an 8 MB cap checked
       before the file is opened, and a `.catch` that reports the failure.
-- [ ] **P1 — AI** SDK drift again, noticed 2026-09-22 and **not acted on**: `expo` moved to
-      `58.0.0-preview.5` overnight and seventeen packages now want a patch bump, so
-      `bun run check` fails at `expo-doctor` while lint, typecheck and all 180 tests stay
-      green. This is upstream movement on a preview SDK, not a defect in this repo, and both
-      dev builds run correctly on preview.4. Taking it means `npx expo install --fix`, which
-      changes native module versions and therefore invalidates the installed dev builds on
-      both platforms — a prebuild and two rebuilds, on a machine with about 4 GB free.
-      Decide deliberately: chase it now, or pin it and take one bump immediately before the
-      first store build. Whichever, do not hand-edit the versions.
+- [x] **P1 — AI** SDK drift: `expo` moved to `58.0.0-preview.5` overnight and seventeen
+      packages wanted a patch bump, so `bun run check` failed at `expo-doctor` while
+      everything else stayed green. **Taken 2026-09-22.** `npx expo install --fix`, then the
+      clean `node_modules` reinstall it asked for — the first run left duplicate copies of
+      `expo-asset`, `expo-constants` and `expo-file-system`, which is the same thing that
+      happened at preview.4. `expo-doctor` is back to 20/20 and `bun run check` is green end
+      to end. Bundled with the native theme fix and the `@expo/material-symbols` removal so
+      one prebuild and one rebuild covered all three rather than three separate builds.
 - [ ] **P1 — AI** Widgets are static placeholders. `src/widgets/right-now-widget.tsx:28-31`
       and `quick-duas-widget.tsx:33-36` render fixed props (`title: 'Open Ihsaanly'`,
       `titles: []`). `src/widgets/snapshot.ios.ts` writes `today.json` but no widget reads it
@@ -286,21 +285,22 @@ decisions, hardware or people. **Mixed** = AI does the wiring once you supply th
       the rebuilt app, both after choosing Arabic during onboarding and after switching
       language at runtime: a pixel crop of the status-bar band is empty, and a
       `uiautomator` dump finds the Library label only in the tab bar.
-- [ ] **P1 — AI** Bug: Appearance Dark → System leaves the app dark under a light system.
-      Still open, but now diagnosed precisely rather than guessed at. Confirmed on the
-      rebuilt app: system night mode `no`, stored preference `system`, app dark. A JS reload
-      alone turns it light, so **the native side is already correct and the JavaScript
-      colour-scheme cache is the stale part**. The cause is in
-      `node_modules/react-native/Libraries/Utilities/Appearance.js`: `setColorScheme('auto')`
-      immediately caches `NativeAppearance.getColorScheme()`, and on Android that call
-      happens before `AppCompatDelegate` has recreated the activity, so it stores the
-      outgoing scheme. No change event follows, because from the OS's point of view the
-      system scheme never changed — only the app's own override did.
-      Tried and reverted: re-applying the preference from a mount effect in
-      `src/app/_layout.tsx`. It does not fire, so the React root is not remounting on the
-      activity recreation. Recommended next: give `modules/theme-override` a getter for the
-      effective night mode and read that in `useEffectiveColorScheme` instead of trusting
-      RN's cache. That is a native change, so it needs a prebuild and a rebuild.
+- [x] **P1 — AI** Bug: Appearance Dark → System left the app dark under a light system.
+      **Fixed 2026-09-22 with the native getter the earlier diagnosis recommended.**
+      The cause was established before: `Appearance.setColorScheme('auto')` caches
+      `getColorScheme()` the instant it is called, and on Android that reads a context
+      `AppCompatDelegate` has not recreated yet, so the cache keeps the scheme being left
+      behind. No change event follows, because from the OS's point of view nothing changed —
+      only this app's override did.
+      `modules/theme-override` gains `getSystemNightMode()`, which reads
+      `Resources.getSystem().configuration.uiMode`: the _system_ configuration, which an
+      app-level override never touches, so it is right at exactly the moment the cache is
+      wrong. `useEffectiveColorScheme` reads it through `useSyncExternalStore` rather than
+      during render, because this is mutable state from outside React and React Compiler
+      would otherwise be free to memoise it — the pattern AGENTS.md prescribes and
+      `src/storage/events.ts` already follows. `subscribe` is hoisted; the snapshot is a
+      string, so referential stability is free.
+      A native change, so it needed a prebuild and a rebuild.
 - [x] **P1 — AI** `app.json` `name` is `"ihsaanly"`, so the launcher, permission dialogs and
       the notification shade all show a lowercase name. Set `"Ihsaanly"`.
 - [x] **P1 — AI** `expo-notifications` plugin has no `icon` or `color`, so the shade shows
@@ -402,9 +402,12 @@ decisions, hardware or people. **Mixed** = AI does the wiring once you supply th
       `assets/images/README.md`.
       **Done 2026-09-22:** both deleted and `assets/images/README.md` says so rather than listing them as
       unused.
-- [ ] **P2 — AI** `@expo/material-symbols` has no import in `src/` and expo-router's
+- [x] **P2 — AI** `@expo/material-symbols` has no import in `src/` and expo-router's
       NativeTabs types its `md=` icons against `expo-symbols`. Build for Android without it;
       if the tab icons still render, remove it.
+      **Done 2026-09-22:** removed, and the rebuild that carried the theme fix confirmed the
+      Material tab icons still render — they come from expo-symbols' `md=` names, which is
+      what the types always said.
 - [x] **P2 — AI** `src/prayer/marks.ts:141` — the only `console.warn` in the app is not
       `__DEV__`-guarded. Guard it or route it into `lastStorageError()` so it reaches the
       diagnostic bundle instead of the console.

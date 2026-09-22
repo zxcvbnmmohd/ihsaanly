@@ -219,6 +219,9 @@ export const ar: Strings = {
     noCoordinates: 'غير محفوظة',
     records: 'سجلات الممارسة',
     settings: 'الإعدادات المحفوظة',
+    reminders: 'التذكيرات',
+    remindersDetail: (permission: string, pending: number): string =>
+      `${permission} · ${count(pending, 'مجدول واحد', 'مجدولان', 'مجدولة', 'مجدولة')}`,
     error: 'خطأ أخير',
     errorIncluded: 'مرفق واحد',
     showRaw: 'إظهار التقرير كاملًا',

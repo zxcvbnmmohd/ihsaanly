@@ -11,7 +11,8 @@ import { colors } from '@/theme/colors'
 import { usePalette } from '@/theme/store'
 
 export interface DiagnosticsScreenProps {
-  summary: DiagnosticsSummary
+  /** Null while the bundle is still being gathered. */
+  summary: DiagnosticsSummary | null
   /** The bundle as it will be sent, so what is shown and what leaves cannot differ. */
   raw: string
   showingRaw: boolean
@@ -34,6 +35,14 @@ export function DiagnosticsScreen({
   const palette = usePalette()
   useColorScheme()
 
+  // The bundle is still being gathered; a spinner for one frame would flash.
+  if (!summary)
+    return (
+      <Screen palette={palette} className="gap-4 p-4">
+        <></>
+      </Screen>
+    )
+
   return (
     <Screen palette={palette} className="gap-4 p-4">
       <Text className="text-sm" style={{ color: colors.secondaryLabel }}>
@@ -53,6 +62,13 @@ export function DiagnosticsScreen({
         />
         <Row title={strings.diagnostics.records} detail={String(summary.records)} />
         <Row title={strings.diagnostics.settings} detail={String(summary.settings)} />
+        <Row
+          title={strings.diagnostics.reminders}
+          detail={strings.diagnostics.remindersDetail(
+            summary.reminders.permission,
+            summary.reminders.pending,
+          )}
+        />
         {summary.hasError ? (
           <Row title={strings.diagnostics.error} detail={strings.diagnostics.errorIncluded} />
         ) : null}

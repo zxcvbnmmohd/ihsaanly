@@ -44,7 +44,7 @@ decisions, hardware or people. **Mixed** = AI does the wiring once you supply th
 | P0 Blockers    |    8 |    4 |    12 |
 | P1 Must Have   |   21 |   12 |    33 |
 | P2 Should Have |   21 |   14 |    35 |
-| P3 Could Have  |    1 |   12 |    13 |
+| P3 Could Have  |    8 |    5 |    13 |
 | P4 Future      |    0 |    7 |     7 |
 
 ---
@@ -562,27 +562,38 @@ portrait` and no width cap means edge-to-edge rows on a 12.9" screen, and it add
       and title style, is alpha, and cannot coexist with the standard Stack on Android. Keep
       Material's small top app bar until `ExperimentalStack` gains `headerType` and styling;
       do not fake it in JavaScript over a native header.
-- [ ] **P3 — AI** `src/components/counter.tsx:127-141` (168pt circle, `text-5xl`) and
+- [x] **P3 — AI** `src/components/counter.tsx:127-141` (168pt circle, `text-5xl`) and
       `src/components/stepper.tsx:28-45` (44pt squares, `text-xl`) can clip at the largest
       Dynamic Type sizes. Add `maxFontSizeMultiplier` or let the containers grow.
-- [ ] **P3 — AI** `src/components/counter.tsx:31` — add an `accessibilityLabel` naming
+      **Done 2026-09-22:** both capped at `maxFontSizeMultiplier={1.4}`, since each sits in a fixed-size target.
+- [x] **P3 — AI** `src/components/counter.tsx:31` — add an `accessibilityLabel` naming
       the item so the spoken control is not just a number.
-- [ ] **P3 — AI** `src/components/arabic-text.tsx` — add `accessibilityLanguage="ar"` so
+      **Done 2026-09-22:** the item's name is passed down and spoken as the control's label.
+- [x] **P3 — AI** `src/components/arabic-text.tsx` — add `accessibilityLanguage="ar"` so
       VoiceOver picks an Arabic voice (open criterion on issue #19).
-- [ ] **P3 — AI** `package.json` — add `"postinstall": "git config core.hooksPath
+      **Done 2026-09-22:** `accessibilityLanguage="ar"`, which closes that criterion on #19.
+- [x] **P3 — AI** `package.json` — add `"postinstall": "git config core.hooksPath
 .githooks"` so the pre-commit hook is not opt-in per clone.
-- [ ] **P3 — AI** `.githooks/pre-commit` runs prettier, eslint and tsc but not `bun test`
+      **Done 2026-09-22:** added, so a fresh clone gets the hook from `bun install`.
+- [x] **P3 — AI** `.githooks/pre-commit` runs prettier, eslint and tsc but not `bun test`
       or `validate:content`; broken content JSON can be committed. Acceptable if CI (P1)
       exists; otherwise add the two fast steps.
+      **Done 2026-09-22:** the hook runs `bun test` and `bun run validate:content` too. Both are under a
+      second, and content is JSON the app trusts at runtime.
 - [ ] **P3 — AI** `src/screens/onboarding.tsx:367-611` — `StepBody` is a 244-line switch.
       Fine as one exhaustive union; if it grows, extract each `case` body into a local
       function in the same file. Do not split across files.
-- [ ] **P3 — AI** `.github/ISSUE_TEMPLATE/` with the acceptance-criteria shape the existing
+- [x] **P3 — AI** `.github/ISSUE_TEMPLATE/` with the acceptance-criteria shape the existing
       issues already use, and a one-paragraph `PULL_REQUEST_TEMPLATE.md` asking for
       `bun run check` output.
-- [ ] **P3 — AI** `AGENTS.md` understates the purity boundary: `eslint.config.js:107-133`
+      **Done 2026-09-22:** a piece-of-work template in the shape the existing issues use, a bug template that
+      points at the diagnostics screen, and a PR template asking for the tail of
+      `bun run check` and a line about what was actually run on a device.
+- [x] **P3 — AI** `AGENTS.md` understates the purity boundary: `eslint.config.js:107-133`
       also protects `src/plan/*`, `src/prayer/qada.ts`, `src/data/bundle.ts`,
       `src/memorise/reveal.ts`, `src/i18n/locale.ts`. Update the doc to match the lint.
+      **Done 2026-09-22:** the doc lists what lint lists, and says the rule is the list rather than the folder.
+      The stale `preview.2` line was corrected while there.
 - [ ] **P3 — AI** A theme change on Android recreates the activity and lands on Today,
       losing the Appearance screen the user was on (documented consequence in
       `AGENTS.md`). Consider restoring the route after recreation.
@@ -952,12 +963,12 @@ Data collected → why → where it goes → who receives it → optional:
 | 10  | Travelling and paused tracking         | Partial 6/7     | "Missed fasts recorded as owed while paused" has no mechanism; needs a ruling decision                | Mixed |
 | 11  | Calendar occasions                     | **Done**        | Closed 2026-09-22                                                                                     | AI    |
 | 12  | Notifications                          | **Done**        | Closed 2026-09-22                                                                                     | AI    |
-| 13  | Onboarding                             | Done, wording   | Ships 6 steps against an AC that says 5; `CHANGELOG.md` documents the change. Edit the AC and close   | Human |
+| 13  | Onboarding                             | **Done**        | Closed 2026-09-22; the AC was amended to six steps, with the reason                                   | AI    |
 | 14  | Audio and memorisation                 | Partial         | Player wired; every `audio` is `null`; needs recitations                                              | Mixed |
 | 15  | Contextual events and geofencing       | **Done**        | Closed 2026-09-22; geofence accuracy still unverified on device, see #22                              | AI    |
 | 16  | Widgets                                | Partial         | Widgets never read the snapshot; no tap deep link; no Android widget; App Group needs paid membership | Mixed |
 | 17  | History                                | **Done**        | Closed 2026-09-22                                                                                     | AI    |
-| 18  | Export, import, diagnostics            | Partial 3/6     | No log capture, pending-notification list, permission states, or pre-send preview                     | AI    |
+| 18  | Export, import, diagnostics            | Partial 4/6     | Preview, permission state and pending list now ship; a rotating log and the database do not           | AI    |
 | 19  | Second language and RTL                | Partial         | No `accessibilityLanguage`; Arabic unreviewed                                                         | Mixed |
 | 20  | Voice shortcuts                        | Not started     | Blocked by #14                                                                                        | Mixed |
 | 21  | CarPlay / Android Auto                 | Not started     | Blocked by #14, #20 and an entitlement                                                                | Human |

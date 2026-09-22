@@ -11,6 +11,8 @@ export interface DiagnosticsSummary {
   coordinates: { latitude: number; longitude: number } | null
   records: number
   settings: number
+  /** Reminder permission, and how many are queued. */
+  reminders: { permission: string; pending: number }
   hasError: boolean
 }
 
@@ -21,6 +23,10 @@ export function summarise(diagnostics: Diagnostics): DiagnosticsSummary {
     coordinates: diagnostics.coordinates,
     records: diagnostics.data.events.length,
     settings: Object.keys(diagnostics.data.preferences).length,
+    reminders: {
+      permission: diagnostics.reminders.permission,
+      pending: diagnostics.reminders.pending.length,
+    },
     hasError: diagnostics.lastStorageError !== null,
   }
 }

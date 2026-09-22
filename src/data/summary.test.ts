@@ -9,6 +9,8 @@ const diagnostics: Diagnostics = {
   app: { version: '1.0.0', platform: 'ios', osVersion: '18.1', device: 'Apple iPhone' },
   locale: 'en-GB',
   timeZone: 'Europe/London',
+  utcOffsetMinutes: 60,
+  daylightSaving: true,
   coordinates: { latitude: 51.501, longitude: -0.142 },
   notifications: {
     windows: true,
@@ -18,6 +20,7 @@ const diagnostics: Diagnostics = {
     perItem: {},
     maxPerDay: 3,
   },
+  reminders: { permission: 'granted', pending: [] },
   lastStorageError: null,
   data: {
     format: 'ihsaanly-export',

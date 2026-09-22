@@ -2,6 +2,12 @@ import { requireOptionalNativeModule } from 'expo'
 
 interface ThemeOverrideNative {
   setNightMode: (mode: 'system' | 'light' | 'dark') => void
+  /**
+   * The device's own night setting, unaffected by this app's override. React
+   * Native caches the scheme and refreshes it from a context that has not been
+   * recreated yet, so straight after an override its answer is the outgoing one.
+   */
+  getSystemNightMode: () => 'light' | 'dark'
 }
 
 /**

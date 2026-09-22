@@ -20,7 +20,7 @@ export function TrackingScreen({
   const strings = useStrings()
   const palette = usePalette()
   return (
-    <Screen className="gap-3 p-4">
+    <Screen palette={palette} className="gap-3 p-4">
       <SwitchRow
         title={strings.tracking.travelling}
         detail={strings.tracking.travellingDetail}

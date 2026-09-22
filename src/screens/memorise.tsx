@@ -7,6 +7,7 @@ import { Screen } from '@/components/screen'
 import type { Reveal } from '@/memorise/reveal'
 import { useStrings } from '@/strings'
 import { colors } from '@/theme/colors'
+import { usePalette } from '@/theme/store'
 
 export interface MemoriseScreenProps {
   arabic: string | null
@@ -25,10 +26,11 @@ export interface MemoriseScreenProps {
 
 export function MemoriseScreen(props: MemoriseScreenProps): ReactElement {
   const strings = useStrings()
+  const palette = usePalette()
   useColorScheme()
 
   return (
-    <Screen className="gap-6 p-4">
+    <Screen palette={palette} className="gap-6 p-4">
       {props.arabic ? <ArabicText>{props.arabic}</ArabicText> : null}
 
       {props.reveal.transliteration && props.transliteration ? (

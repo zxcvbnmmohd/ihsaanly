@@ -3,7 +3,6 @@ import { Text, useColorScheme, View } from 'react-native'
 
 import { Row } from '@/components/row'
 import { Screen } from '@/components/screen'
-import { Wash } from '@/components/wash'
 import { useStrings } from '@/strings'
 import { colors } from '@/theme/colors'
 import { fonts } from '@/theme/fonts'
@@ -14,6 +13,8 @@ export interface AboutScreenProps {
   build: string | null
   itemCount: number
   reviewedBy: string | null
+  /** Null where there is nothing to offer yet, which is iOS until the gift exists. */
+  donate: { destination: string; onPress: () => void } | null
 }
 
 interface BlockProps {
@@ -42,39 +43,46 @@ export function AboutScreen({
   build,
   itemCount,
   reviewedBy,
+  donate,
 }: AboutScreenProps): ReactElement {
   const strings = useStrings()
   const palette = usePalette()
   useColorScheme()
 
   return (
-    <View className="flex-1" style={{ backgroundColor: colors.systemBackground }}>
-      <Wash palette={palette} />
-      <Screen className="gap-8 p-4">
+    <Screen palette={palette} className="gap-8 p-4">
+      <View className="gap-3">
+        <Row title={strings.about.version} detail={build ? `${version} (${build})` : version} />
+        <Row
+          title={strings.about.content}
+          detail={
+            reviewedBy
+              ? strings.about.contentReviewedBy(reviewedBy, itemCount)
+              : strings.about.contentUnreviewed(itemCount)
+          }
+        />
+      </View>
+
+      {donate ? (
         <View className="gap-3">
-          <Row title={strings.about.version} detail={build ? `${version} (${build})` : version} />
-          <Row
-            title={strings.about.content}
-            detail={
-              reviewedBy
-                ? strings.about.contentReviewedBy(reviewedBy, itemCount)
-                : strings.about.contentUnreviewed(itemCount)
-            }
-          />
+          <Row title={strings.about.donate} detail={donate.destination} onPress={donate.onPress} />
+          <Text className="text-sm" style={{ color: colors.secondaryLabel }}>
+            {strings.about.donateBody}
+          </Text>
         </View>
+      ) : null}
 
-        <Block title={strings.about.privacyTitle}>
-          <Text className="text-base leading-relaxed" style={{ color: colors.label }}>
-            {strings.about.privacyBody}
-          </Text>
-        </Block>
+      <Block title={strings.about.privacyTitle}>
+        <Text className="text-base leading-relaxed" style={{ color: colors.label }}>
+          {strings.about.privacyBody}
+        </Text>
+      </Block>
 
-        <Block title={strings.about.licences}>
-          <Text className="text-base leading-relaxed" style={{ color: colors.label }}>
-            {strings.about.licencesBody}
-          </Text>
-        </Block>
-      </Screen>
-    </View>
+      <Block title={strings.about.licences}>
+        <Text className="text-base leading-relaxed" style={{ color: colors.label }}>
+          {strings.about.licencesBody}
+        </Text>
+      </Block>
+    </Screen>
   )
 }

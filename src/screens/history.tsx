@@ -6,6 +6,7 @@ import { Screen } from '@/components/screen'
 import type { ActionSummary } from '@/plan/history'
 import { useStrings, type Strings } from '@/strings'
 import { colors } from '@/theme/colors'
+import { usePalette } from '@/theme/store'
 
 export interface HistoryScreenProps {
   daysActive: number
@@ -63,6 +64,7 @@ export function HistoryScreen({
   labelFor,
 }: HistoryScreenProps): ReactElement {
   const strings = useStrings()
+  const palette = usePalette()
   useColorScheme()
 
   if (daysActive === 0) {
@@ -70,7 +72,7 @@ export function HistoryScreen({
   }
 
   return (
-    <Screen className="gap-6 p-4">
+    <Screen palette={palette} className="gap-6 p-4">
       <Text className="text-sm" style={{ color: colors.secondaryLabel }}>
         {strings.history.daysActive(daysActive)}
       </Text>

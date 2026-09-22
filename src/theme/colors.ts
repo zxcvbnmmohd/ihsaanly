@@ -77,11 +77,25 @@ export interface Palette {
   onAccent: string
   /** A switch knob reads as 'on' by being light in either theme, as it is on iOS. */
   knob: string
+  /** Android cards: a warm veil over the wash instead of Material's grey surface-container. */
+  surface: string
 }
 
 export const palettes: Record<'light' | 'dark', Palette> = {
-  light: { wash: ['#f7f0e9', '#e8cdbd'], accent: '#a94a32', onAccent: '#fff6f0', knob: '#fffaf6' },
-  dark: { wash: ['#1b1411', '#3a241d'], accent: '#e28c6f', onAccent: '#1d120d', knob: '#fffaf6' },
+  light: {
+    wash: ['#f7f0e9', '#e8cdbd'],
+    accent: '#a94a32',
+    onAccent: '#fff6f0',
+    knob: '#fffaf6',
+    surface: 'rgba(255, 250, 246, 0.78)',
+  },
+  dark: {
+    wash: ['#1b1411', '#3a241d'],
+    accent: '#e28c6f',
+    onAccent: '#1d120d',
+    knob: '#fffaf6',
+    surface: 'rgba(255, 246, 240, 0.08)',
+  },
 }
 
 export function paletteFor(scheme: ColorSchemeName | null): Palette {

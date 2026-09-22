@@ -5,14 +5,16 @@ import { useEffect, useState, type ReactNode } from 'react'
 import { AccessibilityInfo, useColorScheme, View, type ViewProps } from 'react-native'
 
 import { colors } from '@/theme/colors'
+import { usePalette } from '@/theme/store'
 
 const canUseGlass =
   process.env.EXPO_OS === 'ios' && isLiquidGlassAvailable() && isGlassEffectAPIAvailable()
 
 /**
  * One elevated container that speaks each platform's own language:
- * liquid glass on iOS 26+, a system material blur on older iOS, and a
- * Material 3 surface-container on Android. Falls back to a solid fill when
+ * liquid glass on iOS 26+, a system material blur on older iOS, and a warm
+ * translucent veil over the wash on Android, where Material's surface-container
+ * read as grey next to the iOS cards. Falls back to a solid system fill when
  * Reduce Transparency is on.
  *
  * ponytail: single `interactive` knob instead of a variant system — add
@@ -33,6 +35,7 @@ export function Surface({ children, style, interactive = false }: SurfaceProps):
   // Android's Material colors don't re-resolve on their own — subscribing to the
   // scheme here forces a re-render when the theme flips (React Compiler memoizes).
   useColorScheme()
+  const palette = usePalette()
 
   useEffect(() => {
     const apply = (reduceTransparency: boolean): void => setThing({ reduceTransparency })
@@ -46,14 +49,14 @@ export function Surface({ children, style, interactive = false }: SurfaceProps):
   // hidden cuts off the rim highlight and press bulge.
   const base: ViewProps['style'] = [{ borderCurve: 'continuous' }, style]
 
-  if (
-    thing.reduceTransparency ||
-    process.env.EXPO_OS === 'android' ||
-    process.env.EXPO_OS === 'web'
-  ) {
+  if (thing.reduceTransparency) {
     return (
       <View style={[base, { backgroundColor: colors.secondarySystemBackground }]}>{children}</View>
     )
+  }
+
+  if (process.env.EXPO_OS === 'android' || process.env.EXPO_OS === 'web') {
+    return <View style={[base, { backgroundColor: palette.surface }]}>{children}</View>
   }
 
   if (canUseGlass) {

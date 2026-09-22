@@ -3,11 +3,12 @@ import type { ReactElement, ReactNode } from 'react'
 import { Pressable, Text, useColorScheme, View } from 'react-native'
 
 import { Button } from '@/components/button'
+import { OnboardingArt } from '@/components/onboarding-art'
 import { Row } from '@/components/row'
 import { Screen } from '@/components/screen'
 import { Surface } from '@/components/surface'
-import { Wash } from '@/components/wash'
 import type { HijriDate } from '@/hijri/calendar'
+import type { LocationProblem } from './onboarding'
 import type { Prayer } from '@/prayer/qada'
 import type { WindowName } from '@/prayer/windows'
 import { useStrings } from '@/strings'
@@ -48,6 +49,10 @@ export interface SuggestionEntry {
 
 export interface TodayScreenProps {
   hasLocation: boolean
+  /** True while the device is being asked where it is, so the button can say so. */
+  locating: boolean
+  locationProblem: LocationProblem
+  onUseMyLocation: () => void
   /** One item not yet on Today, offered at most weekly. */
   suggestion: SuggestionEntry | null
   onAddSuggestion: (id: string) => void
@@ -278,6 +283,9 @@ function PrayerStrip({ prayers, names, palette, onMark }: PrayerStripProps): Rea
 
 export function TodayScreen({
   hasLocation,
+  locating,
+  locationProblem,
+  onUseMyLocation,
   suggestion,
   onAddSuggestion,
   onDismissSuggestion,
@@ -302,131 +310,170 @@ export function TodayScreen({
 
   const [rightNow = null, ...alsoNow] = now
 
+  // Location is set, the prayer strip is up, and nothing at all is asked of
+  // the user. A screen that simply stops reads as a bug; one sentence does not.
+  const nothingElse =
+    !rightNow &&
+    alsoNow.length === 0 &&
+    allDay.length === 0 &&
+    tomorrow.length === 0 &&
+    later.length === 0 &&
+    qada.length === 0 &&
+    !suggestion &&
+    !(next && (next.before.length > 0 || next.after.length > 0))
+
+  // Someone who skipped the location step lands here first, so this is the
+  // screen that has to earn the permission rather than send them to settings
+  // to find it. Both paths are offered, and declining is named as a real one.
   if (!hasLocation) {
     return (
-      <View className="flex-1" style={{ backgroundColor: colors.systemBackground }}>
-        <Wash palette={palette} />
-        <Screen className="gap-4 p-4">
+      <Screen palette={palette} className="gap-6 p-4">
+        <View className="items-center pt-4">
+          <OnboardingArt variant="welcome" color={palette.accent} onColor={palette.onAccent} />
+        </View>
+
+        <View className="gap-2">
           <Text
-            className="pt-2 text-3xl leading-tight"
+            className="text-3xl leading-tight"
             style={{ color: colors.label, fontFamily: fonts.display, fontWeight: '600' }}>
-            {strings.today.title}
+            {strings.today.needsLocationTitle}
           </Text>
           <Text className="text-base leading-relaxed" style={{ color: colors.secondaryLabel }}>
             {strings.today.needsLocation}
           </Text>
+        </View>
+
+        {locationProblem ? (
+          <Text className="text-sm leading-relaxed" style={{ color: colors.secondaryLabel }}>
+            {locationProblem === 'declined'
+              ? strings.location.declined
+              : strings.location.unavailable}
+          </Text>
+        ) : null}
+
+        <View className="gap-3">
+          <Button
+            title={locating ? strings.location.locating : strings.location.useDevice}
+            onPress={onUseMyLocation}
+            disabled={locating}
+            color={palette.accent}
+            onColor={palette.onAccent}
+          />
           <Row
             href={locationHref}
-            title={strings.location.title}
-            detail={strings.location.notSet}
+            title={strings.today.chooseCity}
+            detail={strings.today.chooseCityDetail}
           />
-        </Screen>
-      </View>
+        </View>
+      </Screen>
     )
   }
 
   return (
-    <View className="flex-1" style={{ backgroundColor: colors.systemBackground }}>
-      <Wash palette={palette} />
-      <Screen className="gap-6 p-4">
-        <View className="gap-1 pt-2">
-          <Text
-            className="text-4xl leading-tight"
-            style={{ color: colors.label, fontFamily: fonts.display, fontWeight: '600' }}>
-            {window ? strings.window[window] : strings.today.title}
-          </Text>
-          {hijri ? (
-            <Text className="text-base" style={{ color: colors.secondaryLabel }}>
-              {strings.hijri.format(hijri.day, strings.hijriMonth[hijri.month] ?? '', hijri.year)}
-              {placeLabel ? ` · ${placeLabel}` : ''}
-            </Text>
-          ) : null}
-        </View>
-
-        {rightNow ? (
-          <Section title={strings.plan.rightNow} accent={palette.accent}>
-            <RightNowCard entry={rightNow} palette={palette} />
-          </Section>
-        ) : null}
-
-        {alsoNow.length > 0 ? (
-          <Section title={strings.plan.alsoNow} accent={palette.accent}>
-            {alsoNow.map((entry) => (
-              <Row key={entry.id} href={entry.href} title={entry.title} detail={entry.detail} />
-            ))}
-          </Section>
-        ) : null}
-
-        {prayers.length > 0 ? (
-          <Section title={strings.plan.prayers} accent={palette.accent}>
-            <PrayerStrip
-              prayers={prayers}
-              names={strings.prayer}
-              palette={palette}
-              onMark={onMarkPrayer}
-            />
-          </Section>
-        ) : null}
-
-        {next && (next.before.length > 0 || next.after.length > 0) ? (
-          <Section title={strings.plan.upNext} accent={palette.accent}>
-            <UpNextCard next={next} names={strings.prayer} palette={palette} />
-          </Section>
-        ) : null}
-
-        {allDay.length > 0 ? (
-          <Section title={strings.plan.alsoToday} accent={palette.accent}>
-            {allDay.map((entry) => (
-              <Row key={entry.id} href={entry.href} title={entry.title} detail={entry.detail} />
-            ))}
-          </Section>
-        ) : null}
-
-        {suggestion ? (
-          <Section title={strings.plan.tryOneMore} accent={palette.accent}>
-            <SuggestionCard
-              entry={suggestion}
-              palette={palette}
-              onAdd={() => onAddSuggestion(suggestion.id)}
-              onDismiss={() => onDismissSuggestion(suggestion.id)}
-            />
-          </Section>
-        ) : null}
-
-        {qada.length > 0 ? (
-          <Section title={strings.plan.makeUp} accent={palette.accent}>
-            {qada.map((entry) => (
-              <Row
-                key={entry.prayer}
-                title={strings.prayer[entry.prayer]}
-                detail={strings.plan.outstanding(entry.count)}
-                onPress={() => onMakeUp(entry.prayer)}
-              />
-            ))}
-            <Row href={qadaHref} title={strings.qada.manage} detail={strings.qada.manageDetail} />
-          </Section>
-        ) : null}
-
-        {tomorrow.length > 0 ? (
-          <Section title={strings.plan.tomorrow} accent={palette.accent}>
-            {tomorrow.map((entry) => (
-              <Row key={entry.id} href={entry.href} title={entry.title} detail={entry.detail} />
-            ))}
-          </Section>
-        ) : null}
-
-        {later.length > 0 ? (
-          <Section title={strings.plan.comingUp} accent={palette.accent}>
-            {later.map((entry) => (
-              <Row key={entry.id} href={entry.href} title={entry.title} detail={entry.detail} />
-            ))}
-          </Section>
-        ) : null}
-
-        <Text className="text-xs" style={{ color: colors.secondaryLabel }}>
-          {strings.hijri.approximate}
+    <Screen palette={palette} className="gap-6 p-4">
+      <View className="gap-1 pt-2">
+        <Text
+          className="text-4xl leading-tight"
+          style={{ color: colors.label, fontFamily: fonts.display, fontWeight: '600' }}>
+          {window ? strings.window[window] : strings.today.title}
         </Text>
-      </Screen>
-    </View>
+        {hijri ? (
+          <Text className="text-base" style={{ color: colors.secondaryLabel }}>
+            {strings.hijri.format(hijri.day, strings.hijriMonth[hijri.month] ?? '', hijri.year)}
+            {placeLabel ? ` · ${placeLabel}` : ''}
+          </Text>
+        ) : null}
+      </View>
+
+      {rightNow ? (
+        <Section title={strings.plan.rightNow} accent={palette.accent}>
+          <RightNowCard entry={rightNow} palette={palette} />
+        </Section>
+      ) : null}
+
+      {alsoNow.length > 0 ? (
+        <Section title={strings.plan.alsoNow} accent={palette.accent}>
+          {alsoNow.map((entry) => (
+            <Row key={entry.id} href={entry.href} title={entry.title} detail={entry.detail} />
+          ))}
+        </Section>
+      ) : null}
+
+      {prayers.length > 0 ? (
+        <Section title={strings.plan.prayers} accent={palette.accent}>
+          <PrayerStrip
+            prayers={prayers}
+            names={strings.prayer}
+            palette={palette}
+            onMark={onMarkPrayer}
+          />
+        </Section>
+      ) : null}
+
+      {nothingElse ? (
+        <Text className="text-base" style={{ color: colors.secondaryLabel }}>
+          {strings.today.nothingElse}
+        </Text>
+      ) : null}
+
+      {next && (next.before.length > 0 || next.after.length > 0) ? (
+        <Section title={strings.plan.upNext} accent={palette.accent}>
+          <UpNextCard next={next} names={strings.prayer} palette={palette} />
+        </Section>
+      ) : null}
+
+      {allDay.length > 0 ? (
+        <Section title={strings.plan.alsoToday} accent={palette.accent}>
+          {allDay.map((entry) => (
+            <Row key={entry.id} href={entry.href} title={entry.title} detail={entry.detail} />
+          ))}
+        </Section>
+      ) : null}
+
+      {suggestion ? (
+        <Section title={strings.plan.tryOneMore} accent={palette.accent}>
+          <SuggestionCard
+            entry={suggestion}
+            palette={palette}
+            onAdd={() => onAddSuggestion(suggestion.id)}
+            onDismiss={() => onDismissSuggestion(suggestion.id)}
+          />
+        </Section>
+      ) : null}
+
+      {qada.length > 0 ? (
+        <Section title={strings.plan.makeUp} accent={palette.accent}>
+          {qada.map((entry) => (
+            <Row
+              key={entry.prayer}
+              title={strings.prayer[entry.prayer]}
+              detail={strings.plan.outstanding(entry.count)}
+              onPress={() => onMakeUp(entry.prayer)}
+            />
+          ))}
+          <Row href={qadaHref} title={strings.qada.manage} detail={strings.qada.manageDetail} />
+        </Section>
+      ) : null}
+
+      {tomorrow.length > 0 ? (
+        <Section title={strings.plan.tomorrow} accent={palette.accent}>
+          {tomorrow.map((entry) => (
+            <Row key={entry.id} href={entry.href} title={entry.title} detail={entry.detail} />
+          ))}
+        </Section>
+      ) : null}
+
+      {later.length > 0 ? (
+        <Section title={strings.plan.comingUp} accent={palette.accent}>
+          {later.map((entry) => (
+            <Row key={entry.id} href={entry.href} title={entry.title} detail={entry.detail} />
+          ))}
+        </Section>
+      ) : null}
+
+      <Text className="text-xs" style={{ color: colors.secondaryLabel }}>
+        {strings.hijri.approximate}
+      </Text>
+    </Screen>
   )
 }

@@ -1,105 +1,38 @@
-import type { ReactElement, ReactNode } from 'react'
+import type { ReactElement } from 'react'
 import { Text, useColorScheme, View } from 'react-native'
-import type { Href } from 'expo-router'
 
+import { EmptyState } from '@/components/empty-state'
 import { Row } from '@/components/row'
 import { Screen } from '@/components/screen'
-import { Wash } from '@/components/wash'
+import type { MoreGroup } from '@/more/rows'
 import { useStrings } from '@/strings'
-import { colors } from '@/theme/colors'
 import { usePalette } from '@/theme/store'
 
 export interface MoreScreenProps {
-  locationLabel: string
-  locationHref: Href
-  calculationLabel: string
-  calculationHref: Href
-  hijriLabel: string
-  hijriHref: Href
-  trackingLabel: string
-  trackingHref: Href
-  aboutHref: Href
-  notificationsHref: Href
-  eventsHref: Href
-  historyHref: Href
-  qadaHref: Href
-  qadaLabel: string
-  dataHref: Href
-  languageHref: Href
-  languageLabel: string
-  appearanceHref: Href
-  appearanceLabel: string
+  /** Already filtered by the route when a search is in progress. */
+  groups: MoreGroup[]
 }
 
-export function MoreScreen({
-  locationLabel,
-  locationHref,
-  calculationLabel,
-  calculationHref,
-  hijriLabel,
-  hijriHref,
-  trackingLabel,
-  trackingHref,
-  aboutHref,
-  notificationsHref,
-  eventsHref,
-  historyHref,
-  qadaHref,
-  qadaLabel,
-  dataHref,
-  languageHref,
-  languageLabel,
-  appearanceHref,
-  appearanceLabel,
-}: MoreScreenProps): ReactElement {
+export function MoreScreen({ groups }: MoreScreenProps): ReactElement {
   const strings = useStrings()
   const palette = usePalette()
   useColorScheme()
 
   return (
-    <View className="flex-1" style={{ backgroundColor: colors.systemBackground }}>
-      <Wash palette={palette} />
-      <Screen className="gap-6 p-4">
-        <Group title={strings.more.prayer} accent={palette.accent}>
-          <Row href={locationHref} title={strings.location.title} detail={locationLabel} />
-          <Row href={calculationHref} title={strings.calculation.title} detail={calculationLabel} />
-          <Row href={hijriHref} title={strings.hijri.title} detail={hijriLabel} />
-        </Group>
-
-        <Group title={strings.more.app} accent={palette.accent}>
-          <Row href={notificationsHref} title={strings.notifications.title} detail={null} />
-          <Row href={trackingHref} title={strings.tracking.title} detail={trackingLabel} />
-          <Row href={eventsHref} title={strings.events.title} detail={null} />
-          <Row href={languageHref} title={strings.language.title} detail={languageLabel} />
-          <Row href={appearanceHref} title={strings.appearance.title} detail={appearanceLabel} />
-          <Row href={aboutHref} title={strings.about.title} detail={null} />
-        </Group>
-
-        <Group title={strings.more.practice} accent={palette.accent}>
-          <Row href={historyHref} title={strings.history.title} detail={null} />
-          <Row href={qadaHref} title={strings.qada.title} detail={qadaLabel} />
-          <Row href={dataHref} title={strings.data.title} detail={null} />
-        </Group>
-      </Screen>
-    </View>
-  )
-}
-
-interface GroupProps {
-  title: string
-  accent: string
-  children: ReactNode
-}
-
-function Group({ title, accent, children }: GroupProps): ReactElement {
-  useColorScheme()
-
-  return (
-    <View className="gap-3">
-      <Text className="text-xs font-semibold tracking-wide uppercase" style={{ color: accent }}>
-        {title}
-      </Text>
-      {children}
-    </View>
+    <Screen palette={palette} className="gap-6 p-4">
+      {groups.length === 0 ? <EmptyState message={strings.library.noResults} /> : null}
+      {groups.map((group) => (
+        <View key={group.title} className="gap-3">
+          <Text
+            className="text-xs font-semibold tracking-wide uppercase"
+            style={{ color: palette.accent }}>
+            {group.title}
+          </Text>
+          {group.rows.map((row) => (
+            <Row key={row.title} href={row.href} title={row.title} detail={row.detail} />
+          ))}
+        </View>
+      ))}
+    </Screen>
   )
 }

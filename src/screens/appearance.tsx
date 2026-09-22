@@ -19,7 +19,7 @@ export function AppearanceScreen({ preference, onSelect }: AppearanceScreenProps
   useColorScheme()
 
   return (
-    <Screen className="gap-4 p-4">
+    <Screen palette={palette} className="gap-4 p-4">
       {THEME_PREFERENCES.map((option) => (
         <ChoiceRow
           key={option}

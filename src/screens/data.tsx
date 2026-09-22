@@ -5,6 +5,7 @@ import { Row } from '@/components/row'
 import { Screen } from '@/components/screen'
 import { useStrings } from '@/strings'
 import { colors } from '@/theme/colors'
+import { usePalette } from '@/theme/store'
 
 export interface DataScreenProps {
   message: string | null
@@ -22,10 +23,11 @@ export function DataScreen({
   onDelete,
 }: DataScreenProps): ReactElement {
   const strings = useStrings()
+  const palette = usePalette()
   useColorScheme()
 
   return (
-    <Screen className="gap-4 p-4">
+    <Screen palette={palette} className="gap-4 p-4">
       <Text className="text-sm" style={{ color: colors.secondaryLabel }}>
         {strings.data.explanation}
       </Text>

@@ -3,7 +3,6 @@ import { Text, useColorScheme, View } from 'react-native'
 
 import { Screen } from '@/components/screen'
 import { Surface } from '@/components/surface'
-import { Wash } from '@/components/wash'
 import { colors } from '@/theme/colors'
 import { fonts } from '@/theme/fonts'
 import { usePalette } from '@/theme/store'
@@ -31,31 +30,28 @@ export function GlossaryScreen({ entries, highlighted }: GlossaryScreenProps): R
   ]
 
   return (
-    <View className="flex-1" style={{ backgroundColor: colors.systemBackground }}>
-      <Wash palette={palette} />
-      <Screen className="gap-3 p-4">
-        {ordered.map((entry) => (
-          <Surface
-            key={entry.id}
-            style={{
-              borderRadius: 20,
-              padding: 18,
-              borderWidth: entry.id === highlighted ? 2 : 0,
-              borderColor: palette.accent,
-            }}>
-            <View className="gap-1.5">
-              <Text
-                className="text-xl leading-tight"
-                style={{ color: colors.label, fontFamily: fonts.display, fontWeight: '600' }}>
-                {entry.term}
-              </Text>
-              <Text className="text-base leading-relaxed" style={{ color: colors.label }}>
-                {entry.definition}
-              </Text>
-            </View>
-          </Surface>
-        ))}
-      </Screen>
-    </View>
+    <Screen palette={palette} className="gap-3 p-4">
+      {ordered.map((entry) => (
+        <Surface
+          key={entry.id}
+          style={{
+            borderRadius: 20,
+            padding: 18,
+            borderWidth: entry.id === highlighted ? 2 : 0,
+            borderColor: palette.accent,
+          }}>
+          <View className="gap-1.5">
+            <Text
+              className="text-xl leading-tight"
+              style={{ color: colors.label, fontFamily: fonts.display, fontWeight: '600' }}>
+              {entry.term}
+            </Text>
+            <Text className="text-base leading-relaxed" style={{ color: colors.label }}>
+              {entry.definition}
+            </Text>
+          </View>
+        </Surface>
+      ))}
+    </Screen>
   )
 }

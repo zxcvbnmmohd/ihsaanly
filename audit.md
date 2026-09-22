@@ -42,9 +42,9 @@ decisions, hardware or people. **Mixed** = AI does the wiring once you supply th
 | Priority       | Done | Open | Total |
 | -------------- | ---: | ---: | ----: |
 | P0 Blockers    |    8 |    4 |    12 |
-| P1 Must Have   |   23 |   10 |    33 |
-| P2 Should Have |   26 |   10 |    36 |
-| P3 Could Have  |    8 |    5 |    13 |
+| P1 Must Have   |   24 |    9 |    33 |
+| P2 Should Have |   27 |    9 |    36 |
+| P3 Could Have  |    9 |    4 |    13 |
 | P4 Future      |    1 |    6 |     7 |
 
 ---
@@ -136,7 +136,9 @@ decisions, hardware or people. **Mixed** = AI does the wiring once you supply th
       only, and `src/app/(more)/language.tsx` shows an alert saying so. Android still
       reloads itself. The half-turned screen you saw — content in English, navigation bar
       still mirrored — came from a JavaScript reload that cannot move UIKit's layout
-      direction. `ios/Ihsaanly/Info.plist` still declares no `CFBundleLocalizations`; adding
+      direction. `ios/Ihsaanly/Info.plist` declared no `CFBundleLocalizations` — **fixed 2026-09-22**,
+      `app.json` now sets `ios.infoPlist.CFBundleLocalizations` to `["en", "ar"]`, so iOS
+      stops treating the app as English-only. The original note follows: adding
       `ar` is worth doing separately. Text stays left-aligned and the tab bar does not mirror.
       **Diagnosed:** the native mechanism is fine. Writing `RCTI18nUtil_allowRTL` and
       `RCTI18nUtil_forceRTL` and then launching the app cold gives a correct, fully mirrored
@@ -229,12 +231,16 @@ decisions, hardware or people. **Mixed** = AI does the wiring once you supply th
       happened at preview.4. `expo-doctor` is back to 20/20 and `bun run check` is green end
       to end. Bundled with the native theme fix and the `@expo/material-symbols` removal so
       one prebuild and one rebuild covered all three rather than three separate builds.
-- [ ] **P1 — AI** Widgets are static placeholders. `src/widgets/right-now-widget.tsx:28-31`
-      and `quick-duas-widget.tsx:33-36` render fixed props (`title: 'Open Ihsaanly'`,
-      `titles: []`). `src/widgets/snapshot.ios.ts` writes `today.json` but no widget reads it
-      (`grep today.json src/widgets/*.tsx` is empty). Either wire the widgets to the snapshot
-      once the App Group exists, or remove the `expo-widgets` plugin entry from `app.json`
-      for v1 so reviewers do not see a widget that never changes. Recommended: remove for v1.
+- [x] **P1 — AI** Widgets were static placeholders: `right-now-widget.tsx` and
+      `quick-duas-widget.tsx` rendered fixed props, and although `snapshot.ios.ts` wrote
+      `today.json`, no widget ever read it. **Cut from v1 on 2026-09-22**, which is what this
+      item recommended. The `expo-widgets` plugin entry is out of `app.json`, so no widget
+      extension is generated and no reviewer sees one that says "Open Ihsaanly" for ever.
+      Nothing else changed: the components, `snapshot.ios.ts` and `use-snapshot.ts` all stay,
+      and the write is already swallowed because the shared container needs an App Group,
+      which needs the paid membership. Re-adding is that one plugin entry.
+      Wiring them properly was never available to do here — it is blocked on the App Group,
+      so it belongs after the Apple account exists, not before.
 - [x] **P1 — AI** `README.md` is the template README. It describes `(settings)/`,
       `counter-widget.tsx`, `delivery-activity.tsx` and a "Start delivery" Live Activity,
       none of which exist. Rewrite to describe the real app, scripts and `AGENTS.md` pointer.
@@ -359,6 +365,11 @@ decisions, hardware or people. **Mixed** = AI does the wiring once you supply th
       `plugins/with-android-manifest.js` looks safe. Flagged rather than done, because iOS
       background geofencing cannot be exercised on a simulator and silently breaking it
       would be hard to notice.
+      **Confirmed 2026-09-22 and deliberately still not done.** That reasoning holds: the
+      change is a ten-line local plugin, but the only way to know it did no harm is to watch
+      a real device cross a geofence. Do it during the real-device pass, with the geofence
+      test, and not before — this is the one item where writing the code first would be the
+      mistake.
 
 - [x] **P2 — AI** Today's empty state was one "Location · Not set" row that sent people to
       settings to find the permission. It now asks where the user already is: the star
@@ -424,10 +435,18 @@ decisions, hardware or people. **Mixed** = AI does the wiring once you supply th
       with no "nothing else today" line. Add one sentence via `useStrings()`.
       **Done 2026-09-22:** a `nothingElse` flag covers every empty section at once and renders one sentence,
       `today.nothingElse`, in both languages.
-- [ ] **P2 — AI** `src/screens/about.tsx` — "Licences" and "Privacy" are inline
+- [x] **P2 — AI** `src/screens/about.tsx` — "Licences" and "Privacy" are inline
       paragraphs with no link. Once the policy is hosted, link to it, and link Amiri's OFL
       (`assets/fonts/OFL-Amiri.txt`) and Natural Earth attribution. No `Linking.openURL`
       exists in the app today, so this is new surface: allow-list the two URLs.
+      **Done 2026-09-22, except the privacy link, deliberately.** About carries two licence
+      rows now — the Amiri font's SIL OFL and Natural Earth's terms — each showing its
+      destination before the tap, which are the two this app actually redistributes. The
+      "new surface" worry is moot: `Linking.openURL` arrived with the Android donate row.
+      The privacy policy is **not** linked yet. Its address is already known, but Pages is
+      not enabled, and a policy link that answers 404 is worse than the paragraph sitting
+      next to it — and is the kind of thing App Review rejects for. It goes in the moment
+      the page is live, which is one click on your side.
 - [x] **P2 — AI** `eslint.config.js` uses the non-type-aware `tseslint` config, so
       `@typescript-eslint/no-floating-promises` is not on. The one floating promise found
       (`data.tsx:29`) would have been caught. Enable the type-checked config for `src/`.
@@ -613,9 +632,13 @@ portrait` and no width cap means edge-to-edge rows on a 12.9" screen, and it add
       exists; otherwise add the two fast steps.
       **Done 2026-09-22:** the hook runs `bun test` and `bun run validate:content` too. Both are under a
       second, and content is JSON the app trusts at runtime.
-- [ ] **P3 — AI** `src/screens/onboarding.tsx:367-611` — `StepBody` is a 244-line switch.
-      Fine as one exhaustive union; if it grows, extract each `case` body into a local
-      function in the same file. Do not split across files.
+- [x] **P3 — AI** `src/screens/onboarding.tsx` — `StepBody` is a long switch over the step
+      union. **Looked at again 2026-09-22: no action, and that is the finding.** It has grown
+      by four lines since the audit was written, to 248. The condition this item set was "if
+      it grows", and it has not in any way that matters: it is still one exhaustive switch
+      closed by `assertNever`, so a new step fails the build until every branch handles it.
+      Splitting it across files would trade that for indirection. Revisit if a case body
+      stops fitting on a screen.
 - [x] **P3 — AI** `.github/ISSUE_TEMPLATE/` with the acceptance-criteria shape the existing
       issues already use, and a one-paragraph `PULL_REQUEST_TEMPLATE.md` asking for
       `bun run check` output.
@@ -1007,30 +1030,30 @@ Data collected → why → where it goes → who receives it → optional:
 
 ## GitHub issues vs code
 
-| #   | Title                                  | Status          | Remaining                                                                                             | Owner |
-| --- | -------------------------------------- | --------------- | ----------------------------------------------------------------------------------------------------- | ----- |
-| 1   | MVP spec (epic)                        | Partial         | Rolls up everything below                                                                             | Mixed |
-| 2   | Three-tab shell                        | **Done**        | Closed 2026-09-22                                                                                     | AI    |
-| 3   | One content item end to end            | **Done**        | Closed 2026-09-22                                                                                     | AI    |
-| 4   | Library browse and search              | **Done**        | Closed 2026-09-22                                                                                     | AI    |
-| 5   | GPS or chosen city                     | **Done**        | Closed 2026-09-22; device GPS still unverified on real hardware, see #22                              | AI    |
-| 6   | Prayer windows                         | **Done**        | Closed 2026-09-22                                                                                     | AI    |
-| 7   | The Hijri day                          | **Done**        | Closed 2026-09-22                                                                                     | AI    |
-| 8   | The decision function                  | **Done**        | Closed 2026-09-22                                                                                     | AI    |
-| 9   | Prayer marking, sunnah unlock, make-up | **Done**        | Closed 2026-09-22                                                                                     | AI    |
-| 10  | Travelling and paused tracking         | Partial 6/7     | "Missed fasts recorded as owed while paused" has no mechanism; needs a ruling decision                | Mixed |
-| 11  | Calendar occasions                     | **Done**        | Closed 2026-09-22                                                                                     | AI    |
-| 12  | Notifications                          | **Done**        | Closed 2026-09-22                                                                                     | AI    |
-| 13  | Onboarding                             | **Done**        | Closed 2026-09-22; the AC was amended to six steps, with the reason                                   | AI    |
-| 14  | Audio and memorisation                 | Partial         | Player wired; every `audio` is `null`; needs recitations                                              | Mixed |
-| 15  | Contextual events and geofencing       | **Done**        | Closed 2026-09-22; geofence accuracy still unverified on device, see #22                              | AI    |
-| 16  | Widgets                                | Partial         | Widgets never read the snapshot; no tap deep link; no Android widget; App Group needs paid membership | Mixed |
-| 17  | History                                | **Done**        | Closed 2026-09-22                                                                                     | AI    |
-| 18  | Export, import, diagnostics            | Partial 5/6     | Only the database file itself is not carried, which is a decision rather than a gap                   | Mixed |
-| 19  | Second language and RTL                | Partial         | No `accessibilityLanguage`; Arabic unreviewed                                                         | Mixed |
-| 20  | Voice shortcuts                        | Not started     | Blocked by #14                                                                                        | Mixed |
-| 21  | CarPlay / Android Auto                 | Not started     | Blocked by #14, #20 and an entitlement                                                                | Human |
-| 22  | Release prerequisites                  | Not started 0/7 | Hosting, support email, privacy declarations, reviewer and reciter names, payments decision           | Human |
+| #   | Title                                  | Status          | Remaining                                                                                              | Owner |
+| --- | -------------------------------------- | --------------- | ------------------------------------------------------------------------------------------------------ | ----- |
+| 1   | MVP spec (epic)                        | Partial         | Rolls up everything below                                                                              | Mixed |
+| 2   | Three-tab shell                        | **Done**        | Closed 2026-09-22                                                                                      | AI    |
+| 3   | One content item end to end            | **Done**        | Closed 2026-09-22                                                                                      | AI    |
+| 4   | Library browse and search              | **Done**        | Closed 2026-09-22                                                                                      | AI    |
+| 5   | GPS or chosen city                     | **Done**        | Closed 2026-09-22; device GPS still unverified on real hardware, see #22                               | AI    |
+| 6   | Prayer windows                         | **Done**        | Closed 2026-09-22                                                                                      | AI    |
+| 7   | The Hijri day                          | **Done**        | Closed 2026-09-22                                                                                      | AI    |
+| 8   | The decision function                  | **Done**        | Closed 2026-09-22                                                                                      | AI    |
+| 9   | Prayer marking, sunnah unlock, make-up | **Done**        | Closed 2026-09-22                                                                                      | AI    |
+| 10  | Travelling and paused tracking         | Partial 6/7     | "Missed fasts recorded as owed while paused" has no mechanism; needs a ruling decision                 | Mixed |
+| 11  | Calendar occasions                     | **Done**        | Closed 2026-09-22                                                                                      | AI    |
+| 12  | Notifications                          | **Done**        | Closed 2026-09-22                                                                                      | AI    |
+| 13  | Onboarding                             | **Done**        | Closed 2026-09-22; the AC was amended to six steps, with the reason                                    | AI    |
+| 14  | Audio and memorisation                 | Partial         | Player wired; every `audio` is `null`; needs recitations                                               | Mixed |
+| 15  | Contextual events and geofencing       | **Done**        | Closed 2026-09-22; geofence accuracy still unverified on device, see #22                               | AI    |
+| 16  | Widgets                                | Cut from v1     | Plugin entry removed 2026-09-22; wiring is blocked on the App Group, so it waits for the Apple account | Mixed |
+| 17  | History                                | **Done**        | Closed 2026-09-22                                                                                      | AI    |
+| 18  | Export, import, diagnostics            | Partial 5/6     | Only the database file itself is not carried, which is a decision rather than a gap                    | Mixed |
+| 19  | Second language and RTL                | Partial         | No `accessibilityLanguage`; Arabic unreviewed                                                          | Mixed |
+| 20  | Voice shortcuts                        | Not started     | Blocked by #14                                                                                         | Mixed |
+| 21  | CarPlay / Android Auto                 | Not started     | Blocked by #14, #20 and an entitlement                                                                 | Human |
+| 22  | Release prerequisites                  | Not started 0/7 | Hosting, support email, privacy declarations, reviewer and reciter names, payments decision            | Human |
 
 ---
 

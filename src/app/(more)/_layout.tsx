@@ -18,6 +18,7 @@ export default function MoreLayout(): ReactElement {
       <Stack.Screen name="history" options={{ title: strings.history.title }} />
       <Stack.Screen name="qada" options={{ title: strings.qada.title }} />
       <Stack.Screen name="data" options={{ title: strings.data.title }} />
+      <Stack.Screen name="diagnostics" options={{ title: strings.diagnostics.title }} />
       <Stack.Screen name="language" options={{ title: strings.language.title }} />
       <Stack.Screen name="appearance" options={{ title: strings.appearance.title }} />
       <Stack.Screen name="about" options={{ title: strings.about.title }} />

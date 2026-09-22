@@ -168,6 +168,9 @@ export const en = {
     noCoordinates: 'None stored',
     records: 'Practice records',
     settings: 'Settings stored',
+    reminders: 'Reminders',
+    remindersDetail: (permission: string, pending: number): string =>
+      `${permission} · ${pending} queued`,
     error: 'Recent error',
     errorIncluded: 'One is included',
     showRaw: 'Show the whole report',

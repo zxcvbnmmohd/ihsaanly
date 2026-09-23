@@ -82,6 +82,21 @@ function needsNamedGrader(evidence: z.infer<typeof Evidence>): boolean {
   )
 }
 
+/**
+ * One text inside a composite item, such as a single remembrance of the
+ * morning adhkar. Embedded rather than top-level, so a part never appears in
+ * Library lists, the plan, suggestions or notifications on its own.
+ */
+const Part = z.object({
+  id: Slug,
+  title: LocalisedText,
+  arabic: z.string().min(1),
+  transliteration: LocalisedText.nullable(),
+  translation: LocalisedText,
+  repeat: z.number().int().positive(),
+  evidence: z.array(Evidence).min(1),
+})
+
 const Item = z
   .object({
     id: Slug,
@@ -110,6 +125,8 @@ const Item = z
     reviewed: z.boolean(),
     audio: z.string().min(1).nullable(),
     audioTranslation: LocalisedText.nullable(),
+    /** The texts to say, in order, when the item is a set such as the morning adhkar. */
+    parts: z.array(Part).optional(),
   })
   .superRefine((item, ctx) => {
     item.evidence.forEach((evidence, index) => {
@@ -120,6 +137,29 @@ const Item = z
         message: `"${item.id}" cites a collection that does not carry its own grading, so it must name a grader`,
       })
     })
+
+    const parts = item.parts ?? []
+    parts.forEach((part, partIndex) =>
+      part.evidence.forEach((evidence, index) => {
+        if (!needsNamedGrader(evidence)) return
+        ctx.addIssue({
+          code: 'custom',
+          path: ['parts', partIndex, 'evidence', index, 'gradedBy'],
+          message: `"${item.id}/${part.id}" cites a collection that does not carry its own grading, so it must name a grader`,
+        })
+      }),
+    )
+
+    parts
+      .map((part) => part.id)
+      .filter((id, index, ids) => ids.indexOf(id) !== index)
+      .forEach((id) =>
+        ctx.addIssue({
+          code: 'custom',
+          path: ['parts'],
+          message: `"${item.id}" has duplicate part id "${id}"`,
+        }),
+      )
   })
 
 export const ContentDocument = z
@@ -167,6 +207,12 @@ function localisedFieldsOf(item: z.infer<typeof Item>): Record<string, string>[]
     item.audioTranslation,
     ...item.how,
     ...item.evidence.map((evidence) => evidence.text),
+    ...(item.parts ?? []).flatMap((part) => [
+      part.title,
+      part.transliteration,
+      part.translation,
+      ...part.evidence.map((evidence) => evidence.text),
+    ]),
   ].filter((field) => field !== null)
 }
 
@@ -189,5 +235,6 @@ export type Ruling = z.infer<typeof Ruling>
 export type Grading = z.infer<typeof Grading>
 export type ContentDocument = z.infer<typeof ContentDocument>
 export type Item = z.infer<typeof Item>
+export type Part = z.infer<typeof Part>
 export type Evidence = z.infer<typeof Evidence>
 export type Trigger = z.infer<typeof Trigger>

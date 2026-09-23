@@ -17,6 +17,8 @@ export interface AboutScreenProps {
   donate: { destination: string; onPress: () => void } | null
   /** The licences worth reading in full, rather than only named in a paragraph. */
   licences: { label: string; destination: string; onPress: () => void }[]
+  /** The published policy, which both stores require to be reachable. */
+  privacy: { destination: string; onPress: () => void }
 }
 
 interface BlockProps {
@@ -47,6 +49,7 @@ export function AboutScreen({
   reviewedBy,
   donate,
   licences,
+  privacy,
 }: AboutScreenProps): ReactElement {
   const strings = useStrings()
   const palette = usePalette()
@@ -79,6 +82,11 @@ export function AboutScreen({
         <Text className="text-base leading-relaxed" style={{ color: colors.label }}>
           {strings.about.privacyBody}
         </Text>
+        <Row
+          title={strings.about.privacyPolicy}
+          detail={privacy.destination}
+          onPress={privacy.onPress}
+        />
       </Block>
 
       <Block title={strings.about.licences}>

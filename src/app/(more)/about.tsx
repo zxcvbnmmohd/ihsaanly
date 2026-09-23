@@ -7,6 +7,7 @@ import { AboutScreen } from '@/screens/about'
 
 /** Shown as the row's detail, so the destination is known before the tap. */
 const DONATION_HOST = 'donate.ihsaanly.com'
+const PRIVACY_URL = 'https://zxcvbnmmohd.github.io/ihsaanly/legal/privacy-policy'
 
 /**
  * The two licences a reader might actually want in full. The rest are named in
@@ -55,6 +56,12 @@ export default function AboutRoute(): ReactElement {
       itemCount={content.items.length}
       reviewedBy={content.reviewedBy}
       donate={donation()}
+      privacy={{
+        destination: PRIVACY_URL.replace('https://', ''),
+        onPress: (): void => {
+          void Linking.openURL(PRIVACY_URL)
+        },
+      }}
       licences={LICENCES.map(({ label, destination, url }) => ({
         label,
         destination,

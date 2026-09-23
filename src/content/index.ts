@@ -1,11 +1,13 @@
 import document from '../../content/items.json'
 import type { ContentDocument, Item } from './schema'
+import { translationFiles } from './translation-files'
+import { applyTranslations } from './translations'
 
 /**
  * Shape is guaranteed by the build gate, so the app does not re-parse the
- * document at startup.
+ * document at startup. Every language but English is laid over it here.
  */
-export const content = document as ContentDocument
+export const content = applyTranslations(document as ContentDocument, translationFiles)
 
 export const items = content.items
 

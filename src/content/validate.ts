@@ -42,15 +42,17 @@ function releaseWarningsFor(document: ContentDocument): string[] {
   const inconsistent = new Set<string>()
 
   document.items.forEach((item) =>
-    item.evidence.forEach((evidence) => {
-      if (evidence.type !== 'hadith') return
-      const citation = `${evidence.collection} ${evidence.reference}`
-      const narration = Object.values(evidence.text).join(' ')
-      const seen = narrations.get(citation)
+    [...item.evidence, ...(item.parts ?? []).flatMap((part) => part.evidence)].forEach(
+      (evidence) => {
+        if (evidence.type !== 'hadith') return
+        const citation = `${evidence.collection} ${evidence.reference}`
+        const narration = Object.values(evidence.text).join(' ')
+        const seen = narrations.get(citation)
 
-      if (seen === undefined) narrations.set(citation, narration)
-      else if (seen !== narration) inconsistent.add(citation)
-    }),
+        if (seen === undefined) narrations.set(citation, narration)
+        else if (seen !== narration) inconsistent.add(citation)
+      },
+    ),
   )
 
   // Not an error: a long narration can legitimately be quoted in parts. It is

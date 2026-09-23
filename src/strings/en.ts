@@ -125,6 +125,20 @@ export const en = {
     manage: 'Adjust what you owe',
     manageDetail: 'Set what you carry over and record make-ups in one go.',
   },
+  fasting: {
+    title: 'Fasts',
+    intro: 'Ramadan days you did not fast, and any owed from before. A count, never a list.',
+    notFastingToday: 'Not fasting today',
+    notFastingTodayDetail: 'Keeps one fast to make up later.',
+    recordedToday: 'Noted: not fasting today',
+    undo: 'Tap to undo',
+    summary: (count: number): string =>
+      count === 1 ? '1 fast to make up' : `${count} fasts to make up`,
+    outstanding: (count: number): string => (count === 1 ? '1 owed' : `${count} owed`),
+    none: 'Nothing owed',
+    owed: 'Owed from before',
+    recordMadeUp: 'Record one made up',
+  },
   history: {
     title: 'History',
     empty: 'Nothing recorded yet.',
@@ -193,6 +207,7 @@ export const en = {
     donate: 'Donate',
     donateBody:
       'Optional, and it unlocks nothing. Every part of the app is free and stays free. Opens in your browser.',
+    privacyPolicy: 'Privacy policy',
     privacyTitle: 'Nothing leaves this phone',
     privacyBody:
       'Ihsaanly has no account, no server and no analytics. Your location is used on the device to compute prayer times and is stored only here. Your practice record is stored only here. Nothing is sent anywhere unless you export it or share it yourself. Donate is the one link out of the app: it opens your browser, and that page is not part of Ihsaanly.',
@@ -217,13 +232,21 @@ export const en = {
     restart:
       'Arabic reads right to left. Switching to or from it restarts the app, or asks you to reopen it.',
     incomplete:
-      'A language appears here only once its content is complete and reviewed. Nothing is machine-translated.',
+      'English is the original. Every other language is a draft still awaiting review by a qualified speaker.',
     reopenTitle: 'Reopen Ihsaanly',
     reopenBody:
-      'Arabic reads right to left. Close Ihsaanly and open it again for the change to finish.',
+      'This language reads right to left. Close Ihsaanly and open it again for the change to finish.',
     names: {
       en: 'English',
       ar: 'العربية',
+      fr: 'Français',
+      it: 'Italiano',
+      ja: '日本語',
+      hi: 'हिन्दी',
+      ur: 'اردو',
+      so: 'Soomaali',
+      zh: '中文（普通话）',
+      yue: '廣東話',
     } as Record<SupportedLanguage, string>,
   },
   appearance: {
@@ -358,6 +381,8 @@ export const en = {
     evidence: 'Evidence',
     note: 'Scholars differ',
     repeat: (times: number): string => `Repeat ${times} times`,
+    parts: 'What to say',
+    partRepeat: (times: number): string => `${times} times`,
     gradedBy: (grader: string): string => `graded by ${grader}`,
     quranReference: (surah: number, ayah: number): string => `Qur\u2019an ${surah}:${ayah}`,
   },

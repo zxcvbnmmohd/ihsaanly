@@ -34,6 +34,12 @@ export interface QadaEntry {
   count: number
 }
 
+/** Today's fast, offered only on a Ramadan day. */
+export interface FastingTodayEntry {
+  /** The user has already said they are not fasting today. */
+  recorded: boolean
+}
+
 export interface NextPrayerEntry {
   prayer: Prayer
   distance: string
@@ -73,6 +79,12 @@ export interface TodayScreenProps {
   qada: QadaEntry[]
   onMarkPrayer: (prayer: Prayer) => void
   onMakeUp: (prayer: Prayer) => void
+  /** Null outside Ramadan, and then the row is absent. */
+  fastingToday: FastingTodayEntry | null
+  /** Fasts still owed, all sources combined. */
+  fastsOwed: number
+  onRecordFastOwed: () => void
+  onUndoFastOwed: () => void
   locationHref: Href
 }
 
@@ -308,6 +320,10 @@ export function TodayScreen({
   qada,
   onMarkPrayer,
   onMakeUp,
+  fastingToday,
+  fastsOwed,
+  onRecordFastOwed,
+  onUndoFastOwed,
   locationHref,
 }: TodayScreenProps): ReactElement {
   const strings = useStrings()
@@ -318,6 +334,7 @@ export function TodayScreen({
   const firstQada = qada[0]
   // The commonest state is one of each owed; five rows say what one does.
   const qadaUniform = qada.length > 1 && qada.every((entry) => entry.count === firstQada?.count)
+  const makeUp = qada.length > 0 || fastsOwed > 0 || fastingToday !== null
 
   // Location is set, the prayer strip is up, and nothing at all is asked of
   // the user. A screen that simply stops reads as a bug; one sentence does not.
@@ -327,7 +344,7 @@ export function TodayScreen({
     allDay.length === 0 &&
     tomorrow.length === 0 &&
     later.length === 0 &&
-    qada.length === 0 &&
+    !makeUp &&
     !suggestion &&
     !(next && (next.before.length > 0 || next.after.length > 0))
 
@@ -450,9 +467,9 @@ export function TodayScreen({
         </Section>
       ) : null}
 
-      {qada.length > 0 ? (
+      {makeUp ? (
         <Section title={strings.plan.makeUp} accent={palette.accent}>
-          {qadaUniform ? (
+          {qada.length === 0 ? null : qadaUniform ? (
             <Row
               href={qadaHref}
               title={strings.qada.summary(qada.reduce((sum, entry) => sum + entry.count, 0))}
@@ -471,6 +488,26 @@ export function TodayScreen({
               <Row href={qadaHref} title={strings.qada.manage} detail={strings.qada.manageDetail} />
             </>
           )}
+          {fastsOwed > 0 ? (
+            <Row href={qadaHref} title={strings.fasting.summary(fastsOwed)} />
+          ) : null}
+          {/* A quiet row, and only in Ramadan: saying so is the user's act, never an inference. */}
+          {fastingToday ? (
+            fastingToday.recorded ? (
+              <Row
+                title={strings.fasting.recordedToday}
+                detail={strings.fasting.undo}
+                onPress={onUndoFastOwed}
+                selected
+              />
+            ) : (
+              <Row
+                title={strings.fasting.notFastingToday}
+                detail={strings.fasting.notFastingTodayDetail}
+                onPress={onRecordFastOwed}
+              />
+            )
+          ) : null}
         </Section>
       ) : null}
 

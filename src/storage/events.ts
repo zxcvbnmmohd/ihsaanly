@@ -1,6 +1,7 @@
 import { useSyncExternalStore } from 'react'
 
 import type { ExportedEvent } from '@/data/bundle'
+import { readLedger, type FastEvent, type FastEventKind, type FastLedger } from '@/fasting/ledger'
 import type { Prayer } from '@/prayer/qada'
 
 import { database, lastDatabaseError } from './database'
@@ -13,6 +14,7 @@ export type EventKind =
   | 'prayer-made-up'
   | 'item-completed'
   | 'item-uncompleted'
+  | FastEventKind
 
 export interface NewEvent {
   kind: EventKind
@@ -230,6 +232,34 @@ function readQadaCounts(): Partial<Record<Prayer, number>> {
   })
 
   return counts
+}
+
+let fastCache: Cached<FastLedger> | null = null
+
+/**
+ * Every fasting event, oldest first, folded by `readLedger`. Raw: the backlog
+ * and the clamp are added in fasting/store.ts.
+ */
+function fastSnapshot(): FastLedger {
+  if (fastCache && fastCache.version === version) return fastCache.value
+
+  const rows = attempt(
+    'readFastLedger',
+    () =>
+      database.getAllSync<FastEvent>(
+        `SELECT kind, log_day AS logDay FROM events
+         WHERE kind IN ('fast-owed', 'fast-owed-cleared', 'fast-made-up')
+         ORDER BY id ASC`,
+      ),
+    [],
+  )
+  const value = readLedger(rows)
+  fastCache = { version, value }
+  return value
+}
+
+export function useFastLedger(): FastLedger {
+  return useSyncExternalStore(subscribe, fastSnapshot)
 }
 
 /**

@@ -12,7 +12,13 @@
       "bundleIdentifier": "com.ihsaanly.app",
       "infoPlist": {
         "UIBackgroundModes": ["location"],
-        "CFBundleLocalizations": ["en", "ar"]
+        "UISupportedInterfaceOrientations~ipad": [
+          "UIInterfaceOrientationPortrait",
+          "UIInterfaceOrientationPortraitUpsideDown",
+          "UIInterfaceOrientationLandscapeLeft",
+          "UIInterfaceOrientationLandscapeRight"
+        ],
+        "CFBundleLocalizations": ["en", "ar", "fr", "it", "ja", "hi", "ur", "so", "zh-Hans", "yue"]
       },
       "config": {
         "usesNonExemptEncryption": false

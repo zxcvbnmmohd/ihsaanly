@@ -21,8 +21,18 @@ export interface QadaRow {
   pending: number
 }
 
+export interface FastsRow {
+  /** What is still owed, all sources combined. */
+  outstanding: number
+  /** Owed from before tracking began. Written as it changes. */
+  owed: number
+}
+
 export interface QadaScreenProps {
   rows: QadaRow[]
+  fasts: FastsRow
+  onFastsOwedChange: (value: number) => void
+  onRecordFastMadeUp: () => void
   onOwedChange: (prayer: Prayer, value: number) => void
   onPendingChange: (prayer: Prayer, value: number) => void
   onRecord: (prayer: Prayer) => void
@@ -31,6 +41,9 @@ export interface QadaScreenProps {
 /** A count per prayer and two ways to move it. Never a list, never a date, never the word "missed". */
 export function QadaScreen({
   rows,
+  fasts,
+  onFastsOwedChange,
+  onRecordFastMadeUp,
   onOwedChange,
   onPendingChange,
   onRecord,
@@ -83,6 +96,39 @@ export function QadaScreen({
           </View>
         </Surface>
       ))}
+
+      <Surface style={{ borderRadius: 24, padding: 20 }}>
+        <View className="gap-4">
+          <View className="flex-row items-baseline justify-between">
+            <Text
+              className="text-2xl"
+              style={{ color: colors.label, fontFamily: fonts.display, fontWeight: '600' }}>
+              {strings.fasting.title}
+            </Text>
+            <Text className="text-base" style={{ color: colors.secondaryLabel }}>
+              {fasts.outstanding > 0
+                ? strings.fasting.outstanding(fasts.outstanding)
+                : strings.fasting.none}
+            </Text>
+          </View>
+          <Text className="text-sm leading-relaxed" style={{ color: colors.secondaryLabel }}>
+            {strings.fasting.intro}
+          </Text>
+          <Stepper
+            label={strings.fasting.owed}
+            value={fasts.owed}
+            onChange={onFastsOwedChange}
+            palette={palette}
+          />
+          <Button
+            title={strings.fasting.recordMadeUp}
+            onPress={onRecordFastMadeUp}
+            disabled={fasts.outstanding === 0}
+            variant="secondary"
+            color={palette.accent}
+          />
+        </View>
+      </Surface>
     </Screen>
   )
 }

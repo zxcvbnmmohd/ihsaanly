@@ -30,7 +30,9 @@ export function Screen({ children, className, palette }: ScreenProps): ReactElem
       // Without this the first tap on a search result only dismisses the
       // keyboard and the row has to be tapped twice.
       keyboardShouldPersistTaps="handled"
-      contentContainerClassName={className ?? 'gap-4 p-4'}>
+      contentContainerClassName={className ?? 'gap-4 p-4'}
+      // A reading column on iPad and tablets; a phone is narrower than the cap.
+      contentContainerStyle={{ width: '100%', maxWidth: 720, alignSelf: 'center' }}>
       {children}
     </ScrollView>
   )

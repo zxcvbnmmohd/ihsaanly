@@ -2,6 +2,10 @@ import { Stack } from 'expo-router'
 import { useEffect, useState, type ReactElement } from 'react'
 
 import { itemById, resolveText } from '@/content'
+import { civilDateIn, civilDateKey } from '@/day/boundaries'
+import { isRamadanDay } from '@/fasting/ledger'
+import { clearFastOwed, recordFastOwed, useFastOwedOn, useFastsOutstanding } from '@/fasting/store'
+import { useHijriOffset } from '@/hijri/store'
 import { requestDeviceLocation } from '@/location/device'
 import { setPlace, usePlace } from '@/location/store'
 import type { NextPrayer, PlannedItem } from '@/plan/signals'
@@ -148,6 +152,12 @@ export default function TodayRoute(): ReactElement {
   const locale = useLocale()
   const timeZone = place?.timeZone ?? 'UTC'
   const civilDay = (instant: Date): string => instant.toLocaleDateString('en-CA', { timeZone })
+  const hijriOffset = useHijriOffset()
+  const fastsOwed = useFastsOutstanding()
+  const todayCivil = civilDateIn(now, timeZone)
+  const fastOwedToday = useFastOwedOn(civilDateKey(todayCivil))
+  // Not gated on the tracking pause: recording an owed fast is the user's act.
+  const ramadan = isRamadanDay(todayCivil, hijriOffset)
   const windows = place ? buildWindows(prayerTimesAcross(place, now, preferences)) : []
   // Today's window for the prayer has closed; yesterday's Isha does not count.
   const passed = (prayer: Prayer): boolean =>
@@ -251,6 +261,10 @@ export default function TodayRoute(): ReactElement {
         }))}
         onMarkPrayer={togglePrayer}
         onMakeUp={onMakeUpFor(place?.timeZone, now)}
+        fastingToday={ramadan ? { recorded: fastOwedToday } : null}
+        fastsOwed={fastsOwed}
+        onRecordFastOwed={() => recordFastOwed(now, timeZone)}
+        onUndoFastOwed={() => clearFastOwed(now, timeZone)}
         suggestion={suggested}
         onAddSuggestion={(id) => setEnabledItems([...enabled, id])}
         onDismissSuggestion={(id) =>

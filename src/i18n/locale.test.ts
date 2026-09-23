@@ -19,11 +19,11 @@ describe('resolving a locale', () => {
   })
 
   it('falls back to the default when nothing matches', () => {
-    expect(resolveLocale(['ja-JP'])).toBe(DEFAULT_LOCALE)
+    expect(resolveLocale(['de-DE'])).toBe(DEFAULT_LOCALE)
   })
 
   it('takes the first preference that can be served', () => {
-    expect(resolveLocale(['ja-JP', 'ar'])).toBe('ar')
+    expect(resolveLocale(['de-DE', 'ar'])).toBe('ar')
   })
 
   it('handles an empty preference list', () => {
@@ -70,5 +70,21 @@ describe('choosing a language', () => {
   it('reduces a stored locale to the language the user picked', () => {
     expect(supportedLanguageOf('en-GB')).toBe('en')
     expect(supportedLanguageOf('ar')).toBe('ar')
+  })
+})
+
+describe('Chinese on a device', () => {
+  it('reads Hong Kong and Macau as Cantonese', () => {
+    expect(resolveLocale(['zh-Hant-HK'])).toBe('yue')
+    expect(resolveLocale(['zh-MO'])).toBe('yue')
+  })
+
+  it('reads the mainland and Taiwan as Mandarin', () => {
+    expect(resolveLocale(['zh-Hans-CN'])).toBe('zh-Hans')
+    expect(resolveLocale(['zh-Hant-TW'])).toBe('zh-Hans')
+  })
+
+  it('reads Urdu as right to left', () => {
+    expect(isRightToLeft('ur')).toBe(true)
   })
 })

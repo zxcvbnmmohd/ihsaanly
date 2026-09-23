@@ -94,7 +94,7 @@ Enforced by lint, so a violation fails `bun run check`.
   src/plan/{plan,day-match,day-context,signals,user-state,quiet-hours,
              notification-preferences,history,presets,suggest}.ts
   src/data/bundle.ts        src/memorise/reveal.ts  src/i18n/locale.ts
-  src/assert-never.ts
+  src/assert-never.ts       src/fasting/ledger.ts
   ```
 
   Adding a file to the domain means adding it there too; the rule is the list,

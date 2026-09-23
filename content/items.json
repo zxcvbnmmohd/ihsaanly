@@ -624,13 +624,347 @@
           "en": "After Fajr, sit a moment."
         },
         {
-          "en": "Say the morning adhkar: Ayat al-Kursi, the three Quls, the sayyid al-istighfar, and the rest."
+          "en": "Say the morning adhkar, whose texts are below: Ayat al-Kursi, the three Quls, the sayyid al-istighfar, and the rest."
         },
         {
           "en": "If you know only one or two, say those."
         }
       ],
-      "reviewed": false
+      "reviewed": false,
+      "parts": [
+        {
+          "id": "ayat-al-kursi",
+          "title": {
+            "en": "Ayat al-Kursi",
+            "ar": "آية الكرسي"
+          },
+          "arabic": "اللَّهُ لَا إِلَهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ لَا تَأْخُذُهُ سِنَةٌ وَلَا نَوْمٌ لَهُ مَا فِي السَّمَاوَاتِ وَمَا فِي الْأَرْضِ مَنْ ذَا الَّذِي يَشْفَعُ عِنْدَهُ إِلَّا بِإِذْنِهِ يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ وَلَا يُحِيطُونَ بِشَيْءٍ مِنْ عِلْمِهِ إِلَّا بِمَا شَاءَ وَسِعَ كُرْسِيُّهُ السَّمَاوَاتِ وَالْأَرْضَ وَلَا يَئُودُهُ حِفْظُهُمَا وَهُوَ الْعَلِيُّ الْعَظِيمُ",
+          "transliteration": {
+            "en": "Allāhu lā ilāha illā huwal-ḥayyul-qayyūm, lā taʾkhudhuhū sinatun wa lā nawm, lahū mā fis-samāwāti wa mā fil-arḍ, man dhal-ladhī yashfaʿu ʿindahū illā bi-idhnih, yaʿlamu mā bayna aydīhim wa mā khalfahum, wa lā yuḥīṭūna bi-shayʾim-min ʿilmihī illā bimā shāʾ, wasiʿa kursiyyuhus-samāwāti wal-arḍ, wa lā yaʾūduhū ḥifẓuhumā, wa huwal-ʿaliyyul-ʿaẓīm."
+          },
+          "translation": {
+            "en": "Allah: there is no deity except Him, the Ever-Living, the Sustainer of all existence. Neither drowsiness overtakes Him nor sleep. To Him belongs whatever is in the heavens and whatever is on the earth. Who is it that can intercede with Him except by His permission? He knows what is before them and what will be after them, and they encompass nothing of His knowledge except what He wills. His Kursi extends over the heavens and the earth, and their preservation does not tire Him. And He is the Most High, the Most Great."
+          },
+          "repeat": 1,
+          "evidence": [
+            {
+              "type": "quran",
+              "surah": 2,
+              "ayah": 255,
+              "text": {
+                "en": "Allah: there is no deity except Him, the Ever-Living, the Sustainer of all existence."
+              }
+            }
+          ]
+        },
+        {
+          "id": "al-ikhlas",
+          "title": {
+            "en": "Al-Ikhlas",
+            "ar": "سورة الإخلاص"
+          },
+          "arabic": "بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ\nقُلْ هُوَ اللَّهُ أَحَدٌ\nاللَّهُ الصَّمَدُ\nلَمْ يَلِدْ وَلَمْ يُولَدْ\nوَلَمْ يَكُنْ لَهُ كُفُوًا أَحَدٌ",
+          "transliteration": {
+            "en": "Bismillāhir-raḥmānir-raḥīm. Qul huwallāhu aḥad. Allāhuṣ-ṣamad. Lam yalid wa lam yūlad. Wa lam yakul-lahū kufuwan aḥad."
+          },
+          "translation": {
+            "en": "In the name of Allah, the Most Gracious, the Most Merciful. Say: He is Allah, the One. Allah, the Eternal Refuge. He neither begets nor is born, and there is none comparable to Him."
+          },
+          "repeat": 3,
+          "evidence": [
+            {
+              "type": "quran",
+              "surah": 112,
+              "ayah": 1,
+              "text": {
+                "en": "Say: He is Allah, the One."
+              }
+            },
+            {
+              "type": "hadith",
+              "collection": "Sunan Abi Dawud",
+              "reference": "5082",
+              "grading": "hasan",
+              "gradedBy": "al-Albani",
+              "text": {
+                "en": "Say “Qul huwa Allahu ahad” and the two chapters of refuge, al-Falaq and an-Nas, three times in the evening and in the morning; they will suffice you against everything."
+              }
+            },
+            {
+              "type": "hadith",
+              "collection": "Sunan at-Tirmidhi",
+              "reference": "3575",
+              "grading": "hasan",
+              "gradedBy": "al-Albani",
+              "text": {
+                "en": "Say “Qul huwa Allahu ahad” and the two chapters of refuge, al-Falaq and an-Nas, three times in the evening and in the morning; they will suffice you against everything."
+              }
+            }
+          ]
+        },
+        {
+          "id": "al-falaq",
+          "title": {
+            "en": "Al-Falaq",
+            "ar": "سورة الفلق"
+          },
+          "arabic": "بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ\nقُلْ أَعُوذُ بِرَبِّ الْفَلَقِ\nمِنْ شَرِّ مَا خَلَقَ\nوَمِنْ شَرِّ غَاسِقٍ إِذَا وَقَبَ\nوَمِنْ شَرِّ النَّفَّاثَاتِ فِي الْعُقَدِ\nوَمِنْ شَرِّ حَاسِدٍ إِذَا حَسَدَ",
+          "transliteration": {
+            "en": "Bismillāhir-raḥmānir-raḥīm. Qul aʿūdhu bi-rabbil-falaq. Min sharri mā khalaq. Wa min sharri ghāsiqin idhā waqab. Wa min sharrin-naffāthāti fil-ʿuqad. Wa min sharri ḥāsidin idhā ḥasad."
+          },
+          "translation": {
+            "en": "In the name of Allah, the Most Gracious, the Most Merciful. Say: I seek refuge in the Lord of daybreak, from the evil of what He has created, and from the evil of darkness when it settles, and from the evil of those who blow on knots, and from the evil of an envier when he envies."
+          },
+          "repeat": 3,
+          "evidence": [
+            {
+              "type": "quran",
+              "surah": 113,
+              "ayah": 1,
+              "text": {
+                "en": "Say: I seek refuge in the Lord of daybreak."
+              }
+            },
+            {
+              "type": "hadith",
+              "collection": "Sunan Abi Dawud",
+              "reference": "5082",
+              "grading": "hasan",
+              "gradedBy": "al-Albani",
+              "text": {
+                "en": "Say “Qul huwa Allahu ahad” and the two chapters of refuge, al-Falaq and an-Nas, three times in the evening and in the morning; they will suffice you against everything."
+              }
+            },
+            {
+              "type": "hadith",
+              "collection": "Sunan at-Tirmidhi",
+              "reference": "3575",
+              "grading": "hasan",
+              "gradedBy": "al-Albani",
+              "text": {
+                "en": "Say “Qul huwa Allahu ahad” and the two chapters of refuge, al-Falaq and an-Nas, three times in the evening and in the morning; they will suffice you against everything."
+              }
+            }
+          ]
+        },
+        {
+          "id": "an-nas",
+          "title": {
+            "en": "An-Nas",
+            "ar": "سورة الناس"
+          },
+          "arabic": "بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ\nقُلْ أَعُوذُ بِرَبِّ النَّاسِ\nمَلِكِ النَّاسِ\nإِلَهِ النَّاسِ\nمِنْ شَرِّ الْوَسْوَاسِ الْخَنَّاسِ\nالَّذِي يُوَسْوِسُ فِي صُدُورِ النَّاسِ\nمِنَ الْجِنَّةِ وَالنَّاسِ",
+          "transliteration": {
+            "en": "Bismillāhir-raḥmānir-raḥīm. Qul aʿūdhu bi-rabbin-nās. Malikin-nās. Ilāhin-nās. Min sharril-waswāsil-khannās. Alladhī yuwaswisu fī ṣudūrin-nās. Minal-jinnati wan-nās."
+          },
+          "translation": {
+            "en": "In the name of Allah, the Most Gracious, the Most Merciful. Say: I seek refuge in the Lord of mankind, the King of mankind, the God of mankind, from the evil of the retreating whisperer, who whispers in the hearts of mankind, from among the jinn and mankind."
+          },
+          "repeat": 3,
+          "evidence": [
+            {
+              "type": "quran",
+              "surah": 114,
+              "ayah": 1,
+              "text": {
+                "en": "Say: I seek refuge in the Lord of mankind."
+              }
+            },
+            {
+              "type": "hadith",
+              "collection": "Sunan Abi Dawud",
+              "reference": "5082",
+              "grading": "hasan",
+              "gradedBy": "al-Albani",
+              "text": {
+                "en": "Say “Qul huwa Allahu ahad” and the two chapters of refuge, al-Falaq and an-Nas, three times in the evening and in the morning; they will suffice you against everything."
+              }
+            },
+            {
+              "type": "hadith",
+              "collection": "Sunan at-Tirmidhi",
+              "reference": "3575",
+              "grading": "hasan",
+              "gradedBy": "al-Albani",
+              "text": {
+                "en": "Say “Qul huwa Allahu ahad” and the two chapters of refuge, al-Falaq and an-Nas, three times in the evening and in the morning; they will suffice you against everything."
+              }
+            }
+          ]
+        },
+        {
+          "id": "asbahna",
+          "title": {
+            "en": "We have reached the morning",
+            "ar": "أصبحنا وأصبح الملك لله"
+          },
+          "arabic": "أَصْبَحْنَا وَأَصْبَحَ الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ، رَبِّ أَسْأَلُكَ خَيْرَ مَا فِي هَذَا الْيَوْمِ وَخَيْرَ مَا بَعْدَهُ، وَأَعُوذُ بِكَ مِنْ شَرِّ مَا فِي هَذَا الْيَوْمِ وَشَرِّ مَا بَعْدَهُ، رَبِّ أَعُوذُ بِكَ مِنَ الْكَسَلِ وَسُوءِ الْكِبَرِ، رَبِّ أَعُوذُ بِكَ مِنْ عَذَابٍ فِي النَّارِ وَعَذَابٍ فِي الْقَبْرِ",
+          "transliteration": {
+            "en": "Aṣbaḥnā wa aṣbaḥal-mulku lillāh, wal-ḥamdu lillāh, lā ilāha illallāhu waḥdahū lā sharīka lah, lahul-mulku wa lahul-ḥamdu wa huwa ʿalā kulli shayʾin qadīr. Rabbi asʾaluka khayra mā fī hādhal-yawmi wa khayra mā baʿdah, wa aʿūdhu bika min sharri mā fī hādhal-yawmi wa sharri mā baʿdah. Rabbi aʿūdhu bika minal-kasali wa sūʾil-kibar. Rabbi aʿūdhu bika min ʿadhābin fin-nāri wa ʿadhābin fil-qabr."
+          },
+          "translation": {
+            "en": "We have reached the morning, and the dominion belongs to Allah, and all praise is for Allah. There is no deity but Allah alone, without partner; His is the dominion and His is the praise, and He has power over all things. My Lord, I ask You for the good of this day and the good of what follows it, and I seek refuge in You from the evil of this day and the evil of what follows it. My Lord, I seek refuge in You from laziness and the misery of old age. My Lord, I seek refuge in You from punishment in the Fire and punishment in the grave."
+          },
+          "repeat": 1,
+          "evidence": [
+            {
+              "type": "hadith",
+              "collection": "Sahih Muslim",
+              "reference": "2723",
+              "grading": "sahih",
+              "gradedBy": null,
+              "text": {
+                "en": "When evening came, the Prophet ﷺ would say: “We have reached the evening and the dominion belongs to Allah…” And in the morning he said the same: “We have reached the morning and the dominion belongs to Allah.”"
+              }
+            }
+          ]
+        },
+        {
+          "id": "bika-asbahna",
+          "title": {
+            "en": "By You we reach the morning",
+            "ar": "اللهم بك أصبحنا"
+          },
+          "arabic": "اللَّهُمَّ بِكَ أَصْبَحْنَا، وَبِكَ أَمْسَيْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ، وَإِلَيْكَ النُّشُورُ",
+          "transliteration": {
+            "en": "Allāhumma bika aṣbaḥnā, wa bika amsaynā, wa bika naḥyā, wa bika namūtu, wa ilaykan-nushūr."
+          },
+          "translation": {
+            "en": "O Allah, by You we reach the morning and by You we reach the evening, by You we live and by You we die, and to You is the resurrection."
+          },
+          "repeat": 1,
+          "evidence": [
+            {
+              "type": "hadith",
+              "collection": "Sunan at-Tirmidhi",
+              "reference": "3391",
+              "grading": "sahih",
+              "gradedBy": "al-Albani",
+              "text": {
+                "en": "The Prophet ﷺ would teach his companions to say in the morning: “O Allah, by You we reach the morning and by You we reach the evening, by You we live and by You we die, and to You is the resurrection,” and in the evening: “O Allah, by You we reach the evening and by You we reach the morning, by You we live and by You we die, and to You is the return.”"
+              }
+            }
+          ]
+        },
+        {
+          "id": "sayyid-al-istighfar",
+          "title": {
+            "en": "Sayyid al-istighfar",
+            "ar": "سيد الاستغفار"
+          },
+          "arabic": "اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَهَ إِلَّا أَنْتَ، خَلَقْتَنِي وَأَنَا عَبْدُكَ، وَأَنَا عَلَى عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ، أَعُوذُ بِكَ مِنْ شَرِّ مَا صَنَعْتُ، أَبُوءُ لَكَ بِنِعْمَتِكَ عَلَيَّ، وَأَبُوءُ لَكَ بِذَنْبِي فَاغْفِرْ لِي، فَإِنَّهُ لَا يَغْفِرُ الذُّنُوبَ إِلَّا أَنْتَ",
+          "transliteration": {
+            "en": "Allāhumma anta rabbī lā ilāha illā ant, khalaqtanī wa ana ʿabduk, wa ana ʿalā ʿahdika wa waʿdika mastaṭaʿt, aʿūdhu bika min sharri mā ṣanaʿt, abūʾu laka bi-niʿmatika ʿalayya, wa abūʾu laka bi-dhanbī faghfir lī, fa-innahū lā yaghfirudh-dhunūba illā ant."
+          },
+          "translation": {
+            "en": "O Allah, You are my Lord; there is no deity but You. You created me and I am Your servant, and I keep to Your covenant and Your promise as far as I am able. I seek refuge in You from the evil of what I have done. I acknowledge Your favour upon me, and I acknowledge my sin, so forgive me, for none forgives sins but You."
+          },
+          "repeat": 1,
+          "evidence": [
+            {
+              "type": "hadith",
+              "collection": "Sahih al-Bukhari",
+              "reference": "6306",
+              "grading": "sahih",
+              "gradedBy": null,
+              "text": {
+                "en": "The best manner of seeking forgiveness is to say: O Allah, You are my Lord, there is no deity but You. You created me and I am Your servant."
+              }
+            }
+          ]
+        },
+        {
+          "id": "raditu-billahi-rabban",
+          "title": {
+            "en": "Pleased with Allah as Lord",
+            "ar": "رضيت بالله ربا"
+          },
+          "arabic": "رَضِيتُ بِاللَّهِ رَبًّا، وَبِالْإِسْلَامِ دِينًا، وَبِمُحَمَّدٍ ﷺ نَبِيًّا",
+          "transliteration": {
+            "en": "Raḍītu billāhi rabban, wa bil-islāmi dīnan, wa bi-Muḥammadin ﷺ nabiyyā."
+          },
+          "translation": {
+            "en": "I am pleased with Allah as Lord, with Islam as religion, and with Muhammad ﷺ as Prophet."
+          },
+          "repeat": 3,
+          "evidence": [
+            {
+              "type": "hadith",
+              "collection": "Sunan Abi Dawud",
+              "reference": "5072",
+              "grading": "disputed",
+              "gradedBy": "Ibn Baz (hasan); al-Albani (da’if)",
+              "text": {
+                "en": "Whoever says, in the morning and the evening, that he is pleased with Allah as Lord, with Islam as religion and with Muhammad ﷺ as Prophet, it is a right upon Allah to please him."
+              }
+            }
+          ]
+        },
+        {
+          "id": "bismillah-alladhi-la-yadurr",
+          "title": {
+            "en": "In the name of Allah, with whose name nothing harms",
+            "ar": "بسم الله الذي لا يضر مع اسمه شيء"
+          },
+          "arabic": "بِسْمِ اللَّهِ الَّذِي لَا يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الْأَرْضِ وَلَا فِي السَّمَاءِ وَهُوَ السَّمِيعُ الْعَلِيمُ",
+          "transliteration": {
+            "en": "Bismillāhil-ladhī lā yaḍurru maʿasmihī shayʾun fil-arḍi wa lā fis-samāʾ, wa huwas-samīʿul-ʿalīm."
+          },
+          "translation": {
+            "en": "In the name of Allah, with whose name nothing on earth or in the heaven can cause harm, and He is the All-Hearing, the All-Knowing."
+          },
+          "repeat": 3,
+          "evidence": [
+            {
+              "type": "hadith",
+              "collection": "Sunan Abi Dawud",
+              "reference": "5088",
+              "grading": "hasan",
+              "gradedBy": "al-Albani",
+              "text": {
+                "en": "Whoever says three times, “In the name of Allah, with whose name nothing on earth or in the heaven can cause harm, and He is the All-Hearing, the All-Knowing,” will not be struck by sudden affliction until morning, and whoever says it three times in the morning will not be struck by sudden affliction until evening."
+              }
+            },
+            {
+              "type": "hadith",
+              "collection": "Sunan at-Tirmidhi",
+              "reference": "3388",
+              "grading": "sahih",
+              "gradedBy": "al-Albani",
+              "text": {
+                "en": "No servant says, in the morning of every day and the evening of every night, “In the name of Allah, with whose name nothing on earth or in the heaven can cause harm, and He is the All-Hearing, the All-Knowing,” three times, and is then harmed by anything."
+              }
+            }
+          ]
+        },
+        {
+          "id": "subhan-allahi-wa-bihamdihi",
+          "title": {
+            "en": "Glory be to Allah, and praise be to Him",
+            "ar": "سبحان الله وبحمده"
+          },
+          "arabic": "سُبْحَانَ اللَّهِ وَبِحَمْدِهِ",
+          "transliteration": {
+            "en": "Subḥānallāhi wa bi-ḥamdih."
+          },
+          "translation": {
+            "en": "Glory be to Allah, and praise be to Him."
+          },
+          "repeat": 100,
+          "evidence": [
+            {
+              "type": "hadith",
+              "collection": "Sahih Muslim",
+              "reference": "2692",
+              "grading": "sahih",
+              "gradedBy": null,
+              "text": {
+                "en": "Whoever says, in the morning and in the evening, “Glory be to Allah, and praise be to Him” a hundred times, no one will come on the Day of Resurrection with anything better, except one who said the same or more."
+              }
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "evening-adhkar",
@@ -675,13 +1009,374 @@
           "en": "After Asr, sit a moment."
         },
         {
-          "en": "Say the evening adhkar."
+          "en": "Say the evening adhkar, whose texts are below."
         },
         {
           "en": "If you know only one or two, say those."
         }
       ],
-      "reviewed": false
+      "reviewed": false,
+      "parts": [
+        {
+          "id": "ayat-al-kursi",
+          "title": {
+            "en": "Ayat al-Kursi",
+            "ar": "آية الكرسي"
+          },
+          "arabic": "اللَّهُ لَا إِلَهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ لَا تَأْخُذُهُ سِنَةٌ وَلَا نَوْمٌ لَهُ مَا فِي السَّمَاوَاتِ وَمَا فِي الْأَرْضِ مَنْ ذَا الَّذِي يَشْفَعُ عِنْدَهُ إِلَّا بِإِذْنِهِ يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ وَلَا يُحِيطُونَ بِشَيْءٍ مِنْ عِلْمِهِ إِلَّا بِمَا شَاءَ وَسِعَ كُرْسِيُّهُ السَّمَاوَاتِ وَالْأَرْضَ وَلَا يَئُودُهُ حِفْظُهُمَا وَهُوَ الْعَلِيُّ الْعَظِيمُ",
+          "transliteration": {
+            "en": "Allāhu lā ilāha illā huwal-ḥayyul-qayyūm, lā taʾkhudhuhū sinatun wa lā nawm, lahū mā fis-samāwāti wa mā fil-arḍ, man dhal-ladhī yashfaʿu ʿindahū illā bi-idhnih, yaʿlamu mā bayna aydīhim wa mā khalfahum, wa lā yuḥīṭūna bi-shayʾim-min ʿilmihī illā bimā shāʾ, wasiʿa kursiyyuhus-samāwāti wal-arḍ, wa lā yaʾūduhū ḥifẓuhumā, wa huwal-ʿaliyyul-ʿaẓīm."
+          },
+          "translation": {
+            "en": "Allah: there is no deity except Him, the Ever-Living, the Sustainer of all existence. Neither drowsiness overtakes Him nor sleep. To Him belongs whatever is in the heavens and whatever is on the earth. Who is it that can intercede with Him except by His permission? He knows what is before them and what will be after them, and they encompass nothing of His knowledge except what He wills. His Kursi extends over the heavens and the earth, and their preservation does not tire Him. And He is the Most High, the Most Great."
+          },
+          "repeat": 1,
+          "evidence": [
+            {
+              "type": "quran",
+              "surah": 2,
+              "ayah": 255,
+              "text": {
+                "en": "Allah: there is no deity except Him, the Ever-Living, the Sustainer of all existence."
+              }
+            }
+          ]
+        },
+        {
+          "id": "al-ikhlas",
+          "title": {
+            "en": "Al-Ikhlas",
+            "ar": "سورة الإخلاص"
+          },
+          "arabic": "بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ\nقُلْ هُوَ اللَّهُ أَحَدٌ\nاللَّهُ الصَّمَدُ\nلَمْ يَلِدْ وَلَمْ يُولَدْ\nوَلَمْ يَكُنْ لَهُ كُفُوًا أَحَدٌ",
+          "transliteration": {
+            "en": "Bismillāhir-raḥmānir-raḥīm. Qul huwallāhu aḥad. Allāhuṣ-ṣamad. Lam yalid wa lam yūlad. Wa lam yakul-lahū kufuwan aḥad."
+          },
+          "translation": {
+            "en": "In the name of Allah, the Most Gracious, the Most Merciful. Say: He is Allah, the One. Allah, the Eternal Refuge. He neither begets nor is born, and there is none comparable to Him."
+          },
+          "repeat": 3,
+          "evidence": [
+            {
+              "type": "quran",
+              "surah": 112,
+              "ayah": 1,
+              "text": {
+                "en": "Say: He is Allah, the One."
+              }
+            },
+            {
+              "type": "hadith",
+              "collection": "Sunan Abi Dawud",
+              "reference": "5082",
+              "grading": "hasan",
+              "gradedBy": "al-Albani",
+              "text": {
+                "en": "Say “Qul huwa Allahu ahad” and the two chapters of refuge, al-Falaq and an-Nas, three times in the evening and in the morning; they will suffice you against everything."
+              }
+            },
+            {
+              "type": "hadith",
+              "collection": "Sunan at-Tirmidhi",
+              "reference": "3575",
+              "grading": "hasan",
+              "gradedBy": "al-Albani",
+              "text": {
+                "en": "Say “Qul huwa Allahu ahad” and the two chapters of refuge, al-Falaq and an-Nas, three times in the evening and in the morning; they will suffice you against everything."
+              }
+            }
+          ]
+        },
+        {
+          "id": "al-falaq",
+          "title": {
+            "en": "Al-Falaq",
+            "ar": "سورة الفلق"
+          },
+          "arabic": "بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ\nقُلْ أَعُوذُ بِرَبِّ الْفَلَقِ\nمِنْ شَرِّ مَا خَلَقَ\nوَمِنْ شَرِّ غَاسِقٍ إِذَا وَقَبَ\nوَمِنْ شَرِّ النَّفَّاثَاتِ فِي الْعُقَدِ\nوَمِنْ شَرِّ حَاسِدٍ إِذَا حَسَدَ",
+          "transliteration": {
+            "en": "Bismillāhir-raḥmānir-raḥīm. Qul aʿūdhu bi-rabbil-falaq. Min sharri mā khalaq. Wa min sharri ghāsiqin idhā waqab. Wa min sharrin-naffāthāti fil-ʿuqad. Wa min sharri ḥāsidin idhā ḥasad."
+          },
+          "translation": {
+            "en": "In the name of Allah, the Most Gracious, the Most Merciful. Say: I seek refuge in the Lord of daybreak, from the evil of what He has created, and from the evil of darkness when it settles, and from the evil of those who blow on knots, and from the evil of an envier when he envies."
+          },
+          "repeat": 3,
+          "evidence": [
+            {
+              "type": "quran",
+              "surah": 113,
+              "ayah": 1,
+              "text": {
+                "en": "Say: I seek refuge in the Lord of daybreak."
+              }
+            },
+            {
+              "type": "hadith",
+              "collection": "Sunan Abi Dawud",
+              "reference": "5082",
+              "grading": "hasan",
+              "gradedBy": "al-Albani",
+              "text": {
+                "en": "Say “Qul huwa Allahu ahad” and the two chapters of refuge, al-Falaq and an-Nas, three times in the evening and in the morning; they will suffice you against everything."
+              }
+            },
+            {
+              "type": "hadith",
+              "collection": "Sunan at-Tirmidhi",
+              "reference": "3575",
+              "grading": "hasan",
+              "gradedBy": "al-Albani",
+              "text": {
+                "en": "Say “Qul huwa Allahu ahad” and the two chapters of refuge, al-Falaq and an-Nas, three times in the evening and in the morning; they will suffice you against everything."
+              }
+            }
+          ]
+        },
+        {
+          "id": "an-nas",
+          "title": {
+            "en": "An-Nas",
+            "ar": "سورة الناس"
+          },
+          "arabic": "بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ\nقُلْ أَعُوذُ بِرَبِّ النَّاسِ\nمَلِكِ النَّاسِ\nإِلَهِ النَّاسِ\nمِنْ شَرِّ الْوَسْوَاسِ الْخَنَّاسِ\nالَّذِي يُوَسْوِسُ فِي صُدُورِ النَّاسِ\nمِنَ الْجِنَّةِ وَالنَّاسِ",
+          "transliteration": {
+            "en": "Bismillāhir-raḥmānir-raḥīm. Qul aʿūdhu bi-rabbin-nās. Malikin-nās. Ilāhin-nās. Min sharril-waswāsil-khannās. Alladhī yuwaswisu fī ṣudūrin-nās. Minal-jinnati wan-nās."
+          },
+          "translation": {
+            "en": "In the name of Allah, the Most Gracious, the Most Merciful. Say: I seek refuge in the Lord of mankind, the King of mankind, the God of mankind, from the evil of the retreating whisperer, who whispers in the hearts of mankind, from among the jinn and mankind."
+          },
+          "repeat": 3,
+          "evidence": [
+            {
+              "type": "quran",
+              "surah": 114,
+              "ayah": 1,
+              "text": {
+                "en": "Say: I seek refuge in the Lord of mankind."
+              }
+            },
+            {
+              "type": "hadith",
+              "collection": "Sunan Abi Dawud",
+              "reference": "5082",
+              "grading": "hasan",
+              "gradedBy": "al-Albani",
+              "text": {
+                "en": "Say “Qul huwa Allahu ahad” and the two chapters of refuge, al-Falaq and an-Nas, three times in the evening and in the morning; they will suffice you against everything."
+              }
+            },
+            {
+              "type": "hadith",
+              "collection": "Sunan at-Tirmidhi",
+              "reference": "3575",
+              "grading": "hasan",
+              "gradedBy": "al-Albani",
+              "text": {
+                "en": "Say “Qul huwa Allahu ahad” and the two chapters of refuge, al-Falaq and an-Nas, three times in the evening and in the morning; they will suffice you against everything."
+              }
+            }
+          ]
+        },
+        {
+          "id": "amsayna",
+          "title": {
+            "en": "We have reached the evening",
+            "ar": "أمسينا وأمسى الملك لله"
+          },
+          "arabic": "أَمْسَيْنَا وَأَمْسَى الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ، رَبِّ أَسْأَلُكَ خَيْرَ مَا فِي هَذِهِ اللَّيْلَةِ وَخَيْرَ مَا بَعْدَهَا، وَأَعُوذُ بِكَ مِنْ شَرِّ مَا فِي هَذِهِ اللَّيْلَةِ وَشَرِّ مَا بَعْدَهَا، رَبِّ أَعُوذُ بِكَ مِنَ الْكَسَلِ وَسُوءِ الْكِبَرِ، رَبِّ أَعُوذُ بِكَ مِنْ عَذَابٍ فِي النَّارِ وَعَذَابٍ فِي الْقَبْرِ",
+          "transliteration": {
+            "en": "Amsaynā wa amsal-mulku lillāh, wal-ḥamdu lillāh, lā ilāha illallāhu waḥdahū lā sharīka lah, lahul-mulku wa lahul-ḥamdu wa huwa ʿalā kulli shayʾin qadīr. Rabbi asʾaluka khayra mā fī hādhihil-laylati wa khayra mā baʿdahā, wa aʿūdhu bika min sharri mā fī hādhihil-laylati wa sharri mā baʿdahā. Rabbi aʿūdhu bika minal-kasali wa sūʾil-kibar. Rabbi aʿūdhu bika min ʿadhābin fin-nāri wa ʿadhābin fil-qabr."
+          },
+          "translation": {
+            "en": "We have reached the evening, and the dominion belongs to Allah, and all praise is for Allah. There is no deity but Allah alone, without partner; His is the dominion and His is the praise, and He has power over all things. My Lord, I ask You for the good of this night and the good of what follows it, and I seek refuge in You from the evil of this night and the evil of what follows it. My Lord, I seek refuge in You from laziness and the misery of old age. My Lord, I seek refuge in You from punishment in the Fire and punishment in the grave."
+          },
+          "repeat": 1,
+          "evidence": [
+            {
+              "type": "hadith",
+              "collection": "Sahih Muslim",
+              "reference": "2723",
+              "grading": "sahih",
+              "gradedBy": null,
+              "text": {
+                "en": "When evening came, the Prophet ﷺ would say: “We have reached the evening and the dominion belongs to Allah…” And in the morning he said the same: “We have reached the morning and the dominion belongs to Allah.”"
+              }
+            }
+          ]
+        },
+        {
+          "id": "bika-amsayna",
+          "title": {
+            "en": "By You we reach the evening",
+            "ar": "اللهم بك أمسينا"
+          },
+          "arabic": "اللَّهُمَّ بِكَ أَمْسَيْنَا، وَبِكَ أَصْبَحْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ، وَإِلَيْكَ الْمَصِيرُ",
+          "transliteration": {
+            "en": "Allāhumma bika amsaynā, wa bika aṣbaḥnā, wa bika naḥyā, wa bika namūtu, wa ilaykal-maṣīr."
+          },
+          "translation": {
+            "en": "O Allah, by You we reach the evening and by You we reach the morning, by You we live and by You we die, and to You is the return."
+          },
+          "repeat": 1,
+          "evidence": [
+            {
+              "type": "hadith",
+              "collection": "Sunan at-Tirmidhi",
+              "reference": "3391",
+              "grading": "sahih",
+              "gradedBy": "al-Albani",
+              "text": {
+                "en": "The Prophet ﷺ would teach his companions to say in the morning: “O Allah, by You we reach the morning and by You we reach the evening, by You we live and by You we die, and to You is the resurrection,” and in the evening: “O Allah, by You we reach the evening and by You we reach the morning, by You we live and by You we die, and to You is the return.”"
+              }
+            }
+          ]
+        },
+        {
+          "id": "sayyid-al-istighfar",
+          "title": {
+            "en": "Sayyid al-istighfar",
+            "ar": "سيد الاستغفار"
+          },
+          "arabic": "اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَهَ إِلَّا أَنْتَ، خَلَقْتَنِي وَأَنَا عَبْدُكَ، وَأَنَا عَلَى عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ، أَعُوذُ بِكَ مِنْ شَرِّ مَا صَنَعْتُ، أَبُوءُ لَكَ بِنِعْمَتِكَ عَلَيَّ، وَأَبُوءُ لَكَ بِذَنْبِي فَاغْفِرْ لِي، فَإِنَّهُ لَا يَغْفِرُ الذُّنُوبَ إِلَّا أَنْتَ",
+          "transliteration": {
+            "en": "Allāhumma anta rabbī lā ilāha illā ant, khalaqtanī wa ana ʿabduk, wa ana ʿalā ʿahdika wa waʿdika mastaṭaʿt, aʿūdhu bika min sharri mā ṣanaʿt, abūʾu laka bi-niʿmatika ʿalayya, wa abūʾu laka bi-dhanbī faghfir lī, fa-innahū lā yaghfirudh-dhunūba illā ant."
+          },
+          "translation": {
+            "en": "O Allah, You are my Lord; there is no deity but You. You created me and I am Your servant, and I keep to Your covenant and Your promise as far as I am able. I seek refuge in You from the evil of what I have done. I acknowledge Your favour upon me, and I acknowledge my sin, so forgive me, for none forgives sins but You."
+          },
+          "repeat": 1,
+          "evidence": [
+            {
+              "type": "hadith",
+              "collection": "Sahih al-Bukhari",
+              "reference": "6306",
+              "grading": "sahih",
+              "gradedBy": null,
+              "text": {
+                "en": "The best manner of seeking forgiveness is to say: O Allah, You are my Lord, there is no deity but You. You created me and I am Your servant."
+              }
+            }
+          ]
+        },
+        {
+          "id": "raditu-billahi-rabban",
+          "title": {
+            "en": "Pleased with Allah as Lord",
+            "ar": "رضيت بالله ربا"
+          },
+          "arabic": "رَضِيتُ بِاللَّهِ رَبًّا، وَبِالْإِسْلَامِ دِينًا، وَبِمُحَمَّدٍ ﷺ نَبِيًّا",
+          "transliteration": {
+            "en": "Raḍītu billāhi rabban, wa bil-islāmi dīnan, wa bi-Muḥammadin ﷺ nabiyyā."
+          },
+          "translation": {
+            "en": "I am pleased with Allah as Lord, with Islam as religion, and with Muhammad ﷺ as Prophet."
+          },
+          "repeat": 3,
+          "evidence": [
+            {
+              "type": "hadith",
+              "collection": "Sunan Abi Dawud",
+              "reference": "5072",
+              "grading": "disputed",
+              "gradedBy": "Ibn Baz (hasan); al-Albani (da’if)",
+              "text": {
+                "en": "Whoever says, in the morning and the evening, that he is pleased with Allah as Lord, with Islam as religion and with Muhammad ﷺ as Prophet, it is a right upon Allah to please him."
+              }
+            }
+          ]
+        },
+        {
+          "id": "bismillah-alladhi-la-yadurr",
+          "title": {
+            "en": "In the name of Allah, with whose name nothing harms",
+            "ar": "بسم الله الذي لا يضر مع اسمه شيء"
+          },
+          "arabic": "بِسْمِ اللَّهِ الَّذِي لَا يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الْأَرْضِ وَلَا فِي السَّمَاءِ وَهُوَ السَّمِيعُ الْعَلِيمُ",
+          "transliteration": {
+            "en": "Bismillāhil-ladhī lā yaḍurru maʿasmihī shayʾun fil-arḍi wa lā fis-samāʾ, wa huwas-samīʿul-ʿalīm."
+          },
+          "translation": {
+            "en": "In the name of Allah, with whose name nothing on earth or in the heaven can cause harm, and He is the All-Hearing, the All-Knowing."
+          },
+          "repeat": 3,
+          "evidence": [
+            {
+              "type": "hadith",
+              "collection": "Sunan Abi Dawud",
+              "reference": "5088",
+              "grading": "hasan",
+              "gradedBy": "al-Albani",
+              "text": {
+                "en": "Whoever says three times, “In the name of Allah, with whose name nothing on earth or in the heaven can cause harm, and He is the All-Hearing, the All-Knowing,” will not be struck by sudden affliction until morning, and whoever says it three times in the morning will not be struck by sudden affliction until evening."
+              }
+            },
+            {
+              "type": "hadith",
+              "collection": "Sunan at-Tirmidhi",
+              "reference": "3388",
+              "grading": "sahih",
+              "gradedBy": "al-Albani",
+              "text": {
+                "en": "No servant says, in the morning of every day and the evening of every night, “In the name of Allah, with whose name nothing on earth or in the heaven can cause harm, and He is the All-Hearing, the All-Knowing,” three times, and is then harmed by anything."
+              }
+            }
+          ]
+        },
+        {
+          "id": "kalimat-allah-at-tammat",
+          "title": {
+            "en": "Refuge in the perfect words of Allah",
+            "ar": "أعوذ بكلمات الله التامات"
+          },
+          "arabic": "أَعُوذُ بِكَلِمَاتِ اللَّهِ التَّامَّاتِ مِنْ شَرِّ مَا خَلَقَ",
+          "transliteration": {
+            "en": "Aʿūdhu bi-kalimātillāhit-tāmmāti min sharri mā khalaq."
+          },
+          "translation": {
+            "en": "I seek refuge in the perfect words of Allah from the evil of what He has created."
+          },
+          "repeat": 1,
+          "evidence": [
+            {
+              "type": "hadith",
+              "collection": "Sahih Muslim",
+              "reference": "2709",
+              "grading": "sahih",
+              "gradedBy": null,
+              "text": {
+                "en": "A man came to the Prophet ﷺ and said he had been stung by a scorpion the night before. He said: “Had you said, when evening came, ‘I seek refuge in the perfect words of Allah from the evil of what He has created,’ it would not have harmed you.”"
+              }
+            }
+          ]
+        },
+        {
+          "id": "subhan-allahi-wa-bihamdihi",
+          "title": {
+            "en": "Glory be to Allah, and praise be to Him",
+            "ar": "سبحان الله وبحمده"
+          },
+          "arabic": "سُبْحَانَ اللَّهِ وَبِحَمْدِهِ",
+          "transliteration": {
+            "en": "Subḥānallāhi wa bi-ḥamdih."
+          },
+          "translation": {
+            "en": "Glory be to Allah, and praise be to Him."
+          },
+          "repeat": 100,
+          "evidence": [
+            {
+              "type": "hadith",
+              "collection": "Sahih Muslim",
+              "reference": "2692",
+              "grading": "sahih",
+              "gradedBy": null,
+              "text": {
+                "en": "Whoever says, in the morning and in the evening, “Glory be to Allah, and praise be to Him” a hundred times, no one will come on the Day of Resurrection with anything better, except one who said the same or more."
+              }
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "fast-monday",

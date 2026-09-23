@@ -75,7 +75,19 @@ export const todayFixture: TodayScreenProps = {
   qada: [{ prayer: 'fajr', count: 2 }],
   onMarkPrayer: noop,
   onMakeUp: noop,
+  fastingToday: null,
+  fastsOwed: 3,
+  onRecordFastOwed: noop,
+  onUndoFastOwed: noop,
   locationHref: '/location',
+}
+
+/** A Ramadan day, with today already noted as not fasting. */
+export const todayInRamadanFixture: TodayScreenProps = {
+  ...todayFixture,
+  hijri: { year: 1448, month: 9, day: 12 },
+  fastingToday: { recorded: true },
+  fastsOwed: 1,
 }
 
 export const todayWithoutLocationFixture: TodayScreenProps = {
@@ -92,6 +104,8 @@ export const todayWithoutLocationFixture: TodayScreenProps = {
   later: [],
   prayers: [],
   qada: [],
+  fastingToday: null,
+  fastsOwed: 0,
 }
 
 export const libraryFixture: LibraryScreenProps = {
@@ -160,6 +174,27 @@ export const itemFixture: ItemDetail = {
       text: { en: 'A narration.' },
     },
     { type: 'quran', surah: 2, ayah: 255, text: { en: 'A verse.' } },
+  ],
+  parts: [
+    {
+      id: 'subhan-allahi-wa-bihamdihi',
+      title: 'Glory be to Allah, and praise be to Him',
+      arabic: 'سُبْحَانَ اللَّهِ وَبِحَمْدِهِ',
+      transliteration: 'Subḥānallāhi wa bi-ḥamdih.',
+      translation: 'Glory be to Allah, and praise be to Him.',
+      repeat: 100,
+      source: 'Sahih Muslim 2692',
+    },
+    {
+      id: 'ayat-al-kursi',
+      title: 'Ayat al-Kursi',
+      arabic: 'اللَّهُ لَا إِلَهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ',
+      transliteration: null,
+      translation:
+        'Allah: there is no deity except Him, the Ever-Living, the Sustainer of all existence.',
+      repeat: 1,
+      source: 'Qur\u2019an 2:255',
+    },
   ],
 }
 
@@ -329,6 +364,9 @@ export const qadaFixture: QadaScreenProps = {
     { prayer: 'fajr', outstanding: 12, owed: 10, pending: 2 },
     { prayer: 'dhuhr', outstanding: 0, owed: 0, pending: 0 },
   ],
+  fasts: { outstanding: 4, owed: 3 },
+  onFastsOwedChange: noop,
+  onRecordFastMadeUp: noop,
   onOwedChange: noop,
   onPendingChange: noop,
   onRecord: noop,
@@ -340,6 +378,7 @@ export const aboutFixture: AboutScreenProps = {
   itemCount: 32,
   reviewedBy: null,
   donate: { destination: 'donate.ihsaanly.com', onPress: noop },
+  privacy: { destination: 'zxcvbnmmohd.github.io/ihsaanly/legal/privacy-policy', onPress: noop },
   licences: [
     {
       label: 'Amiri font (SIL Open Font Licence)',

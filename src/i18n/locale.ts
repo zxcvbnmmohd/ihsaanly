@@ -1,5 +1,18 @@
 /** Interface locales are region-qualified; content is keyed by language only. */
-export const SUPPORTED_LOCALES = ['en-CA', 'en-GB', 'en-US', 'ar'] as const
+export const SUPPORTED_LOCALES = [
+  'en-CA',
+  'en-GB',
+  'en-US',
+  'ar',
+  'fr',
+  'it',
+  'ja',
+  'hi',
+  'ur',
+  'so',
+  'zh-Hans',
+  'yue',
+] as const
 
 export type SupportedLocale = (typeof SUPPORTED_LOCALES)[number]
 
@@ -19,7 +32,17 @@ export function isRightToLeft(locale: string): boolean {
  * A device locale is matched exactly, then by language, then falls back. A
  * language whose content is incomplete is simply not in the supported list.
  */
+/**
+ * Hong Kong and Macau speak Cantonese, but their devices usually report
+ * Chinese with a region rather than `yue`, so they are read as Cantonese.
+ * Taiwan also writes Traditional Chinese but speaks Mandarin, and is left alone.
+ */
+function normalise(tag: string): string {
+  return /^zh(-Hant)?-(HK|MO)$/i.test(tag) ? 'yue' : tag
+}
+
 export function resolveLocale(preferred: string[]): SupportedLocale {
+  preferred = preferred.map(normalise)
   const exact = preferred.find((candidate): candidate is SupportedLocale =>
     SUPPORTED_LOCALES.includes(candidate as SupportedLocale),
   )
@@ -35,7 +58,18 @@ export function resolveLocale(preferred: string[]): SupportedLocale {
 }
 
 /** What the user chooses. The region is the device's business. */
-export const SUPPORTED_LANGUAGES = ['en', 'ar'] as const
+export const SUPPORTED_LANGUAGES = [
+  'en',
+  'ar',
+  'fr',
+  'it',
+  'ja',
+  'hi',
+  'ur',
+  'so',
+  'zh',
+  'yue',
+] as const
 
 export type SupportedLanguage = (typeof SUPPORTED_LANGUAGES)[number]
 
@@ -53,7 +87,7 @@ export function localeForLanguage(
   language: SupportedLanguage,
   deviceLocales: string[],
 ): SupportedLocale {
-  const inLanguage = deviceLocales.filter((tag) => languageOf(tag) === language)
+  const inLanguage = deviceLocales.map(normalise).filter((tag) => languageOf(tag) === language)
   const resolved = resolveLocale(inLanguage)
   if (languageOf(resolved) === language) return resolved
 

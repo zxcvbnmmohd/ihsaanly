@@ -158,6 +158,7 @@ module.exports = [
       'src/memorise/reveal.ts',
       'src/i18n/locale.ts',
       'src/assert-never.ts',
+      'src/fasting/ledger.ts',
     ],
     rules: {
       'no-restricted-imports': [

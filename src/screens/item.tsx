@@ -18,6 +18,18 @@ import { colors } from '@/theme/colors'
 import { fonts } from '@/theme/fonts'
 import { usePalette } from '@/theme/store'
 
+/** One text of a composite item, already resolved to the reader's language. */
+export interface ItemPartDetail {
+  id: string
+  title: string
+  arabic: string
+  transliteration: string | null
+  translation: string | null
+  repeat: number
+  /** Citation lines such as "Sahih Muslim 2723", already formatted. */
+  source: string
+}
+
 export interface ItemDetail {
   ruling: Ruling
   rulingHref: Href
@@ -30,6 +42,8 @@ export interface ItemDetail {
   translation: string | null
   note: string | null
   evidence: Evidence[]
+  /** The texts to say, in order; empty for an item that is a single text. */
+  parts: ItemPartDetail[]
 }
 
 export interface CounterState {
@@ -65,6 +79,47 @@ export interface ItemScreenProps {
 interface LabelledProps {
   label: string
   children: ReactNode
+}
+
+interface PartCardProps {
+  part: ItemPartDetail
+}
+
+function PartCard({ part }: PartCardProps): ReactElement {
+  const strings = useStrings()
+  const palette = usePalette()
+  useColorScheme()
+
+  return (
+    <Surface style={{ borderRadius: 20, padding: 18 }}>
+      <View className="gap-3">
+        <View className="flex-row flex-wrap items-baseline justify-between gap-2">
+          <Text className="flex-1 text-base font-semibold" style={{ color: colors.label }}>
+            {part.title}
+          </Text>
+          {part.repeat > 1 ? (
+            <Text className="text-sm font-semibold" style={{ color: palette.accent }}>
+              {strings.item.partRepeat(part.repeat)}
+            </Text>
+          ) : null}
+        </View>
+        <ArabicText>{part.arabic}</ArabicText>
+        {part.transliteration ? (
+          <Text className="text-base italic" style={{ color: colors.secondaryLabel }}>
+            {part.transliteration}
+          </Text>
+        ) : null}
+        {part.translation ? (
+          <Text className="text-base leading-relaxed" style={{ color: colors.label }}>
+            {part.translation}
+          </Text>
+        ) : null}
+        <Text className="text-sm" style={{ color: colors.secondaryLabel }}>
+          {part.source}
+        </Text>
+      </View>
+    </Surface>
+  )
 }
 
 function Labelled({ label, children }: LabelledProps): ReactElement {
@@ -160,6 +215,16 @@ export function ItemScreen({
           resetLabel={strings.item.counterReset}
           palette={palette}
         />
+      ) : null}
+
+      {item.parts.length > 0 ? (
+        <Labelled label={strings.item.parts}>
+          <View className="gap-3">
+            {item.parts.map((part) => (
+              <PartCard key={part.id} part={part} />
+            ))}
+          </View>
+        </Labelled>
       ) : null}
 
       {item.why ? (

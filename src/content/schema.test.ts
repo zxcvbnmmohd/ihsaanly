@@ -127,3 +127,62 @@ describe('release warnings', () => {
     expect(result.valid && result.warnings.join()).toContain('cannot be released unreviewed')
   })
 })
+
+describe('parts', () => {
+  const part = (id: string, overrides: Fixture = {}): Fixture => ({
+    id,
+    title: { en: 'A part' },
+    arabic: 'نص',
+    transliteration: null,
+    translation: { en: 'A translation' },
+    repeat: 3,
+    evidence: [hadithFrom('Sahih Muslim', null)],
+    ...overrides,
+  })
+
+  const withParts = (parts: Fixture[]): TestDocument =>
+    documentWith(hadithFrom('Sahih Muslim', null), { parts })
+
+  it('accepts an item with ordered parts', () => {
+    expect(validateContentDocument(withParts([part('one'), part('two')])).valid).toBe(true)
+  })
+
+  it('rejects duplicate part ids within an item', () => {
+    const result = validateContentDocument(withParts([part('one'), part('one')]))
+
+    expect(result.valid).toBe(false)
+    expect(result.valid === false && result.problems.join()).toContain('duplicate part id')
+  })
+
+  it('rejects a part with no Arabic', () => {
+    expect(validateContentDocument(withParts([part('one', { arabic: '' })])).valid).toBe(false)
+  })
+
+  it('holds part evidence to the same grading gate', () => {
+    const result = validateContentDocument(
+      withParts([part('one', { evidence: [hadithFrom('Sunan Abi Dawud', null)] })]),
+    )
+
+    expect(result.valid).toBe(false)
+    expect(result.valid === false && result.problems.join()).toContain('must name a grader')
+  })
+
+  it('rejects part text in an undeclared language', () => {
+    const result = validateContentDocument(
+      withParts([part('one', { title: { en: 'A part', fr: 'Une partie' } })]),
+    )
+
+    expect(result.valid).toBe(false)
+  })
+
+  it('gives the shipped morning and evening adhkar their texts', () => {
+    const result = validateContentDocument(shippedDocument)
+    const ids = ['morning-adhkar', 'evening-adhkar']
+    const parts = result.valid
+      ? ids.map((id) => result.document.items.find((item) => item.id === id)?.parts?.length ?? 0)
+      : []
+
+    expect(parts).toHaveLength(2)
+    expect(parts.every((count) => count > 0)).toBe(true)
+  })
+})

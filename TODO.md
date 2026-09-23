@@ -84,13 +84,16 @@ one thing from you.
       **I can finish it:** `supportsTablet: false` is the smaller job and I'll do
       it on a word. Keeping it means layout work plus those screenshots.
 
-- [ ] **The fasting-owed rule.**
+- [x] **The fasting-owed rule.** _Implemented with a narrow v1 rule, pending the
+      content reviewer's confirmation (§5)._
       `docs/PRD.md:142` and `docs/SPEC.md:57` require "missed fasts still recorded
-      as owed while paused". No fasting-debt concept exists anywhere in the code,
-      and adding one means a second ledger with its own rules about which fasts
-      are owed and to whom — a ruling question before a coding one.
-      Either the reviewer defines it, or it's struck from the spec for v1
-      (issue #10's last open criterion).
+      as owed while paused". v1: only obligatory fasts are owed, and only Ramadan
+      days the user records as not fasted (a quiet "Not fasting today" row on
+      Today during Ramadan, with undo), plus an "Owed from before" backlog on the
+      To make up screen. Nothing accrues automatically, so recording is the
+      user's act and the tracking pause does not stop it. A count, never a list.
+      Voluntary fasts are never owed; vows, expiations and fidya are out of scope.
+      Code: `src/fasting/ledger.ts`, `src/fasting/store.ts`.
 
 - [ ] **The adhkar content gap.**
       "Morning adhkar" and "Evening adhkar" tell the reader _what_ to say — Ayat
@@ -170,7 +173,11 @@ Hand this section over as-is.
       narrations. Confirm both are correct, or fix the reference.
 - [ ] **Translation sources.** `translationSources: {en: null, ar: null}` and the
       validator warns. Name the source, or confirm the translations are original.
-- [ ] **The fasting-owed rule** from §2, if it's theirs to define.
+- [ ] **Confirm the v1 fasting-owed rule** (§2). Owed fasts are Ramadan days the
+      user records as not fasted, plus a backlog they set; each make-up is
+      recorded one at a time. Nothing accrues on its own, and recording works
+      while tracking is paused. Vows, expiations and fidya are out of scope.
+      Confirm, or say what v1 must add or drop.
 - [ ] **The before-prayer window.** A `before` item is now relevant during that
       prayer's _own_ window while the prayer is unmarked — the rawatib are prayed
       once the time has entered. This replaced a rule that offered Fajr's sunnah

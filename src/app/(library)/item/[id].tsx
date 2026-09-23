@@ -162,6 +162,15 @@ export default function ItemRoute(): ReactElement {
                 translation: resolveText(item.translation),
                 note: resolveText(item.note),
                 evidence: item.evidence,
+                parts: (item.parts ?? []).map((part) => ({
+                  id: part.id,
+                  title: resolveText(part.title) ?? part.id,
+                  arabic: part.arabic,
+                  transliteration: resolveText(part.transliteration),
+                  translation: resolveText(part.translation),
+                  repeat: part.repeat,
+                  source: part.evidence.map((evidence) => sourceFor(evidence, strings)).join(' · '),
+                })),
               }
             : null
         }

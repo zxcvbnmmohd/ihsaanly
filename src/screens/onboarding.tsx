@@ -685,6 +685,8 @@ export function OnboardingScreen(props: OnboardingScreenProps): ReactElement {
       <ScrollView
         className="flex-1"
         contentContainerClassName="flex-grow px-6 pb-4"
+        // The same reading column as Screen, so a tablet is not edge to edge.
+        contentContainerStyle={{ width: '100%', maxWidth: 720, alignSelf: 'center' }}
         keyboardShouldPersistTaps="handled">
         <Animated.View
           key={step}
@@ -696,7 +698,14 @@ export function OnboardingScreen(props: OnboardingScreenProps): ReactElement {
         </Animated.View>
       </ScrollView>
 
-      <View className="gap-2 px-6 pt-2" style={{ paddingBottom: insets.bottom + 12 }}>
+      <View
+        className="gap-2 px-6 pt-2"
+        style={{
+          paddingBottom: insets.bottom + 12,
+          width: '100%',
+          maxWidth: 720,
+          alignSelf: 'center',
+        }}>
         <Dots count={props.stepCount} index={props.stepIndex} accent={palette.accent} />
         <View className="pt-2">
           <Button

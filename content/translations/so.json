@@ -1,5 +1,528 @@
 {
   "language": "so",
-  "items": {},
-  "glossary": {}
+  "items": {
+    "dua-leaving-home": {
+      "title": "Ka bixidda guriga",
+      "translation": "Magaca Alle ayaan ku baxay, Alle ayaan isku halleeyey, xoog iyo awood midna ma jiraan Alle mooyee.",
+      "why": "Weedh albaabka lagu yiraahdo oo maalinta Alle u gacan gelisa intaanay bilaabmin. Nabiga ﷺ wuxuu baray in qofkii yiraahda la hanuuniyo, wax loo filo oo la ilaaliyo marka uu baxo.",
+      "reminder": "Albaabka ayaa lagu yiraahdaa, intaanay maalintu ku qaadan. Way gaaban tahay oo waxay noqon kartaa wax aad samayso adigoon ka fikirin.",
+      "how": [
+        "Albaabka ku istaag marka aad baxayso.",
+        "Hal mar dheh erayada, si hoose ama cod dheer.",
+        "Bax."
+      ],
+      "evidence": [
+        "Qofkii yiraahda marka uu gurigiisa ka baxo: “Magaca Alle ayaan ku baxay, Alle ayaan isku halleeyey, xoog iyo awood midna ma jiraan Alle mooyee,” waxaa lagu yiraahdaa: waa lagu hanuuniyey, waa lagu filnaaday, waana lagu ilaaliyey."
+      ]
+    },
+    "dua-entering-masjid": {
+      "title": "Gelidda masaajidka",
+      "translation": "Allow, ii fur albaabbada naxariistaada.",
+      "why": "Masaajidku waa meel naxariis, sidaa darteed naxariis ayaad weydiisataa marka aad gasho. Waxay kaloo calaamad u tahay u gudubka jidka ilaa salaadda.",
+      "reminder": "Weedh weydiisasho ah marka aad gudaha u gasho, intaadan saf meel ka raadin.",
+      "how": ["Lugtaada midig ku gal.", "Ducada dheh marka aad galayso."],
+      "evidence": [
+        "Midkiin marka uu masaajidka galo ha yiraahdo: Allow, ii fur albaabbada naxariistaada."
+      ]
+    },
+    "dua-travel": {
+      "title": "U ambabixidda safar",
+      "translation": "Waxaa nasahan Kan tan noo sakhiray, annaguna ma aynaan awoodeen; Rabbigeenna ayaanna u noqon doonnaa xaqiiq ahaan.",
+      "why": "Ducada safarku waxay Alle ugu mahadnaqdaa waxa lagu safro, waxayna weydiisataa waddo fudud iyo soo noqosho nabad ah. Waxaa la yiraahdaa marka safarku dhab ahaan bilaabmo.",
+      "reminder": "Waxaa la yiraahdaa marka aad degto oo aad socoto, bilowga waddada, ee maaha degdegga bixitaanka.",
+      "how": [
+        "Marka aad fadhiisato oo aad socoto, saddex jeer dheh Allaahu Akbar.",
+        "Ducada dheh.",
+        "Haddii aad rabto, erayadaada ku weydiiso fudayd, nabadgelyo iyo soo noqosho wanaagsan."
+      ],
+      "evidence": [
+        "Nabiga ﷺ markuu awrkiisa fuulo si uu safar ugu baxo wuxuu oran jiray: Waxaa nasahan Kan tan noo sakhiray, annaguna ma aynaan awoodeen."
+      ]
+    },
+    "dua-sleeping": {
+      "title": "Seexashada",
+      "translation": "Magacaaga, Allow, ayaan ku dhintaa kuna noolaadaa.",
+      "why": "Erayada ugu dambeeya maalinta, Alle loo dhiibay. Markaad tiraahdo, hurdadu lafteedu waxay noqotaa xusuus Alle.",
+      "reminder": "Erayada ugu dambeeya maalinta, marka taleefanka la dhigo kadib. Waqti ka yar ayey qaadataa intaad jiifto oo aad go’aansanayso inaad seexato.",
+      "how": ["Haddii aad awoodo, dhinacaaga midig u jiifso.", "Hal mar dheh erayada."],
+      "evidence": [
+        "Nabiga ﷺ markuu sariirtiisa u tago wuxuu oran jiray: Magacaaga, Allow, ayaan ku dhintaa kuna noolaadaa."
+      ]
+    },
+    "dua-waking": {
+      "title": "Toosidda",
+      "translation": "Mahad waxaa leh Alle na nooleeyey kadib markuu na dilay, isaga ayaana loo soo bixi doonaa.",
+      "why": "Toosiddu waa ku soo noqosho yar oo nolosha ah, erayada ugu horreeya maalintuna waxay ku mahadnaqaan Kan dib u celiyey.",
+      "reminder": "Erayada ugu horreeya maalinta, intaan wax kale feejignaantaada ku qaadan.",
+      "how": ["Dheh erayada isla marka aad toosto, wax kasta ka hor."],
+      "evidence": [
+        "Nabiga ﷺ markuu toosto wuxuu oran jiray: Mahad waxaa leh Alle na nooleeyey kadib markuu na dilay, isaga ayaana loo soo bixi doonaa."
+      ]
+    },
+    "dua-eating": {
+      "title": "Cunidda ka hor",
+      "translation": "Magaca Alle.",
+      "why": "Ku xusidda magaca Alle cuntada waa farqiga u dhexeeya cunid iyo cunid mahadnaq leh. Haddii aad illowdo oo aad cuntada dhexdeeda xusuusato, taasna erayo gaar ah ayey leedahay.",
+      "reminder": "Qaniinyada ugu horreysa ka hor. Hakad laba ilbiriqsi ah oo cunto ka dhigta wax la dareemay.",
+      "how": [
+        "Qaniinyada ugu horreysa ka hor dheh Bismillaah.",
+        "Haddii aad illowdo, dheh: Bismillaahi awwalahu wa aakhirahu (magaca Alle bilowgeeda iyo dhammaadkeeda)."
+      ],
+      "evidence": [
+        "Nabiga ﷺ wuxuu wiil uu korinayay ku yiri: Magaca Alle xus, gacantaada midig wax ku cun, oona ka cun waxa kuu dhow."
+      ]
+    },
+    "tasbih-after-prayer": {
+      "title": "Tasbiixa salaadda kadib",
+      "translation": "Alle waa nasahan yahay.",
+      "why": "Soddon iyo saddex jeer mid kasta oo Subxaanallaah, Alxamdulillaah iyo Allaahu Akbar salaad kasta kadib, laguna dhammaystiro hal weedh si ay boqol u noqoto. Nabiga ﷺ wuxuu sheegay in dembiyada loo dhaafo, xitaa hadday badan yihiin.",
+      "reminder": "Adigoo fadhiya ayaa la yiraahdaa, intaadan istaagin oo xilligu dhaafin. Soddon iyo saddex, soddon iyo saddex, soddon iyo afar.",
+      "how": [
+        "Salaadda kadib, 33 jeer dheh Subxaanallaah.",
+        "33 jeer dheh Alxamdulillaah.",
+        "33 jeer dheh Allaahu Akbar.",
+        "Boqolka ku dhammaystir: Laa ilaaha illallaahu waxdahu laa shariika lah, lahul mulku wa lahul xamdu wa huwa calaa kulli shay’in qadiir."
+      ],
+      "evidence": [
+        "Qofkii salaad kasta kadib Alle ku nasahiya soddon iyo saddex jeer, ku mahdiya soddon iyo saddex jeer, kuna weyneeya soddon iyo saddex jeer, kadibna boqolka dhammaystira, dembiyadiisa waa loo dhaafaa xitaa hadday la mid yihiin xumbada badda."
+      ]
+    },
+    "ayat-al-kursi-after-prayer": {
+      "title": "Aayatul Kursi salaadda kadib",
+      "why": "Hal aayad oo salaad kasta kadib la akhriyo. Nabiga ﷺ wuxuu sheegay in qofka akhriya salaadda kadib aanay waxba u dhexeyn gelidda Jannada geeri mooyee.",
+      "reminder": "Waxaa la akhriyaa marka aad dhammayso, adigoo weli fadhiya meeshii aad ku tukatay.",
+      "how": ["Tasbiixa kadib, hal mar akhri Aayatul Kursi (Qur’aanka 2:255)."],
+      "evidence": [
+        "Macnaha aayadda: Alle — ilaah aan isaga ahayn ma jiro, waa Nooleha weligii jira, ee wax walba taagan ku haya.",
+        "Qofkii akhriya Aayatul Kursi salaad kasta oo faral ah kadib, waxba uma dhexeeyaan gelidda Jannada geeri mooyee."
+      ]
+    },
+    "siwak-before-prayer": {
+      "title": "Cadayga salaadda ka hor",
+      "why": "Ilkaha oo la nadiifiyo intaan salaadda loo istaagin. Burush ilkeed ayaa isla shaqadaas qabta meesha aan caday lagu helin.",
+      "reminder": "Ilkaha oo la nadiifiyo intaan salaadda loo istaagin. Burush ilkeed ayaa isla shaqadaas qabta meesha aan caday lagu helin.",
+      "how": ["Salaadda ka hor, ilkaha ku nadiifi caday ama burush."],
+      "evidence": [
+        "Haddaanay ahaan lahayn inaan ummaddayda ku culeysiyo, waxaan fari lahaa inay caday isticmaalaan salaad kasta."
+      ]
+    },
+    "sunnah-before-fajr": {
+      "title": "Laba rakco Subaxa ka hor",
+      "why": "Laba rakco oo gaagaaban salaadda Subaxa ka hor. Salaadaha sunnada ah oo dhan, tani waa tan uusan Nabiga ﷺ weligiis ka tagin, xitaa safarka.",
+      "reminder": "Laba rakco oo gaagaaban marka Subaxu galo, faralka ka hor. Nabiga ﷺ kuwan wuxuu u ilaalin jiray si ka badan salaad kasta oo kale oo sunno ah.",
+      "how": [
+        "Aadaanka Subaxa kadib iyo salaadda faralka ka hor, tuko laba rakco.",
+        "Gaabi.",
+        "Kadib tuko Subaxa."
+      ],
+      "evidence": [
+        "Labada rakco ee Subaxa ka horreeya ayaa ka khayr badan adduunka iyo waxa ku jira."
+      ]
+    },
+    "sunnah-after-dhuhr": {
+      "title": "Laba rakco Duhurka kadib",
+      "why": "Laba rakco salaadda Duhurka kadib, oo ka mid ah laba iyo tobanka rawaatib ee maalinlaha ah ee Nabiga ﷺ u ballanqaaday guri Jannada ku yaal.",
+      "reminder": "Faralka kadib ayaa la tukadaa, adigoo weli jooga meeshii aad ku tukatay.",
+      "how": ["Salaadda Duhurka iyo dikrigeeda kadib, tuko laba rakco."],
+      "evidence": [
+        "Qofkii tukada laba iyo toban rakco maalin iyo habeen, guri ayaa Jannada looga dhisaa."
+      ]
+    },
+    "morning-adhkar": {
+      "title": "Adkaarta subaxa",
+      "why": "Xusuusyo la yiraahdo inta u dhexeysa Subaxa iyo qorrax ka soo baxa, ama guud ahaan subaxa. Waxay maalinta qaabeeyaan intaanay wax kale ka buuxsamin.",
+      "reminder": "Xusuusta subaxa, inta u dhexeysa Subaxa iyo qorrax ka soo baxa. Nabiga ﷺ salaadda subaxa kadib wuxuu fadhiyi jiray isagoo Alle xusaya ilaa qorraxdu ka soo baxdo.",
+      "how": [
+        "Subaxa kadib, wax yar fadhiiso.",
+        "Dheh adkaarta subaxa, oo qoraalkoodu hoos ku yaal: Aayatul Kursi, saddexda Qul, sayyidul istighfaar, iyo inta kale.",
+        "Haddii aad mid ama laba oo keliya taqaan, kuwaas dheh."
+      ],
+      "evidence": [
+        "Habka ugu wanaagsan ee dembi dhaaf weydiisashada waa inaad tiraahdo: Allow, adaa Rabbigay ah, ilaah aan adiga ahayn ma jiro. Adaa i abuuray, anna waxaan ahay addoonkaaga."
+      ],
+      "parts": {
+        "ayat-al-kursi": {
+          "title": "Aayatul Kursi",
+          "translation": "Alle: ilaah aan isaga ahayn ma jiro, waa Nooleha weligii jira, ee jiritaanka oo dhan taagan ku haya. Lulo iyo hurdo midna ma qabato. Isaga ayaa iska leh waxa samooyinka ku jira iyo waxa dhulka ku jira. Waa kuma kan agtiisa ka shafeeci kara idankiisa la’aantiis? Wuu ogyahay waxa ka horreeya iyo waxa ka dambeeya, waxbana kama koobaan cilmigiisa waxa uu doono mooyee. Kursigiisu wuxuu ku fidsan yahay samooyinka iyo dhulka, ilaalintooduna ma daalinayso. Isagu waa Kan Sarreeya, ee Weyn."
+        },
+        "al-ikhlas": {
+          "title": "Suuratul Ikhlaas",
+          "translation": "Magaca Alle, Naxariistaha guud, Naxariistaha gaarka ah. Dheh: Isagu waa Alle, Keligiis ah. Alle waa Kan loo baahdo oo aan waxba u baahnayn. Ma dhalin, lamana dhalin, mana jiro cid u dhiganta."
+        },
+        "al-falaq": {
+          "title": "Suuratul Falaq",
+          "translation": "Magaca Alle, Naxariistaha guud, Naxariistaha gaarka ah. Dheh: Waxaan magan u galay Rabbiga waaberiga, sharka waxa uu abuuray, iyo sharka mugdiga marka uu degto, iyo sharka kuwa guntimaha ku tufa, iyo sharka xaasidka marka uu xaasido."
+        },
+        "an-nas": {
+          "title": "Suuratun Naas",
+          "translation": "Magaca Alle, Naxariistaha guud, Naxariistaha gaarka ah. Dheh: Waxaan magan u galay Rabbiga dadka, Boqorka dadka, Ilaaha dadka, sharka waswaasiyaha dib u dhuunta, ee ku waswaasiya laabta dadka, jinniga iyo dadka midkood."
+        },
+        "asbahna": {
+          "title": "Waxaan gallay subaxa",
+          "translation": "Waxaan gallay subaxa, xukunkuna Alle ayuu u sugnaaday, mahad oo dhanna Alle ayaa leh. Ilaah aan Alle ahayn ma jiro, keligiis, shariig ma leh; isaga ayaa leh xukunka, isaga ayaa leh mahadda, wax walbana wuu karaa. Rabbiyow, waxaan ku weydiisanayaa khayrka maalintan iyo khayrka waxa ka dambeeya, waxaanan kaa magan galayaa sharka maalintan iyo sharka waxa ka dambeeya. Rabbiyow, waxaan kaa magan galayaa caajisnimada iyo xumaanta gabowga. Rabbiyow, waxaan kaa magan galayaa cadaabka Naarta iyo cadaabka qabriga."
+        },
+        "bika-asbahna": {
+          "title": "Adiga ayaan kugu gallay subaxa",
+          "translation": "Allow, adiga ayaan kugu gallay subaxa, adiga ayaan kugu gallay fiidka, adiga ayaan kugu noolnahay, adiga ayaan kugu dhimanaynaa, adiga ayaana loo soo bixi doonaa."
+        },
+        "sayyid-al-istighfar": {
+          "title": "Sayyidul istighfaar",
+          "translation": "Allow, adaa Rabbigay ah; ilaah aan adiga ahayn ma jiro. Adaa i abuuray, anna waxaan ahay addoonkaaga, waxaanan ku sugan ahay ballankaaga iyo yaboohaaga intaan karo. Waxaan kaa magan galayaa sharka waxa aan sameeyey. Waan qirayaa nicmadaada aad igu galisay, waanan qirayaa dembigayga, ee ii dambi dhaaf, maxaa yeelay dembiyada cid aan adiga ahayn ma dhaafto."
+        },
+        "raditu-billahi-rabban": {
+          "title": "Waxaan ku raalli noqday Alle inuu Rabbi yahay",
+          "translation": "Waxaan ku raalli noqday Alle inuu Rabbi yahay, Islaamka inuu diin yahay, iyo Muxammad ﷺ inuu Nabi yahay."
+        },
+        "bismillah-alladhi-la-yadurr": {
+          "title": "Magaca Alle, ee magaciisa aanu waxba waxyeeleyn",
+          "translation": "Magaca Alle, Kan magaciisa la xusay aanu waxba oo dhulka ama samada ku jira waxyeeleyn karin, isaguna waa Maqle, Ogaal."
+        },
+        "subhan-allahi-wa-bihamdihi": {
+          "title": "Alle waa nasahan yahay, mahadna waa uu leeyahay",
+          "translation": "Alle waa nasahan yahay, mahadna waa uu leeyahay."
+        }
+      }
+    },
+    "evening-adhkar": {
+      "title": "Adkaarta galabta",
+      "why": "Dhiggooda galabta, oo la yiraahdo inta u dhexeysa Casarka iyo Maqribka, ama guud ahaan fiidka. Isla ilaalinta iyo mahadnaqa maalinta ayaa habeenkana loogu talagalay.",
+      "reminder": "Xusuusta galabta, laga bilaabo Casarka ilaa iftiinku ka tago.",
+      "how": [
+        "Casarka kadib, wax yar fadhiiso.",
+        "Dheh adkaarta galabta, oo qoraalkoodu hoos ku yaal.",
+        "Haddii aad mid ama laba oo keliya taqaan, kuwaas dheh."
+      ],
+      "evidence": [
+        "Habka ugu wanaagsan ee dembi dhaaf weydiisashada waa inaad tiraahdo: Allow, adaa Rabbigay ah, ilaah aan adiga ahayn ma jiro. Adaa i abuuray, anna waxaan ahay addoonkaaga."
+      ],
+      "parts": {
+        "ayat-al-kursi": {
+          "title": "Aayatul Kursi",
+          "translation": "Alle: ilaah aan isaga ahayn ma jiro, waa Nooleha weligii jira, ee jiritaanka oo dhan taagan ku haya. Lulo iyo hurdo midna ma qabato. Isaga ayaa iska leh waxa samooyinka ku jira iyo waxa dhulka ku jira. Waa kuma kan agtiisa ka shafeeci kara idankiisa la’aantiis? Wuu ogyahay waxa ka horreeya iyo waxa ka dambeeya, waxbana kama koobaan cilmigiisa waxa uu doono mooyee. Kursigiisu wuxuu ku fidsan yahay samooyinka iyo dhulka, ilaalintooduna ma daalinayso. Isagu waa Kan Sarreeya, ee Weyn."
+        },
+        "al-ikhlas": {
+          "title": "Suuratul Ikhlaas",
+          "translation": "Magaca Alle, Naxariistaha guud, Naxariistaha gaarka ah. Dheh: Isagu waa Alle, Keligiis ah. Alle waa Kan loo baahdo oo aan waxba u baahnayn. Ma dhalin, lamana dhalin, mana jiro cid u dhiganta."
+        },
+        "al-falaq": {
+          "title": "Suuratul Falaq",
+          "translation": "Magaca Alle, Naxariistaha guud, Naxariistaha gaarka ah. Dheh: Waxaan magan u galay Rabbiga waaberiga, sharka waxa uu abuuray, iyo sharka mugdiga marka uu degto, iyo sharka kuwa guntimaha ku tufa, iyo sharka xaasidka marka uu xaasido."
+        },
+        "an-nas": {
+          "title": "Suuratun Naas",
+          "translation": "Magaca Alle, Naxariistaha guud, Naxariistaha gaarka ah. Dheh: Waxaan magan u galay Rabbiga dadka, Boqorka dadka, Ilaaha dadka, sharka waswaasiyaha dib u dhuunta, ee ku waswaasiya laabta dadka, jinniga iyo dadka midkood."
+        },
+        "amsayna": {
+          "title": "Waxaan gallay fiidka",
+          "translation": "Waxaan gallay fiidka, xukunkuna Alle ayuu u sugnaaday, mahad oo dhanna Alle ayaa leh. Ilaah aan Alle ahayn ma jiro, keligiis, shariig ma leh; isaga ayaa leh xukunka, isaga ayaa leh mahadda, wax walbana wuu karaa. Rabbiyow, waxaan ku weydiisanayaa khayrka habeenkan iyo khayrka waxa ka dambeeya, waxaanan kaa magan galayaa sharka habeenkan iyo sharka waxa ka dambeeya. Rabbiyow, waxaan kaa magan galayaa caajisnimada iyo xumaanta gabowga. Rabbiyow, waxaan kaa magan galayaa cadaabka Naarta iyo cadaabka qabriga."
+        },
+        "bika-amsayna": {
+          "title": "Adiga ayaan kugu gallay fiidka",
+          "translation": "Allow, adiga ayaan kugu gallay fiidka, adiga ayaan kugu gallay subaxa, adiga ayaan kugu noolnahay, adiga ayaan kugu dhimanaynaa, adiga ayaana loo noqonayaa."
+        },
+        "sayyid-al-istighfar": {
+          "title": "Sayyidul istighfaar",
+          "translation": "Allow, adaa Rabbigay ah; ilaah aan adiga ahayn ma jiro. Adaa i abuuray, anna waxaan ahay addoonkaaga, waxaanan ku sugan ahay ballankaaga iyo yaboohaaga intaan karo. Waxaan kaa magan galayaa sharka waxa aan sameeyey. Waan qirayaa nicmadaada aad igu galisay, waanan qirayaa dembigayga, ee ii dambi dhaaf, maxaa yeelay dembiyada cid aan adiga ahayn ma dhaafto."
+        },
+        "raditu-billahi-rabban": {
+          "title": "Waxaan ku raalli noqday Alle inuu Rabbi yahay",
+          "translation": "Waxaan ku raalli noqday Alle inuu Rabbi yahay, Islaamka inuu diin yahay, iyo Muxammad ﷺ inuu Nabi yahay."
+        },
+        "bismillah-alladhi-la-yadurr": {
+          "title": "Magaca Alle, ee magaciisa aanu waxba waxyeeleyn",
+          "translation": "Magaca Alle, Kan magaciisa la xusay aanu waxba oo dhulka ama samada ku jira waxyeeleyn karin, isaguna waa Maqle, Ogaal."
+        },
+        "kalimat-allah-at-tammat": {
+          "title": "Magan u gelidda erayada dhammaystiran ee Alle",
+          "translation": "Waxaan magan u galay erayada dhammaystiran ee Alle sharka waxa uu abuuray."
+        },
+        "subhan-allahi-wa-bihamdihi": {
+          "title": "Alle waa nasahan yahay, mahadna waa uu leeyahay",
+          "translation": "Alle waa nasahan yahay, mahadna waa uu leeyahay."
+        }
+      }
+    },
+    "fast-monday": {
+      "title": "Soonka Isniinta",
+      "why": "Nabiga ﷺ wuxuu soomi jiray Isniinta iyo Khamiista, wuxuuna sheegay in camallada la soo bandhigo maalmahaas. Isniintu waa sidoo kale maalintii uu dhashay.",
+      "reminder": "Isniintu waxay ka mid ahayd labada maalmood ee Nabiga ﷺ ku noqon jiray, toddobaad walba, sannadka oo dhan.",
+      "how": [
+        "Habeenka ka hor go’aanso inaad soonto.",
+        "Haddii aad awoodo, wax cun Subaxa ka hor (suxuur).",
+        "Soom laga bilaabo Subaxa ilaa Maqribka."
+      ],
+      "evidence": [
+        "Nabiga ﷺ waxaa la weydiiyey soonka Isniinta, wuxuuna yiri: taasi waa maalintii aan dhashay, iyo maalintii la i soo diray, ama maalintii waxyigu ii soo degay."
+      ]
+    },
+    "fast-thursday": {
+      "title": "Soonka Khamiista",
+      "why": "Khamiistu waa soonka kale ee toddobaadlaha ah ee Nabiga ﷺ ilaalin jiray. Hal maalin toddobaadkii waa caado la qaadi karo; laba waa caadadiisa.",
+      "reminder": "Khamiista, iyo Isniinta, waxay ahaayeen soon uu ﷺ si joogto ah u soomi jiray, ee maaha mar mar.",
+      "how": [
+        "Habeenka ka hor go’aanso inaad soonto.",
+        "Haddii aad awoodo, wax cun Subaxa ka hor (suxuur).",
+        "Soom laga bilaabo Subaxa ilaa Maqribka."
+      ],
+      "evidence": [
+        "Camallada waxaa la soo bandhigaa Isniinta iyo Khamiista, waxaanan jeclahay in camalkayga la soo bandhigo anigoo soomman."
+      ]
+    },
+    "fast-white-days": {
+      "title": "Soonka Maalmaha Cad",
+      "why": "Saddex maalmood bishii, 13-ka, 14-ka iyo 15-ka marka dayaxu buuxo. Nabiga ﷺ wuxuu soonka saddex maalmood bil kasta u ekeysiiyey soonka sannadka oo dhan.",
+      "reminder": "Saddex iyo tobanka, afar iyo tobanka iyo shan iyo tobanka, marka dayaxu buuxo. Saddex maalmood bishii, oo loo kala fogeeyey si aanay isu urursan.",
+      "note": "Xadiisku wuxuu caddeeyaa soonka saddex maalmood bil kasta. Culimadu way ku kala duwan yihiin inay tahay in si gaar ah loo soomo saddex iyo tobanka, afar iyo tobanka iyo shan iyo tobanka.",
+      "how": [
+        "Dhuux bartamaha bisha Islaamka; abkan wuxuu kuu muujiyaa dhowr maalmood ka hor.",
+        "Soom 13-ka, 14-ka iyo 15-ka, ama saddex maalmood oo kasta oo bisha ah."
+      ],
+      "evidence": [
+        "Saaxiibkay wuxuu ii dardaarmay saddex arrimood: inaan soomo saddex maalmood bil kasta, inaan tukado laba rakco oo Duxa ah, iyo inaan Witirka tukado intaanan seexan."
+      ]
+    },
+    "fast-ashura": {
+      "title": "Soonka Caashuuraa",
+      "why": "10-ka Muxarram. Nabiga ﷺ wuxuu sheegay in soonkeedu dembi dhaaf u yahay sannadkii ka horreeyey, wuxuuna ku taliyey in lagu daro 9-ka.",
+      "reminder": "Tobanka Muxarram. Waa hal maalin, caawana in la go’aansado ayaa ka fudud waaberiga.",
+      "how": ["Soom 10-ka Muxarram.", "Haddii aad awoodo, ku dar 9-ka."],
+      "evidence": [
+        "Nabiga ﷺ wuxuu helay Yuhuuddii oo soomaysa maalinta Caashuuraa, wuxuuna yiri: annagaa idinka xaq u leh Nabi Muuse — markaas wuu soomay, wuxuuna amray in la soomo."
+      ]
+    },
+    "fast-arafah": {
+      "title": "Soonka maalinta Carafo",
+      "why": "9-ka Dul Xijja, maalinta xujaajku Carafo taagan yihiin. Kuwa aan Xajka ku jirin, soonkeedu wuxuu dembi dhaaf u yahay laba sano.",
+      "reminder": "Sagaalka Dul Xijja, kuwa aan Carafo taagnayn.",
+      "note": "Culimadu way ku kala duwan yihiin inay raacdo sagaalka Dul Xijja ee deegaanka iyo in ay raacdo maalinta Carafo lagu taagan yahay ee Maka, marka labadu kala duwan yihiin.",
+      "how": ["Soom 9-ka Dul Xijja.", "Xujaajka uma aha; maalintaas ma soomaan."],
+      "evidence": [
+        "Soonka maalinta Carafo wuxuu dembi dhaaf u yahay sannadka ka horreeya iyo sannadka soo socda."
+      ]
+    },
+    "fast-shawwal": {
+      "title": "Lixda maalmood ee Shawwaal",
+      "why": "Lix maalmood oo soon ah bisha Ramadaan xigta. Ramadaanka marka lagu daro waxay noqdaan waxa Nabiga ﷺ ugu yeeray soonka sannadka oo dhan.",
+      "reminder": "Lix maalmood, lix kasta, meel kasta oo bisha ah. Uma baahna in la isku xiro.",
+      "how": [
+        "Lix maalmood oo kasta oo Shawwaal ah, wada jir ama kala go’an, maalinta Ciidda kadib."
+      ],
+      "evidence": [
+        "Qofkii soomay Ramadaan oo ku xijiyey lix maalmood oo Shawwaal ah, waa sidii isagoo soomay sannadka oo dhan."
+      ]
+    },
+    "duha-prayer": {
+      "title": "Salaadda Duxa",
+      "why": "Salaad sunno ah oo gaaban oo barqadii la tukado. Nabiga ﷺ wuxuu sheegay in sadaqada lagu leeyahay laf-kala-gal kasta oo jirka ah ay ku filan tahay laba rakco oo Duxa ah.",
+      "reminder": "Waxaa la tukadaa marka qorraxdu si fiican u kor u baxdo iyo Duhurka ka hor. Laba rakco ayaa ku filan.",
+      "how": [
+        "Marka qorraxdu si fiican u kor u baxdo iyo duhurnimada ka hor, tuko laba rakco ama ka badan."
+      ],
+      "evidence": [
+        "Saaxiibkay wuxuu ii dardaarmay saddex arrimood: inaan soomo saddex maalmood bil kasta, inaan tukado laba rakco oo Duxa ah, iyo inaan Witirka tukado intaanan seexan."
+      ]
+    },
+    "qasr-while-travelling": {
+      "title": "Gaabinta salaadda",
+      "why": "Safarka, salaadaha afarta rakco ah waxaa loo gaabiyaa laba. Waa hadiyad, ee maaha tanaasul, Nabiga ﷺ na had iyo jeer wuu qaadan jiray.",
+      "reminder": "Inta aad safarka ku jirto, salaadaha afarta rakco ah waxaa loo tukan karaa laba.",
+      "note": "Culimadu way ku kala duwan yihiin in gaabinta safarku waajib tahay iyo inay tahay fududeyn la qaadan karo ama laga tagi karo.",
+      "how": [
+        "Inta aad safarka ku jirto, Duhurka, Casarka iyo Cishaha mid kasta laba rakco u tuko.",
+        "Subaxa iyo Maqribku sidooda ayey ahaanayaan."
+      ],
+      "evidence": [
+        "Macnaha aayadda: Markaad dhulka ku socdaalaysaan, dembi idinkuma aha inaad salaadda gaabisaan."
+      ]
+    },
+    "sunnah-before-dhuhr": {
+      "title": "Laba ama afar rakco Duhurka ka hor",
+      "why": "Laba ama afar rakco salaadda Duhurka ka hor, qaybta ugu weyn ee rawaatibta maalinlaha ah. Waxay ku degaan intaadan salaadda faralka ah u degdegin.",
+      "reminder": "Waxaa la tukadaa marka Duhurku galo kadib iyo faralka ka hor.",
+      "how": [
+        "Aadaanka Duhurka kadib iyo salaadda faralka ka hor, tuko laba rakco, ama afar oo laba laba ah.",
+        "Kadib tuko Duhurka."
+      ],
+      "evidence": [
+        "Waxaan Nabiga ﷺ ka xafiday toban rakco: laba Duhurka ka hor iyo laba kadib, laba Maqribka kadib gurigiisa, laba Cishaha kadib gurigiisa, iyo laba salaadda Subaxa ka hor."
+      ]
+    },
+    "sunnah-after-maghrib": {
+      "title": "Laba rakco Maqribka kadib",
+      "why": "Laba rakco salaadda Maqribka kadib. Nabiga ﷺ gurigiisa ayuu ku tukan jiray, oo ah halka dadka badankiisu joogaan saacaddaas.",
+      "reminder": "Laba rakco faralka kadib, intaan fiidku u gudbin wax kale.",
+      "how": ["Salaadda Maqribka iyo dikrigeeda kadib, tuko laba rakco."],
+      "evidence": [
+        "Waxaan Nabiga ﷺ ka xafiday toban rakco: laba Duhurka ka hor iyo laba kadib, laba Maqribka kadib gurigiisa, laba Cishaha kadib gurigiisa, iyo laba salaadda Subaxa ka hor."
+      ]
+    },
+    "sunnah-after-isha": {
+      "title": "Laba rakco Cishaha kadib",
+      "why": "Laba rakco salaadda Cishaha kadib, tan ugu dambeysa rawaatibta, oo inta badan guriga lagu tukado Witirka ka hor.",
+      "reminder": "Laba rakco faralka kadib, adigoo weli halkaas jooga.",
+      "how": ["Salaadda Cishaha iyo dikrigeeda kadib, tuko laba rakco."],
+      "evidence": [
+        "Waxaan Nabiga ﷺ ka xafiday toban rakco: laba Duhurka ka hor iyo laba kadib, laba Maqribka kadib gurigiisa, laba Cishaha kadib gurigiisa, iyo laba salaadda Subaxa ka hor."
+      ]
+    },
+    "witr": {
+      "title": "Witir",
+      "why": "Tiro kisi ah oo rakco ah, inta badan hal ama saddex, oo ah salaadda ugu dambeysa habeenka. Nabiga ﷺ weligiis kama tagin, guriga iyo safarka midna, wuxuuna na faray inaan ka dhigno waxa ugu dambeeya ee aan tukanno.",
+      "reminder": "Salaadda ugu dambeysa habeenka, tiro kisi ah oo rakco ah. Haddii aadan hubin inaad toosi doonto, waxaa la tukan karaa intaadan seexan.",
+      "how": [
+        "Waqti kasta oo Cishaha kadib ah iyo Subaxa ka hor, tuko hal rakco, ama saddex.",
+        "Haddii aad ka baqdo inaadan toosin, tuko intaadan seexan.",
+        "Ka dhig salaadda ugu dambeysa habeenkaaga."
+      ],
+      "evidence": ["Witirka ka dhiga salaadda ugu dambeysa ee habeenkii."]
+    },
+    "dua-entering-home": {
+      "title": "Guriga oo la yimaado",
+      "translation": "Magaca Alle.",
+      "why": "Xusidda Alle marka aad gasho, iyo salaamidda cidda joogta, waxay guriga ka dhigtaa meel Alle lagu xuso. Nabiga ﷺ wuxuu sheegay in Shaydaanku aanu guri caynkaas ah meel uu ku hoydo ka helin.",
+      "reminder": "Waxaa la yiraahdaa marka aad albaabka ka soo gasho, intaan gurigu ku qaadan.",
+      "how": [
+        "Dheh Bismillaah marka aad gudaha u gasho.",
+        "Kuwa gudaha jooga ku salaan Assalaamu calaykum, xitaa haddii gurigu madhan yahay."
+      ],
+      "evidence": [
+        "Marka ninku gurigiisa galo oo uu Alle xuso marka uu galayo iyo marka uu wax cunayo, Shaydaanku wuxuu saaxiibbadiis ku yiraahdaa: halkan hoy iyo casho midna idiinma leh."
+      ]
+    },
+    "takbir-ascending": {
+      "title": "Kor u bixid",
+      "translation": "Alle waa ka weyn yahay wax walba.",
+      "why": "Allaahu Akbar marka aad kor u baxayso: buur, jaranjaro, wiish. Asxaabtu waxay ku oran jireen kor u bax kasta oo waddada ah, wuxuuna kor u bax caadi ah u beddelaa xusuus Alle.",
+      "reminder": "Waxaa la yiraahdaa marka kor loo baxayo — jaranjaro, buur, wiish. Eray yar oo kor u bax yar ah.",
+      "how": ["Marka aad bilowdo kor u bixidda, dheh Allaahu Akbar."],
+      "evidence": [
+        "Markaan kor u baxno waxaan oran jirnay Allaahu Akbar, markaan hoos u degnana waxaan oran jirnay Subxaanallaah."
+      ]
+    },
+    "tasbih-descending": {
+      "title": "Hoos u degid",
+      "translation": "Alle waa nasahan yahay.",
+      "why": "Subxaanallaah marka aad hoos u degayso, oo ah dhigga takbiirka kor u bixidda.",
+      "reminder": "Waxaa la yiraahdaa marka hoos loo degayo, sida takbiirka loo yiraahdo marka kor loo baxayo.",
+      "how": ["Marka aad bilowdo hoos u degidda, dheh Subxaanallaah."],
+      "evidence": [
+        "Markaan kor u baxno waxaan oran jirnay Allaahu Akbar, markaan hoos u degnana waxaan oran jirnay Subxaanallaah."
+      ]
+    },
+    "dua-riding": {
+      "title": "Ku ambabixidda gaari",
+      "translation": "Magaca Alle, mahad waxaa leh Alle. Waxaa nasahan Kan tan noo sakhiray, annaguna ma aynaan awoodeen; Rabbigeenna ayaanna u noqon doonnaa xaqiiq ahaan.",
+      "why": "Erayadii Nabiga ﷺ oran jiray markuu awrkiisa fuulo, oo si isku mid ah ugu habboon gaari, bas ama tareen: tan waa noo sakhirantay, annaguna ma aynaan awoodeen.",
+      "reminder": "Waxaa la yiraahdaa marka aad fadhiisato oo gaarigu socdo.",
+      "how": [
+        "Marka aad fadhiisato, dheh Bismillaah.",
+        "Dheh Alxamdulillaah.",
+        "Dheh aayadda: Subxaanalladii sakhkhara lanaa haadaa wamaa kunnaa lahu muqriniin, wa innaa ilaa Rabbinaa lamunqalibuun."
+      ],
+      "evidence": [
+        "Macnaha aayadda: Waxaa nasahan Kan tan noo sakhiray, annaguna ma aynaan awoodeen; Rabbigeenna ayaanna u noqon doonnaa xaqiiq ahaan.",
+        "Nabiga ﷺ markuu awrkiisa fuulo si uu safar ugu baxo, saddex jeer ayuu oran jiray Allaahu Akbar, kadibna: Waxaa nasahan Kan tan noo sakhiray..."
+      ]
+    },
+    "adhkar-before-sleep": {
+      "title": "Hurdada ka hor: Aayatul Kursi iyo saddexda Qul",
+      "why": "Xusuus gaaban oo Nabiga ﷺ akhrin jiray habeen kasta: Aayatul Kursi, iyo saddexda suuradood ee gaagaaban ee ku bilaabma Qul, oo gacmaha lagu tufo lagana mariyo jirka. Wuxuu sheegay in qofka akhriya Aayatul Kursi uu ilaaliye la joogo ilaa subaxa.",
+      "reminder": "Aayatul Kursi iyo saddexda Qul, waxa ugu dambeeya. Qiyaastii hal daqiiqo, maalintuna way xirantaa.",
+      "how": [
+        "Akhri Aayatul Kursi (Qur’aanka 2:255).",
+        "Gacmahaaga isku qabo, ku tuf, oo akhri al-Ikhlaas, al-Falaq iyo an-Naas.",
+        "Gacmahaaga mari inta aad gaari karto jirkaaga, adigoo ka bilaabaya madaxa iyo wejiga.",
+        "Gacmaha saddex jeer sidaas u samee."
+      ],
+      "evidence": [
+        "Habeen kasta markuu Nabiga ﷺ sariirtiisa u tago wuxuu isku qaban jiray gacmihiisa, ku tufi jiray, oo akhrin jiray Qul huwallaahu axad, Qul acuudu bi Rabbil falaq iyo Qul acuudu bi Rabbin naas, kadibna wuxuu marin jiray inta uu kari karo jirkiisa, isagoo ka bilaabaya madaxiisa, wejigiisa iyo hore jirkiisa, saddex jeer.",
+        "Markaad sariirtaada u tagto, akhri Aayatul Kursi; ilaaliye xagga Alle ka yimid ayaa kula joogi doona, shaydaanna kuuma soo dhowaan doono ilaa subaxa."
+      ]
+    },
+    "ramadan-nights": {
+      "title": "Salaadda habeenka Ramadaan",
+      "why": "Salaadda habeenka ee Ramadaan, oo jamaaco ahaan loo tukado sida Taraawiixda ama keligaa guriga. Nabiga ﷺ wuxuu u ballanqaaday dembi dhaaf dembiyadii hore qofkii u istaaga iimaan dartiis.",
+      "reminder": "Salaadda habeenka ee Ramadaan, masaajidka ama guriga — inta rakco ee aad joogteyn karto.",
+      "how": [
+        "Cishaha kadib, Taraawiixda ku tuko masaajidka ama rakcooyin guriga ku tuko.",
+        "Tiro kasta waa la xisaabiyaa; joogtee inta aad habeen walba joogteyn karto."
+      ],
+      "evidence": [
+        "Qofkii Ramadaan salaad ugu istaaga iimaan iyo ajar raadin, dembiyadiisii hore waa loo dhaafaa."
+      ]
+    },
+    "dhul-hijjah-ten": {
+      "title": "Tobanka maalmood ee ugu horreeya Dul Xijja",
+      "why": "Tobanka maalmood ee u horseeda Ciidul Adxa, oo Nabiga ﷺ sheegay inay camallada ku jira Alle ugu jecel yihiin maalin kasta oo kale. Soonka, dikriga iyo sadaqaduba waa la xisaabiyaa; 9-ku waa Carafo.",
+      "reminder": "Tobanka maalmood ee ugu horreeya Dul Xijja. Camallada wanaagsan ee caadiga ahi si gaar ah ayey ugu culus yihiin.",
+      "how": [
+        "Maalmaha oo dhan dheh Allaahu Akbar, laa ilaaha illallaah, Allaahu Akbar, wa lillaahil xamd.",
+        "Soom inta aad karto sagaalka maalmood ee ugu horreeya.",
+        "Wax sadaqo ah bixi."
+      ],
+      "evidence": ["Ma jiraan maalmo camal wanaagsan Alle ugu jecel yahay tobankan maalmood."]
+    }
+  },
+  "glossary": {
+    "fard": {
+      "term": "Faral",
+      "definition": "Waajib. Wax Muslim kasta ay waajib ku tahay inuu sameeyo, sida shanta salaadood ee maalinlaha ah. Ka tagiddiisu waa dembi; goor dambe gudashadiisa waxaa la yiraahdaa qadaa."
+    },
+    "wajib": {
+      "term": "Waajib",
+      "definition": "Sidoo kale waa waajib. Culimada qaarkood waxay u isticmaalaan waajibaadka lagu caddeeyey daliil wax yar ka hubaal yar kan faralka; ficil ahaan labadaba si isku mid ah ayaad ula dhaqantaa."
+    },
+    "sunnah-muakkadah": {
+      "term": "Sunno la adkeeyey",
+      "definition": "Camal uu Nabiga ﷺ ku dhawaad aan marna ka tagin, sida labada rakco ee Subaxa ka horreeya. Waajib maaha, laakiin waa waxa ugu dhow."
+    },
+    "sunnah": {
+      "term": "Sunno",
+      "definition": "Wixii uu Nabiga ﷺ sameeyey, yiri ama oggolaaday. Sameynta sunnada waa lagu ajar helaa; ka tagiddeeduna dembi maaha. Abkan oo dhan wuxuu ku saabsan yahay sunnooyinka ku habboon maalin caadi ah."
+    },
+    "mustahabb": {
+      "term": "Mustaxab",
+      "definition": "La jecel yahay oo lagu ajar helo, laakiin Nabiga ﷺ uu si ka yar joogteyn ugu sameyn jiray sunnada la adkeeyey. Wax wanaagsan in lagu daro marka inta kale ay degto."
+    },
+    "mubah": {
+      "term": "Bannaan",
+      "definition": "Lafteeda ajar laguma helo, lagumana canaanto. Waxaa loo taxay oo keliya si xukun aan marna bannaan u harin."
+    },
+    "rawatib": {
+      "term": "Rawaatib",
+      "definition": "Salaadaha sunnada ah ee joogtada ah ee ku xiran shanta salaadood ee faralka ah: laba Subaxa ka hor, afar Duhurka ka hor iyo laba kadib, laba Maqribka kadib, laba Cishaha kadib. Wadar ahaan laba iyo toban."
+    },
+    "adhkar": {
+      "term": "Adkaar",
+      "definition": "Wadarta dikriga: weedho go’an oo xusuus iyo ammaan ah. Adkaarta subaxa iyo galabtu waa ururo la yiraahdo Subaxa kadib iyo Casarka kadib."
+    },
+    "dhikr": {
+      "term": "Dikri",
+      "definition": "Xusidda Alle carrabka iyo qalbiga: Subxaanallaah, Alxamdulillaah, Allaahu Akbar iyo wixii la mid ah. Meel kasta iyo xaalad kasta waa la oran karaa."
+    },
+    "qada": {
+      "term": "Qadaa",
+      "definition": "Gudashada salaad faral ah kadib markuu waqtigeedu dhaafo. Abkan wuxuu hayaa tiro, marna liis taariikho ah: ujeeddadu waa in la gudo, ee maaha in dhibco la tiriyo."
+    },
+    "window": {
+      "term": "Waqti",
+      "definition": "Inta u dhexeysa waqti salaadeed iyo ka xiga. Abkan marna saacad kuma muujiyo; wuxuu kuu sheegaa waqtiga aad ku jirto iyo qiyaas ahaan inta ka hartay salaadda xigta."
+    },
+    "white-days": {
+      "term": "Maalmaha Cad",
+      "definition": "13-ka, 14-ka iyo 15-ka bil kasta oo Islaami ah, marka dayaxu buuxo oo habeennadu iftiin yihiin. Nabiga ﷺ wuxuu ku dardaarmay in la soomo."
+    },
+    "witr": {
+      "term": "Witir",
+      "definition": "Salaad tiro kisi ah, inta badan hal ama saddex rakco, oo la tukado Cishaha kadib iyo Subaxa ka hor iyadoo ah salaadda ugu dambeysa habeenka."
+    },
+    "duha": {
+      "term": "Duxa",
+      "definition": "Salaad sunno ah oo laba rakco ama ka badan ah oo barqadii la tukado, marka qorraxdu si fiican u kor u baxdo iyo intaanay bartamaha samada gaarin."
+    },
+    "siwak": {
+      "term": "Caday (siwaak)",
+      "definition": "Laan ilkaha lagu cadaysto, inta badan geedka arakta. Ilkaha oo la nadiifiyo salaadda ka hor waa la jecel yahay; burush ilkeedna isla shaqadaas ayuu qabtaa."
+    }
+  }
 }

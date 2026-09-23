@@ -328,6 +328,23 @@ go through the `count` helper in `ar.ts`, which handles singular, dual, the
 3-to-10 plural and the 11-and-up singular; never interpolate a bare number
 next to a noun in Arabic copy.
 
+Ten languages ship (2026-09-23): English, Arabic, French, Italian, Japanese,
+Hindi, Urdu, Somali, Mandarin (`zh`, Simplified) and Cantonese (`yue`,
+Traditional). Every file but `en.ts` is a draft awaiting a qualified speaker,
+and the Language screen says so. Urdu is right to left like Arabic. A device
+reporting `zh-HK` or `zh-MO` is read as Cantonese (`normalise` in
+`src/i18n/locale.ts`); Taiwan stays Mandarin. Adding a language means a
+`src/strings/<code>.ts`, an entry in `SHIPPED`, `SUPPORTED_LOCALES` and
+`SUPPORTED_LANGUAGES`, a name in every table's `language.names`, a
+`content/translations/<code>.json`, and `CFBundleLocalizations` in `app.json`.
+
+Content in every language but English lives in `content/translations/<code>.json`,
+keyed by item, part and glossary id, and is laid over `items.json` at load by
+`applyTranslations` in `src/content/translations.ts`. It fills only what is
+absent, so it can never overwrite text `items.json` already carries.
+Transliteration falls back to the English romanisation. `validate-content`
+reports what each language still lacks.
+
 ### The brand palette is app-wide; it is still the only literal colour
 
 `palettes` in `src/theme/colors.ts` are the only hex values in the app. A

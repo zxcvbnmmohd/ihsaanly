@@ -46,7 +46,8 @@ function releaseWarningsFor(document: ContentDocument): string[] {
       (evidence) => {
         if (evidence.type !== 'hadith') return
         const citation = `${evidence.collection} ${evidence.reference}`
-        const narration = Object.values(evidence.text).join(' ')
+        // English is the source; a translation present on one citation and not another is not a different narration.
+        const narration = evidence.text.en ?? Object.values(evidence.text).join(' ')
         const seen = narrations.get(citation)
 
         if (seen === undefined) narrations.set(citation, narration)

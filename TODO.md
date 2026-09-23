@@ -27,16 +27,14 @@ one thing from you.
       Android does not wait for Apple. Once `eas init` has run,
       `bunx eas-cli build -p android --profile preview` works the same day.
 
-- [ ] **Enable GitHub Pages** — repo Settings → Pages → source `production`, folder `/docs`.
+- [x] **Enable GitHub Pages** — repo Settings → Pages → source `production`, folder `/docs`.
       Everything is prepared: `docs/_config.yml` publishes only `legal/` and holds
       back `PRD.md` and `SPEC.md`; `docs/index.md` links to both pages.
       Since you own `ihsaanly.com`, a custom domain reads better than the
       github.io address — that's a `CNAME` file and a DNS record.
 
       **Apple rejects submissions without a reachable privacy policy.**
-      **I can finish it:** the app deliberately does *not* link to the policy yet,
-      because a 404 there is worse than the paragraph beside it. Tell me the URL
-      resolves and I'll add the link to About.
+      _Done 2026-09-23: Pages serves `production:/docs`, and About links the policy._
 
 - [ ] **Point `donate.ihsaanly.com` at a real page.**
       The donate row is live in the Android build and a reviewer will tap it.
@@ -54,35 +52,19 @@ one thing from you.
 
 ## 2. Decisions — each one I can execute the same day
 
-- [ ] **Arabic: write it, or hold it for v1.**
-      This is not "review the Arabic". Measured 2026-09-22:
+- [x] **Arabic: written (2026-09-23).** Every item's `why`, `how`, `reminder`
+      and `note` now exists in Arabic, in `content/translations/ar.json`. Like
+      `src/strings/ar.ts` it is a draft: a qualified speaker still reviews both
+      before release.
 
-      | | Arabic |
-      | --- | --- |
-      | item titles | 32 / 32 |
-      | glossary definitions | 15 / 15 |
-      | `why` | **0 / 32** |
-      | `how` steps | **0 / 68** |
-      | `reminder` | **0 / 32** |
-      | `note` | **0 / 3** |
+- [x] **Eight more languages (2026-09-23):** French, Italian, Japanese, Hindi,
+      Urdu, Somali, Mandarin and Cantonese — interface and content, all drafts
+      awaiting a qualified speaker each. The Language screen says so.
+      **You:** find a reviewer per language, or tell me which to hold back.
 
-      About **135 strings that don't exist**. `resolveText` returns null rather
-      than falling back, so an Arabic reader gets an Arabic interface, Arabic
-      titles and a glossary — with every explanation silently absent. No error,
-      just gaps.
-
-      `src/strings/ar.ts` is separate: complete, a one-pass draft, still needs a
-      qualified speaker. `AGENTS.md` calls that a release condition.
-
-      **I can finish it:** say "English-only for v1" and I'll hide Arabic from
-      the picker — a small change. Or commission the strings and I'll wire them.
-
-- [ ] **iPad: support it, or not.**
-      `supportsTablet: true` with `orientation: portrait` and no width cap means
-      edge-to-edge rows on a 13" screen — and it adds iPad screenshots to the
-      submission.
-      **I can finish it:** `supportsTablet: false` is the smaller job and I'll do
-      it on a word. Keeping it means layout work plus those screenshots.
+- [x] **iPad: supported (2026-09-23).** A 720pt reading column on every screen,
+      all four orientations on iPad (phones stay portrait). **You:** 13" iPad
+      screenshots join the submission.
 
 - [x] **The fasting-owed rule.** _Implemented with a narrow v1 rule, pending the
       content reviewer's confirmation (§5)._
@@ -95,11 +77,10 @@ one thing from you.
       Voluntary fasts are never owed; vows, expiations and fidya are out of scope.
       Code: `src/fasting/ledger.ts`, `src/fasting/store.ts`.
 
-- [ ] **The adhkar content gap.**
-      "Morning adhkar" and "Evening adhkar" tell the reader _what_ to say — Ayat
-      al-Kursi, the three Quls, the sayyid al-istighfar — and contain none of the
-      texts. The primary audience can't act on that.
-      Decide: add them as sub-items, or link out.
+- [x] **The adhkar content gap: sub-items (2026-09-23).** Morning adhkar has 10
+      parts and evening 11 — Ayat al-Kursi, the three Quls, sayyid al-istighfar
+      and the rest, each with Arabic, transliteration, translation, count and
+      source. The reviewer checks them with everything else (§5).
 
 ---
 
@@ -169,6 +150,20 @@ Hand this section over as-is.
       never reviewed.
 - [ ] **The 32 reminder sentences** (new, 2026-09-22). One line each: the moment
       named, then why. They make claims about the sunnah that need checking.
+- [ ] **The adhkar sub-items** (new, 2026-09-23). Every Arabic text, count and
+      reference was written from memory. In particular: "A'udhu bikalimatillah"
+      is ×1 because Muslim 2709 states no count (Hisn al-Muslim has ×3 from
+      another narration); "Raditu billahi rabban" follows Hisn's wording and is
+      graded `disputed`; Ayat al-Kursi cites only 2:255, not the hadith that makes
+      it a morning practice; confirm Tirmidhi 3391 and 3388, Abu Dawud 5088 and 5072.
+- [ ] **References that may be wrong** (found while writing the Arabic,
+      2026-09-23). Bukhari 1178 (fast-white-days, duha-prayer): the English follows
+      a different version from the one under that number. Abu Dawud 2602
+      (dua-riding): the English is Ibn Umar's narration, which may be Muslim 1342 or
+      Abu Dawud 2599. Bukhari 969 (dhul-hijjah-ten): the English follows the
+      Abu Dawud/Tirmidhi wording. Bukhari 2004 (fast-ashura): the matn says "I have
+      more right", the English says "we". The 27 Arabic matn in
+      `content/translations/ar.json` were all written from memory.
 - [ ] **`Sahih Muslim 1162`** — the validator flags it as cited with two different
       narrations. Confirm both are correct, or fix the reference.
 - [ ] **Translation sources.** `translationSources: {en: null, ar: null}` and the

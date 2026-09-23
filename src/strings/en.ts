@@ -230,7 +230,7 @@ export const en = {
   language: {
     title: 'Language',
     restart:
-      'Arabic reads right to left. Switching to or from it restarts the app, or asks you to reopen it.',
+      'Arabic and Urdu read right to left. Switching to or from them restarts the app, or asks you to reopen it.',
     incomplete:
       'English is the original. Every other language is a draft still awaiting review by a qualified speaker.',
     reopenTitle: 'Reopen Ihsaanly',

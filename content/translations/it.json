@@ -1,5 +1,527 @@
 {
   "language": "it",
-  "items": {},
-  "glossary": {}
+  "items": {
+    "dua-leaving-home": {
+      "title": "Uscendo di casa",
+      "translation": "Nel nome di Allah, ripongo la mia fiducia in Allah, e non c’è forza né potenza se non in Allah.",
+      "why": "Una frase sulla porta che affida la giornata ad Allah prima che cominci. Il Profeta ﷺ insegnò che chi la dice uscendo è guidato, provveduto e protetto.",
+      "how": [
+        "Fermati un attimo sulla porta mentre esci.",
+        "Di’ le parole una volta, sottovoce o ad alta voce.",
+        "Esci."
+      ],
+      "reminder": "Si dice sulla porta, prima che la giornata prenda il sopravvento. È abbastanza breve da diventare un gesto che fai senza pensarci.",
+      "evidence": [
+        "Chi dice, quando esce di casa: «Nel nome di Allah, ripongo la mia fiducia in Allah, e non c’è forza né potenza se non in Allah», gli viene detto: sei guidato, ti è stato provveduto e sei protetto."
+      ]
+    },
+    "dua-entering-masjid": {
+      "title": "Entrando in moschea",
+      "translation": "O Allah, aprimi le porte della Tua misericordia.",
+      "why": "La moschea è un luogo di misericordia, quindi chiedi misericordia mentre entri. Segna anche il passaggio dalla strada alla preghiera.",
+      "how": ["Entra con il piede destro.", "Di’ la du’a mentre entri."],
+      "reminder": "Una parola di richiesta mentre varchi la soglia, prima di cercare un posto nella fila.",
+      "evidence": [
+        "Quando uno di voi entra in moschea, dica: O Allah, aprimi le porte della Tua misericordia."
+      ]
+    },
+    "dua-travel": {
+      "title": "Partendo per un viaggio",
+      "translation": "Gloria a Colui che ci ha reso soggetto questo, mentre noi non ne saremmo mai stati capaci; e al nostro Signore certamente faremo ritorno.",
+      "why": "La du’a del viaggio ringrazia Allah per il mezzo con cui si viaggia e chiede una strada facile e un ritorno sicuro. Si dice quando il viaggio è davvero cominciato.",
+      "how": [
+        "Una volta seduto e in movimento, di’ Allahu Akbar tre volte.",
+        "Di’ la du’a.",
+        "Se vuoi, chiedi con parole tue facilità, sicurezza e un buon ritorno."
+      ],
+      "reminder": "Si dice quando sei sistemato e in movimento, all’inizio della strada e non nella fretta della partenza.",
+      "evidence": [
+        "Quando il Profeta montava sul suo cammello per partire in viaggio, diceva: Gloria a Colui che ci ha reso soggetto questo, mentre noi non ne saremmo mai stati capaci."
+      ]
+    },
+    "dua-sleeping": {
+      "title": "Prima di dormire",
+      "translation": "Nel Tuo nome, o Allah, muoio e vivo.",
+      "why": "Le ultime parole della giornata, affidate ad Allah. Dirle rende il sonno stesso un atto di ricordo.",
+      "how": ["Sdraiati sul fianco destro, se puoi.", "Di’ le parole una volta."],
+      "reminder": "Le ultime parole della giornata, dopo aver posato il telefono. Richiedono meno tempo che restare lì a decidere di dormire.",
+      "evidence": ["Quando il Profeta andava a letto diceva: Nel Tuo nome, o Allah, muoio e vivo."]
+    },
+    "dua-waking": {
+      "title": "Al risveglio",
+      "translation": "Lode ad Allah che ci ha ridato la vita dopo averci fatto morire, e a Lui è la resurrezione.",
+      "why": "Svegliarsi è un piccolo ritorno alla vita, e le prime parole della giornata ringraziano Colui che l’ha ridata.",
+      "how": ["Di’ le parole appena sveglio, prima di ogni altra cosa."],
+      "reminder": "Le prime parole della giornata, prima che qualsiasi altra cosa chieda la tua attenzione.",
+      "evidence": [
+        "Quando il Profeta si svegliava diceva: Lode ad Allah che ci ha ridato la vita dopo averci fatto morire, e a Lui è la resurrezione."
+      ]
+    },
+    "dua-eating": {
+      "title": "Prima di mangiare",
+      "translation": "Nel nome di Allah.",
+      "why": "Nominare Allah sul cibo è la differenza tra mangiare e mangiare con gratitudine. Se te ne dimentichi e te ne ricordi a metà pasto, c’è una formula anche per questo.",
+      "how": [
+        "Di’ Bismillah prima del primo boccone.",
+        "Se te ne dimentichi, di’: Bismillahi awwalahu wa akhirahu (nel nome di Allah, al suo inizio e alla sua fine)."
+      ],
+      "reminder": "Prima del primo boccone. Una pausa di due secondi che trasforma un pasto in qualcosa di consapevole.",
+      "evidence": [
+        "Il Profeta disse a un ragazzo affidato alle sue cure: Pronuncia il nome di Allah, mangia con la mano destra e mangia da ciò che ti è più vicino."
+      ]
+    },
+    "tasbih-after-prayer": {
+      "title": "Tasbih dopo la preghiera",
+      "translation": "Gloria ad Allah.",
+      "why": "Trentatré volte ciascuno Subhan Allah, Alhamdulillah e Allahu Akbar dopo ogni preghiera, completati da una frase per arrivare a cento. Il Profeta ﷺ disse che per questo i peccati vengono perdonati, per quanti siano.",
+      "how": [
+        "Dopo la preghiera, di’ Subhan Allah 33 volte.",
+        "Di’ Alhamdulillah 33 volte.",
+        "Di’ Allahu Akbar 33 volte.",
+        "Completa il cento con: La ilaha illa Allah wahdahu la sharika lah, lahu al-mulk wa lahu al-hamd wa huwa ala kulli shay'in qadir."
+      ],
+      "reminder": "Si dice seduti, prima di alzarsi e che il momento sia passato. Trentatré, trentatré, trentaquattro.",
+      "evidence": [
+        "Chi glorifica Allah trentatré volte dopo ogni preghiera, Lo loda trentatré volte e Lo magnifica trentatré volte, e poi completa il cento, i suoi peccati vengono perdonati anche se fossero come la schiuma del mare."
+      ]
+    },
+    "ayat-al-kursi-after-prayer": {
+      "title": "Ayat al-Kursi dopo la preghiera",
+      "why": "Un solo versetto, recitato dopo ogni preghiera. Il Profeta ﷺ disse che tra chi lo recita dopo la preghiera e l’ingresso in Paradiso non c’è altro che la morte.",
+      "how": ["Dopo il tasbih, recita una volta Ayat al-Kursi (Corano 2:255)."],
+      "reminder": "Si recita quando hai finito, mentre sei ancora seduto dove hai pregato.",
+      "evidence": [
+        "Allah: non c’è divinità all’infuori di Lui, il Vivente, Colui che sostiene l’esistenza. (Traduzione del significato.)",
+        "Chi recita Ayat al-Kursi dopo ogni preghiera obbligatoria, tra lui e l’ingresso in Paradiso non c’è altro che la morte."
+      ]
+    },
+    "siwak-before-prayer": {
+      "title": "Siwak prima della preghiera",
+      "why": "Pulire i denti prima di mettersi in piedi per pregare. Dove non c’è il siwak, lo spazzolino serve allo stesso scopo.",
+      "how": ["Prima della preghiera, pulisci i denti con il siwak o con lo spazzolino."],
+      "reminder": "Pulire i denti prima di mettersi in piedi per pregare. Dove non c’è il siwak, lo spazzolino fa lo stesso lavoro.",
+      "evidence": [
+        "Se non fosse per non gravare sulla mia umma, avrei ordinato loro di usare il siwak a ogni preghiera."
+      ]
+    },
+    "sunnah-before-fajr": {
+      "title": "Due rak’a prima di Fajr",
+      "why": "Due rak’a brevi prima della preghiera di Fajr. Tra tutte le preghiere volontarie, è quella che il Profeta ﷺ non lasciò mai, nemmeno in viaggio.",
+      "how": [
+        "Dopo l’adhan di Fajr e prima della preghiera obbligatoria, prega due rak’a.",
+        "Tienile brevi.",
+        "Poi prega Fajr."
+      ],
+      "reminder": "Due rak’a brevi quando è entrato il tempo di Fajr, prima della preghiera obbligatoria. Il Profeta ﷺ le mantenne più di qualsiasi altra preghiera volontaria.",
+      "evidence": [
+        "Le due rak’a prima di Fajr sono migliori del mondo e di tutto ciò che contiene."
+      ]
+    },
+    "sunnah-after-dhuhr": {
+      "title": "Due rak’a dopo Dhuhr",
+      "why": "Due rak’a dopo la preghiera di Dhuhr, parte delle dodici rawatib quotidiane per le quali il Profeta ﷺ promise una casa in Paradiso.",
+      "how": ["Dopo la preghiera di Dhuhr e il suo dhikr, prega due rak’a."],
+      "reminder": "Si pregano dopo la preghiera obbligatoria, mentre sei ancora in piedi dove hai pregato.",
+      "evidence": [
+        "Chi prega dodici rak’a in un giorno e una notte, gli verrà costruita una casa in Paradiso."
+      ]
+    },
+    "morning-adhkar": {
+      "title": "Adhkar del mattino",
+      "why": "Un insieme di invocazioni di ricordo dette tra Fajr e l’alba, o in generale al mattino. Danno forma alla giornata prima che si riempia di tutto il resto.",
+      "how": [
+        "Dopo Fajr, siediti un momento.",
+        "Di’ gli adhkar del mattino, i cui testi sono qui sotto: Ayat al-Kursi, le tre Qul, il sayyid al-istighfar e gli altri.",
+        "Se ne conosci solo uno o due, di’ quelli."
+      ],
+      "reminder": "Il ricordo del mattino, tra Fajr e il sorgere del sole. Il Profeta ﷺ restava seduto nel ricordo dopo la preghiera del mattino finché il sole non era sorto.",
+      "evidence": [
+        "Il modo migliore di chiedere perdono è dire: O Allah, Tu sei il mio Signore, non c’è divinità all’infuori di Te. Tu mi hai creato e io sono il Tuo servo."
+      ],
+      "parts": {
+        "ayat-al-kursi": {
+          "title": "Ayat al-Kursi",
+          "translation": "Allah: non c’è divinità all’infuori di Lui, il Vivente, Colui che sostiene tutta l’esistenza. Non Lo colgono né sopore né sonno. A Lui appartiene tutto ciò che è nei cieli e tutto ciò che è sulla terra. Chi può intercedere presso di Lui se non con il Suo permesso? Egli conosce ciò che sta davanti a loro e ciò che verrà dopo di loro, ed essi non abbracciano nulla della Sua scienza se non ciò che Egli vuole. Il Suo Kursi si estende sui cieli e sulla terra, e custodirli non Gli pesa. Ed Egli è l’Altissimo, l’Immenso."
+        },
+        "al-ikhlas": {
+          "title": "Al-Ikhlas",
+          "translation": "Nel nome di Allah, il Compassionevole, il Misericordioso. Di’: Egli è Allah, l’Unico. Allah, l’Assoluto a cui tutto si rivolge. Non ha generato e non è stato generato, e nessuno è pari a Lui."
+        },
+        "al-falaq": {
+          "title": "Al-Falaq",
+          "translation": "Nel nome di Allah, il Compassionevole, il Misericordioso. Di’: Mi rifugio nel Signore dell’alba, dal male di ciò che ha creato, dal male dell’oscurità quando si stende, dal male di chi soffia sui nodi, e dal male dell’invidioso quando invidia."
+        },
+        "an-nas": {
+          "title": "An-Nas",
+          "translation": "Nel nome di Allah, il Compassionevole, il Misericordioso. Di’: Mi rifugio nel Signore degli uomini, il Re degli uomini, il Dio degli uomini, dal male del sussurratore che si ritrae, che sussurra nei cuori degli uomini, tra i jinn e tra gli uomini."
+        },
+        "asbahna": {
+          "title": "Siamo giunti al mattino",
+          "translation": "Siamo giunti al mattino, e il regno appartiene ad Allah, e ogni lode è di Allah. Non c’è divinità all’infuori di Allah, Unico, senza associati; a Lui il regno e a Lui la lode, ed Egli ha potere su ogni cosa. Signore mio, Ti chiedo il bene di questo giorno e il bene di ciò che lo segue, e mi rifugio in Te dal male di questo giorno e dal male di ciò che lo segue. Signore mio, mi rifugio in Te dalla pigrizia e dalla miseria della vecchiaia. Signore mio, mi rifugio in Te dal castigo del Fuoco e dal castigo della tomba."
+        },
+        "bika-asbahna": {
+          "title": "Per Te giungiamo al mattino",
+          "translation": "O Allah, per Te giungiamo al mattino e per Te giungiamo alla sera, per Te viviamo e per Te moriamo, e a Te è la resurrezione."
+        },
+        "sayyid-al-istighfar": {
+          "title": "Sayyid al-istighfar",
+          "translation": "O Allah, Tu sei il mio Signore; non c’è divinità all’infuori di Te. Tu mi hai creato e io sono il Tuo servo, e mi attengo al Tuo patto e alla Tua promessa per quanto ne sono capace. Mi rifugio in Te dal male di ciò che ho fatto. Riconosco il Tuo favore su di me e riconosco il mio peccato, perdonami dunque, perché nessuno perdona i peccati se non Tu."
+        },
+        "raditu-billahi-rabban": {
+          "title": "Soddisfatto di Allah come Signore",
+          "translation": "Sono soddisfatto di Allah come Signore, dell’Islam come religione e di Muhammad ﷺ come Profeta."
+        },
+        "bismillah-alladhi-la-yadurr": {
+          "title": "Nel nome di Allah, con il cui nome nulla nuoce",
+          "translation": "Nel nome di Allah, con il cui nome nulla sulla terra né nel cielo può nuocere, ed Egli è Colui che tutto ascolta, Colui che tutto sa."
+        },
+        "subhan-allahi-wa-bihamdihi": {
+          "title": "Gloria ad Allah e lode a Lui",
+          "translation": "Gloria ad Allah e lode a Lui."
+        }
+      }
+    },
+    "evening-adhkar": {
+      "title": "Adhkar della sera",
+      "why": "Il corrispettivo serale, detto tra Asr e Maghrib o in generale di sera. La stessa protezione e la stessa gratitudine per la notte come per il giorno.",
+      "how": [
+        "Dopo Asr, siediti un momento.",
+        "Di’ gli adhkar della sera, i cui testi sono qui sotto.",
+        "Se ne conosci solo uno o due, di’ quelli."
+      ],
+      "reminder": "Il ricordo della sera, da Asr finché la luce se ne va.",
+      "evidence": [
+        "Il modo migliore di chiedere perdono è dire: O Allah, Tu sei il mio Signore, non c’è divinità all’infuori di Te. Tu mi hai creato e io sono il Tuo servo."
+      ],
+      "parts": {
+        "ayat-al-kursi": {
+          "title": "Ayat al-Kursi",
+          "translation": "Allah: non c’è divinità all’infuori di Lui, il Vivente, Colui che sostiene tutta l’esistenza. Non Lo colgono né sopore né sonno. A Lui appartiene tutto ciò che è nei cieli e tutto ciò che è sulla terra. Chi può intercedere presso di Lui se non con il Suo permesso? Egli conosce ciò che sta davanti a loro e ciò che verrà dopo di loro, ed essi non abbracciano nulla della Sua scienza se non ciò che Egli vuole. Il Suo Kursi si estende sui cieli e sulla terra, e custodirli non Gli pesa. Ed Egli è l’Altissimo, l’Immenso."
+        },
+        "al-ikhlas": {
+          "title": "Al-Ikhlas",
+          "translation": "Nel nome di Allah, il Compassionevole, il Misericordioso. Di’: Egli è Allah, l’Unico. Allah, l’Assoluto a cui tutto si rivolge. Non ha generato e non è stato generato, e nessuno è pari a Lui."
+        },
+        "al-falaq": {
+          "title": "Al-Falaq",
+          "translation": "Nel nome di Allah, il Compassionevole, il Misericordioso. Di’: Mi rifugio nel Signore dell’alba, dal male di ciò che ha creato, dal male dell’oscurità quando si stende, dal male di chi soffia sui nodi, e dal male dell’invidioso quando invidia."
+        },
+        "an-nas": {
+          "title": "An-Nas",
+          "translation": "Nel nome di Allah, il Compassionevole, il Misericordioso. Di’: Mi rifugio nel Signore degli uomini, il Re degli uomini, il Dio degli uomini, dal male del sussurratore che si ritrae, che sussurra nei cuori degli uomini, tra i jinn e tra gli uomini."
+        },
+        "amsayna": {
+          "title": "Siamo giunti alla sera",
+          "translation": "Siamo giunti alla sera, e il regno appartiene ad Allah, e ogni lode è di Allah. Non c’è divinità all’infuori di Allah, Unico, senza associati; a Lui il regno e a Lui la lode, ed Egli ha potere su ogni cosa. Signore mio, Ti chiedo il bene di questa notte e il bene di ciò che la segue, e mi rifugio in Te dal male di questa notte e dal male di ciò che la segue. Signore mio, mi rifugio in Te dalla pigrizia e dalla miseria della vecchiaia. Signore mio, mi rifugio in Te dal castigo del Fuoco e dal castigo della tomba."
+        },
+        "bika-amsayna": {
+          "title": "Per Te giungiamo alla sera",
+          "translation": "O Allah, per Te giungiamo alla sera e per Te giungiamo al mattino, per Te viviamo e per Te moriamo, e a Te è il ritorno."
+        },
+        "sayyid-al-istighfar": {
+          "title": "Sayyid al-istighfar",
+          "translation": "O Allah, Tu sei il mio Signore; non c’è divinità all’infuori di Te. Tu mi hai creato e io sono il Tuo servo, e mi attengo al Tuo patto e alla Tua promessa per quanto ne sono capace. Mi rifugio in Te dal male di ciò che ho fatto. Riconosco il Tuo favore su di me e riconosco il mio peccato, perdonami dunque, perché nessuno perdona i peccati se non Tu."
+        },
+        "raditu-billahi-rabban": {
+          "title": "Soddisfatto di Allah come Signore",
+          "translation": "Sono soddisfatto di Allah come Signore, dell’Islam come religione e di Muhammad ﷺ come Profeta."
+        },
+        "bismillah-alladhi-la-yadurr": {
+          "title": "Nel nome di Allah, con il cui nome nulla nuoce",
+          "translation": "Nel nome di Allah, con il cui nome nulla sulla terra né nel cielo può nuocere, ed Egli è Colui che tutto ascolta, Colui che tutto sa."
+        },
+        "kalimat-allah-at-tammat": {
+          "title": "Rifugio nelle parole perfette di Allah",
+          "translation": "Mi rifugio nelle parole perfette di Allah dal male di ciò che Egli ha creato."
+        },
+        "subhan-allahi-wa-bihamdihi": {
+          "title": "Gloria ad Allah e lode a Lui",
+          "translation": "Gloria ad Allah e lode a Lui."
+        }
+      }
+    },
+    "fast-monday": {
+      "title": "Digiuno del lunedì",
+      "why": "Il Profeta ﷺ digiunava il lunedì e il giovedì e disse che in quei giorni le azioni vengono presentate. Il lunedì è anche il giorno in cui nacque.",
+      "how": [
+        "Decidi la sera prima di digiunare.",
+        "Mangia prima di Fajr, se puoi.",
+        "Digiuna da Fajr a Maghrib."
+      ],
+      "reminder": "Il lunedì era uno dei due giorni a cui il Profeta ﷺ tornava, settimana dopo settimana, per tutto l’anno.",
+      "evidence": [
+        "Al Profeta fu chiesto del digiuno del lunedì e disse: è il giorno in cui sono nato, e il giorno in cui sono stato inviato, o in cui mi è giunta la rivelazione."
+      ]
+    },
+    "fast-thursday": {
+      "title": "Digiuno del giovedì",
+      "why": "Il giovedì è l’altro digiuno settimanale che il Profeta ﷺ osservava. Un giorno a settimana è un’abitudine sostenibile; due sono la sua.",
+      "how": [
+        "Decidi la sera prima di digiunare.",
+        "Mangia prima di Fajr, se puoi.",
+        "Digiuna da Fajr a Maghrib."
+      ],
+      "reminder": "Il giovedì, insieme al lunedì, era un digiuno che egli ﷺ osservava con regolarità, non solo di tanto in tanto.",
+      "evidence": [
+        "Le azioni vengono presentate il lunedì e il giovedì, e amo che le mie azioni siano presentate mentre sto digiunando."
+      ]
+    },
+    "fast-white-days": {
+      "title": "Digiuno dei Giorni Bianchi",
+      "why": "Tre giorni al mese, il 13, il 14 e il 15, quando la luna è piena. Il Profeta ﷺ paragonò il digiuno di tre giorni ogni mese al digiuno di tutto l’anno.",
+      "how": [
+        "Fai attenzione alla metà del mese islamico; questa app te la mostra qualche giorno prima.",
+        "Digiuna il 13, il 14 e il 15, oppure tre giorni qualsiasi del mese."
+      ],
+      "reminder": "Il tredicesimo, il quattordicesimo e il quindicesimo giorno, quando la luna è piena. Tre giorni al mese, distanziati in modo da non accumularsi mai.",
+      "note": "L’hadith stabilisce il digiuno di tre giorni ogni mese. I sapienti hanno opinioni diverse sul fatto che debbano essere proprio il tredicesimo, il quattordicesimo e il quindicesimo.",
+      "evidence": [
+        "Il mio amico mi raccomandò tre cose: digiunare tre giorni ogni mese, pregare due rak’a di Duha e pregare il Witr prima di dormire."
+      ]
+    },
+    "fast-ashura": {
+      "title": "Digiuno di Ashura",
+      "why": "Il 10 di Muharram. Il Profeta ﷺ disse che digiunarlo espia i peccati dell’anno precedente, e raccomandò di aggiungere il 9.",
+      "how": ["Digiuna il 10 di Muharram.", "Aggiungi il 9, se puoi."],
+      "reminder": "Il decimo giorno di Muharram. È un giorno solo, ed è più facile deciderlo stasera che all’alba.",
+      "evidence": [
+        "Il Profeta trovò gli ebrei che digiunavano il giorno di Ashura e disse: noi abbiamo più diritto di voi su Musa; così lo digiunò e ordinò che fosse digiunato."
+      ]
+    },
+    "fast-arafah": {
+      "title": "Digiuno del giorno di Arafa",
+      "why": "Il 9 di Dhu al-Hijja, il giorno in cui i pellegrini stanno ad Arafa. Per chi non è in Hajj, digiunarlo espia i peccati di due anni.",
+      "how": [
+        "Digiuna il 9 di Dhu al-Hijja.",
+        "Non vale per i pellegrini: loro quel giorno non digiunano."
+      ],
+      "reminder": "Il nono giorno di Dhu al-Hijja, per chi non sta ad Arafa.",
+      "note": "I sapienti hanno opinioni diverse sul fatto che si segua il nove di Dhu al-Hijja locale o il giorno della sosta ad Arafa, alla Mecca, quando i due non coincidono.",
+      "evidence": [
+        "Il digiuno del giorno di Arafa espia i peccati dell’anno precedente e dell’anno successivo."
+      ]
+    },
+    "fast-shawwal": {
+      "title": "Sei giorni di Shawwal",
+      "why": "Sei giorni di digiuno nel mese che segue il Ramadan. Insieme al Ramadan equivalgono a ciò che il Profeta ﷺ chiamò digiunare tutto l’anno.",
+      "how": ["Sei giorni qualsiasi di Shawwal, consecutivi o separati, dopo il giorno dell’Eid."],
+      "reminder": "Sei giorni, sei qualsiasi, in qualunque punto del mese. Non occorre farli di seguito.",
+      "evidence": [
+        "Chi digiuna il Ramadan e lo fa seguire da sei giorni di Shawwal, è come se avesse digiunato tutto l’anno."
+      ]
+    },
+    "duha-prayer": {
+      "title": "Preghiera di Duha",
+      "why": "Una breve preghiera volontaria a metà mattina. Il Profeta ﷺ disse che l’elemosina dovuta per ogni articolazione del corpo viene assolta con due rak’a di Duha.",
+      "how": ["Quando il sole è ben alto e prima di mezzogiorno, prega due rak’a o più."],
+      "reminder": "Si prega quando il sole è ben alto e prima di Dhuhr. Due rak’a bastano perché valga.",
+      "evidence": [
+        "Il mio amico mi raccomandò tre cose: digiunare tre giorni ogni mese, pregare due rak’a di Duha e pregare il Witr prima di dormire."
+      ]
+    },
+    "qasr-while-travelling": {
+      "title": "Accorciare la preghiera",
+      "why": "In viaggio le preghiere di quattro rak’a si accorciano a due. È un dono, non un ripiego, e il Profeta ﷺ se ne avvalse sempre.",
+      "how": [
+        "Mentre sei in viaggio, prega Dhuhr, Asr e Isha con due rak’a ciascuna.",
+        "Fajr e Maghrib restano come sono."
+      ],
+      "reminder": "Mentre sei in viaggio, le preghiere di quattro rak’a si possono pregare in due.",
+      "note": "I sapienti hanno opinioni diverse sul fatto che accorciare in viaggio sia obbligatorio o una concessione che si può prendere o lasciare.",
+      "evidence": [
+        "E quando viaggiate sulla terra, non c’è colpa su di voi se accorciate la preghiera. (Traduzione del significato.)"
+      ]
+    },
+    "sunnah-before-dhuhr": {
+      "title": "Due o quattro rak’a prima di Dhuhr",
+      "why": "Due o quattro rak’a prima della preghiera di Dhuhr, la parte più ampia delle rawatib quotidiane. Ti preparano con calma alla preghiera obbligatoria invece di farti arrivare di corsa.",
+      "how": [
+        "Dopo l’adhan di Dhuhr e prima della preghiera obbligatoria, prega due rak’a, o quattro in due coppie.",
+        "Poi prega Dhuhr."
+      ],
+      "reminder": "Si pregano quando è entrato il tempo di Dhuhr e prima della preghiera obbligatoria.",
+      "evidence": [
+        "Ho imparato dal Profeta ﷺ dieci rak’a: due prima di Dhuhr e due dopo, due dopo Maghrib a casa sua, due dopo Isha a casa sua e due prima della preghiera di Fajr."
+      ]
+    },
+    "sunnah-after-maghrib": {
+      "title": "Due rak’a dopo Maghrib",
+      "why": "Due rak’a dopo la preghiera di Maghrib. Il Profeta ﷺ le pregava a casa, che è dove la maggior parte delle persone si trova comunque a quell’ora.",
+      "how": ["Dopo la preghiera di Maghrib e il suo dhikr, prega due rak’a."],
+      "reminder": "Due rak’a dopo la preghiera obbligatoria, prima che la serata passi ad altro.",
+      "evidence": [
+        "Ho imparato dal Profeta ﷺ dieci rak’a: due prima di Dhuhr e due dopo, due dopo Maghrib a casa sua, due dopo Isha a casa sua e due prima della preghiera di Fajr."
+      ]
+    },
+    "sunnah-after-isha": {
+      "title": "Due rak’a dopo Isha",
+      "why": "Due rak’a dopo la preghiera di Isha, l’ultima delle rawatib, di solito pregate a casa prima del Witr.",
+      "how": ["Dopo la preghiera di Isha e il suo dhikr, prega due rak’a."],
+      "reminder": "Due rak’a dopo la preghiera obbligatoria, mentre sei ancora lì.",
+      "evidence": [
+        "Ho imparato dal Profeta ﷺ dieci rak’a: due prima di Dhuhr e due dopo, due dopo Maghrib a casa sua, due dopo Isha a casa sua e due prima della preghiera di Fajr."
+      ]
+    },
+    "witr": {
+      "title": "Witr",
+      "why": "Un numero dispari di rak’a, spesso una o tre, come ultima preghiera della notte. Il Profeta ﷺ non lo lasciò mai, né a casa né in viaggio, e ci disse di farne l’ultima cosa che preghiamo.",
+      "how": [
+        "In qualsiasi momento dopo Isha e prima di Fajr, prega una rak’a, oppure tre.",
+        "Se temi di non svegliarti, pregalo prima di dormire.",
+        "Fanne l’ultima preghiera della tua notte."
+      ],
+      "reminder": "L’ultima preghiera della notte, un numero dispari di rak’a. Se non sei sicuro di svegliarti, puoi pregarlo prima di dormire.",
+      "evidence": ["Fate del Witr l’ultima delle vostre preghiere della notte."]
+    },
+    "dua-entering-home": {
+      "title": "Rientrando a casa",
+      "translation": "Nel nome di Allah.",
+      "why": "Menzionare Allah mentre entri, e salutare chi c’è, mantiene la casa un luogo in cui Egli è ricordato. Il Profeta ﷺ disse che in una casa così Shaytan non trova dove stare.",
+      "how": [
+        "Di’ Bismillah mentre entri.",
+        "Saluta chi è in casa con as-salamu alaykum, anche se la casa è vuota."
+      ],
+      "reminder": "Si dice mentre varchi la porta, prima che la casa prenda il sopravvento.",
+      "evidence": [
+        "Quando un uomo entra in casa e menziona Allah entrando e mangiando, Shaytan dice ai suoi compagni: qui non avete né alloggio né cena."
+      ]
+    },
+    "takbir-ascending": {
+      "title": "Salendo",
+      "translation": "Allah è il più grande.",
+      "why": "Allahu Akbar mentre sali: una collina, una scala, un ascensore. I compagni lo facevano a ogni salita della strada, e trasforma una salita qualunque in ricordo.",
+      "how": ["Quando cominci a salire, di’ Allahu Akbar."],
+      "reminder": "Si dice salendo: una scala, una collina, un ascensore. Una piccola parola per una piccola salita.",
+      "evidence": [
+        "Quando salivamo dicevamo Allahu Akbar, e quando scendevamo dicevamo Subhan Allah."
+      ]
+    },
+    "tasbih-descending": {
+      "title": "Scendendo",
+      "translation": "Gloria ad Allah.",
+      "why": "Subhan Allah mentre scendi, il compagno del takbir detto in salita.",
+      "how": ["Quando cominci a scendere, di’ Subhan Allah."],
+      "reminder": "Si dice scendendo, come il takbir si dice salendo.",
+      "evidence": [
+        "Quando salivamo dicevamo Allahu Akbar, e quando scendevamo dicevamo Subhan Allah."
+      ]
+    },
+    "dua-riding": {
+      "title": "Partendo con un veicolo",
+      "translation": "Nel nome di Allah, lode ad Allah. Gloria a Colui che ci ha reso soggetto questo, mentre noi non ne saremmo stati capaci da soli; e al nostro Signore certamente faremo ritorno.",
+      "why": "Le parole che il Profeta ﷺ diceva montando sul suo cammello, che si adattano altrettanto bene a un’auto, un autobus o un treno: questo è stato messo al nostro servizio, e da soli non ce l’avremmo fatta.",
+      "how": [
+        "Una volta seduto, di’ Bismillah.",
+        "Di’ Alhamdulillah.",
+        "Di’ il versetto: Subhan alladhi sakhkhara lana hadha wa ma kunna lahu muqrinin, wa inna ila Rabbina lamunqalibun."
+      ],
+      "reminder": "Si dice una volta seduti, quando il veicolo è in movimento.",
+      "evidence": [
+        "Gloria a Colui che ci ha reso soggetto questo, mentre noi non ne saremmo stati capaci da soli; e al nostro Signore certamente faremo ritorno. (Traduzione del significato.)",
+        "Quando il Profeta ﷺ montava sul suo cammello per partire in viaggio, diceva Allahu Akbar tre volte, poi: Gloria a Colui che ci ha reso soggetto questo..."
+      ]
+    },
+    "adhkar-before-sleep": {
+      "title": "Prima di dormire: Ayat al-Kursi e le Qul",
+      "why": "Una breve serie che il Profeta ﷺ recitava ogni notte: Ayat al-Kursi e le tre brevi sure che iniziano con Qul, soffiate nelle mani e passate sul corpo. Disse che un custode resta con chi recita Ayat al-Kursi fino al mattino.",
+      "how": [
+        "Recita Ayat al-Kursi (Corano 2:255).",
+        "Unisci le mani a coppa, soffiaci dentro e recita al-Ikhlas, al-Falaq e an-Nas.",
+        "Passa le mani su quanto più del corpo riesci a raggiungere, cominciando dalla testa e dal viso.",
+        "Ripeti con le mani tre volte."
+      ],
+      "reminder": "Ayat al-Kursi e le tre Qul, per ultime. Circa un minuto, e la giornata è chiusa.",
+      "evidence": [
+        "Ogni notte, quando andava a letto, il Profeta ﷺ univa le mani a coppa, vi soffiava dentro, recitava Qul huwa Allahu ahad, Qul a'udhu bi Rabbi al-falaq e Qul a'udhu bi Rabbi an-nas, poi passava le mani su tutto ciò che poteva del suo corpo, cominciando dalla testa, dal viso e dalla parte anteriore del corpo, per tre volte.",
+        "Quando vai a letto, recita Ayat al-Kursi: un custode da parte di Allah resterà con te e nessun demonio ti si avvicinerà fino al mattino."
+      ]
+    },
+    "ramadan-nights": {
+      "title": "Stare in preghiera nel Ramadan",
+      "why": "La preghiera notturna del Ramadan, pregata in congregazione come Tarawih o da soli a casa. Il Profeta ﷺ promise il perdono dei peccati passati a chi vi sta in piedi con fede.",
+      "how": [
+        "Dopo Isha, prega il Tarawih in moschea o qualche rak’a a casa.",
+        "Qualsiasi quantità conta; mantieni ciò che riesci a mantenere ogni notte."
+      ],
+      "reminder": "La preghiera notturna del Ramadan, in moschea o a casa: tante rak’a quante riesci a mantenere.",
+      "evidence": [
+        "Chi sta in preghiera nel Ramadan con fede e sperando nella ricompensa, gli vengono perdonati i peccati precedenti."
+      ]
+    },
+    "dhul-hijjah-ten": {
+      "title": "I primi dieci giorni di Dhu al-Hijja",
+      "why": "I dieci giorni che portano all’Eid al-Adha, nei quali, disse il Profeta ﷺ, le azioni sono più amate da Allah che in qualsiasi altro giorno. Digiuno, dhikr ed elemosina contano tutti; il 9 è il giorno di Arafa.",
+      "how": [
+        "Di’ Allahu Akbar, la ilaha illa Allah, Allahu Akbar, wa lillahi al-hamd durante questi giorni.",
+        "Digiuna quelli dei primi nove giorni che riesci.",
+        "Dai qualcosa in elemosina."
+      ],
+      "reminder": "I primi dieci giorni di Dhu al-Hijja. Le buone azioni di ogni giorno pesano in modo particolare in questi giorni.",
+      "evidence": [
+        "Non ci sono giorni in cui le buone azioni siano più amate da Allah di questi dieci giorni."
+      ]
+    }
+  },
+  "glossary": {
+    "fard": {
+      "term": "Fard",
+      "definition": "Obbligatorio. Qualcosa che ogni musulmano deve fare, come le cinque preghiere quotidiane. Tralasciarlo è un peccato; recuperarlo in seguito si chiama qada."
+    },
+    "wajib": {
+      "term": "Wajib",
+      "definition": "Anch’esso obbligatorio. Alcuni sapienti lo usano per i doveri stabiliti da prove un po’ meno certe del fard; nella pratica si trattano allo stesso modo."
+    },
+    "sunnah-muakkadah": {
+      "term": "Sunna rafforzata",
+      "definition": "Una pratica che il Profeta ﷺ mantenne quasi senza eccezioni, come le due rak’a prima di Fajr. Non è obbligatoria, ma è ciò che le si avvicina di più."
+    },
+    "sunnah": {
+      "term": "Sunna",
+      "definition": "Ciò che il Profeta ﷺ fece, disse o approvò. Seguire una sunna è ricompensato; tralasciarla non è un peccato. Tutta questa app riguarda le sunna che trovano posto in una giornata normale."
+    },
+    "mustahabb": {
+      "term": "Raccomandato",
+      "definition": "Gradito e ricompensato, ma praticato dal Profeta ﷺ con meno costanza di una sunna rafforzata. Una cosa buona da aggiungere quando il resto è ormai consolidato."
+    },
+    "mubah": {
+      "term": "Lecito",
+      "definition": "Di per sé né ricompensato né biasimato. È elencato solo perché un giudizio non resti mai vuoto."
+    },
+    "rawatib": {
+      "term": "Rawatib",
+      "definition": "Le preghiere volontarie regolari legate alle cinque obbligatorie: due prima di Fajr, quattro prima e due dopo Dhuhr, due dopo Maghrib, due dopo Isha. Dodici in tutto."
+    },
+    "adhkar": {
+      "term": "Adhkar",
+      "definition": "Plurale di dhikr: formule fisse di ricordo e di lode. Gli adhkar del mattino e della sera sono raccolte che si dicono dopo Fajr e dopo Asr."
+    },
+    "dhikr": {
+      "term": "Dhikr",
+      "definition": "Ricordare Allah con la lingua e con il cuore: Subhan Allah, Alhamdulillah, Allahu Akbar e simili. Si può dire ovunque e in qualsiasi stato."
+    },
+    "qada": {
+      "term": "Qada",
+      "definition": "Recuperare una preghiera obbligatoria dopo che il suo tempo è passato. Questa app tiene un conteggio, mai un elenco di date: lo scopo è rimettersi in pari, non tenere il punteggio."
+    },
+    "window": {
+      "term": "Fascia",
+      "definition": "L’intervallo tra un orario di preghiera e il successivo. Questa app non mostra mai un orario; ti dice in quale fascia ti trovi e quanto manca, più o meno, alla prossima preghiera."
+    },
+    "white-days": {
+      "term": "I Giorni Bianchi",
+      "definition": "Il 13, il 14 e il 15 di ogni mese islamico, quando la luna è piena e le notti sono luminose. Il Profeta ﷺ raccomandò di digiunarli."
+    },
+    "witr": {
+      "term": "Witr",
+      "definition": "Una preghiera di numero dispari, spesso di una o tre rak’a, offerta dopo Isha e prima di Fajr come ultima preghiera della notte."
+    },
+    "duha": {
+      "term": "Duha",
+      "definition": "Una preghiera volontaria di due o più rak’a a metà mattina, dopo che il sole si è ben alzato e prima che raggiunga lo zenit."
+    },
+    "siwak": {
+      "term": "Siwak",
+      "definition": "Un rametto per pulire i denti, di solito dell’albero di arak. Pulire i denti prima della preghiera è raccomandato; anche lo spazzolino serve allo scopo."
+    }
+  }
 }

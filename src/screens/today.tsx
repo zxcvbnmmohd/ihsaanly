@@ -10,7 +10,6 @@ import { Surface } from '@/components/surface'
 import type { HijriDate } from '@/hijri/calendar'
 import type { LocationProblem } from './onboarding'
 import type { Prayer } from '@/prayer/qada'
-import type { WindowName } from '@/prayer/windows'
 import { useStrings } from '@/strings'
 import { colors, type Palette } from '@/theme/colors'
 import { fonts } from '@/theme/fonts'
@@ -26,6 +25,8 @@ export interface TodayEntry {
 export interface PrayerEntry {
   prayer: Prayer
   done: boolean
+  /** Today's window for it has closed without a mark. */
+  passed: boolean
 }
 
 export interface QadaEntry {
@@ -58,7 +59,8 @@ export interface TodayScreenProps {
   onAddSuggestion: (id: string) => void
   onDismissSuggestion: (id: string) => void
   qadaHref: Href
-  window: WindowName | null
+  /** Weekday, day and month in the reader's calendar, e.g. "Wed 23 Sep". */
+  gregorian: string | null
   hijri: HijriDate | null
   placeLabel: string | null
   /** Everything open right now, best first. The head is the hero. */
@@ -260,6 +262,10 @@ function PrayerStrip({ prayers, names, palette, onMark }: PrayerStripProps): Rea
                   width: 26,
                   height: 26,
                   borderWidth: 2,
+                  // Passed and unmarked is quieter than still to come, so the
+                  // strip reads as a day rather than five identical buttons.
+                  borderStyle: entry.passed && !entry.done ? 'dashed' : 'solid',
+                  opacity: entry.passed && !entry.done ? 0.6 : 1,
                   borderColor: entry.done ? palette.accent : colors.separator,
                   backgroundColor: entry.done ? palette.accent : undefined,
                 }}>
@@ -290,7 +296,7 @@ export function TodayScreen({
   onAddSuggestion,
   onDismissSuggestion,
   qadaHref,
-  window,
+  gregorian,
   hijri,
   placeLabel,
   now,
@@ -309,6 +315,9 @@ export function TodayScreen({
   useColorScheme()
 
   const [rightNow = null, ...alsoNow] = now
+  const firstQada = qada[0]
+  // The commonest state is one of each owed; five rows say what one does.
+  const qadaUniform = qada.length > 1 && qada.every((entry) => entry.count === firstQada?.count)
 
   // Location is set, the prayer strip is up, and nothing at all is asked of
   // the user. A screen that simply stops reads as a bug; one sentence does not.
@@ -371,19 +380,30 @@ export function TodayScreen({
 
   return (
     <Screen palette={palette} className="gap-6 p-4">
-      <View className="gap-1 pt-2">
-        <Text
-          className="text-4xl leading-tight"
-          style={{ color: colors.label, fontFamily: fonts.display, fontWeight: '600' }}>
-          {window ? strings.window[window] : strings.today.title}
+      {/* The window is the navigation title, so this line carries only the date and place. */}
+      {hijri ? (
+        <Text className="text-base" style={{ color: colors.secondaryLabel }}>
+          {[
+            gregorian,
+            strings.hijri.format(hijri.day, strings.hijriMonth[hijri.month] ?? '', hijri.year),
+            placeLabel,
+          ]
+            .filter(Boolean)
+            .join(' · ')}
         </Text>
-        {hijri ? (
-          <Text className="text-base" style={{ color: colors.secondaryLabel }}>
-            {strings.hijri.format(hijri.day, strings.hijriMonth[hijri.month] ?? '', hijri.year)}
-            {placeLabel ? ` · ${placeLabel}` : ''}
-          </Text>
-        ) : null}
-      </View>
+      ) : null}
+
+      {/* Above Right now, so marking a prayer never moves the strip under the finger. */}
+      {prayers.length > 0 ? (
+        <Section title={strings.plan.prayers} accent={palette.accent}>
+          <PrayerStrip
+            prayers={prayers}
+            names={strings.prayer}
+            palette={palette}
+            onMark={onMarkPrayer}
+          />
+        </Section>
+      ) : null}
 
       {rightNow ? (
         <Section title={strings.plan.rightNow} accent={palette.accent}>
@@ -396,17 +416,6 @@ export function TodayScreen({
           {alsoNow.map((entry) => (
             <Row key={entry.id} href={entry.href} title={entry.title} detail={entry.detail} />
           ))}
-        </Section>
-      ) : null}
-
-      {prayers.length > 0 ? (
-        <Section title={strings.plan.prayers} accent={palette.accent}>
-          <PrayerStrip
-            prayers={prayers}
-            names={strings.prayer}
-            palette={palette}
-            onMark={onMarkPrayer}
-          />
         </Section>
       ) : null}
 
@@ -443,15 +452,25 @@ export function TodayScreen({
 
       {qada.length > 0 ? (
         <Section title={strings.plan.makeUp} accent={palette.accent}>
-          {qada.map((entry) => (
+          {qadaUniform ? (
             <Row
-              key={entry.prayer}
-              title={strings.prayer[entry.prayer]}
-              detail={strings.plan.outstanding(entry.count)}
-              onPress={() => onMakeUp(entry.prayer)}
+              href={qadaHref}
+              title={strings.qada.summary(qada.reduce((sum, entry) => sum + entry.count, 0))}
+              detail={qada.map((entry) => strings.prayer[entry.prayer]).join(', ')}
             />
-          ))}
-          <Row href={qadaHref} title={strings.qada.manage} detail={strings.qada.manageDetail} />
+          ) : (
+            <>
+              {qada.map((entry) => (
+                <Row
+                  key={entry.prayer}
+                  title={strings.prayer[entry.prayer]}
+                  detail={strings.plan.outstanding(entry.count)}
+                  onPress={() => onMakeUp(entry.prayer)}
+                />
+              ))}
+              <Row href={qadaHref} title={strings.qada.manage} detail={strings.qada.manageDetail} />
+            </>
+          )}
         </Section>
       ) : null}
 

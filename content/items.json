@@ -539,8 +539,8 @@
       "id": "sunnah-after-dhuhr",
       "category": "prayer",
       "title": {
-        "en": "Sunnah around Dhuhr",
-        "ar": "سنة الظهر"
+        "en": "Two rak’ah after Dhuhr",
+        "ar": "سنة الظهر البعدية"
       },
       "ruling": "sunnah-muakkadah",
       "arabic": null,
@@ -1075,7 +1075,7 @@
       "id": "sunnah-before-dhuhr",
       "category": "prayer",
       "title": {
-        "en": "Before Dhuhr",
+        "en": "Two or four rak’ah before Dhuhr",
         "ar": "سنة الظهر القبلية"
       },
       "ruling": "sunnah-muakkadah",
@@ -1124,7 +1124,7 @@
       "id": "sunnah-after-maghrib",
       "category": "prayer",
       "title": {
-        "en": "After Maghrib",
+        "en": "Two rak’ah after Maghrib",
         "ar": "سنة المغرب"
       },
       "ruling": "sunnah-muakkadah",
@@ -1170,7 +1170,7 @@
       "id": "sunnah-after-isha",
       "category": "prayer",
       "title": {
-        "en": "After Isha",
+        "en": "Two rak’ah after Isha",
         "ar": "سنة العشاء"
       },
       "ruling": "sunnah-muakkadah",

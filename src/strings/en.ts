@@ -29,7 +29,7 @@ export const en = {
     soon: 'Soon',
     inAboutAnHour: 'In about an hour',
     inAboutHours: (hours: number): string => `In about ${hours} hours`,
-    context: 'Nearby',
+    context: 'Where you are',
     comingUp: 'Later this week',
     alsoToday: 'Also today',
     tomorrow: 'Tomorrow',
@@ -66,7 +66,7 @@ export const en = {
     quietHours: 'Quiet hours',
     quietHoursDetail: (from: number, to: number): string => `${from}:00 to ${to}:00`,
     quietHoursOff: 'Off',
-    perDay: 'At most a day',
+    perDay: 'Daily limit',
     permission: 'Permission',
     permissionGranted: 'Allowed',
     permissionDenied: 'Turned off in system settings',
@@ -115,19 +115,21 @@ export const en = {
   qada: {
     title: 'To make up',
     intro:
-      'Prayers owed from before you started tracking, and any owed since. A count, never a list.',
+      'Prayers owed from before you started tracking, and any owed since. A count, never a list. Counting starts from the first prayer you mark.',
     owed: 'Owed from before',
     madeUp: 'Made up now',
     record: (count: number): string => (count === 1 ? 'Record one' : `Record ${count}`),
     outstanding: (count: number): string => (count === 1 ? '1 owed' : `${count} owed`),
     none: 'Nothing owed',
     summary: (count: number): string => (count === 1 ? '1 prayer owed' : `${count} prayers owed`),
-    manage: 'Owed from before, or several at once',
+    manage: 'Adjust what you owe',
     manageDetail: 'Set what you carry over and record make-ups in one go.',
   },
   history: {
     title: 'History',
     empty: 'Nothing recorded yet.',
+    firstWeek:
+      'Each day you mark a prayer or finish an item is kept here. After a week you will see which prayers you tend to pray early and which items you keep.',
     daysActive: (days: number): string => `${days} ${days === 1 ? 'day' : 'days'} recorded`,
     prayers: 'Prayers',
     completed: 'Completed',
@@ -319,7 +321,7 @@ export const en = {
     known: 'Known',
     emptyOnToday: 'Nothing is on Today yet. Open any item and turn it on.',
     emptyKnown: 'Nothing marked known yet. Practise an item and say when you have it.',
-    terms: 'What the words mean',
+    terms: 'Glossary',
     termsDetail: 'Sunnah, rawatib, adhkar, qada and the rest, in a sentence each.',
   },
   category: {
@@ -360,7 +362,7 @@ export const en = {
     quranReference: (surah: number, ayah: number): string => `Qur\u2019an ${surah}:${ayah}`,
   },
   glossary: {
-    title: 'Words',
+    title: 'What the words mean',
   },
   ruling: {
     fard: 'Obligatory',

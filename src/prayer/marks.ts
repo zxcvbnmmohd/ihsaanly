@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { civilDateIn, civilDateKey, logDay, shiftDays, type CivilDate } from '@/day/boundaries'
 import type { Place } from '@/location/place'
 import {
+  firstMarkedDay,
   markedPrayersOn,
   recordEvent,
   recordEvents,
@@ -14,7 +15,7 @@ import { readPreference, writePreference } from '@/storage/preferences'
 
 import type { CalculationPreferences } from './calculation'
 import { useQadaBacklog } from './backlog-store'
-import { missedPrayers, outstanding, type Prayer } from './qada'
+import { accruesQada, missedPrayers, outstanding, type Prayer } from './qada'
 import { prayerTimesFor } from './times'
 import { windowClosedAt } from './qada'
 
@@ -97,6 +98,7 @@ function rollover(
   }
 
   let cursor = civilDateIn(new Date(`${processed}T12:00:00Z`), 'UTC')
+  const firstMark = firstMarkedDay()
 
   while (civilDateKey(cursor) < civilDateKey(yesterday)) {
     cursor = shiftDays(cursor, 1)
@@ -105,8 +107,11 @@ function rollover(
     const key = civilDateKey(cursor)
 
     // While tracking is paused nothing is owed, so the days pass unrecorded
-    // and the cursor still advances: resuming never backfills them.
-    if (paused) continue
+    // and the cursor still advances: resuming never backfills them. A day
+    // before the user's first-ever mark gets the same treatment, so a fresh
+    // install does not hand someone five owed prayers before they have had a
+    // chance to record anything.
+    if (paused || !accruesQada(key, firstMark)) continue
 
     missedPrayers(times, next, markedPrayersOn(key), now).forEach((prayer) =>
       recordEvent({

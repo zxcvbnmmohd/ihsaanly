@@ -5,7 +5,7 @@ import { civilDateIn } from '@/day/boundaries'
 import type { Place } from '@/location/place'
 import { DEFAULT_CALCULATION_PREFERENCES } from '@/prayer/calculation'
 import { prayerTimesAcross } from '@/prayer/times'
-import { buildWindows, type WindowName } from '@/prayer/windows'
+import { buildWindows, type PrayerWindow, type WindowName } from '@/prayer/windows'
 
 import { DEFAULT_NOTIFICATION_PREFERENCES } from './notification-preferences'
 import { plan } from './plan'
@@ -22,12 +22,16 @@ const toronto: Place = {
 const anchor = new Date('2026-09-17T12:00:00Z')
 const times = prayerTimesAcross(toronto, anchor, DEFAULT_CALCULATION_PREFERENCES, 8)
 
-function startOf(name: WindowName): Date {
+function windowOf(name: WindowName): PrayerWindow {
   const window = buildWindows(times).find(
     (candidate) => candidate.name === name && candidate.startsAt > anchor,
   )
   if (!window) throw new Error(`no upcoming ${name} window in the fixture range`)
-  return new Date(window.startsAt.getTime() + 60_000)
+  return window
+}
+
+function startOf(name: WindowName): Date {
+  return new Date(windowOf(name).startsAt.getTime() + 60_000)
 }
 
 function makeItem(id: string, trigger: Trigger, overrides: Partial<Item> = {}): Item {
@@ -101,6 +105,9 @@ function makeSignals(items: Item[], overrides: Partial<Signals> = {}): Signals {
 /** A prayer marked a few minutes before the fixture's `now`, inside the after-prayer grace. */
 const justNow = new Date(startOf('asr').getTime() - 5 * 60_000)
 
+/** Asr marked moments after its own window opened, still ahead of the fixture's `now`. */
+const justMarkedAsr = new Date(windowOf('asr').startsAt.getTime() + 10_000)
+
 function itemIds(entries: ScheduledNotification[]): string[] {
   return entries.flatMap((entry) => (entry.kind === 'item' ? [entry.itemId] : []))
 }
@@ -159,7 +166,7 @@ describe('prayer-bound items', () => {
   })
 
   it('treat "any" as satisfied by any marked prayer', () => {
-    const result = plan(makeSignals([dhikr], { prayedToday: { asr: justNow } }))
+    const result = plan(makeSignals([dhikr], { prayedToday: { asr: justMarkedAsr } }))
     expect(result.today.rightNow?.itemId).toBe('after-any')
   })
 })
@@ -465,8 +472,9 @@ describe('the hour after a prayer', () => {
   const now = startOf('asr')
 
   it('lets the sunnah of a just-marked prayer lead the window item', () => {
-    const asr = new Date(now.getTime() - 5 * 60_000)
-    const result = plan(makeSignals([eveningAdhkar, dhikr], { now, prayedToday: { asr } }))
+    const result = plan(
+      makeSignals([eveningAdhkar, dhikr], { now, prayedToday: { asr: justMarkedAsr } }),
+    )
     expect(result.today.now.map((entry) => entry.itemId)).toEqual(['after-any', 'evening-adhkar'])
   })
 
@@ -486,6 +494,27 @@ describe('the hour after a prayer', () => {
         },
       }),
     )
+    expect(result.today.rightNow?.itemId).toBe('after-any')
+  })
+})
+
+describe('a late mark and the after-prayer sunnah', () => {
+  it('does not raise it when the mark landed long after the window and its grace had closed', () => {
+    // Fajr marked hours after sunrise — well past the window and its hour of grace.
+    const lateMark = new Date(windowOf('fajr').endsAt.getTime() + 3 * 3_600_000)
+    const now = new Date(lateMark.getTime() + 60_000)
+
+    const result = plan(makeSignals([dhikr], { now, prayedToday: { fajr: lateMark } }))
+    expect(result.today.now.map((entry) => entry.itemId)).not.toContain('after-any')
+    expect(result.today.rightNow).toBeNull()
+  })
+
+  it('still raises it when the mark landed within the grace after the window closed', () => {
+    // Fajr marked thirty minutes after sunrise — inside the hour of grace.
+    const gracedMark = new Date(windowOf('fajr').endsAt.getTime() + 30 * 60_000)
+    const now = new Date(gracedMark.getTime() + 60_000)
+
+    const result = plan(makeSignals([dhikr], { now, prayedToday: { fajr: gracedMark } }))
     expect(result.today.rightNow?.itemId).toBe('after-any')
   })
 })

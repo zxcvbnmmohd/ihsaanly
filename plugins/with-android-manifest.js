@@ -1,4 +1,13 @@
-const { withAndroidManifest } = require('expo/config-plugins')
+const {
+  AndroidConfig,
+  withAndroidColors,
+  withAndroidColorsNight,
+  withAndroidManifest,
+  withAndroidStyles,
+} = require('expo/config-plugins')
+
+// The brand accent from `palettes` in src/theme/colors.ts. Keep them in step.
+const ACCENT = { light: '#a94a32', dark: '#e28c6f' }
 
 /**
  * Expo's template lets MainActivity handle `uiMode` itself, which stops
@@ -13,7 +22,33 @@ const { withAndroidManifest } = require('expo/config-plugins')
  * activity creation, which would undo the override on the very recreation
  * this plugin allows.
  */
+/**
+ * AppCompat colours its native dialogs (Alert.alert, the date picker) with
+ * `colorAccent`, which the template leaves unset, so they came out teal.
+ */
+function withAccent(config) {
+  const setAccent = (value) => (config) => {
+    config.modResults = AndroidConfig.Colors.assignColorValue(config.modResults, {
+      name: 'colorAccent',
+      value,
+    })
+    return config
+  }
+  config = withAndroidColors(config, setAccent(ACCENT.light))
+  config = withAndroidColorsNight(config, setAccent(ACCENT.dark))
+  return withAndroidStyles(config, (config) => {
+    config.modResults = AndroidConfig.Styles.assignStylesValue(config.modResults, {
+      add: true,
+      parent: AndroidConfig.Styles.getAppThemeGroup(),
+      name: 'colorAccent',
+      value: '@color/colorAccent',
+    })
+    return config
+  })
+}
+
 module.exports = function withAndroidManifestTweaks(config) {
+  config = withAccent(config)
   return withAndroidManifest(config, (config) => {
     const application = config.modResults.manifest.application?.[0]
     // RTL layouts need this; expo-localization's plugin used to set it and is gone.

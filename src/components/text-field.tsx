@@ -11,6 +11,7 @@ import {
 
 import { useStrings } from '@/strings'
 import { colors } from '@/theme/colors'
+import { usePalette } from '@/theme/store'
 
 interface Thing {
   focused: boolean
@@ -79,6 +80,10 @@ export function TextField({
   const [thing, setThing] = useState<Thing>({ focused: false })
   const strings = useStrings()
   useColorScheme()
+  const palette = usePalette()
+  // Material's secondary background is lavender next to the warm wash.
+  const fill =
+    process.env.EXPO_OS === 'android' ? palette.surface : colors.secondarySystemBackground
 
   const glyphColor = thing.focused ? accent : colors.secondaryLabel
 
@@ -87,7 +92,7 @@ export function TextField({
       className="flex-row items-center gap-3 rounded-2xl ps-4 pe-3"
       style={{
         minHeight: 52,
-        backgroundColor: colors.secondarySystemBackground,
+        backgroundColor: fill,
         borderWidth: 1.5,
         borderColor: thing.focused ? accent : colors.separator,
         borderCurve: 'continuous',

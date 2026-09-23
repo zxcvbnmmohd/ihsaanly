@@ -3,7 +3,7 @@ import { describe, expect, it } from 'bun:test'
 import type { Place } from '@/location/place'
 
 import { DEFAULT_CALCULATION_PREFERENCES } from './calculation'
-import { missedPrayers, PRAYERS, windowClosedAt, outstanding } from './qada'
+import { accruesQada, missedPrayers, PRAYERS, windowClosedAt, outstanding } from './qada'
 import { prayerTimesAcross } from './times'
 
 const toronto: Place = {
@@ -57,6 +57,24 @@ describe('what counts as missed', () => {
   it('counts the whole day once the next Fajr arrives', () => {
     const nextMorning = new Date(tomorrow.fajr.getTime() + 60_000)
     expect(missedPrayers(today, tomorrow, [], nextMorning)).toEqual(PRAYERS)
+  })
+})
+
+describe('whether a day accrues qada', () => {
+  it('accrues nothing when no prayer has ever been marked', () => {
+    expect(accruesQada('2026-09-16', null)).toBe(false)
+  })
+
+  it('does not accrue for a day before the first-ever mark', () => {
+    expect(accruesQada('2026-09-15', '2026-09-17')).toBe(false)
+  })
+
+  it('accrues for the day of the first-ever mark', () => {
+    expect(accruesQada('2026-09-17', '2026-09-17')).toBe(true)
+  })
+
+  it('accrues for a day after the first-ever mark', () => {
+    expect(accruesQada('2026-09-20', '2026-09-17')).toBe(true)
   })
 })
 

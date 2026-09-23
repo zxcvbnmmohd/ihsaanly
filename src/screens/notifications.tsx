@@ -69,7 +69,7 @@ function quietLabel(quiet: QuietHours | null, strings: Strings): string {
     : strings.notifications.quietHoursOff
 }
 
-function permissionLabel(status: PermissionStatus, strings: Strings): string {
+export function permissionLabel(status: PermissionStatus, strings: Strings): string {
   switch (status) {
     case 'granted':
       return strings.notifications.permissionGranted

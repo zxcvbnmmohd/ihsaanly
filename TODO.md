@@ -156,6 +156,11 @@ Hand this section over as-is.
       another narration); "Raditu billahi rabban" follows Hisn's wording and is
       graded `disputed`; Ayat al-Kursi cites only 2:255, not the hadith that makes
       it a morning practice; confirm Tirmidhi 3391 and 3388, Abu Dawud 5088 and 5072.
+- [ ] **Each language draft needs a qualified speaker** (2026-09-23): fr, it, ja,
+      hi, ur, so, zh, yue, plus the Arabic content. Two things for every reviewer:
+      gendered forms (Hindi's "Still learning" is masculine; Somali's
+      Brother/Sister is awkward), and how Qur'anic meaning translations are
+      labelled. Each agent's term choices are in PR #31.
 - [ ] **References that may be wrong** (found while writing the Arabic,
       2026-09-23). Bukhari 1178 (fast-white-days, duha-prayer): the English follows
       a different version from the one under that number. Abu Dawud 2602

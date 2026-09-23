@@ -1,11 +1,7 @@
 # What's left, and it's all yours
 
-Everything in `audit.md` that I could do was done as of 2026-09-22. What remains
-for **you** needs an account, a domain, a recording, a device in your hand, or a
-decision only you can make.
-
-_(2026-09-23: a page-by-page walkthrough on `production` added twenty improvements
-to `audit.md`. They are all mine, not yours — none needs anything from this list.)_
+Only what is still open. Everything here needs an account, a domain, a
+reviewer, a device in your hand, or a decision only you can make.
 
 This list is ordered by what unblocks what, not by priority label. `audit.md`
 holds the reasoning behind each; this is the working copy.
@@ -15,7 +11,7 @@ one thing from you.
 
 ---
 
-## 1. Start here — four things gate everything else
+## 1. Start here — three things gate everything else
 
 - [ ] **Apple Developer Program + Google Play Console accounts.**
       Then, in the repo: `bunx eas-cli login`, then `bunx eas-cli init` — which
@@ -27,15 +23,6 @@ one thing from you.
       Android does not wait for Apple. Once `eas init` has run,
       `bunx eas-cli build -p android --profile preview` works the same day.
 
-- [x] **Enable GitHub Pages** — repo Settings → Pages → source `production`, folder `/docs`.
-      Everything is prepared: `docs/_config.yml` publishes only `legal/` and holds
-      back `PRD.md` and `SPEC.md`; `docs/index.md` links to both pages.
-      Since you own `ihsaanly.com`, a custom domain reads better than the
-      github.io address — that's a `CNAME` file and a DNS record.
-
-      **Apple rejects submissions without a reachable privacy policy.**
-      _Done 2026-09-23: Pages serves `production:/docs`, and About links the policy._
-
 - [ ] **Point `donate.ihsaanly.com` at a real page.**
       The donate row is live in the Android build and a reviewer will tap it.
       A link to a domain that doesn't exist reads as a broken app.
@@ -46,45 +33,14 @@ one thing from you.
       project's own policy blocks shipping unreviewed religious content.
       Flipping `reviewed` is the reviewer's act, not mine.
 
-      Give the reviewer §5 below — it's their whole list.
+      Give the reviewer §4 below — it's their whole list. Each of the nine
+      translations (Arabic content, French, Italian, Japanese, Hindi, Urdu,
+      Somali, Mandarin, Cantonese) also needs a qualified speaker: find one per
+      language, or tell me which to hold back from the picker.
 
 ---
 
-## 2. Decisions — each one I can execute the same day
-
-- [x] **Arabic: written (2026-09-23).** Every item's `why`, `how`, `reminder`
-      and `note` now exists in Arabic, in `content/translations/ar.json`. Like
-      `src/strings/ar.ts` it is a draft: a qualified speaker still reviews both
-      before release.
-
-- [x] **Eight more languages (2026-09-23):** French, Italian, Japanese, Hindi,
-      Urdu, Somali, Mandarin and Cantonese — interface and content, all drafts
-      awaiting a qualified speaker each. The Language screen says so.
-      **You:** find a reviewer per language, or tell me which to hold back.
-
-- [x] **iPad: supported (2026-09-23).** A 720pt reading column on every screen,
-      all four orientations on iPad (phones stay portrait). **You:** 13" iPad
-      screenshots join the submission.
-
-- [x] **The fasting-owed rule.** _Implemented with a narrow v1 rule, pending the
-      content reviewer's confirmation (§5)._
-      `docs/PRD.md:142` and `docs/SPEC.md:57` require "missed fasts still recorded
-      as owed while paused". v1: only obligatory fasts are owed, and only Ramadan
-      days the user records as not fasted (a quiet "Not fasting today" row on
-      Today during Ramadan, with undo), plus an "Owed from before" backlog on the
-      To make up screen. Nothing accrues automatically, so recording is the
-      user's act and the tracking pause does not stop it. A count, never a list.
-      Voluntary fasts are never owed; vows, expiations and fidya are out of scope.
-      Code: `src/fasting/ledger.ts`, `src/fasting/store.ts`.
-
-- [x] **The adhkar content gap: sub-items (2026-09-23).** Morning adhkar has 10
-      parts and evening 11 — Ayat al-Kursi, the three Quls, sayyid al-istighfar
-      and the rest, each with Arabic, transliteration, translation, count and
-      source. The reviewer checks them with everything else (§5).
-
----
-
-## 3. Store paperwork — after the accounts exist
+## 2. Store paperwork — after the accounts exist
 
 - [ ] **App Store privacy labels.** "Data Not Collected" for everything automatic,
       plus disclosure that a _user-initiated_ diagnostic report contains
@@ -99,10 +55,11 @@ one thing from you.
 - [ ] **Store metadata.** Title, subtitle (`MARKETING.md` drafts "Sunnah, with its
       source"), description, keywords, category (Lifestyle), age-rating
       questionnaire.
-- [ ] **Screenshots.** 6.7" and 6.5" iPhone, Android phone, 13" iPad if tablet
-      stays. Play also wants a 1024×500 feature graphic.
+- [ ] **Screenshots.** 6.7" and 6.5" iPhone, Android phone, 13" iPad (tablet is
+      supported). Play also wants a 1024×500 feature graphic.
 - [ ] **A one-page landing site** for the marketing URL field — same host as the
-      policy.
+      policy. Optional: serve both from `ihsaanly.com` instead of github.io (a
+      `CNAME` file in `docs/` and a DNS record).
 - [ ] **Confirm the support mailbox receives mail.** `support@ihsaanly.com` is in
       both legal documents.
 - [ ] **TestFlight + Play internal testing** with at least two external testers
@@ -110,7 +67,7 @@ one thing from you.
 
 ---
 
-## 4. On a real device — one iPhone, one Android phone
+## 3. On a real device — one iPhone, one Android phone
 
 None of this can be done on a simulator or emulator. Cover:
 
@@ -119,8 +76,11 @@ None of this can be done on a simulator or emulator. Cover:
 - [ ] Shade actions: Done and Later.
 - [ ] Delete my data.
 - [ ] Theme switch on Android.
-- [ ] Arabic RTL — Android applies immediately, iOS shows an alert saying it
-      applies next time the app is opened.
+- [ ] Arabic and Urdu RTL — Android applies immediately, iOS shows an alert
+      saying it applies next time the app is opened.
+- [ ] iPad: the reading column, rotation, and Split View.
+- [ ] A Ramadan day: "Not fasting today" on Today, and the Fasts section on To
+      make up (set the Hijri offset to land in Ramadan).
 - [ ] **Device GPS** and **geofence accuracy**. Neither has ever run on real
       hardware: the emulator's location provider never resolves, and the simulator
       can't deliver a region crossing. This is the only way to know #5 and #15
@@ -141,7 +101,7 @@ None of this can be done on a simulator or emulator. Cover:
 
 ---
 
-## 5. For the content reviewer
+## 4. For the content reviewer
 
 Hand this section over as-is.
 
@@ -173,7 +133,7 @@ Hand this section over as-is.
       narrations. Confirm both are correct, or fix the reference.
 - [ ] **Translation sources.** `translationSources: {en: null, ar: null}` and the
       validator warns. Name the source, or confirm the translations are original.
-- [ ] **Confirm the v1 fasting-owed rule** (§2). Owed fasts are Ramadan days the
+- [ ] **Confirm the v1 fasting-owed rule.** Owed fasts are Ramadan days the
       user records as not fasted, plus a backlog they set; each make-up is
       recorded one at a time. Nothing accrues on its own, and recording works
       while tracking is paused. Vows, expiations and fidya are out of scope.
@@ -187,7 +147,7 @@ Run `bun run validate:content` to see the current warnings.
 
 ---
 
-## 6. After v1 — nothing here blocks release
+## 5. After v1 — nothing here blocks release
 
 - [ ] **Recitations.** `audioReciter: null`, 0 of 32 items have audio. The player
       is wired and says "no audio" honestly. Needs a reciter **and** distribution
@@ -211,9 +171,9 @@ Run `bun run validate:content` to see the current warnings.
 
 ## Where things stand
 
-`bun run check` is green — lint, typecheck, 186 tests, content validation and
-`expo-doctor` 20/20 — on Expo SDK 58 preview.5. Both platforms are rebuilt from a
-clean prebuild and running. 13 of 21 GitHub issues are closed; the 8 open ones
+`bun run check` is green — lint, typecheck, 217 tests, content validation and
+`expo-doctor` 20/20 — on Expo SDK 58 preview.6, which needs a fresh native build
+before a device runs it. 13 of 21 GitHub issues are closed; the 8 open ones
 each say what they're waiting on.
 
 `audit.md` has the full reasoning, including the decisions that went the other

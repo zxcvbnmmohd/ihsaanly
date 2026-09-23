@@ -43,9 +43,9 @@ decisions, hardware or people. **Mixed** = AI does the wiring once you supply th
 | Priority       | Done | Open | Total |
 | -------------- | ---: | ---: | ----: |
 | P0 Blockers    |    8 |    4 |    12 |
-| P1 Must Have   |   24 |    9 |    33 |
-| P2 Should Have |   27 |    9 |    36 |
-| P3 Could Have  |    9 |    4 |    13 |
+| P1 Must Have   |   24 |   11 |    35 |
+| P2 Should Have |   27 |   20 |    47 |
+| P3 Could Have  |    9 |   11 |    20 |
 | P4 Future      |    1 |    6 |     7 |
 
 ---
@@ -778,6 +778,94 @@ exercised. Screenshots are not committed.
 
 **Not tested on the emulator**: device GPS, geofence transitions, share sheet targets,
 import from a real file, notification actions with the app killed.
+
+## Both platforms on `production`, 2026-09-23, 09:30 BST
+
+Android emulator driven screen by screen (49 capture points, every stacked route,
+mark/unmark, counter, Done/Undo, search, the delete dialog cancelled); iOS simulator
+Today only, since it cannot be tapped. Both devices now hold the same data. No render
+errors, no LogBox, nothing crashed. At 09:30 the plan was right: window **Morning**,
+Right now **Morning adhkar**, Up next **Dhuhr in about 3 hours**, Fajr unmarked.
+
+Twenty improvements, ordered by how much they change for the person holding the phone.
+All are mine to do; none needs an account.
+
+- [ ] **P1 — AI** Deep links land with nothing underneath. Only the root layout declares
+      `unstable_settings.anchor`; `(library)`, `(more)` and `(home)` do not. So a
+      notification tap into `/item/…` builds a stack of one screen and Back exits to Today,
+      and a deep link into `/about` leaves the More tab showing About with no menu beneath it
+      — which is exactly the state the walkthrough found the More tab in. Add
+      `export const unstable_settings = { anchor: 'index' }` to each group layout.
+- [ ] **P1 — AI** A day-old install already owes five prayers. Nothing was marked
+      yesterday, so at Maghrib rollover every prayer became owed and Today now shows "1 to
+      make up" five times to someone who very likely prayed and simply had not started
+      marking. Do not accrue before the first-ever mark (or before the first full day after
+      onboarding), and say so in the qada intro.
+- [ ] **P2 — AI** The prayer strip moves under your finger. Marking a prayer inserts "Also
+      now" above the strip, which jumped about 300px; the subagent's second tap landed on a
+      card instead. Marking is the app's core gesture and the target should hold still: put
+      PRAYERS above RIGHT NOW, or reserve the space.
+- [ ] **P2 — AI** The strip does not know a prayer's time has passed. At 09:32 Fajr's ring
+      looks identical to Isha's. A quiet third state for passed-and-unmarked (dimmed ring, or
+      a dot) lets the strip read as a day rather than five identical buttons.
+- [ ] **P2 — AI** A late mark raises the after-prayer sunnah as "now". Marking Fajr at 09:32
+      put Tasbih under Right now, because the 60-minute grace counts from the mark, not the
+      prayer. Raise `after` items only when the mark lands inside that prayer's window or the
+      grace after it closes; a mark hours later is a record, not an event.
+- [ ] **P2 — AI** Material lavender is back in two components. `Chip` (unselected) and
+      `TextField` both use `colors.secondarySystemBackground`, so the Library filter chips,
+      Location's "Search for a city" and the onboarding city search are grey-lavender on a
+      warm screen — the same fault the cards and chrome had. Same fix: `palette.surface`.
+- [ ] **P2 — AI** The not-found screen is unstyled. White background, no wash, no header
+      chrome, a default-blue "Today" link. Wrap it in `Screen` with the palette and the
+      accent; it is what a stale notification opens onto.
+- [ ] **P2 — AI** The delete confirm is a stock Material dialog with **teal** CANCEL/DELETE
+      and no visual difference between the two. Set `colorAccent` in the Android theme via
+      the existing manifest plugin, or replace `Alert.alert` with an in-app sheet where
+      DELETE is the accent and CANCEL is plain.
+- [ ] **P2 — AI** Arabic is the afterthought on item detail and Memorise: small, hugging the
+      right edge, wedged between HOW and TRANSLITERATION. For a dua the Arabic _is_ the item.
+      Give it a hero card — larger type, centred, transliteration and translation beneath —
+      above HOW, and the same on Memorise where it sits alone at top-right over a blank wash.
+- [ ] **P2 — AI** The tasbih counter is below WHY, HOW, the Arabic and two labels, so the
+      thirty-three-tap daily act starts with a scroll every time. For repeated items lead
+      with the counter (or pin it to the bottom); WHY and HOW are read once.
+- [ ] **P2 — AI** Rawatib titles do not share a shape, and two collide with window
+      headlines. "Two rak'ah before Fajr" names the act; "Before Dhuhr" names only the
+      moment; "Sunnah around Dhuhr" is an _after_ trigger. "After Maghrib" and "After Isha"
+      are also the window headlines, so at 19:20 yesterday Today read "After Maghrib /
+      RIGHT NOW: After Maghrib". Name the act throughout — "Four rak'ah before Dhuhr", "Two
+      rak'ah after Dhuhr", "Two rak'ah after Maghrib", "Two rak'ah after Isha" — which also
+      removes the "BEFORE / Before Dhuhr" redundancy on the next-prayer card. Content, so the
+      reviewer signs it off.
+- [ ] **P2 — AI** Diagnostics leaks the raw enum: "granted · 7 queued", while the Reminders
+      screen says "Allowed" for the same thing. Map `PermissionStatus` through strings.
+- [ ] **P2 — AI** "To make up" on Today is five full cards plus a manage row for the most
+      common state. Collapse to one card — "5 prayers to make up · Fajr, Dhuhr, Asr,
+      Maghrib, Isha" — that opens the manage screen, and expand per prayer only when counts
+      differ.
+- [ ] **P3 — AI** History with one day shows "1 day recorded" and a blank wash. Add the
+      early state: what will appear here and when, so the screen is not a dead end for the
+      first week.
+- [ ] **P3 — AI** Two headings on Today: the bar says "Today", the serif says "Morning". On
+      iOS both are large. Let the window be the title, or drop the tab title on Today.
+- [ ] **P3 — AI** The Reminders section heading reads "AT MOST A DAY" — the string
+      `perDay: 'At most a day'` is a fragment without its number. "Daily limit".
+- [ ] **P3 — AI** The glossary has three names: header "Words", Library row "What the words
+      mean", code and audit "Glossary". One title, the other as its detail line.
+- [ ] **P3 — AI** "Owed from before, or several at once" (the row under To make up) is
+      awkward. "Adjust what you owe".
+- [ ] **P3 — AI** The date line is Hijri only — "12 Rabi' ath-Thani 1448 · London". Most
+      people carry both calendars. "Wed 23 Sep · 12 Rabi' ath-Thani 1448 · London", still with
+      no clock time anywhere.
+- [ ] **P3 — AI** `plan.context` is labelled "Nearby", and it holds active states like
+      travelling and leaving home. "Nearby" does not describe "you are travelling". "Where
+      you are", matching the settings screen of the same name.
+
+Seen and fine: Glossary, Prayer calculation, Hijri (adjust + authorities), Reminders,
+Tracking, Where you are, Language, Your data, Diagnostics summary and raw view, About with
+its licence rows, Library search and filters, counter → Start again → Done → Undo, Memorise
+progressive hide. The 404 route works and the delete dialog cancels cleanly.
 
 ## A caveat on every side-by-side before 2026-09-22
 

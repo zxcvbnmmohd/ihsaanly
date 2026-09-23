@@ -1,6 +1,7 @@
 import { assertNever } from '@/assert-never'
 import type { Item, Ruling, Trigger } from '@/content/schema'
 import { civilDateIn, isSameCivilDate, shiftDays } from '@/day/boundaries'
+import { PRAYERS } from '@/prayer/qada'
 import {
   buildWindows,
   nextPrayerWindow,
@@ -105,15 +106,34 @@ function availableItems(signals: Signals): Item[] {
   })
 }
 
-/** The most recent mark this trigger answers to. */
-function latestMark(trigger: Extract<Trigger, { kind: 'prayer' }>, signals: Signals): Date | null {
-  const marks =
-    trigger.prayer === 'any'
-      ? Object.values(signals.prayedToday)
-      : [signals.prayedToday[trigger.prayer]]
+/**
+ * Whether a mark counts as answering its prayer: made while that prayer's
+ * window was still open, or within the after-prayer grace once it closed. A
+ * mark recorded well after the fact — Fajr marked at 09:32, hours after
+ * sunrise — is a record, not an event, and must not raise the sunnah as
+ * though the prayer had just happened.
+ */
+function markAnswersPrayer(prayer: Prayer, mark: Date, windows: PrayerWindow[]): boolean {
+  const window = windows
+    .filter((candidate) => candidate.name === prayer && candidate.startsAt <= mark)
+    .at(-1)
+  return window !== undefined && mark.getTime() <= window.endsAt.getTime() + AFTER_PRAYER_GRACE_MS
+}
+
+/** The most recent mark this trigger answers to, ignoring one that landed too late to count. */
+function latestMark(
+  trigger: Extract<Trigger, { kind: 'prayer' }>,
+  signals: Signals,
+  windows: PrayerWindow[],
+): Date | null {
+  const prayers = trigger.prayer === 'any' ? PRAYERS : [trigger.prayer]
+
   return (
-    marks
-      .filter((mark): mark is Date => mark instanceof Date)
+    prayers
+      .flatMap((prayer) => {
+        const mark = signals.prayedToday[prayer]
+        return mark && markAnswersPrayer(prayer, mark, windows) ? [mark] : []
+      })
       .sort((a, b) => b.getTime() - a.getTime())[0] ?? null
   )
 }
@@ -128,6 +148,7 @@ function isDoneForOccasion(
   reason: PlanReason,
   signals: Signals,
   window: PrayerWindow | null,
+  windows: PrayerWindow[],
 ): boolean {
   const completed = signals.completedToday[item.id]
   if (!completed) return false
@@ -135,7 +156,7 @@ function isDoneForOccasion(
   const start = ((): Date | null => {
     switch (reason) {
       case 'after-prayer':
-        return item.trigger.kind === 'prayer' ? latestMark(item.trigger, signals) : null
+        return item.trigger.kind === 'prayer' ? latestMark(item.trigger, signals, windows) : null
       case 'current-window':
       case 'before-prayer':
       case 'active-event':
@@ -151,7 +172,12 @@ function isDoneForOccasion(
   return start === null || completed >= start
 }
 
-function reasonFor(item: Item, signals: Signals, window: PrayerWindow | null): PlanReason | null {
+function reasonFor(
+  item: Item,
+  signals: Signals,
+  window: PrayerWindow | null,
+  windows: PrayerWindow[],
+): PlanReason | null {
   const { trigger } = item
 
   switch (trigger.kind) {
@@ -167,7 +193,7 @@ function reasonFor(item: Item, signals: Signals, window: PrayerWindow | null): P
       const prayed = Object.keys(signals.prayedToday)
 
       if (trigger.when === 'after') {
-        const latest = latestMark(trigger, signals)
+        const latest = latestMark(trigger, signals, windows)
         if (!latest) return null
         return signals.now.getTime() - latest.getTime() <= AFTER_PRAYER_GRACE_MS
           ? 'after-prayer'
@@ -311,8 +337,9 @@ function scheduleNotifications(signals: Signals, items: Item[]): ScheduledNotifi
 
 /** Whether an item has a reason to appear at this moment, enabled or not. */
 export function isRelevantNow(item: Item, signals: Signals): boolean {
-  const window = windowAt(signals.now, buildWindows(signals.prayerTimes))
-  return reasonFor(item, signals, window) !== null
+  const windows = buildWindows(signals.prayerTimes)
+  const window = windowAt(signals.now, windows)
+  return reasonFor(item, signals, window, windows) !== null
 }
 
 /**
@@ -325,7 +352,7 @@ export function plan(signals: Signals): Plan {
   const window = windowAt(signals.now, windows)
 
   const relevant: PlannedItem[] = items.flatMap((item) => {
-    const reason = reasonFor(item, signals, window)
+    const reason = reasonFor(item, signals, window, windows)
     if (!reason) return []
     return [
       {
@@ -339,7 +366,7 @@ export function plan(signals: Signals): Plan {
 
   const isDone = (entry: PlannedItem): boolean => {
     const item = items.find((candidate) => candidate.id === entry.itemId)
-    return item ? isDoneForOccasion(item, entry.reason, signals, window) : false
+    return item ? isDoneForOccasion(item, entry.reason, signals, window, windows) : false
   }
   const ranked = [...relevant].sort(byRelevance(items))
   const open = ranked.filter((entry) => !isDone(entry))

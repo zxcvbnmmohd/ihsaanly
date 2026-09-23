@@ -30,6 +30,19 @@ export function outstanding(
   return result
 }
 
+/**
+ * Nothing accrues for a day before the user's first-ever prayer mark. A fresh
+ * install has recorded no mark at all, so every day up to that first one
+ * counts as "before" and passes unrecorded — the same treatment `rollover`
+ * gives a paused day — rather than handing a new user five owed prayers
+ * apiece before they had a chance to record anything. `day` and
+ * `firstMarkedDay` are civil-date keys (`YYYY-MM-DD`), which sort correctly
+ * as strings.
+ */
+export function accruesQada(day: string, firstMarkedDay: string | null): boolean {
+  return firstMarkedDay !== null && day >= firstMarkedDay
+}
+
 export function windowClosedAt(
   prayer: Prayer,
   today: DailyPrayerTimes,

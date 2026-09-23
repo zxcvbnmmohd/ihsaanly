@@ -192,6 +192,25 @@ export function markedPrayersOn(logDay: string): Prayer[] {
 }
 
 /**
+ * The civil day of the earliest prayer mark ever recorded, or null when
+ * nothing has been marked yet. `rollover` uses this so a fresh install does
+ * not accrue owed prayers for days before tracking meaningfully began.
+ */
+export function firstMarkedDay(): string | null {
+  const row = attempt(
+    'firstMarkedDay',
+    () =>
+      database.getFirstSync<{ logDay: string }>(
+        `SELECT log_day AS logDay FROM events
+         WHERE kind = 'prayer-performed'
+         ORDER BY at ASC LIMIT 1`,
+      ),
+    null,
+  )
+  return row?.logDay ?? null
+}
+
+/**
  * Net per prayer: what was missed, less what has been made up. Raw, and it can
  * go negative when a backlog from before tracking is being paid down; the
  * clamp lives in `outstanding` in prayer/qada.ts, next to the backlog it adds.

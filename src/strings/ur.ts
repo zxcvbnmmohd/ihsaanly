@@ -500,4 +500,10 @@ export const ur: Strings = {
     title: 'نہیں ملا',
     body: 'یہ اسکرین موجود نہیں۔',
   },
+  widgets: {
+    quickDuas: 'فوری دعائیں',
+    duaOfTheDay: 'آج کی دعا',
+    nothingNow: 'اس وقت آپ سے کچھ مطلوب نہیں',
+    openApp: 'تازہ کرنے کے لیے احسانلی کھولیں',
+  },
 }

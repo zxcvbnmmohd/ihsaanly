@@ -502,4 +502,10 @@ export const hi: Strings = {
     title: 'नहीं मिला',
     body: 'वह स्क्रीन मौजूद नहीं है।',
   },
+  widgets: {
+    quickDuas: 'फ़ौरी दुआएँ',
+    duaOfTheDay: 'आज की दुआ',
+    nothingNow: 'अभी आपसे कुछ नहीं माँगा गया',
+    openApp: 'इसे ताज़ा करने के लिए Ihsaanly खोलें',
+  },
 }

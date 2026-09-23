@@ -1,0 +1,150 @@
+{
+  "at": 1790152200000,
+  "stale": false,
+  "rtl": false,
+  "ink": {
+    "light": {
+      "background": "#f7f0e9",
+      "backgroundEnd": "#e8cdbd",
+      "surface": "#fffaf6",
+      "accent": "#a94a32",
+      "onAccent": "#fff6f0",
+      "label": "#2b1f1a",
+      "secondaryLabel": "#7a665c"
+    },
+    "dark": {
+      "background": "#1b1411",
+      "backgroundEnd": "#3a241d",
+      "surface": "#2a1c17",
+      "accent": "#e28c6f",
+      "onAccent": "#1d120d",
+      "label": "#f7ece6",
+      "secondaryLabel": "#bba89e"
+    }
+  },
+  "labels": {
+    "app": "Ihsaanly",
+    "rightNow": "Right now",
+    "upNext": "Up next",
+    "prayers": "Prayers",
+    "hijri": "Hijri date",
+    "alsoToday": "Also today",
+    "quickDuas": "Quick duas",
+    "duaOfTheDay": "Dua of the day",
+    "makeUp": "To make up",
+    "comingUp": "Later this week",
+    "nothingNow": "Nothing asked of you right now",
+    "nothingOwed": "Nothing owed",
+    "openApp": "Open Ihsaanly to bring this up to date",
+    "before": "Before",
+    "after": "After"
+  },
+  "window": "Morning",
+  "date": {
+    "gregorian": "Wed 23 Sep",
+    "hijri": "12 Rabi’ ath-Thani 1448",
+    "place": "London"
+  },
+  "rightNow": {
+    "title": "Morning adhkar",
+    "detail": null,
+    "url": "ihsaanly://item/morning-adhkar"
+  },
+  "alsoNow": [],
+  "next": {
+    "prayer": "Dhuhr",
+    "distance": "In about 3 hours",
+    "before": [
+      {
+        "title": "Two or four rak’ah before Dhuhr",
+        "detail": null,
+        "url": "ihsaanly://item/sunnah-before-dhuhr"
+      }
+    ],
+    "after": [
+      {
+        "title": "Tasbih after prayer",
+        "detail": null,
+        "url": "ihsaanly://item/tasbih-after-prayer"
+      },
+      {
+        "title": "Two rak’ah after Dhuhr",
+        "detail": null,
+        "url": "ihsaanly://item/sunnah-after-dhuhr"
+      }
+    ]
+  },
+  "prayers": [
+    {
+      "name": "Fajr",
+      "short": "F",
+      "done": true,
+      "passed": true
+    },
+    {
+      "name": "Dhuhr",
+      "short": "D",
+      "done": false,
+      "passed": false
+    },
+    {
+      "name": "Asr",
+      "short": "A",
+      "done": false,
+      "passed": false
+    },
+    {
+      "name": "Maghrib",
+      "short": "M",
+      "done": false,
+      "passed": false
+    },
+    {
+      "name": "Isha",
+      "short": "I",
+      "done": false,
+      "passed": false
+    }
+  ],
+  "allDay": [],
+  "comingUp": [],
+  "quickDuas": [
+    {
+      "title": "Leaving home",
+      "detail": null,
+      "url": "ihsaanly://item/dua-leaving-home"
+    },
+    {
+      "title": "Setting out on a journey",
+      "detail": null,
+      "url": "ihsaanly://item/dua-travel"
+    },
+    {
+      "title": "Shortening the prayer",
+      "detail": null,
+      "url": "ihsaanly://item/qasr-while-travelling"
+    },
+    {
+      "title": "Going up",
+      "detail": null,
+      "url": "ihsaanly://item/takbir-ascending"
+    },
+    {
+      "title": "Going down",
+      "detail": null,
+      "url": "ihsaanly://item/tasbih-descending"
+    }
+  ],
+  "duaOfTheDay": {
+    "title": "Tasbih after prayer",
+    "arabic": "سُبْحَانَ اللَّهِ",
+    "translation": "Glory be to Allah.",
+    "url": "ihsaanly://item/tasbih-after-prayer"
+  },
+  "makeUp": {
+    "prayers": 1,
+    "fasts": 0,
+    "summary": "1 prayer owed",
+    "url": "ihsaanly://qada"
+  }
+}

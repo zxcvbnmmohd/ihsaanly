@@ -478,4 +478,10 @@ export const yue: Strings = {
     title: '搵唔到',
     body: '嗰個畫面唔存在。',
   },
+  widgets: {
+    quickDuas: '快捷祈禱詞',
+    duaOfTheDay: '今日祈禱詞',
+    nothingNow: '而家冇嘢要做',
+    openApp: '打開 Ihsaanly 更新',
+  },
 }

@@ -493,4 +493,10 @@ export const ja: Strings = {
     title: '見つかりません',
     body: 'その画面は存在しません。',
   },
+  widgets: {
+    quickDuas: 'すぐに使えるドゥアー',
+    duaOfTheDay: '今日のドゥアー',
+    nothingNow: '今はお勤めがありません',
+    openApp: 'Ihsaanly を開いて更新してください',
+  },
 }

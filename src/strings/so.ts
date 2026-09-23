@@ -510,4 +510,10 @@ export const so: Strings = {
     title: 'Lama helin',
     body: 'Shaashaddaas ma jirto.',
   },
+  widgets: {
+    quickDuas: 'Duco degdeg ah',
+    duaOfTheDay: 'Ducada maanta',
+    nothingNow: 'Hadda waxba lagaa rabo ma jiraan',
+    openApp: 'Fur Ihsaanly si aad u cusboonaysiiso',
+  },
 }

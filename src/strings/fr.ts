@@ -514,4 +514,10 @@ export const fr: Strings = {
     title: 'Introuvable',
     body: 'Cet écran n’existe pas.',
   },
+  widgets: {
+    quickDuas: "Du'as rapides",
+    duaOfTheDay: "Du'a du jour",
+    nothingNow: "Rien ne vous est demandé pour l'instant",
+    openApp: 'Ouvrez Ihsaanly pour mettre à jour',
+  },
 }

@@ -506,4 +506,10 @@ export const ar: Strings = {
     title: 'غير موجود',
     body: 'هذه الشاشة غير موجودة.',
   },
+  widgets: {
+    quickDuas: 'أدعية سريعة',
+    duaOfTheDay: 'دعاء اليوم',
+    nothingNow: 'لا شيء مطلوب منك الآن',
+    openApp: 'افتح إحسانلي لتحديث هذا',
+  },
 }

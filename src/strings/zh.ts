@@ -481,4 +481,10 @@ export const zh: Strings = {
     title: '未找到',
     body: '该页面不存在。',
   },
+  widgets: {
+    quickDuas: '快捷杜阿',
+    duaOfTheDay: '每日杜阿',
+    nothingNow: '此刻没有要做的',
+    openApp: '打开 Ihsaanly 以更新',
+  },
 }

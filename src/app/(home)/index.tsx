@@ -10,7 +10,7 @@ import { requestDeviceLocation } from '@/location/device'
 import { setPlace, usePlace } from '@/location/store'
 import type { NextPrayer, PlannedItem } from '@/plan/signals'
 import { useNotificationSync } from '@/notifications/use-sync'
-import { useWidgetSnapshot } from '@/widgets/use-snapshot'
+import { useWidgetTimeline } from '@/widgets/use-timeline'
 import { useOnboarding } from '@/onboarding/store'
 import { useLocale } from '@/i18n/store'
 import { setEnabledItems, useEnabledItems } from '@/plan/enabled-store'
@@ -141,7 +141,11 @@ export default function TodayRoute(): ReactElement {
   const signals = useSignals()
   const planned = signals ? plan(signals) : null
   useNotificationSync(planned)
-  useWidgetSnapshot(planned)
+  useWidgetTimeline(
+    signals,
+    planned,
+    place ? (place.label.split(',')[0]?.trim() ?? place.label) : null,
+  )
   const marks = useTodayMarks(place?.timeZone ?? 'UTC', now)
   const qada = useQada()
   const strings = useStrings()

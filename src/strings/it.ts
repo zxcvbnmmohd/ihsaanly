@@ -510,4 +510,10 @@ export const it: Strings = {
     title: 'Non trovato',
     body: 'Questa schermata non esiste.',
   },
+  widgets: {
+    quickDuas: "Du'a rapide",
+    duaOfTheDay: "Du'a del giorno",
+    nothingNow: 'Niente da fare in questo momento',
+    openApp: 'Apri Ihsaanly per aggiornare',
+  },
 }

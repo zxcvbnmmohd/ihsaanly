@@ -491,6 +491,12 @@ export const en = {
     title: 'Not found',
     body: 'That screen does not exist.',
   },
+  widgets: {
+    quickDuas: 'Quick duas',
+    duaOfTheDay: 'Dua of the day',
+    nothingNow: 'Nothing asked of you right now',
+    openApp: 'Open Ihsaanly to bring this up to date',
+  },
 }
 
 export type Strings = typeof en

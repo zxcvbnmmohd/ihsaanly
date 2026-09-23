@@ -52,9 +52,12 @@ one thing from you.
 - [ ] **Play Console: Financial features declaration.** Donations and tipping
       aren't among its categories, so the answer is likely "none" — but every app
       must submit the form.
-- [ ] **Store metadata.** Title, subtitle (`MARKETING.md` drafts "Sunnah, with its
-      source"), description, keywords, category (Lifestyle), age-rating
-      questionnaire.
+- [ ] **Store metadata.** Drafted: `store.config.json` (App Store, EAS Metadata) and
+      `store/google-play/` (fastlane layout), in every language both stores offer;
+      `store/README.md` says what is left. Still yours: the App Store review contact,
+      the copyright holder, a native-speaker check of each listing, then
+      `bunx eas-cli metadata:push` and the Play upload. Somali has no store listing on
+      either store; Urdu goes into App Store Connect by hand.
 - [ ] **Screenshots.** 6.7" and 6.5" iPhone, Android phone, 13" iPad (tablet is
       supported). Play also wants a 1024×500 feature graphic.
 - [ ] **A one-page landing site** for the marketing URL field — same host as the
@@ -153,9 +156,7 @@ Run `bun run validate:content` to see the current warnings.
       is wired and says "no audio" honestly. Needs a reciter **and** distribution
       permission. Blocks voice shortcuts (#20) and CarPlay/Android Auto (#21).
 - [ ] **CarPlay / Android Auto entitlement** request — also needs the audio.
-- [ ] **Widgets.** Cut from v1: they rendered fixed props and never read their own
-      snapshot. The snapshot side works. Needs the App Group from §1, then wiring
-      and a tap deep link. Re-adding is one plugin entry in `app.json`.
+- [ ] **Widgets.** Ten iOS widgets now exist (`src/widgets/ios/`); device builds need the App Group `group.com.ihsaanly.app` from §1 (simulator builds work).
 - [ ] **Voluntary payment products** in both consoles, once §1 is done.
 
 **Blocked on other people, not on you:**

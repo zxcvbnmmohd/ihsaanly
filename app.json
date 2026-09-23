@@ -22,6 +22,9 @@
       },
       "config": {
         "usesNonExemptEncryption": false
+      },
+      "entitlements": {
+        "com.apple.security.application-groups": ["group.com.ihsaanly.app"]
       }
     },
     "android": {
@@ -85,6 +88,321 @@
           "dark": {
             "backgroundColor": "#1b1411"
           }
+        }
+      ],
+      [
+        "react-native-android-widget",
+        {
+          "widgets": [
+            {
+              "name": "RightNowWidget",
+              "label": "Right now",
+              "description": "What this part of the day asks of you, one tap from the app.",
+              "minWidth": "110dp",
+              "minHeight": "40dp",
+              "targetCellWidth": 4,
+              "targetCellHeight": 2,
+              "maxResizeWidth": "800dp",
+              "maxResizeHeight": "800dp",
+              "resizeMode": "horizontal|vertical",
+              "updatePeriodMillis": 1800000
+            },
+            {
+              "name": "NextPrayerWidget",
+              "label": "Next prayer",
+              "description": "The next prayer and roughly how far away it is.",
+              "minWidth": "110dp",
+              "minHeight": "40dp",
+              "targetCellWidth": 2,
+              "targetCellHeight": 2,
+              "maxResizeWidth": "800dp",
+              "maxResizeHeight": "800dp",
+              "resizeMode": "horizontal|vertical",
+              "updatePeriodMillis": 1800000
+            },
+            {
+              "name": "PrayersWidget",
+              "label": "Prayers",
+              "description": "Today's five prayers and which you have marked.",
+              "minWidth": "110dp",
+              "minHeight": "40dp",
+              "targetCellWidth": 4,
+              "targetCellHeight": 1,
+              "maxResizeWidth": "800dp",
+              "maxResizeHeight": "800dp",
+              "resizeMode": "horizontal|vertical",
+              "updatePeriodMillis": 1800000
+            },
+            {
+              "name": "HijriDateWidget",
+              "label": "Hijri date",
+              "description": "The Hijri date, with the Gregorian date and your place.",
+              "minWidth": "110dp",
+              "minHeight": "40dp",
+              "targetCellWidth": 2,
+              "targetCellHeight": 2,
+              "maxResizeWidth": "800dp",
+              "maxResizeHeight": "800dp",
+              "resizeMode": "horizontal|vertical",
+              "updatePeriodMillis": 1800000
+            },
+            {
+              "name": "UpNextWidget",
+              "label": "Up next",
+              "description": "What the next prayer asks before and after it.",
+              "minWidth": "110dp",
+              "minHeight": "40dp",
+              "targetCellWidth": 4,
+              "targetCellHeight": 2,
+              "maxResizeWidth": "800dp",
+              "maxResizeHeight": "800dp",
+              "resizeMode": "horizontal|vertical",
+              "updatePeriodMillis": 1800000
+            },
+            {
+              "name": "AlsoTodayWidget",
+              "label": "Also today",
+              "description": "Today's all-day sunnah.",
+              "minWidth": "110dp",
+              "minHeight": "40dp",
+              "targetCellWidth": 4,
+              "targetCellHeight": 2,
+              "maxResizeWidth": "800dp",
+              "maxResizeHeight": "800dp",
+              "resizeMode": "horizontal|vertical",
+              "updatePeriodMillis": 1800000
+            },
+            {
+              "name": "QuickDuasWidget",
+              "label": "Quick duas",
+              "description": "Duas for leaving home, travelling, going up and coming down.",
+              "minWidth": "110dp",
+              "minHeight": "40dp",
+              "targetCellWidth": 4,
+              "targetCellHeight": 2,
+              "maxResizeWidth": "800dp",
+              "maxResizeHeight": "800dp",
+              "resizeMode": "horizontal|vertical",
+              "updatePeriodMillis": 1800000
+            },
+            {
+              "name": "DuaOfTheDayWidget",
+              "label": "Dua of the day",
+              "description": "One dua a day, in Arabic.",
+              "minWidth": "110dp",
+              "minHeight": "40dp",
+              "targetCellWidth": 4,
+              "targetCellHeight": 2,
+              "maxResizeWidth": "800dp",
+              "maxResizeHeight": "800dp",
+              "resizeMode": "horizontal|vertical",
+              "updatePeriodMillis": 1800000
+            },
+            {
+              "name": "MakeUpWidget",
+              "label": "To make up",
+              "description": "Prayers and fasts still to make up.",
+              "minWidth": "110dp",
+              "minHeight": "40dp",
+              "targetCellWidth": 2,
+              "targetCellHeight": 2,
+              "maxResizeWidth": "800dp",
+              "maxResizeHeight": "800dp",
+              "resizeMode": "horizontal|vertical",
+              "updatePeriodMillis": 1800000
+            },
+            {
+              "name": "ComingUpWidget",
+              "label": "Later this week",
+              "description": "What is coming up in the days ahead.",
+              "minWidth": "110dp",
+              "minHeight": "40dp",
+              "targetCellWidth": 4,
+              "targetCellHeight": 2,
+              "maxResizeWidth": "800dp",
+              "maxResizeHeight": "800dp",
+              "resizeMode": "horizontal|vertical",
+              "updatePeriodMillis": 1800000
+            }
+          ]
+        }
+      ],
+      [
+        "expo-widgets",
+        {
+          "groupIdentifier": "group.com.ihsaanly.app",
+          "widgets": [
+            {
+              "name": "RightNowWidget",
+              "displayName": "Right now",
+              "description": "What this part of the day asks of you, one tap away.",
+              "ios": {
+                "supportedFamilies": [
+                  "systemSmall",
+                  "systemMedium",
+                  "systemLarge",
+                  "systemExtraLarge",
+                  "accessoryCircular",
+                  "accessoryRectangular",
+                  "accessoryInline"
+                ],
+                "initialLayout": "src/widgets/ios/right-now-widget.tsx"
+              }
+            },
+            {
+              "name": "NextPrayerWidget",
+              "displayName": "Next prayer",
+              "description": "The next prayer and roughly how far away it is.",
+              "ios": {
+                "supportedFamilies": [
+                  "systemSmall",
+                  "systemMedium",
+                  "systemLarge",
+                  "systemExtraLarge",
+                  "accessoryCircular",
+                  "accessoryRectangular",
+                  "accessoryInline"
+                ],
+                "initialLayout": "src/widgets/ios/next-prayer-widget.tsx"
+              }
+            },
+            {
+              "name": "PrayersWidget",
+              "displayName": "Prayers",
+              "description": "Today's five prayers and which you have marked.",
+              "ios": {
+                "supportedFamilies": [
+                  "systemSmall",
+                  "systemMedium",
+                  "systemLarge",
+                  "systemExtraLarge",
+                  "accessoryCircular",
+                  "accessoryRectangular",
+                  "accessoryInline"
+                ],
+                "initialLayout": "src/widgets/ios/prayers-widget.tsx"
+              }
+            },
+            {
+              "name": "HijriDateWidget",
+              "displayName": "Hijri date",
+              "description": "The Hijri date, with the Gregorian date and your place.",
+              "ios": {
+                "supportedFamilies": [
+                  "systemSmall",
+                  "systemMedium",
+                  "systemLarge",
+                  "systemExtraLarge",
+                  "accessoryCircular",
+                  "accessoryRectangular",
+                  "accessoryInline"
+                ],
+                "initialLayout": "src/widgets/ios/hijri-date-widget.tsx"
+              }
+            },
+            {
+              "name": "UpNextWidget",
+              "displayName": "Up next",
+              "description": "What the next prayer asks before and after it.",
+              "ios": {
+                "supportedFamilies": [
+                  "systemSmall",
+                  "systemMedium",
+                  "systemLarge",
+                  "systemExtraLarge",
+                  "accessoryCircular",
+                  "accessoryRectangular",
+                  "accessoryInline"
+                ],
+                "initialLayout": "src/widgets/ios/up-next-widget.tsx"
+              }
+            },
+            {
+              "name": "AlsoTodayWidget",
+              "displayName": "Also today",
+              "description": "Today's all-day sunnah, such as a fast.",
+              "ios": {
+                "supportedFamilies": [
+                  "systemSmall",
+                  "systemMedium",
+                  "systemLarge",
+                  "systemExtraLarge",
+                  "accessoryCircular",
+                  "accessoryRectangular",
+                  "accessoryInline"
+                ],
+                "initialLayout": "src/widgets/ios/also-today-widget.tsx"
+              }
+            },
+            {
+              "name": "QuickDuasWidget",
+              "displayName": "Quick duas",
+              "description": "Duas for leaving home, travelling, going up and coming down.",
+              "ios": {
+                "supportedFamilies": [
+                  "systemSmall",
+                  "systemMedium",
+                  "systemLarge",
+                  "systemExtraLarge",
+                  "accessoryCircular",
+                  "accessoryRectangular",
+                  "accessoryInline"
+                ],
+                "initialLayout": "src/widgets/ios/quick-duas-widget.tsx"
+              }
+            },
+            {
+              "name": "DuaOfTheDayWidget",
+              "displayName": "Dua of the day",
+              "description": "One dua a day, in Arabic.",
+              "ios": {
+                "supportedFamilies": [
+                  "systemSmall",
+                  "systemMedium",
+                  "systemLarge",
+                  "systemExtraLarge",
+                  "accessoryCircular",
+                  "accessoryRectangular",
+                  "accessoryInline"
+                ],
+                "initialLayout": "src/widgets/ios/dua-of-the-day-widget.tsx"
+              }
+            },
+            {
+              "name": "MakeUpWidget",
+              "displayName": "To make up",
+              "description": "Prayers and fasts still to make up.",
+              "ios": {
+                "supportedFamilies": [
+                  "systemSmall",
+                  "systemMedium",
+                  "systemLarge",
+                  "systemExtraLarge",
+                  "accessoryCircular",
+                  "accessoryRectangular",
+                  "accessoryInline"
+                ],
+                "initialLayout": "src/widgets/ios/make-up-widget.tsx"
+              }
+            },
+            {
+              "name": "ComingUpWidget",
+              "displayName": "Later this week",
+              "description": "What is coming up in the days ahead.",
+              "ios": {
+                "supportedFamilies": [
+                  "systemSmall",
+                  "systemMedium",
+                  "systemLarge",
+                  "systemExtraLarge",
+                  "accessoryCircular",
+                  "accessoryRectangular",
+                  "accessoryInline"
+                ],
+                "initialLayout": "src/widgets/ios/coming-up-widget.tsx"
+              }
+            }
+          ]
         }
       ]
     ],

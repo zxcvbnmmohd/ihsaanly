@@ -173,7 +173,7 @@ anything that names the real cause. Run `npx expo run:android` / `run:ios`.
 `expo-widgets` throws when imported on Android, so `Platform.OS === 'ios'`
 inside a function is too late — the import itself is what fails. Put the real
 implementation in `*.ios.ts` and a no-op in the base file, and let Metro pick.
-`src/widgets/snapshot.ts` is the pattern.
+`src/widgets/publish.ts` is the pattern.
 
 ### After-prayer items lead for an hour, then expire
 
@@ -187,7 +187,7 @@ grace is what makes the higher rank safe. Do not restore the old order or drop
 the expiry without changing the other.
 
 `TodayModel.now` is every relevant non-all-day item in rank order; `rightNow`
-is its head and is kept for the widget snapshot and notifications.
+is its head and is kept for the widget timeline and notifications.
 `TodayModel.next` names the next prayer (sunrise is a boundary, not a prayer,
 so `nextPrayerWindow` skips it) and lists what enabled content asks before and
 after it, computed from triggers rather than from the moment so it is stable
@@ -465,3 +465,27 @@ Metro bundling green does not prove NativeWind is working; utilities can silentl
 compile to nothing. To verify styling end-to-end, compile `global.css` through
 PostCSS and `react-native-css/compiler` and assert the class names appear in the
 resulting stylesheet.
+
+### Widgets: one timeline, two renderers
+
+Ten widgets exist on both platforms (`WIDGET_NAMES` in `src/widgets/names.ts`).
+`widgetTimeline` in `src/widgets/model.ts` is pure: it runs `plan()` for every
+half hour of the next day plus each window start and resolves every string and
+colour, so no widget ever thinks. `useWidgetTimeline` republishes it from Today
+when something shown could have changed; `publish.ts` is the no-op base split by
+platform like any iOS-only module.
+
+- **iOS** (`src/widgets/ios/`, `expo-widgets`): a `'widget'` body runs in an
+  isolated runtime and may reference nothing outside itself — not an import,
+  not a module constant, not a helper — which is why each file repeats its
+  helpers. `Group` does not render; the system font is used, not Amiri. Every
+  widget declares all seven families. The App Group `group.com.ihsaanly.app`
+  is required, so device builds wait for the Apple account.
+- **Android** (`src/widgets/android/`, `react-native-android-widget`): the task
+  handler registered from `index.ts` (via `register.android.ts`; the library
+  throws at import on iOS) reads `widget-timeline.json` from `Paths.document`
+  and renders by widget size. Every file starts with `'use no memo'`: the
+  library calls components as plain functions and the compiler's cache is a
+  hook. Light and dark are both rendered and the launcher's night mode picks,
+  so the app's own theme override does not reach widgets. No logical
+  direction exists, so RTL reverses rows by hand.

@@ -124,8 +124,9 @@ module.exports = [
       '@typescript-eslint/explicit-function-return-type': 'off',
     },
   },
-  // Scaffold sample widgets, replaced wholesale in #16. Their render functions
-  // return framework-specific shapes, not ReactElement.
+  // Widget render functions return framework-specific shapes (SwiftUI trees for
+  // expo-widgets, RemoteViews trees for react-native-android-widget), not
+  // ReactElement, and iOS widget bodies cannot reference a shared type alias.
   {
     files: ['src/widgets/**'],
     rules: { '@typescript-eslint/explicit-function-return-type': 'off' },

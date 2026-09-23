@@ -58,7 +58,8 @@ export interface WidgetModel {
   }
   /** "Morning", "After Maghrib"; null before the first prayer is calculable. */
   window: string | null
-  date: { gregorian: string; hijri: string; place: string | null }
+  /** `hijriDay` is the bare number, for a circle too small for the formatted date. */
+  date: { gregorian: string; hijri: string; hijriDay: number; place: string | null }
   rightNow: WidgetLink | null
   alsoNow: WidgetLink[]
   next: { prayer: string; distance: string; before: WidgetLink[]; after: WidgetLink[] } | null
@@ -213,6 +214,7 @@ function modelAt(input: WidgetInput, at: Date): WidgetModel {
         timeZone,
       }).format(at),
       hijri: strings.hijri.format(hijri.day, strings.hijriMonth[hijri.month] ?? '', hijri.year),
+      hijriDay: hijri.day,
       place: input.placeLabel,
     },
     rightNow: head ? link(head.itemId) : null,

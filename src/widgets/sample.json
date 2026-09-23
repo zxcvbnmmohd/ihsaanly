@@ -43,6 +43,7 @@
   "date": {
     "gregorian": "Wed 23 Sep",
     "hijri": "12 Rabi’ ath-Thani 1448",
+    "hijriDay": 12,
     "place": "London"
   },
   "rightNow": {

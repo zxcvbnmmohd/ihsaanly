@@ -4,6 +4,7 @@ import { Text, useColorScheme, View } from 'react-native'
 import { ArabicText } from '@/components/arabic-text'
 import { Row } from '@/components/row'
 import { Screen } from '@/components/screen'
+import { Surface } from '@/components/surface'
 import type { Reveal } from '@/memorise/reveal'
 import { useStrings } from '@/strings'
 import { colors } from '@/theme/colors'
@@ -31,18 +32,24 @@ export function MemoriseScreen(props: MemoriseScreenProps): ReactElement {
 
   return (
     <Screen palette={palette} className="gap-6 p-4">
-      {props.arabic ? <ArabicText>{props.arabic}</ArabicText> : null}
-
-      {props.reveal.transliteration && props.transliteration ? (
-        <Text className="text-base italic" style={{ color: colors.secondaryLabel }}>
-          {props.transliteration}
-        </Text>
-      ) : null}
-
-      {props.reveal.translation && props.translation ? (
-        <Text className="text-base" style={{ color: colors.secondaryLabel }}>
-          {props.translation}
-        </Text>
+      {props.arabic ? (
+        <Surface style={{ borderRadius: 24, padding: 22 }}>
+          <View className="items-center gap-3">
+            <ArabicText variant="hero">{props.arabic}</ArabicText>
+            {props.reveal.transliteration && props.transliteration ? (
+              <Text
+                className="text-center text-base italic"
+                style={{ color: colors.secondaryLabel }}>
+                {props.transliteration}
+              </Text>
+            ) : null}
+            {props.reveal.translation && props.translation ? (
+              <Text className="text-center text-base" style={{ color: colors.secondaryLabel }}>
+                {props.translation}
+              </Text>
+            ) : null}
+          </View>
+        </Surface>
       ) : null}
 
       <View className="gap-3">

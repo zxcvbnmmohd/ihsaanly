@@ -1,3 +1,4 @@
+import { Stack } from 'expo-router'
 import { useEffect, useState, type ReactElement } from 'react'
 
 import { itemById, resolveText } from '@/content'
@@ -7,6 +8,7 @@ import type { NextPrayer, PlannedItem } from '@/plan/signals'
 import { useNotificationSync } from '@/notifications/use-sync'
 import { useWidgetSnapshot } from '@/widgets/use-snapshot'
 import { useOnboarding } from '@/onboarding/store'
+import { useLocale } from '@/i18n/store'
 import { setEnabledItems, useEnabledItems } from '@/plan/enabled-store'
 import { plan } from '@/plan/plan'
 import { suggest, SUGGESTION_INTERVAL_MS, type Phase } from '@/plan/suggest'
@@ -143,6 +145,17 @@ export default function TodayRoute(): ReactElement {
   const onboarding = useOnboarding()
   const suggestion = useSuggestion()
   const enabled = useEnabledItems()
+  const locale = useLocale()
+  const timeZone = place?.timeZone ?? 'UTC'
+  const civilDay = (instant: Date): string => instant.toLocaleDateString('en-CA', { timeZone })
+  const windows = place ? buildWindows(prayerTimesAcross(place, now, preferences)) : []
+  // Today's window for the prayer has closed; yesterday's Isha does not count.
+  const passed = (prayer: Prayer): boolean =>
+    windows.some(
+      (entry) =>
+        entry.name === prayer && entry.endsAt <= now && civilDay(entry.startsAt) === civilDay(now),
+    )
+  const window = planned?.today.window ?? null
 
   // Three weeks of settling before fasting is offered; missing means an
   // install from before the date was recorded, treated as early.
@@ -197,45 +210,56 @@ export default function TodayRoute(): ReactElement {
       return
     }
 
-    const windows = buildWindows(prayerTimesAcross(place, now, preferences))
     const current = windows.filter((entry) => entry.name === prayer && entry.startsAt <= now).pop()
 
     markPrayer(prayer, now, place.timeZone, current)
   }
 
   return (
-    <TodayScreen
-      hasLocation={place !== null}
-      locating={thing.locating}
-      locationProblem={thing.problem}
-      onUseMyLocation={useMyLocation}
-      window={planned?.today.window ?? null}
-      hijri={planned?.today.hijri ?? null}
-      placeLabel={place ? (place.label.split(',')[0]?.trim() ?? place.label) : null}
-      now={planned?.today.now.flatMap((entry) => toEntry(entry, strings) ?? []) ?? []}
-      next={toNext(planned?.today.next ?? null, now, strings)}
-      allDay={ahead.allDay.flatMap((entry) => toEntry(entry, strings, false) ?? [])}
-      tomorrow={ahead.tomorrow.flatMap((entry) => toEntry(entry, strings, false) ?? [])}
-      later={ahead.later.flatMap((entry) => toEntry(entry, strings) ?? [])}
-      prayers={
-        place && !signals?.userState.trackingPaused
-          ? PRAYERS.map((prayer) => ({ prayer, done: marks[prayer] !== undefined }))
-          : []
-      }
-      qada={Object.entries(qada).map(([prayer, count]) => ({
-        prayer: prayer as Prayer,
-        count: count ?? 0,
-      }))}
-      onMarkPrayer={togglePrayer}
-      onMakeUp={onMakeUpFor(place?.timeZone, now)}
-      suggestion={suggested}
-      onAddSuggestion={(id) => setEnabledItems([...enabled, id])}
-      onDismissSuggestion={(id) =>
-        setSuggestion({ ...suggestion, dismissed: [...suggestion.dismissed, id] })
-      }
-      qadaHref="/qada"
-      locationHref="/location"
-    />
+    <>
+      <Stack.Screen options={{ title: window ? strings.window[window] : strings.today.title }} />
+      <TodayScreen
+        hasLocation={place !== null}
+        locating={thing.locating}
+        locationProblem={thing.problem}
+        onUseMyLocation={useMyLocation}
+        gregorian={new Intl.DateTimeFormat(locale, {
+          weekday: 'short',
+          day: 'numeric',
+          month: 'short',
+          timeZone,
+        }).format(now)}
+        hijri={planned?.today.hijri ?? null}
+        placeLabel={place ? (place.label.split(',')[0]?.trim() ?? place.label) : null}
+        now={planned?.today.now.flatMap((entry) => toEntry(entry, strings) ?? []) ?? []}
+        next={toNext(planned?.today.next ?? null, now, strings)}
+        allDay={ahead.allDay.flatMap((entry) => toEntry(entry, strings, false) ?? [])}
+        tomorrow={ahead.tomorrow.flatMap((entry) => toEntry(entry, strings, false) ?? [])}
+        later={ahead.later.flatMap((entry) => toEntry(entry, strings) ?? [])}
+        prayers={
+          place && !signals?.userState.trackingPaused
+            ? PRAYERS.map((prayer) => ({
+                prayer,
+                done: marks[prayer] !== undefined,
+                passed: passed(prayer),
+              }))
+            : []
+        }
+        qada={Object.entries(qada).map(([prayer, count]) => ({
+          prayer: prayer as Prayer,
+          count: count ?? 0,
+        }))}
+        onMarkPrayer={togglePrayer}
+        onMakeUp={onMakeUpFor(place?.timeZone, now)}
+        suggestion={suggested}
+        onAddSuggestion={(id) => setEnabledItems([...enabled, id])}
+        onDismissSuggestion={(id) =>
+          setSuggestion({ ...suggestion, dismissed: [...suggestion.dismissed, id] })
+        }
+        qadaHref="/qada"
+        locationHref="/location"
+      />
+    </>
   )
 }
 

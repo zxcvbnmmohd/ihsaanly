@@ -6,6 +6,7 @@ import { Row } from '@/components/row'
 import { Screen } from '@/components/screen'
 import { Surface } from '@/components/surface'
 import { formatCoordinates, type DiagnosticsSummary } from '@/data/summary'
+import { permissionLabel } from '@/screens/notifications'
 import { useStrings } from '@/strings'
 import { colors } from '@/theme/colors'
 import { usePalette } from '@/theme/store'
@@ -71,7 +72,7 @@ export function DiagnosticsScreen({
         <Row
           title={strings.diagnostics.reminders}
           detail={strings.diagnostics.remindersDetail(
-            summary.reminders.permission,
+            permissionLabel(summary.reminders.permission, strings),
             summary.reminders.pending,
           )}
         />

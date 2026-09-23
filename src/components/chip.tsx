@@ -23,7 +23,15 @@ export function Chip({ label, selected, onPress, palette }: ChipProps): ReactEle
       // without making the pill itself look heavy in a row of them.
       hitSlop={6}
       className="rounded-full px-3 py-2"
-      style={{ backgroundColor: selected ? palette.accent : colors.secondarySystemBackground }}>
+      style={{
+        // Material's secondary background is lavender next to the warm wash;
+        // Android uses the same veil as the cards.
+        backgroundColor: selected
+          ? palette.accent
+          : process.env.EXPO_OS === 'android'
+            ? palette.surface
+            : colors.secondarySystemBackground,
+      }}>
       <Text
         className="text-sm font-semibold"
         style={{ color: selected ? palette.onAccent : colors.label }}>

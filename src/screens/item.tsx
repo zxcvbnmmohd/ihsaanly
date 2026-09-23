@@ -8,6 +8,7 @@ import { EmptyState } from '@/components/empty-state'
 import { EvidencePanel } from '@/components/evidence-panel'
 import { Row } from '@/components/row'
 import { Screen } from '@/components/screen'
+import { Surface } from '@/components/surface'
 import { SwitchRow } from '@/components/switch-row'
 import { Link, type Href } from 'expo-router'
 
@@ -129,6 +130,38 @@ export function ItemScreen({
         ) : null}
       </View>
 
+      {item.arabic ? (
+        <Surface style={{ borderRadius: 24, padding: 22 }}>
+          <View className="items-center gap-3">
+            <ArabicText variant="hero">{item.arabic}</ArabicText>
+            {item.transliteration ? (
+              <Text
+                className="text-center text-base italic"
+                style={{ color: colors.secondaryLabel }}>
+                {item.transliteration}
+              </Text>
+            ) : null}
+            {item.translation ? (
+              <Text className="text-center text-base" style={{ color: colors.secondaryLabel }}>
+                {item.translation}
+              </Text>
+            ) : null}
+          </View>
+        </Surface>
+      ) : null}
+
+      {counter && !done ? (
+        <Counter
+          label={title}
+          count={counter.count}
+          target={counter.target}
+          onTap={onTapCounter}
+          onReset={onResetCounter}
+          resetLabel={strings.item.counterReset}
+          palette={palette}
+        />
+      ) : null}
+
       {item.why ? (
         <Labelled label={strings.item.why}>
           <Text className="text-base leading-relaxed" style={{ color: colors.label }}>
@@ -156,42 +189,12 @@ export function ItemScreen({
         </Labelled>
       ) : null}
 
-      {item.arabic ? <ArabicText>{item.arabic}</ArabicText> : null}
-
-      {item.transliteration ? (
-        <Labelled label={strings.item.transliteration}>
-          <Text className="text-base italic" style={{ color: colors.label }}>
-            {item.transliteration}
-          </Text>
-        </Labelled>
-      ) : null}
-
-      {item.translation ? (
-        <Labelled label={strings.item.translation}>
-          <Text className="text-base" style={{ color: colors.label }}>
-            {item.translation}
-          </Text>
-        </Labelled>
-      ) : null}
-
       {item.note ? (
         <Labelled label={strings.item.note}>
           <Text className="text-sm" style={{ color: colors.label }}>
             {item.note}
           </Text>
         </Labelled>
-      ) : null}
-
-      {counter && !done ? (
-        <Counter
-          label={title}
-          count={counter.count}
-          target={counter.target}
-          onTap={onTapCounter}
-          onReset={onResetCounter}
-          resetLabel={strings.item.counterReset}
-          palette={palette}
-        />
       ) : null}
 
       <View className="gap-2">

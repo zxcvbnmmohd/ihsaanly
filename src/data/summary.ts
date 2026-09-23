@@ -12,7 +12,7 @@ export interface DiagnosticsSummary {
   records: number
   settings: number
   /** Reminder permission, and how many are queued. */
-  reminders: { permission: string; pending: number }
+  reminders: { permission: Diagnostics['reminders']['permission']; pending: number }
   /** How many recorded failures ride along, and when the last one was. */
   failures: { count: number; latest: string | null }
   hasError: boolean

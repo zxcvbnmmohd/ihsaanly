@@ -44,7 +44,7 @@ export const ar: Strings = {
     inAboutAnHour: 'بعد نحو ساعة',
     inAboutHours: (hours: number): string =>
       `بعد نحو ${count(hours, 'ساعة', 'ساعتين', 'ساعات', 'ساعة')}`,
-    context: 'بالقرب منك',
+    context: 'حيث أنت',
     comingUp: 'لاحقًا هذا الأسبوع',
     alsoToday: 'أيضًا اليوم',
     tomorrow: 'غدًا',
@@ -82,7 +82,7 @@ export const ar: Strings = {
     quietHours: 'ساعات الهدوء',
     quietHoursDetail: (from: number, to: number): string => `من ${from}:00 إلى ${to}:00`,
     quietHoursOff: 'معطَّل',
-    perDay: 'في اليوم على الأكثر',
+    perDay: 'الحد اليومي',
     permission: 'الإذن',
     permissionGranted: 'مسموح',
     permissionDenied: 'معطَّل من إعدادات النظام',
@@ -132,19 +132,22 @@ export const ar: Strings = {
   },
   qada: {
     title: 'القضاء',
-    intro: 'صلوات عليك من قبل أن تبدأ المتابعة، وما تراكم بعدها. عدد لا قائمة.',
+    intro:
+      'صلوات عليك من قبل أن تبدأ المتابعة، وما تراكم بعدها. عدد لا قائمة. يبدأ الحساب من أول صلاة تسجّلها.',
     owed: 'عليك من قبل',
     madeUp: 'قضيتها الآن',
     record: (n: number): string => `سجّل ${count(n, 'واحدة', 'اثنتين', 'صلوات', 'صلاة')}`,
     outstanding: (n: number): string => `${count(n, 'صلاة واحدة', 'صلاتان', 'صلوات', 'صلاة')} عليك`,
     none: 'لا شيء عليك',
     summary: (n: number): string => `${count(n, 'صلاة واحدة', 'صلاتان', 'صلوات', 'صلاة')} عليك`,
-    manage: 'ما عليك من قبل، أو عدة مرات معًا',
+    manage: 'عدّل ما عليك',
     manageDetail: 'حدّد ما تحمله من قبل وسجّل القضاء دفعة واحدة.',
   },
   history: {
     title: 'السجل',
     empty: 'لم يُسجَّل شيء بعد.',
+    firstWeek:
+      'كل يوم تسجّل فيه صلاة أو تُتمّ عملًا يُحفظ هنا. بعد أسبوع سترى أي الصلوات تصليها مبكرًا وأي الأعمال تداوم عليها.',
     daysActive: (days: number): string =>
       count(days, 'يوم واحد مسجَّل', 'يومان مسجَّلان', 'أيام مسجَّلة', 'يومًا مسجَّلًا'),
     prayers: 'الصلوات',
@@ -334,7 +337,7 @@ export const ar: Strings = {
     known: 'محفوظ',
     emptyOnToday: 'لا شيء في «اليوم» بعد. افتح أي عنصر وفعّله.',
     emptyKnown: 'لم تحدد شيئًا كمحفوظ بعد. تدرّب على عنصر ثم قل إنك حفظته.',
-    terms: 'معاني الكلمات',
+    terms: 'المصطلحات',
     termsDetail: 'السنة والرواتب والأذكار والقضاء وغيرها، في جملة لكل منها.',
   },
   category: {
@@ -375,7 +378,7 @@ export const ar: Strings = {
     quranReference: (surah: number, ayah: number): string => `القرآن ${surah}:${ayah}`,
   },
   glossary: {
-    title: 'الكلمات',
+    title: 'معاني الكلمات',
   },
   ruling: {
     fard: 'فرض',

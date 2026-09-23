@@ -76,6 +76,12 @@ export function HistoryScreen({
       <Text className="text-sm" style={{ color: colors.secondaryLabel }}>
         {strings.history.daysActive(daysActive)}
       </Text>
+      {/* Summaries need a few days to mean anything; say what is coming instead of a blank wash. */}
+      {daysActive < 7 ? (
+        <Text className="text-base leading-6" style={{ color: colors.label }}>
+          {strings.history.firstWeek}
+        </Text>
+      ) : null}
       <Group title={strings.history.prayers} summaries={prayers} labelFor={labelFor} />
       <Group title={strings.history.completed} summaries={items} labelFor={labelFor} />
     </Screen>

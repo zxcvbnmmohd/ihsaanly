@@ -1,7 +1,11 @@
 # What's left, and it's all yours
 
-Everything in `audit.md` that I could do is done. What remains needs an account,
-a domain, a recording, a device in your hand, or a decision only you can make.
+Everything in `audit.md` that I could do was done as of 2026-09-22. What remains
+for **you** needs an account, a domain, a recording, a device in your hand, or a
+decision only you can make.
+
+_(2026-09-23: a page-by-page walkthrough on `production` added twenty improvements
+to `audit.md`. They are all mine, not yours — none needs anything from this list.)_
 
 This list is ordered by what unblocks what, not by priority label. `audit.md`
 holds the reasoning behind each; this is the working copy.

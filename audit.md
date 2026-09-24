@@ -99,7 +99,7 @@ decisions, hardware or people. **Mixed** = AI does the wiring once you supply th
 
 - [ ] **P0 — Human** Apple Developer Program membership and Google Play Console account.
       Then run `bunx eas-cli init` to create the EAS project (writes `extra.eas.projectId`).
-      Also unblocks the App Group entitlement `group.com.ihsaanly.app` that
+      Also unblocks the App Group entitlement `group.app.ihsaanly.companion` that
       `src/storage/database.ts:4-11` is waiting on (`SHARED_CONTAINER_ENABLED = false`).
 - [x] **P0 — Human** App icon artwork. Superseded: generated in-repo from the app's own
       motif and approved by the user. Replacing it later with designer artwork is a file
@@ -990,7 +990,7 @@ gesture-dependent on iOS needs a real device or a machine with a working Simulat
 - [ ] `ITSAppUsesNonExemptEncryption`. P1.
 - [ ] `ios.buildNumber`. P1.
 - [ ] Widgets: static placeholders. P1. App Group needs paid membership.
-- [x] Bundle id `com.ihsaanly.app`, portrait only, `userInterfaceStyle: automatic`.
+- [x] Bundle id `app.ihsaanly.companion`, portrait only, `userInterfaceStyle: automatic`.
       Location strings are set in the `expo-location` plugin and are honest. No ATT (no
       tracking), no Sign in with Apple (no accounts), no associated domains needed.
       Per-library privacy manifests are present in `node_modules`; no first-party
@@ -1005,7 +1005,7 @@ gesture-dependent on iOS needs a real device or a machine with a working Simulat
 - [ ] `ACCESS_BACKGROUND_LOCATION` and the Play declaration. P0 decision.
 - [ ] `RECORD_AUDIO` / `MODIFY_AUDIO_SETTINGS` from the `expo-audio` plugin. P1.
 - [ ] `android.versionCode`. P1.
-- [x] Package `com.ihsaanly.app`, `predictiveBackGestureEnabled`, `supportsRtl` via plugin,
+- [x] Package `app.ihsaanly.companion`, `predictiveBackGestureEnabled`, `supportsRtl` via plugin,
       notification channels created before the permission prompt
       (`src/notifications/schedule.ts:81-85`). `SCHEDULE_EXACT_ALARM` deliberately absent
       (`AGENTS.md`). `INTERNET` is present from library defaults and unused; note it in

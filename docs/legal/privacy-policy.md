@@ -1,6 +1,6 @@
 # Privacy Policy
 
-**Ihsaanly** · Last updated: 21 September 2026
+**Ihsaanly** is published by Mohd Inc. · Last updated: 24 September 2026
 
 ## The short version
 
@@ -89,4 +89,4 @@ else it lives.
 
 ## Contact
 
-support@ihsaanly.app
+Mohd Inc. · support@ihsaanly.app

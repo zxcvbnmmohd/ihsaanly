@@ -1,7 +1,11 @@
 import * as SQLite from 'expo-sqlite'
 import { Paths } from 'expo-file-system'
+import Constants from 'expo-constants'
 
-const APP_GROUP = 'group.com.ihsaanly.app'
+/** Each build variant has its own group, set by `app.config.ts`. */
+const configuredGroup: unknown = Constants.expoConfig?.extra?.appGroup
+const APP_GROUP =
+  typeof configuredGroup === 'string' ? configuredGroup : 'group.app.ihsaanly.companion'
 
 /**
  * The single switch. Widgets run in a separate process and can only read a

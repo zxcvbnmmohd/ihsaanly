@@ -9,6 +9,9 @@
       "distribution": "internal",
       "android": {
         "buildType": "apk"
+      },
+      "env": {
+        "APP_VARIANT": "development"
       }
     },
     "development-simulator": {
@@ -17,13 +20,16 @@
         "simulator": true
       }
     },
-    "preview": {
+    "staging": {
       "distribution": "internal",
       "android": {
         "buildType": "apk"
       },
       "ios": {
         "image": "macos-tahoe-26.5-xcode-26.6"
+      },
+      "env": {
+        "APP_VARIANT": "staging"
       }
     },
     "production": {
@@ -33,6 +39,9 @@
       },
       "ios": {
         "image": "macos-tahoe-26.5-xcode-26.6"
+      },
+      "env": {
+        "APP_VARIANT": "production"
       }
     }
   }

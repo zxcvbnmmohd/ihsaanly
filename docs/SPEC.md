@@ -233,7 +233,7 @@ dataset; `Signals.coords` is identical either way and nothing downstream knows t
 | JSON snapshot (app group) | "what to show right now"                        | The widget process reads this; it should not link SQLite |
 
 ```ts
-const dir = Paths.appleSharedContainers['group.com.ihsaanly.app']?.uri
+const dir = Paths.appleSharedContainers['group.app.ihsaanly.companion']?.uri
 await SQLite.openDatabaseAsync('ihsaanly.db', undefined, dir)
 ```
 

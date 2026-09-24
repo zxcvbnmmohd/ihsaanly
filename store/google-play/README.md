@@ -63,7 +63,7 @@ trailing newline on purpose, so what you paste is exactly what was counted.
 
 ## Pushing
 
-`fastlane supply --skip_upload_apk --skip_upload_aab --skip_upload_images --skip_upload_screenshots --metadata_path store/google-play --package_name com.ihsaanly.app`
+`fastlane supply --skip_upload_apk --skip_upload_aab --skip_upload_images --skip_upload_screenshots --metadata_path store/google-play --package_name app.ihsaanly.companion`
 (needs a Play service-account JSON key; there is no fastlane setup in this repo), or
 paste each file into Play Console → Grow → Store presence → Main store listing, one
 language at a time.

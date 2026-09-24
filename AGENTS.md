@@ -168,6 +168,23 @@ in Expo Go. Opening the app there fails at import with "Cannot find native
 module", which surfaces as a route missing its default export rather than as
 anything that names the real cause. Run `npx expo run:android` / `run:ios`.
 
+### Three variants install side by side
+
+`app.config.ts` reads `APP_VARIANT` and derives the name, bundle id, Android
+package and App Group from it; `app.json` holds production.
+
+| Variant     | Identifier                           | App Group                                  |
+| ----------- | ------------------------------------ | ------------------------------------------ |
+| development | `app.ihsaanly.companion.development` | `group.app.ihsaanly.companion.development` |
+| staging     | `app.ihsaanly.companion.staging`     | `group.app.ihsaanly.companion.staging`     |
+| production  | `app.ihsaanly.companion`             | `group.app.ihsaanly.companion`             |
+
+Every `eas.json` profile sets the variant, and `bun run start|ios|android` set
+development. A missing variant means production, so a store build can never
+carry a test identifier. Code reads the App Group from
+`Constants.expoConfig.extra.appGroup`, never a literal. The `ihsaanly://`
+scheme is shared, because iOS widget bodies cannot import one.
+
 ### iOS-only modules need a platform split, not a runtime check
 
 `expo-widgets` throws when imported on Android, so `Platform.OS === 'ios'`
@@ -479,7 +496,7 @@ platform like any iOS-only module.
   isolated runtime and may reference nothing outside itself — not an import,
   not a module constant, not a helper — which is why each file repeats its
   helpers. `Group` does not render; the system font is used, not Amiri. Every
-  widget declares all seven families. The App Group `group.com.ihsaanly.app`
+  widget declares all seven families. The App Group `group.app.ihsaanly.companion`
   is required, so device builds wait for the Apple account.
 - **Android** (`src/widgets/android/`, `react-native-android-widget`): the task
   handler registered from `index.ts` (via `register.android.ts`; the library

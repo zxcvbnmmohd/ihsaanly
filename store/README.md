@@ -110,8 +110,8 @@ in `google-play/README.md`), or paste by hand in Play Console.
   }
   ```
 
-- [ ] **Copyright holder.** `"copyright": "2026 Ihsaanly"`. Replace with your legal name
-      or company if Ihsaanly is not a registered entity.
+- [x] **Copyright holder.** `"copyright": "2026 Mohd Inc."`, the company that publishes
+      the app on both stores.
 - [ ] **Screenshots:** 6.9"/6.7" and 6.5" iPhone, 13" iPad, Android phone. Per locale if
       you want localised shots; otherwise the English ones are used everywhere.
 - [ ] **Play feature graphic,** 1024×500, and a 512×512 Play icon.

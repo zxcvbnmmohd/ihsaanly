@@ -1,9 +1,9 @@
 {
   "scripts": {
     "postinstall": "git config core.hooksPath .githooks",
-    "start": "expo start",
-    "ios": "expo run:ios",
-    "android": "expo run:android",
+    "start": "APP_VARIANT=development expo start",
+    "ios": "APP_VARIANT=development expo run:ios",
+    "android": "APP_VARIANT=development expo run:android",
     "lint": "eslint .",
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit",

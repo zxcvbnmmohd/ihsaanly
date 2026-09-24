@@ -9,7 +9,7 @@
     "platforms": ["ios", "android"],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.ihsaanly.app",
+      "bundleIdentifier": "app.ihsaanly.companion",
       "infoPlist": {
         "UIBackgroundModes": ["location"],
         "UISupportedInterfaceOrientations~ipad": [
@@ -24,11 +24,11 @@
         "usesNonExemptEncryption": false
       },
       "entitlements": {
-        "com.apple.security.application-groups": ["group.com.ihsaanly.app"]
+        "com.apple.security.application-groups": ["group.app.ihsaanly.companion"]
       }
     },
     "android": {
-      "package": "com.ihsaanly.app",
+      "package": "app.ihsaanly.companion",
       "predictiveBackGestureEnabled": true,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
@@ -230,7 +230,7 @@
       [
         "expo-widgets",
         {
-          "groupIdentifier": "group.com.ihsaanly.app",
+          "groupIdentifier": "group.app.ihsaanly.companion",
           "widgets": [
             {
               "name": "RightNowWidget",

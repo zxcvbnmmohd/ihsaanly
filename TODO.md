@@ -17,11 +17,11 @@ one thing from you.
       Then, in the repo: `bunx eas-cli login`, then `bunx eas-cli init` — which
       writes `extra.eas.projectId` into `app.json`.
       Unblocks: every build, TestFlight, the iOS donation, and the App Group
-      (`group.com.ihsaanly.app`) that `src/storage/database.ts` is waiting on
+      (`group.app.ihsaanly.companion`) that `src/storage/database.ts` is waiting on
       with `SHARED_CONTAINER_ENABLED = false`.
 
       Android does not wait for Apple. Once `eas init` has run,
-      `bunx eas-cli build -p android --profile preview` works the same day.
+      `bunx eas-cli build -p android --profile staging` works the same day.
 
 - [ ] **Point `donate.ihsaanly.app` at a real page.**
       The donate row is live in the Android build and a reviewer will tap it.
@@ -156,7 +156,7 @@ Run `bun run validate:content` to see the current warnings.
       is wired and says "no audio" honestly. Needs a reciter **and** distribution
       permission. Blocks voice shortcuts (#20) and CarPlay/Android Auto (#21).
 - [ ] **CarPlay / Android Auto entitlement** request — also needs the audio.
-- [ ] **Widgets.** Ten iOS widgets now exist (`src/widgets/ios/`); device builds need the App Group `group.com.ihsaanly.app` from §1 (simulator builds work).
+- [ ] **Widgets.** Ten iOS widgets now exist (`src/widgets/ios/`); device builds need the App Group `group.app.ihsaanly.companion` from §1 (simulator builds work).
 - [ ] **Voluntary payment products** in both consoles, once §1 is done.
 
 **Blocked on other people, not on you:**

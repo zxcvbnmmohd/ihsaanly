@@ -6,4 +6,4 @@ stays there.
 - [Privacy policy](legal/privacy-policy)
 - [Support](legal/support)
 
-Questions: support@ihsaanly.com
+Questions: support@ihsaanly.app

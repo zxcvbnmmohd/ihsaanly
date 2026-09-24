@@ -377,7 +377,7 @@ export const aboutFixture: AboutScreenProps = {
   build: '12',
   itemCount: 32,
   reviewedBy: null,
-  donate: { destination: 'donate.ihsaanly.com', onPress: noop },
+  donate: { destination: 'donate.ihsaanly.app', onPress: noop },
   privacy: { destination: 'zxcvbnmmohd.github.io/ihsaanly/legal/privacy-policy', onPress: noop },
   licences: [
     {

@@ -85,7 +85,7 @@ decisions, hardware or people. **Mixed** = AI does the wiring once you supply th
     three decimals in `buildDiagnostics()`, so "approximate" is true of what is sent.
     The policy text still needs rewriting to match.
   - Payments: **resolved**. The app is free with nothing locked. The policy now describes
-    one optional donation that unlocks nothing, opening `donate.ihsaanly.com` in the
+    one optional donation that unlocks nothing, opening `donate.ihsaanly.app` in the
     browser on Android. iOS uses a purchase instead and is not built yet, waiting on the
     Apple account.
 - [x] **P0 — AI** Reviewer and grader claims. **Done.** `docs/legal/support.md` now says
@@ -104,12 +104,12 @@ decisions, hardware or people. **Mixed** = AI does the wiring once you supply th
 - [x] **P0 — Human** App icon artwork. Superseded: generated in-repo from the app's own
       motif and approved by the user. Replacing it later with designer artwork is a file
       swap plus one rerun of the script.
-- [x] **P0 — Human** Support email address. `support@ihsaanly.com`, now in both legal
+- [x] **P0 — Human** Support email address. `support@ihsaanly.app`, now in both legal
       documents. The mailbox must actually receive mail before submission.
 - [ ] **P0 — Human** Host the privacy policy and support page. **Prepared:** `docs/_config.yml`
       publishes only `legal/`, holding back `PRD.md` and `SPEC.md`, and `docs/index.md`
       links to both. Enable Pages on the repo, serving from `main` and `/docs`. Since you
-      own `ihsaanly.com`, a custom domain reads better than the github.io address; that is
+      own `ihsaanly.app`, a custom domain reads better than the github.io address; that is
       a `CNAME` file and a DNS record when you want it.
 - [ ] **P0 — Human** Content review. `content/items.json` has `reviewedBy: null` and all
       32 items `reviewed: false`; `bun run validate:content` warns on every build. The
@@ -697,7 +697,7 @@ portrait` and no width cap means edge-to-edge rows on a 12.9" screen, and it add
 - [ ] **P3 — Human** A minimal landing page (one page, same host as the policy) for the
       marketing URL field.
 - [x] **P3 — Human** Payment model. **Decided:** the app is free, everything unlocked, with
-      one optional donation that unlocks nothing. Android links out to `donate.ihsaanly.com`;
+      one optional donation that unlocks nothing. Android links out to `donate.ihsaanly.app`;
       iOS will use a purchase, because Apple's reviewers have refused external donation
       links in documented cases while Play's policy pushes the other way.
 
@@ -1296,7 +1296,7 @@ Human/legal verification required for each:
 
 # Donation, before you submit
 
-- [ ] **P0 — Human** `donate.ihsaanly.com` must resolve and show a real page. The row is
+- [ ] **P0 — Human** `donate.ihsaanly.app` must resolve and show a real page. The row is
       live in the Android build and a reviewer will tap it. A link to a domain that does
       not exist reads as a broken app.
 - [ ] **P1 — Human** Play Console: complete the Financial features declaration. Donations
@@ -1333,13 +1333,13 @@ Done, 2026-09-21:
 2. [x] AI: brand assets generated from the app's own motif and wired in — icon, adaptive,
        Android 13 monochrome, splash, notification glyph
 3. [x] AI: diagnostics preview screen, with coordinates rounded in the bundle itself
-4. [x] AI: donation row on About for Android, opening `donate.ihsaanly.com`
+4. [x] AI: donation row on About for Android, opening `donate.ihsaanly.app`
 5. [x] AI: privacy policy rewritten to match the code; reviewer and grader claims corrected
-6. [x] Human: support email chosen, `support@ihsaanly.com`
+6. [x] Human: support email chosen, `support@ihsaanly.app`
 
 Next, smallest human unblockers first:
 
-7. [ ] Human: point `donate.ihsaanly.com` at a real page. It ships in the Android build and
+7. [ ] Human: point `donate.ihsaanly.app` at a real page. It ships in the Android build and
        a reviewer will tap it.
 8. [ ] Human: enable GitHub Pages, serving `main` and `/docs`, so the two legal pages have
        URLs. `docs/` is already prepared to publish only `legal/`.

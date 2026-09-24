@@ -40,4 +40,4 @@ content is awaiting review, and says so plainly.
 
 ## Contact
 
-support@ihsaanly.com
+support@ihsaanly.app

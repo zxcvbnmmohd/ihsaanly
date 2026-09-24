@@ -25,7 +25,7 @@ trailing newline on purpose, so what you paste is exactly what was counted.
 - **Tags** (up to five, chosen from Play's own list in Store settings, so check each
   exists when you get there): Religion / spirituality, Prayer, Reference, Lifestyle,
   Calendar. Do not pick tags for features the app lacks (audio, Quran recitation).
-- **Contact email:** support@ihsaanly.com
+- **Contact email:** support@ihsaanly.app
 - **Website:** https://zxcvbnmmohd.github.io/ihsaanly/
 - **Privacy policy:** https://zxcvbnmmohd.github.io/ihsaanly/legal/privacy-policy
 - **Price:** Free. **Contains ads:** No. **In-app purchases:** No.
@@ -44,7 +44,7 @@ trailing newline on purpose, so what you paste is exactly what was counted.
 - Shares the user's current physical location with other users: **No**. Location is
   used on the device only.
 - Allows purchase of digital goods: **No**. The optional donation opens
-  `donate.ihsaanly.com` in the browser and unlocks nothing.
+  `donate.ihsaanly.app` in the browser and unlocks nothing.
 - Unrestricted internet access / web browser: **No**. The app opens only specific links
   (the privacy policy, the donation page) in the system browser.
 - Religious content is not a rating question.

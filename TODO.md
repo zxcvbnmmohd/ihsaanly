@@ -23,7 +23,7 @@ one thing from you.
       Android does not wait for Apple. Once `eas init` has run,
       `bunx eas-cli build -p android --profile preview` works the same day.
 
-- [ ] **Point `donate.ihsaanly.com` at a real page.**
+- [ ] **Point `donate.ihsaanly.app` at a real page.**
       The donate row is live in the Android build and a reviewer will tap it.
       A link to a domain that doesn't exist reads as a broken app.
 
@@ -61,9 +61,9 @@ one thing from you.
 - [ ] **Screenshots.** 6.7" and 6.5" iPhone, Android phone, 13" iPad (tablet is
       supported). Play also wants a 1024×500 feature graphic.
 - [ ] **A one-page landing site** for the marketing URL field — same host as the
-      policy. Optional: serve both from `ihsaanly.com` instead of github.io (a
+      policy. Optional: serve both from `ihsaanly.app` instead of github.io (a
       `CNAME` file in `docs/` and a DNS record).
-- [ ] **Confirm the support mailbox receives mail.** `support@ihsaanly.com` is in
+- [ ] **Confirm the support mailbox receives mail.** `support@ihsaanly.app` is in
       both legal documents.
 - [ ] **TestFlight + Play internal testing** with at least two external testers
       before production.

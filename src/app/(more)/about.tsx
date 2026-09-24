@@ -6,7 +6,7 @@ import { content } from '@/content'
 import { AboutScreen } from '@/screens/about'
 
 /** Shown as the row's detail, so the destination is known before the tap. */
-const DONATION_HOST = 'donate.ihsaanly.com'
+const DONATION_HOST = 'donate.ihsaanly.app'
 const PRIVACY_URL = 'https://zxcvbnmmohd.github.io/ihsaanly/legal/privacy-policy'
 
 /**

@@ -80,7 +80,7 @@ a gift, not a transaction. No advertising and no analytics, both of which would 
 the privacy proposition rather than merely complicate it.
 
 The mechanism differs by platform, because the two stores want opposite things. On Android
-a link opens `donate.ihsaanly.com` in the browser: Play's payments policy treats a
+a link opens `donate.ihsaanly.app` in the browser: Play's payments policy treats a
 contribution that reaches the recipient whole and unlocks nothing as peer-to-peer, outside
 its billing requirement. On iOS it will be a purchase instead, since Apple's reviewers have
 refused external donation links in documented cases even where the written guideline allows

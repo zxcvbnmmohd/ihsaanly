@@ -65,7 +65,7 @@ tier, nothing is locked, and there is no advertising.
 
 You may give an optional donation, which unlocks nothing and changes nothing
 about the app. On Android, tapping it opens your browser at
-`donate.ihsaanly.com`. That page is not part of the app, and whatever it
+`donate.ihsaanly.app`. That page is not part of the app, and whatever it
 collects is covered by its own privacy policy, not this one. We never see your
 payment details.
 
@@ -89,4 +89,4 @@ else it lives.
 
 ## Contact
 
-support@ihsaanly.com
+support@ihsaanly.app

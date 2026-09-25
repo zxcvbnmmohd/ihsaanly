@@ -2,16 +2,10 @@
   "common": {
     "skip": "Passer au contenu",
     "brandHome": "Ihsaanly, accueil",
-    "nav": {
-      "label": "Site",
-      "support": "Assistance",
-      "privacy": "Confidentialité",
-      "terms": "Conditions",
-      "donate": "Faire un don"
-    },
     "footer": {
-      "label": "Légal",
+      "label": "Site",
       "copyright": "© {year} Mohd Inc.",
+      "support": "Assistance",
       "privacy": "Politique de confidentialité",
       "terms": "Conditions d’utilisation",
       "donate": "Faire un don"
@@ -32,30 +26,25 @@
     },
     "governs": "Ceci est une traduction fournie à titre pratique. En cas de différence avec la <a href=\"{english}\">version anglaise</a>, c’est la version anglaise qui prévaut."
   },
-
   "home": {
     "title": "Ihsaanly · La sunna qui correspond au moment",
     "description": "Ihsaanly vous montre la sunna qui correspond au moment, avec sa source. Privée, apaisée et gratuite, par Mohd Inc.",
     "shareDescription": "La sunna qui correspond au moment, avec sa source.",
     "shareImageAlt": "Ihsaanly : la sunna qui correspond au moment, et d’où elle vient.",
-
     "hero": {
       "title": "La sunna qui correspond au moment, et d’où elle vient.",
       "lede": "Ihsaanly vous montre ce qui est pertinent en ce moment : les adhkar du matin après le lever du soleil, les deux rak’at après Dhuhr, la du’a en sortant de chez vous. Chaque élément indique sa source.",
       "tryHint": "Essayez-le ici même : marquez une prière, ou ouvrez un élément pour voir sa source."
     },
-
     "stores": {
       "appStorePrefix": "Télécharger sur",
       "playPrefix": "Disponible sur",
       "soon": "Ihsaanly arrive bientôt sur {store}."
     },
-
     "demo": {
       "label": "Aperçu interactif de l’application Ihsaanly",
       "noscript": "Cet aperçu nécessite JavaScript pour fonctionner. Tout ce qu’il montre se trouve aussi dans l’application elle-même."
     },
-
     "day": {
       "title": "Vous marquez la prière. La sunna apparaît.",
       "intro": "Touchez Dhuhr une fois que vous l’avez priée, et le dhikr qui la suit vous attend. L’application indique la partie de la journée où vous êtes, jamais une heure, afin de ne jamais entrer en conflit avec les horaires de votre mosquée.",
@@ -76,13 +65,11 @@
       },
       "outro": "Après chaque prière, le tasbih et Ayat al-Kursi. Pour les moments qu’aucune horloge ne peut situer, comme sortir de chez soi, se mettre en route ou monter un escalier, les du’as sont à portée d’un geste grâce à un widget sur l’écran d’accueil."
     },
-
     "source": {
       "title": "Chaque élément indique sa source",
       "intro": "Chaque acte indique d’où il vient : le verset, ou le recueil de hadith avec sa référence et son authentification, et qui l’a authentifié quand le recueil ne le précise pas lui-même. Là où les savants divergent, l’application le signale plutôt que de choisir à votre place.",
       "plain": "Chaque élément explique aussi, en mots simples, pourquoi il compte et comment le faire."
     },
-
     "specimen": {
       "next": "Afficher une autre du’a",
       "hideTransliteration": "Masquer la translittération",
@@ -96,13 +83,11 @@
       "enteringTitle": "En rentrant chez soi",
       "enteringSource": "Sahih Muslim 2018."
     },
-
     "coming": {
       "title": "Savoir ce qui arrive",
       "fasting": "Les jours de jeûne apparaissent à l’avance : les lundis et les jeudis, les Jours blancs, le jour d’Achoura, le jour d’Arafat et les six jours de Shawwal. Ils sont marqués « prévu », car ils sont calculés plutôt qu’observés.",
       "shift": "Si la date hégirienne de votre communauté diffère, décalez-la jusqu’à deux jours et tout s’ajuste en conséquence."
     },
-
     "calm": {
       "title": "Apaisée par conception",
       "reminders": "Deux ou trois rappels par jour, pas quinze, et rien pendant les heures calmes. Ignorez n’importe quoi sans avoir à vous justifier. Apprenez une du’a et marquez-la comme connue, et l’application arrête de vous la rappeler.",
@@ -111,7 +96,6 @@
       "neverFailed": "Une notification vous disant que vous avez échoué",
       "neverPaywall": "Un mur payant sur le moindre contenu religieux"
     },
-
     "inside": {
       "title": "Ce que contient l’application",
       "adhkar": "Les adhkar du matin et du soir, ainsi que le tasbih et Ayat al-Kursi après la prière",
@@ -122,20 +106,17 @@
       "library": "Une bibliothèque que vous pouvez chercher par nom ou par situation, et un glossaire de ses termes",
       "widgets": "Dix widgets pour l’écran d’accueil, de ce qui est pertinent maintenant aux jours à venir"
     },
-
     "private": {
       "title": "Privée par défaut",
       "pledge": "Les données de votre pratique ne quittent jamais votre téléphone, sauf si vous choisissez de les envoyer.",
       "none": "Aucun compte, aucun serveur, aucune statistique d’usage et aucune publicité. L’application fonctionne entièrement hors ligne, et entièrement sans la moindre autorisation : refusez la position et choisissez plutôt votre ville.",
       "free": "Ihsaanly est gratuite, rien n’y est verrouillé. Consultez la <a href=\"{privacy}\">politique de confidentialité</a> pour savoir exactement ce qui est conservé et ce qui peut quitter votre appareil."
     },
-
     "honest": {
       "title": "Honnête sur elle-même",
       "review": "Le contenu est rédigé et en attente de relecture par un savant nommé, et l’écran À propos de l’application le précise. Une fois qu’un relecteur l’aura approuvé, il y sera crédité.",
       "languages": "L’anglais est la version originale. L’application parle aussi arabe, français, italien, japonais, hindi, ourdou, somali, mandarin et cantonais, et ces traductions sont des brouillons en attente de relecture par des locuteurs qualifiés. Cette page elle-même est aussi une traduction en brouillon."
     },
-
     "questions": {
       "title": "Questions",
       "timesQ": "Pourquoi l’application n’affiche-t-elle pas les heures de prière ?",
@@ -152,7 +133,6 @@
       "brokenA": "Allez dans Plus, puis Vos données, puis Envoyer un rapport de diagnostic. Vous verrez tout ce qu’il contient avant qu’il ne soit envoyé, et c’est vous qui choisissez sa destination. Ou écrivez à <a href=\"{email}\">support@ihsaanly.app</a>."
     }
   },
-
   "privacy": {
     "title": "Politique de confidentialité",
     "pageTitle": "Politique de confidentialité · Ihsaanly",
@@ -160,7 +140,6 @@
     "meta": "Ihsaanly est publiée par Mohd Inc. Dernière mise à jour le {date}.",
     "summaryAccount": "Ihsaanly n’a ni compte, ni serveur, ni statistiques d’usage. Vos prières, vos réglages et votre pratique sont enregistrés sur votre appareil et y restent.",
     "summaryNothing": "Rien ne quitte votre téléphone, sauf si vous choisissez de l’envoyer.",
-
     "storedTitle": "Ce que l’application conserve sur votre appareil",
     "storedMarks": "Quelles prières vous avez marquées, et quand",
     "storedCompleted": "Quels actes facultatifs vous avez accomplis",
@@ -172,42 +151,33 @@
     "storedSettings": "Vos réglages : position, méthode de calcul, décalage de la date hégirienne, rappels, langue et apparence",
     "storedHome": "Si vous activez les rappels en sortant de chez vous, les coordonnées de l’unique lieu que vous avez défini comme domicile",
     "storedWhere": "Tout cela se trouve dans une base de données sur votre appareil. Nous ne pouvons rien en voir.",
-
     "locationTitle": "Position",
     "locationRough": "Ihsaanly a besoin d’une position approximative pour déterminer les parties de la journée. Vous pouvez autoriser l’accès à la position, ou choisir une ville dans une liste intégrée à l’application. L’application fonctionne pleinement dans les deux cas, et elle fonctionne même sans aucune autorisation accordée.",
     "locationNever": "Vos coordonnées sont utilisées sur votre appareil pour calculer les plages de prière et la date hégirienne. <strong>Elles ne sont jamais transmises</strong>, à une exception près que vous contrôlez : si vous envoyez un rapport de diagnostic, une version arrondie de celles-ci y figure. Voir ci-dessous.",
     "locationGeofence": "Si vous activez les rappels en sortant de chez vous, l’application surveille une seule zone autour d’un lieu que vous avez défini. Cette fonction est désactivée par défaut, utilise le géorepérage natif du téléphone, et votre position n’est jamais envoyée nulle part.",
-
     "leaveTitle": "Ce qui peut quitter votre appareil, et uniquement quand vous le choisissez",
     "leaveTwo": "Deux choses, toutes deux depuis <em>Plus → Vos données</em>, toutes deux via le menu de partage natif de votre téléphone, pour que ce soit vous qui choisissiez leur destination.",
     "leaveExport": "<strong>Exporter mes données.</strong> Vos réglages et l’historique complet de votre pratique, sous forme de texte lisible, pour que vous puissiez le conserver ou le transférer sur un nouveau téléphone.",
     "leaveReport": "<strong>Envoyer un rapport de diagnostic.</strong> Pour résoudre un problème. Il contient vos réglages, l’historique de votre pratique, vos coordonnées approximatives, votre appareil et la version de son système, ainsi que les erreurs récentes éventuelles. Avant tout envoi, un écran vous montre exactement ce qu’il contient, et vous pouvez lire le rapport intégral. Les coordonnées du rapport sont arrondies à environ une centaine de mètres. Rien n’est envoyé tant que vous ne choisissez pas de l’envoyer, et c’est vous qui choisissez sa destination.",
     "leaveReceive": "Nous ne recevons un rapport de diagnostic que si vous nous en envoyez un.",
-
     "donationsTitle": "Dons",
     "donationsFree": "Ihsaanly est gratuite. Chaque partie de l’application est gratuite, et le restera. Il n’existe aucun palier payant, rien n’est verrouillé, et il n’y a aucune publicité.",
     "donationsOptional": "Vous pouvez faire un don facultatif, qui ne débloque rien et ne change rien à l’application. Sur Android, le toucher ouvre votre navigateur sur donate.ihsaanly.app. Cette page ne fait pas partie de l’application, et tout ce qu’elle collecte relève de sa propre politique de confidentialité, et non de celle-ci. Nous ne voyons jamais vos coordonnées de paiement.",
-
     "notTitle": "Ce que nous ne faisons pas",
     "notAccount": "Aucun compte, aucune adresse e-mail ni numéro de téléphone",
     "notAds": "Aucune publicité, et aucun identifiant publicitaire",
     "notAnalytics": "Aucune statistique d’usage, aucune télémétrie, aucun rapport de plantage",
     "notTracking": "Aucun pistage entre applications ou sites web",
     "notSelling": "Aucune vente ni partage de quoi que ce soit, car nous ne détenons rien à vendre",
-
     "siteTitle": "Ce site web",
     "siteText": "Ce site ne dépose aucun cookie, n’exécute aucune statistique d’usage et ne charge rien provenant d’une autre société. Comme tout serveur web, l’hébergeur peut conserver des journaux d’accès standards, comme votre adresse IP et la page demandée, à des fins de sécurité et de fonctionnement.",
     "siteStorage": "Si vous choisissez une langue ou une apparence, votre navigateur mémorise ce choix sur votre propre appareil. Il ne nous est jamais transmis.",
-
     "childrenTitle": "Enfants",
     "childrenText": "Ihsaanly ne collecte rien auprès de personne, quel que soit son âge.",
-
     "deleteTitle": "Supprimer vos données",
     "deleteText": "<em>Plus → Vos données → Supprimer mes données</em> supprime tout ce qui se trouve sur l’appareil et fait repartir l’application de zéro. Supprimer l’application fait de même, car elle ne vit nulle part ailleurs.",
-
     "contactTitle": "Contact"
   },
-
   "terms": {
     "title": "Conditions d’utilisation",
     "pageTitle": "Conditions d’utilisation · Ihsaanly",
@@ -215,45 +185,32 @@
     "meta": "Ihsaanly est publiée par Mohd Inc. Dernière mise à jour le {date}.",
     "summaryFree": "Ihsaanly est gratuite, pour votre propre pratique. C’est une compagne, non une savante : pour tout ce qui compte vraiment, demandez à une personne qualifiée.",
     "summaryMistakes": "Nous faisons de notre mieux pour que tout soit exact, mais nous ne pouvons pas garantir l’absence totale d’erreurs.",
-
     "whoTitle": "Qui nous sommes",
     "whoText": "Ihsaanly (« l’application ») est publiée par Mohd Inc. (« nous »). Ces conditions s’appliquent à l’application et à ce site web. En utilisant l’un ou l’autre, vous les acceptez. Si vous ne les acceptez pas, veuillez ne pas utiliser l’application.",
-
     "useTitle": "Utiliser l’application",
     "useLicence": "Nous vous accordons une licence personnelle, non exclusive et non cessible pour utiliser l’application sur les appareils que vous possédez ou contrôlez, pour votre propre pratique. L’application est gratuite et ne nécessite aucun compte.",
     "useCopy": "Merci de ne pas copier, modifier, vendre ou redistribuer l’application, ni d’essayer d’en extraire le code source, sauf dans les cas où la loi vous l’autorise.",
-
     "religiousTitle": "Contenu religieux",
     "religiousGuide": "L’application présente des actes recommandés avec leurs sources : le verset, ou le recueil de hadith avec sa référence et son authentification. C’est un guide de pratique, non un avis religieux, et elle ne remplace pas un savant qualifié. Là où les savants divergent, l’application le signale ; elle ne décide pas à votre place.",
     "religiousReview": "Le contenu est en attente de relecture par un savant nommé, et l’application le précise sur son écran À propos. Les traductions autres que l’anglais sont des brouillons en attente de relecture par des locuteurs qualifiés. Si vous trouvez une erreur, merci de nous en informer.",
-
     "datesTitle": "Plages de prière et dates",
     "datesText": "Les parties de la journée, la date hégirienne et les jours de jeûne sont calculés à partir de votre position et de la méthode que vous choisissez. Le calcul et l’observation locale de la lune diffèrent souvent, c’est pourquoi les jours de jeûne sont marqués « prévu ». Là où votre mosquée ou votre communauté indique autrement, suivez-la.",
-
     "dataTitle": "Vos données",
     "dataText": "Tout ce que l’application enregistre reste sur votre appareil. Nous n’en détenons aucune copie, et ne pouvons donc pas la restaurer si votre téléphone est perdu ou si l’application est supprimée. Utilisez <strong>Plus → Vos données → Exporter mes données</strong> si vous voulez une sauvegarde. La <a href=\"{privacy}\">politique de confidentialité</a> explique exactement ce qui est conservé et ce qui peut quitter votre appareil.",
-
     "donationsTitle": "Dons",
     "donationsText": "Tout don est volontaire, ne débloque rien et ne change rien à l’application. Les achats effectués via l’App Store ou Google Play sont gérés par Apple ou Google selon leurs propres conditions, y compris leurs politiques de remboursement.",
-
     "storesTitle": "Boutiques d’applications",
     "storesText": "Si vous avez téléchargé l’application depuis l’App Store ou Google Play, leurs conditions s’appliquent également. Les présentes conditions ne concernent que vous et Mohd Inc. Apple et Google n’y sont pas parties et ne sont pas responsables de l’application, de son contenu ou de son assistance.",
-
     "warrantyTitle": "Aucune garantie",
     "warrantyText": "L’application et ce site web sont fournis tels quels, sans garantie d’aucune sorte, dans la mesure permise par la loi. Nous ne garantissons pas qu’ils seront toujours disponibles ou exempts d’erreurs.",
-
     "liabilityTitle": "Limites de notre responsabilité",
     "liabilityText": "Dans la mesure permise par la loi, Mohd Inc. n’est pas responsable des pertes indirectes ou consécutives résultant de votre utilisation de l’application ou de ce site web, et notre responsabilité totale envers vous est limitée au montant que vous nous avez versé au cours des douze mois précédant la réclamation. Rien dans les présentes conditions ne limite les droits dont vous bénéficiez en vertu du droit de la consommation et auxquels il est impossible de renoncer.",
-
     "changesTitle": "Modifications",
     "changesText": "Nous pouvons mettre à jour ces conditions à mesure que l’application évolue. Le cas échéant, nous modifierons la date en haut de cette page. Continuer à utiliser l’application après une modification signifie que vous acceptez les nouvelles conditions.",
-
     "lawTitle": "Droit applicable",
     "lawText": "Les présentes conditions sont régies par les lois du Canada et de la province dans laquelle Mohd Inc. est constituée.",
-
     "contactTitle": "Contact"
   },
-
   "notFound": {
     "pageTitle": "Page introuvable · Ihsaanly",
     "title": "Cette page n’est pas là.",

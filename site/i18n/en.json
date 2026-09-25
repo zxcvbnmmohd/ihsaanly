@@ -1,23 +1,15 @@
 {
   "_comment": "English copy for the Ihsaanly website. Every other language is site/i18n/<code>.json with the same shape; any key it leaves out falls back to English and is listed by `bun run build:site`. Keys named _comment or ending in _comment are notes for translators and are never shown. Values may contain only <a href=\"…\">, <strong>, <em> and <br>. Words in braces such as {privacy} are filled in by the build or the page: keep them exactly as written, and move them wherever the sentence needs them. Keep the product name Ihsaanly, the company name Mohd Inc. and the store names App Store and Google Play in Latin letters.",
-
   "common": {
     "_comment": "Shared by every page: the header, the footer and the small controls in them.",
     "skip": "Skip to content",
     "brandHome": "Ihsaanly, home",
     "brandHome_comment": "Spoken label of the logo link in the header, which goes to the home page.",
-    "nav": {
-      "label": "Site",
-      "label_comment": "Screen-reader name of the main navigation.",
-      "support": "Support",
-      "privacy": "Privacy",
-      "terms": "Terms",
-      "donate": "Donate"
-    },
     "footer": {
-      "label": "Legal",
-      "label_comment": "Screen-reader name of the footer navigation.",
+      "label": "Site",
+      "label_comment": "Screen-reader name of the footer navigation, which holds every link on the site.",
       "copyright": "© {year} Mohd Inc.",
+      "support": "Support",
       "privacy": "Privacy policy",
       "terms": "Terms of use",
       "donate": "Donate"
@@ -45,7 +37,6 @@
     "governs": "This is a translation for convenience. If it differs from the <a href=\"{english}\">English version</a>, the English version applies.",
     "governs_comment": "Shown at the top of the privacy policy and terms in every language except English."
   },
-
   "home": {
     "title": "Ihsaanly · The sunnah that fits the moment",
     "title_comment": "The browser tab and search result title of the home page.",
@@ -54,13 +45,11 @@
     "shareDescription": "The sunnah that fits the moment, with its source.",
     "shareDescription_comment": "Shown under the title when the link is shared in a chat or social post.",
     "shareImageAlt": "Ihsaanly: the sunnah that fits the moment, and where it comes from.",
-
     "hero": {
       "title": "The sunnah that fits the moment, and where it comes from.",
       "lede": "Ihsaanly shows you what is relevant right now: the morning adhkar after sunrise, the two rak’ah after Dhuhr, the dua as you leave the house. Every item shows its source.",
       "tryHint": "Try it right here: mark a prayer, or open an item to see its source."
     },
-
     "stores": {
       "_comment": "The two store buttons. The small line sits above the store name, as on the stores' own badges; use the stores' official wording in your language where it exists.",
       "appStorePrefix": "Download on the",
@@ -68,12 +57,10 @@
       "soon": "Ihsaanly is coming soon to {store}.",
       "soon_comment": "Shown briefly when a store button is tapped before launch. {store} is App Store or Google Play."
     },
-
     "demo": {
       "label": "Interactive preview of the Ihsaanly app",
       "noscript": "This preview needs JavaScript to run. Everything it shows is also in the app itself."
     },
-
     "day": {
       "title": "You mark the prayer. The sunnah appears.",
       "intro": "Tap Dhuhr when you have prayed it, and the dhikr that follows is waiting. The app shows the part of the day you are in, not a clock time, so it never competes with your mosque’s timetable.",
@@ -95,13 +82,11 @@
       },
       "outro": "After every prayer, the tasbih and Ayat al-Kursi. For the moments no clock can find, such as leaving home, setting off or going up a flight of stairs, the duas are a tap away on a home screen widget."
     },
-
     "source": {
       "title": "Every item shows its source",
       "intro": "Each act shows where it comes from: the verse, or the hadith collection with its reference and grading, and who graded it where the collection does not carry its own. Where scholars differ, the app says so rather than choosing for you.",
       "plain": "Every item also explains, in plain words, why it matters and how to do it."
     },
-
     "specimen": {
       "_comment": "A sample dua card. The Arabic stays Arabic; the dua titles and meanings come from the app's own translated content. Only the buttons and the source lines are here.",
       "next": "Show another dua",
@@ -117,13 +102,11 @@
       "enteringTitle": "Coming home",
       "enteringSource": "Sahih Muslim 2018."
     },
-
     "coming": {
       "title": "Know what is coming",
       "fasting": "Fasting days appear in advance: Mondays and Thursdays, the White Days, Ashura, Arafah and the six of Shawwal. They are marked “expected”, because they are calculated rather than sighted.",
       "shift": "If your community’s Hijri date differs, shift it by up to two days and everything follows."
     },
-
     "calm": {
       "title": "Calm by design",
       "reminders": "Two or three reminders a day, not fifteen, and nothing during quiet hours. Dismiss anything without explaining yourself. Learn a dua and mark it as known, and the app stops reminding you about it.",
@@ -132,7 +115,6 @@
       "neverFailed": "A notification telling you that you failed",
       "neverPaywall": "A paywall on any religious content"
     },
-
     "inside": {
       "title": "What is inside",
       "adhkar": "Morning and evening adhkar, and the tasbih and Ayat al-Kursi after prayer",
@@ -143,21 +125,18 @@
       "library": "A library you can search by name or by situation, and a glossary of its terms",
       "widgets": "Ten home screen widgets, from what is relevant now to the days coming up"
     },
-
     "private": {
       "title": "Private by default",
       "pledge": "Your worship data never leaves your phone unless you choose to send it.",
       "none": "No account, no server, no analytics and no advertising. The app works fully offline, and fully without a single permission: decline location and choose your city instead.",
       "free": "Ihsaanly is free, with nothing locked. Read the <a href=\"{privacy}\">privacy policy</a> for exactly what is stored and what can leave your device."
     },
-
     "honest": {
       "title": "Honest about itself",
       "review": "The content is drafted and awaiting review by a named scholar, and the app’s About screen says so. When a reviewer has approved it, they will be credited there.",
       "languages": "English is the original. The app also speaks Arabic, French, Italian, Japanese, Hindi, Urdu, Somali, Mandarin and Cantonese, and those translations are drafts awaiting review by qualified speakers.",
       "languages_comment": "In a translation, you may add that this page itself is also a draft translation."
     },
-
     "questions": {
       "title": "Questions",
       "_comment": "Each question pairs with the answer under it. 'More', 'Hijri date', 'Your data' and 'Send a diagnostic report' are screen names in the app: use the app's own wording in your language.",
@@ -175,7 +154,6 @@
       "brokenA": "Go to More, then Your data, then Send a diagnostic report. It shows you everything it contains before anything is sent, and you choose where it goes. Or write to <a href=\"{email}\">support@ihsaanly.app</a>."
     }
   },
-
   "privacy": {
     "_comment": "The privacy policy. A legal text: translate faithfully rather than freely. <em> marks a path through the app's screens (shown unbroken, not italic): use the app's own screen names in your language.",
     "title": "Privacy Policy",
@@ -185,7 +163,6 @@
     "meta_comment": "{date} is filled in by the build in this language's own date format.",
     "summaryAccount": "Ihsaanly has no account, no server and no analytics. Your prayers, your settings and your practice are recorded on your device and stay there.",
     "summaryNothing": "Nothing leaves your phone unless you choose to send it.",
-
     "storedTitle": "What the app stores on your device",
     "storedMarks": "Which prayers you have marked, and when",
     "storedCompleted": "Which optional acts you have completed",
@@ -197,43 +174,34 @@
     "storedSettings": "Your settings: location, calculation method, Hijri offset, reminders, language and appearance",
     "storedHome": "If you turn on leaving-home reminders, the coordinates of the one place you set as home",
     "storedWhere": "All of it lives in a database on your device. We cannot see any of it.",
-
     "locationTitle": "Location",
     "locationRough": "Ihsaanly needs a rough location to work out the parts of the day. You can grant location access, or pick a city from a list built into the app. The app works fully either way, and it works with no permissions granted at all.",
     "locationNever": "Your coordinates are used on your device to calculate prayer windows and the Hijri date. <strong>They are never transmitted</strong>, with one exception you control: if you send a diagnostic report, a rounded version of them is in it. See below.",
     "locationGeofence": "If you turn on leaving-home reminders, the app monitors a single region around a place you set. This is off by default, uses the phone’s own geofencing, and your position is never sent anywhere.",
-
     "leaveTitle": "What can leave your device, and only when you choose it",
     "leaveTwo": "Two things, both from <em>More → Your data</em>, both through your phone’s own share sheet so you pick where they go.",
     "leaveExport": "<strong>Export my data.</strong> Your settings and your full practice record, as readable text, so you can keep it or move to a new phone.",
     "leaveReport": "<strong>Send a diagnostic report.</strong> For fixing a problem. It contains your settings, your practice record, your approximate coordinates, your device and OS version, and any recent errors. Before anything is sent you are shown a screen listing exactly what it holds, and you can read the whole report in full. Coordinates in the report are rounded to about a hundred metres. Nothing is sent until you choose to send it, and you choose where it goes.",
     "leaveReceive": "We only receive a diagnostic report if you send us one.",
-
     "donationsTitle": "Donations",
     "donationsFree": "Ihsaanly is free. Every part of it is free, and stays free. There is no paid tier, nothing is locked, and there is no advertising.",
     "donationsOptional": "You may give an optional donation, which unlocks nothing and changes nothing about the app. On Android, tapping it opens your browser at donate.ihsaanly.app. That page is not part of the app, and whatever it collects is covered by its own privacy policy, not this one. We never see your payment details.",
-
     "notTitle": "What we do not do",
     "notAccount": "No account, email address or phone number",
     "notAds": "No advertising, and no advertising identifier",
     "notAnalytics": "No analytics, telemetry or crash reporting",
     "notTracking": "No tracking across apps or websites",
     "notSelling": "No selling or sharing of anything, because we hold nothing to sell",
-
     "siteTitle": "This website",
     "siteText": "This site sets no cookies, runs no analytics and loads nothing from any other company. Like any web server, the host may keep standard access logs, such as your IP address and the page requested, for security and operation.",
     "siteStorage": "If you choose a language or an appearance, your browser remembers that choice on your own device. It is never sent to us.",
     "siteStorage_comment": "New sentence (2026-09-25): the language and light/dark choices are kept in the browser's local storage.",
-
     "childrenTitle": "Children",
     "childrenText": "Ihsaanly collects nothing from anyone, of any age.",
-
     "deleteTitle": "Deleting your data",
     "deleteText": "<em>More → Your data → Delete my data</em> removes everything on the device and starts the app over. Deleting the app does the same, because there is nowhere else it lives.",
-
     "contactTitle": "Contact"
   },
-
   "terms": {
     "_comment": "The terms of use. A legal text: translate faithfully rather than freely.",
     "title": "Terms of Use",
@@ -242,45 +210,32 @@
     "meta": "Ihsaanly is published by Mohd Inc. Last updated {date}.",
     "summaryFree": "Ihsaanly is free, for your own practice. It is a companion, not a scholar: for anything that matters, ask someone qualified.",
     "summaryMistakes": "We work hard to get it right, but we cannot promise it is free of mistakes.",
-
     "whoTitle": "Who we are",
     "whoText": "Ihsaanly (“the app”) is published by Mohd Inc. (“we”, “us”). These terms apply to the app and to this website. By using either, you agree to them. If you do not agree, please do not use the app.",
-
     "useTitle": "Using the app",
     "useLicence": "We give you a personal, non-exclusive, non-transferable licence to use the app on devices you own or control, for your own practice. The app is free and needs no account.",
     "useCopy": "Please do not copy, modify, sell or redistribute the app, or try to extract its source code, except where the law allows you to.",
-
     "religiousTitle": "Religious content",
     "religiousGuide": "The app presents recommended acts with their sources: the verse, or the hadith collection with its reference and grading. It is a guide to practice, not a religious ruling, and it does not replace a qualified scholar. Where scholars differ, the app says so; it does not decide for you.",
     "religiousReview": "The content is awaiting review by a named scholar, and the app says so on its About screen. Translations other than English are drafts awaiting review by qualified speakers. If you find a mistake, please tell us.",
-
     "datesTitle": "Prayer windows and dates",
     "datesText": "The parts of the day, the Hijri date and the fasting days are calculated from your location and the method you choose. Calculation and local moon sighting often differ, which is why fasting days are marked “expected”. Where your mosque or community says otherwise, follow them.",
-
     "dataTitle": "Your data",
     "dataText": "Everything the app records stays on your device. We do not hold a copy, so we cannot restore it if your phone is lost or the app is deleted. Use <strong>More → Your data → Export my data</strong> if you want a backup. The <a href=\"{privacy}\">privacy policy</a> explains exactly what is stored and what can leave your device.",
-
     "donationsTitle": "Donations",
     "donationsText": "Any donation is voluntary, unlocks nothing and changes nothing about the app. Purchases made through the App Store or Google Play are handled by Apple or Google under their own terms, including their refund policies.",
-
     "storesTitle": "App stores",
     "storesText": "If you downloaded the app from the App Store or Google Play, their terms also apply. These terms are between you and Mohd Inc. only. Apple and Google are not parties to them and are not responsible for the app, its content or its support.",
-
     "warrantyTitle": "No warranty",
     "warrantyText": "The app and this website are provided as they are, without warranties of any kind, to the extent the law allows. We do not promise that they will always be available or free of errors.",
-
     "liabilityTitle": "Limits on our liability",
     "liabilityText": "To the extent the law allows, Mohd Inc. is not liable for any indirect or consequential loss arising from your use of the app or this website, and our total liability to you is limited to the amount you have paid us in the twelve months before the claim. Nothing in these terms limits rights you have under consumer protection law that cannot be waived.",
-
     "changesTitle": "Changes",
     "changesText": "We may update these terms as the app changes. When we do, we will change the date at the top of this page. Continuing to use the app after a change means you accept the new terms.",
-
     "lawTitle": "Governing law",
     "lawText": "These terms are governed by the laws of Canada and of the province in which Mohd Inc. is incorporated.",
-
     "contactTitle": "Contact"
   },
-
   "notFound": {
     "_comment": "The page shown for an address that does not exist.",
     "pageTitle": "Page not found · Ihsaanly",

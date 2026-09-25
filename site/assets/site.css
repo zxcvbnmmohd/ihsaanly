@@ -189,36 +189,6 @@ a:hover {
   color: var(--accent);
 }
 
-.masthead nav {
-  display: flex;
-  gap: clamp(0.9rem, 3vw, 1.75rem);
-  font-size: 1rem;
-}
-
-.masthead nav a {
-  color: var(--ink-soft);
-  text-decoration: none;
-}
-
-.masthead nav a:hover,
-.masthead nav a[aria-current='page'] {
-  color: var(--ink);
-}
-
-/* Nav on one side, the language and appearance controls after it. */
-.masthead-end {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 0.5rem clamp(0.9rem, 3vw, 1.75rem);
-}
-
-.masthead nav {
-  flex-wrap: wrap;
-  row-gap: 0.25rem;
-}
-
 .tools {
   display: flex;
   align-items: center;
@@ -915,42 +885,6 @@ html:lang(ur) .legal .summary {
 }
 
 @media (max-width: 30rem) {
-  .masthead {
-    flex-wrap: wrap;
-  }
-
-  /* Brand and controls share the first row; the nav takes the second. */
-  .masthead-end {
-    display: contents;
-  }
-
-  .tools {
-    order: 1;
-    margin-inline-start: auto;
-  }
-
-  .masthead nav {
-    order: 2;
-    width: 100%;
-  }
-
-  /* Privacy and Terms are in the footer of every page; the header keeps the
-     two links a visitor looks for first, so it stays two short rows in every
-     language. */
-  .masthead nav .nav-legal {
-    display: none;
-  }
-
-  /* The globe alone; the language's name stays for screen readers. */
-  .lang-current {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
-  }
-
   .day li {
     grid-template-columns: minmax(0, 1fr);
     gap: 0.1rem;

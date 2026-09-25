@@ -582,8 +582,7 @@ function languageMenu(
                 <circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.5" />
                 <path d="M3.5 12h17M12 3.5c2.4 2.3 3.6 5.1 3.6 8.5s-1.2 6.2-3.6 8.5c-2.4-2.3-3.6-5.1-3.6-8.5s1.2-6.2 3.6-8.5Z" fill="none" stroke="currentColor" stroke-width="1.5" />
               </svg>
-              <span class="visually-hidden">${escapeText(get(strings, 'common.language.label'))}:</span>
-              <span class="lang-current">${escapeText(locale.name)}</span>
+              <span class="visually-hidden">${escapeText(get(strings, 'common.language.label'))}: ${escapeText(locale.name)}</span>
             </summary>
             <ul class="lang-list">
 ${items}

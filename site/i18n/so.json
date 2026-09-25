@@ -2,16 +2,10 @@
   "common": {
     "skip": "U gudub qoraalka",
     "brandHome": "Ihsaanly, bogga hore",
-    "nav": {
-      "label": "Bogga",
-      "support": "Taageero",
-      "privacy": "Asturnaanta",
-      "terms": "Shuruudaha",
-      "donate": "Deeq bixi"
-    },
     "footer": {
-      "label": "Sharciga",
+      "label": "Bogga",
       "copyright": "© {year} Mohd Inc.",
+      "support": "Taageero",
       "privacy": "Siyaasadda asturnaanta",
       "terms": "Shuruudaha isticmaalka",
       "donate": "Deeq bixi"
@@ -32,30 +26,25 @@
     },
     "governs": "Kani waa turjumaad la soo bandhigay si loo fududeeyo. Haddii ay ka duwan tahay <a href=\"{english}\">nooca Ingiriisiga</a>, nooca Ingiriisigu ayaa khuseeya."
   },
-
   "home": {
     "title": "Ihsaanly · Sunnada ku habboon xilliga",
     "description": "Ihsaanly wuxuu ku tusayaa sunnada ku habboon xilliga, isagoo la socda asalkeeda. Waa mid asturan, deggan, oo bilaash ah, oo ay soo saartay Mohd Inc.",
     "shareDescription": "Sunnada ku habboon xilliga, iyadoo la socota asalkeeda.",
     "shareImageAlt": "Ihsaanly: sunnada ku habboon xilliga, iyo meesha ay ka timid.",
-
     "hero": {
       "title": "Sunnada ku habboon xilliga, iyo meesha ay ka timid.",
       "lede": "Ihsaanly wuxuu ku tusayaa waxa hadda khuseeya: adkaarta subaxa ee barqo ka dib, labada rakco ee Duhurka ka dib, ducada markaad guriga ka baxdo. Qodob kastaa wuxuu muujiyaa asalkiisa.",
       "tryHint": "Halkan isku day: calaamadi salaad, ama fur qodob si aad u aragto asalkiisa."
     },
-
     "stores": {
       "appStorePrefix": "Ka soo deji",
       "playPrefix": "Ka hel",
       "soon": "Ihsaanly dhawaan wuxuu iman doonaa {store}."
     },
-
     "demo": {
       "label": "Tijaabo firfircoon oo abka Ihsaanly ah",
       "noscript": "Tijaabadan waxay u baahan tahay JavaScript si ay u shaqeyso. Wax kasta oo ay tustaa waxay sidoo kale ku jiraan abka laftiisa."
     },
-
     "day": {
       "title": "Adigu salaadda calaamadi. Sunnadu way soo baxaysaa.",
       "intro": "Taabo Duhur marka aad tukato, dikriga ka dambeeyaana wuu ku sugayaa. Abku wuxuu tusaa qaybta maalinta aad ku jirto, marna saacad ma aha, sidaa darteed marnaba kuma khilaafi doono jadwalka masaajidkaaga.",
@@ -76,13 +65,11 @@
       },
       "outro": "Salaad kasta kadib, tasbiixa iyo Aayatul Kursi. Xilliyada aan saacaddu ogaan karin, sida guriga ka bixidda, safar bilaabidda ama jaranjaro fuulidda, ducooyinku hal taabasho ayey u jiraan widget-ka shaashadda hore."
     },
-
     "source": {
       "title": "Qodob kastaa wuxuu muujiyaa asalkiisa",
       "intro": "Camal kastaa wuxuu muujiyaa meesha uu ka yimid: aayadda, ama kutubta xadiiska ee leh tixraaceeda iyo darajadeeda, iyo qofka darajeeyey marka kutubtu aanay lahayn mid iyaga u gaar ah. Meesha ay culimadu ku kala duwan yihiin, abku wuu sheegaa halkii uu kuu doortaa.",
       "plain": "Qodob kastaa sidoo kale wuxuu ku sharraxaa, erayo fudud, sababta ay muhiim u tahay iyo sida loo sameeyo."
     },
-
     "specimen": {
       "next": "Tus duco kale",
       "hideTransliteration": "Qari higgaadda Laatiinka",
@@ -96,13 +83,11 @@
       "enteringTitle": "Guriga oo la yimaado",
       "enteringSource": "Sahih Muslim 2018."
     },
-
     "coming": {
       "title": "Ogow waxa soo socda",
       "fasting": "Maalmaha soonka waxay ka muuqdaan wakhti hore: Isniinta iyo Khamiista, Maalmaha Cad, Caashuuraa, maalinta Carafo iyo lixda maalmood ee Shawwaal. Waxaa lagu calaamadiyaa \"la filayo\", sababtoo ah waa la xisaabiyaa halkii la arki lahaa.",
       "shift": "Haddii taariikhda Hijriga ee bulshadaadu ay ka duwan tahay, ilaa laba maalmood u beddel, wax kastana way raaci doonaan."
     },
-
     "calm": {
       "title": "Deggan, sida loo qorsheeyey",
       "reminders": "Laba ama saddex xusuusiye maalintii, ma aha shan iyo toban, waxbana kuma dhici doono saacadaha aamusnaanta. Wax kasta xir adigoon sabab bixin. Baro duco oo calaamadi inaad taqaan, abkuna wuu joojin doonaa inuu ku xusuusiyo.",
@@ -111,7 +96,6 @@
       "neverFailed": "Ogeysiin kuu sheegaysa inaad fashilantay",
       "neverPaywall": "Xannibaad lacag ah oo saaran wax kasta oo diini ah"
     },
-
     "inside": {
       "title": "Waxa abka ku jira",
       "adhkar": "Adkaarta subaxa iyo galabta, iyo tasbiixa iyo Aayatul Kursi salaadda kadib",
@@ -122,20 +106,17 @@
       "library": "Maktabad aad ku raadin karto magac ama xaalad, iyo qaamuus ereyadeeda ah",
       "widgets": "Toban widget oo shaashadda hore ah, laga bilaabo waxa hadda khuseeya ilaa maalmaha soo socda"
     },
-
     "private": {
       "title": "Asturan si aasaasi ah",
       "pledge": "Xogta camalkaaga marna kama baxdo taleefankaaga, ilaa aad doorato inaad dirto.",
       "none": "Akoon ma jiro, server ma jiro, falanqeyn ma jirto, xayaysiisna ma jiro. Abku si buuxda ayuu u shaqeeyaa isagoon internet lahayn, isla markaana ogolaansho toona la’aantiis: diid goobta oo beddelkeeda dooro magaaladaada.",
       "free": "Ihsaanly waa bilaash, waxna kuma xirna. Akhri <a href=\"{privacy}\">siyaasadda asturnaanta</a> si aad si sax ah ugu ogaato waxa la kaydiyo iyo waxa qalabkaaga ka bixi kara."
     },
-
     "honest": {
       "title": "Daacad ku saabsan naftiisa",
       "review": "Waxa ku jira waa qabyo, waxayna sugayaan in aqoonyahan diini ah oo magaciisa la sheegay dib u eego, shaashadda Ku Saabsan ee abkuna sidaas ayay sheegtaa. Marka dib-u-eegaha ansixiyo, halkaas ayaa lagu sheegi doonaa magaciisa.",
       "languages": "Ingiriisigu waa asalka. Abku wuxuu sidoo kale ku hadlaa Carabi, Faransiis, Talyaani, Jabbaan, Hindi, Urdu, Soomaali, Mandarin iyo Kantoniis, turjumaaddaasna waa qabyo sugaya dib u eegis qof si fiican u yaqaan. Boggan qudhiisuna waa turjumaad qabyo ah."
     },
-
     "questions": {
       "title": "Su’aalaha",
       "timesQ": "Waa maxay sababta abku uusan u muujin waqtiyada salaadda?",
@@ -152,7 +133,6 @@
       "brokenA": "Tag Dheeraad, kadibna Xogtaada, kadibna Dir warbixin cilad-baaris. Wuxuu ku tusayaa wax walba oo uu ka kooban yahay ka hor inta aan waxba la dirin, adigana waxaad dooranaysaa meesha uu tago. Ama u qor <a href=\"{email}\">support@ihsaanly.app</a>."
     }
   },
-
   "privacy": {
     "title": "Siyaasadda Asturnaanta",
     "pageTitle": "Siyaasadda Asturnaanta · Ihsaanly",
@@ -160,7 +140,6 @@
     "meta": "Ihsaanly waxaa soo saartay Mohd Inc. Markii ugu dambeysay ee la cusboonaysiiyay {date}.",
     "summaryAccount": "Ihsaanly ma laha akoon, server iyo falanqeyn midna. Salaadahaaga, dejintaada iyo camalkaaga waxaa lagu diiwaangeliyaa qalabkaaga, halkaasna ayey ku sii jiraan.",
     "summaryNothing": "Waxba kama baxaan taleefankaaga ilaa aad doorato inaad dirto.",
-
     "storedTitle": "Waxa abku ku kaydiyo qalabkaaga",
     "storedMarks": "Salaadaha aad calaamadisay, iyo goorta",
     "storedCompleted": "Camallada ikhtiyaariga ah ee aad dhammaysay",
@@ -172,42 +151,33 @@
     "storedSettings": "Dejintaada: goobta, habka xisaabinta, u beddelka taariikhda Hijriga, xusuusiyeyaasha, luqadda iyo muuqaalka",
     "storedHome": "Haddii aad shiddo xusuusiyeyaasha guriga ka bixidda, isku-duwayaasha meesha kaliya ee aad u dejisay guri",
     "storedWhere": "Dhammaantood waxay ku jiraan kaydka xogta ee qalabkaaga. Wax kama arki karno.",
-
     "locationTitle": "Goobta",
     "locationRough": "Ihsaanly wuxuu u baahan yahay goob qiyaas ah si uu u xisaabiyo qaybaha maalinta. Waxaad siin kartaa ogolaanshaha goobta, ama ka dooran kartaa liiska abka ku jira magaalo. Abku si buuxda ayuu labada dhinacba u shaqeeyaa, wuxuuna u shaqeeyaa xitaa iyadoo aan ogolaansho toona la siin.",
     "locationNever": "Isku-duwayaashaada waxaa lagu isticmaalaa qalabkaaga si loo xisaabiyo waqtiyada salaadda iyo taariikhda Hijriga. <strong>Marnaba lama gudbiyo</strong>, mid ka reeban oo aad adigu xakameyso mooyaane: haddii aad dirto warbixin cilad-baaris, nooc la qiyaasay ayaa ku jira. Eeg hoos.",
     "locationGeofence": "Haddii aad shiddo xusuusiyeyaasha guriga ka bixidda, abku wuxuu la socdaa hal gobol oo ku wareegsan meel aad dejisay. Tan si aasaasi ah waa dansan tahay, waxayna isticmaashaa geofencing-ka gaarka ah ee taleefanka, goobtaadana marnaba meelna looma diro.",
-
     "leaveTitle": "Waxa qalabkaaga ka bixi kara, oo keliya markaad doorato",
     "leaveTwo": "Laba shay, labaduba waxay ka yimaadaan <em>Dheeraad → Xogtaada</em>, labaduba waxay u maraan warqadda wadaagista ee taleefankaaga gaarka ah si adigu u doorato meesha ay tagaan.",
     "leaveExport": "<strong>Dhoofi xogtayda.</strong> Dejintaada iyo diiwaanka buuxa ee camalkaaga, sida qoraal la akhriyi karo, si aad u hayn karto ama u geeyn karto taleefan cusub.",
     "leaveReport": "<strong>Dir warbixin cilad-baaris.</strong> Waxaa loogu talagalay xallinta dhibaato. Waxay ka kooban tahay dejintaada, diiwaanka camalkaaga, isku-duwayaashaada qiyaasta ah, taleefankaaga iyo nooca nidaamkiisa hawlgalinta, iyo khaladaad dhawaan dhacay oo kasta. Intaan waxba la dirin waxaa lagu tusaa shaashad taxaysa si sax ah waxa ay ka kooban tahay, waxaadna akhrin kartaa warbixinta oo dhan. Isku-duwayaasha warbixinta waxaa loo qiyaasaa qiyaastii boqol mitir. Waxba lama dirayo ilaa aad doorato inaad dirto, adigaana dooranaya meesha ay u socoto.",
     "leaveReceive": "Warbixin cilad-baaris uun ayaannu helnaa haddii aad mid noo soo dirto.",
-
     "donationsTitle": "Deeqaha",
     "donationsFree": "Ihsaanly waa bilaash. Qayb kasta oo isaga ah waa bilaash, waana ahaan doontaa bilaash. Heer la bixiyo ma jiro, waxna kuma xirna, xayaysiisna ma jiro.",
     "donationsOptional": "Waxaad bixin kartaa deeq ikhtiyaari ah, taasoo aan waxba furayn ama isbeddel ku samaynayn abka. Android-ka, taabashadeedu waxay furaysaa biraawsarkaaga ee donate.ihsaanly.app. Boggaas qayb kama aha abka, wixii uu ururiyana waxaa daboolaya siyaasaddiisa asturnaanta gaarka ah, ee ma aha tan. Marnaba ma aragno faahfaahinta lacag-bixintaada.",
-
     "notTitle": "Waxaanan samayn",
     "notAccount": "Akoon, ciwaan email ah ama lambar taleefan midna ma jiraan",
     "notAds": "Xayaysiis ma jiro, aqoonsi xayaysiisna ma jiro",
     "notAnalytics": "Falanqeyn, la-socod (telemetry) ama warbixin toos ah oo burbur ku saabsan midna ma jiraan",
     "notTracking": "Lama raaco abab kale ama websites-ka kale",
     "notSelling": "Iib ama wadaagid waxba midna ma jiro, sababtoo ah waxba kuma haynno wax aan iibino",
-
     "siteTitle": "Boggan",
     "siteText": "Boggani ma dejiyo cookies, ma shaqeeyo falanqeyn, wax kamana soo raro shirkad kale. Sida server kasta oo web ah, martida (hosting-ka) ayaa hayn kara diiwaano gelitaan oo caadi ah, sida ciwaankaaga IP-ga iyo bogga la codsaday, ujeedooyin amni iyo hawlgalineed dartood.",
     "siteStorage": "Haddii aad dooratid luqad ama muuqaal, biraawsarkaagu wuxuu xusuustaa doorashadaas qalabkaaga gaarka ah. Marnaba noolama diro.",
-
     "childrenTitle": "Carruurta",
     "childrenText": "Ihsaanly qofna waxba kama ururiyo, da’ kastaba ha ahaadee.",
-
     "deleteTitle": "Tirtiridda xogtaada",
     "deleteText": "<em>Dheeraad → Xogtaada → Tirtir xogtayda</em> ayaa tirtira wax walba oo qalabka ku jira oo abka dib u bilaabaysa. Tirtiridda abkuna isla wax ayay qabataa, sababtoo ah meel kale kuma jiro.",
-
     "contactTitle": "Xiriir"
   },
-
   "terms": {
     "title": "Shuruudaha Isticmaalka",
     "pageTitle": "Shuruudaha Isticmaalka · Ihsaanly",
@@ -215,45 +185,32 @@
     "meta": "Ihsaanly waxaa soo saartay Mohd Inc. Markii ugu dambeysay ee la cusboonaysiiyay {date}.",
     "summaryFree": "Ihsaanly waa bilaash, camalkaaga gaarka ah dartiis. Waa saaxiib, mana aha aqoonyahan: wax kasta oo muhiim ah, weydii qof aqoon leh.",
     "summaryMistakes": "Aad ayaan u dadaalnaa inaan sax ka dhigno, laakiin ma balan qaadi karno inuusan khalad lahayn.",
-
     "whoTitle": "Waxaan Nahay",
     "whoText": "Ihsaanly (\"abka\") waxaa soo saartay Mohd Inc. (\"annaga\"). Shuruudahani waxay khuseeyaan abka iyo boggan. Isticmaalka mid kastaba, waxaad ogolaanaysaa. Haddaanad ogolayn, fadlan ha isticmaalin abka.",
-
     "useTitle": "Isticmaalka Abka",
     "useLicence": "Waxaan ku siinaynaa shati shakhsi ah, aan gaarka ahayn, oo aan la wareejin karin, si aad ugu isticmaasho abka qalabyada aad leedahay ama xakameyso, camalkaaga gaarka ah dartiis. Abku waa bilaash umana baahna akoon.",
     "useCopy": "Fadlan ha koobiyeyn, wax ka bedelin, iibin ama dib u qaybin abka, ama isku day inaad ka soo saarto koodkiisa asalka ah, marka sharcigu kuu oggolaado mooyaane.",
-
     "religiousTitle": "Nuxurka Diinta",
     "religiousGuide": "Abku wuxuu soo bandhigaa camallo la talinayo iyadoo la socda ilahooda: aayadda, ama kutubta xadiiska iyadoo la socda tixraaceeda iyo darajadeeda. Waa hage camal, mana aha xukun diini ah, mana beddelayo aqoonyahan la aqoonsan yahay. Meesha ay culimadu ku kala duwan yihiin, abku wuu sheegaa; kuuma go’aamin doono.",
     "religiousReview": "Waxa ku jira waa la sugayaa dib u eegis aqoonyahan magaciisa la sheegay, abkuna sidaas ayuu ku sheegayaa shaashadda Ku Saabsan. Turjumaadaha aan Ingiriisiga ahayn waa qabyo sugaya dib u eegis qof si fiican u yaqaan. Haddii aad heshid khalad, fadlan noo sheeg.",
-
     "datesTitle": "Waqtiyada Salaadda iyo Taariikhaha",
     "datesText": "Qaybaha maalinta, taariikhda Hijriga iyo maalmaha soonka waxaa lagu xisaabiyaa goobtaada iyo habka aad doorato. Xisaabinta iyo muuqashada bisha ee deegaanku inta badan way kala duwan yihiin, taasoo ah sababta maalmaha soonku loogu calaamadiyo \"la filayo\". Meesha masaajidkaaga ama bulshadaadu si kale u sheegto, raac iyaga.",
-
     "dataTitle": "Xogtaada",
     "dataText": "Wax walba oo abku diiwaangeliyo waxay ku sii jiraan qalabkaaga. Nuqul kama haynno, sidaa darteed ma soo celin karno haddii taleefankaagu lumo ama abka la tirtiro. Isticmaal <strong>Dheeraad → Xogtaada → Dhoofi xogtayda</strong> haddii aad rabto kaydin. <a href=\"{privacy}\">Siyaasadda asturnaanta</a> ayaa si sax ah u sharraxaysa waxa la kaydiyo iyo waxa qalabkaaga ka bixi kara.",
-
     "donationsTitle": "Deeqaha",
     "donationsText": "Deeq kastaa waa ikhtiyaari, waxna kuma furayso, isbeddelna kuma samaynayso abka. Iibsiga lagu sameeyo App Store ama Google Play waxaa maamula Apple ama Google marka loo eego shuruudahooda gaarka ah, oo ay ku jiraan siyaasadahooda dib u celinta lacagta.",
-
     "storesTitle": "Dukaamada Abab",
     "storesText": "Haddii aad abka ka soo dejisay App Store ama Google Play, shuruudahooduna sidoo kale way khuseeyaan. Shuruudahani waxay u dhexeeyaan adiga iyo Mohd Inc. oo keliya. Apple iyo Google kuma jiraan, kama masuulna abka, waxa ku jira ama taageeradiisa.",
-
     "warrantyTitle": "Damaanad Ma Jirto",
     "warrantyText": "Abka iyo boggan waxaa loo bixiyaa sidii ay yihiin, iyadoo aan la bixin damaanad nooc kastaba ha ahaadee, ilaa heerka sharcigu ogolaado. Uma ballan qaadno inay had iyo jeer diyaar noqonayaan ama ay khaladaad ka madhan yihiin.",
-
     "liabilityTitle": "Xadka Mas’uuliyadeenna",
     "liabilityText": "Ilaa heerka sharcigu ogolaado, Mohd Inc. mas’uul kama aha khasaaro kasta oo dadban ama ka dhalata isticmaalka abka ama boggan, mas’uuliyadeenna guudna waxaa xaddidan qaddarka aad na siisay laba iyo tobankii bilood ee ka horreeyay dacwadda. Waxba shuruudahan kama jiraan oo xaddida xuquuqda aad ku leedahay sharciga ilaalinta macaamiisha ee aan la iska dayn karin.",
-
     "changesTitle": "Isbeddellada",
     "changesText": "Waxaan cusboonaysiin karnaa shuruudahan marka abku isbeddelo. Marka taas aan sameyno, waxaan beddelaynaa taariikhda ku taal bogga sare ee boggan. Sii wadidda isticmaalka abka isbeddel ka dib waxay macnaheedu tahay inaad aqbashay shuruudaha cusub.",
-
     "lawTitle": "Sharciga Khuseeya",
     "lawText": "Shuruudahan waxaa xukuma sharciyada Kanada iyo goboolka ay Mohd Inc. ku diiwaangashan tahay.",
-
     "contactTitle": "Xiriir"
   },
-
   "notFound": {
     "pageTitle": "Bog Lama Helin · Ihsaanly",
     "title": "Boggani halkan ma joogo.",

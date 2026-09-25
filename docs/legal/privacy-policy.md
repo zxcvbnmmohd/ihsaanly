@@ -77,6 +77,12 @@ payment details.
 - No tracking across apps or websites
 - No selling or sharing of anything, because we hold nothing to sell
 
+## This website
+
+This site sets no cookies, runs no analytics and loads nothing from any other
+company. Like any web server, the host may keep standard access logs, such as
+your IP address and the page requested, for security and operation.
+
 ## Children
 
 Ihsaanly collects nothing from anyone, of any age.

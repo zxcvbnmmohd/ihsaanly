@@ -1,0 +1,605 @@
+/* Ihsaanly — one stylesheet for every page. Colours are the app's own palette
+   (src/theme/palettes.ts); the Latin face is the platform serif, as in the app,
+   and Arabic is Amiri, served from this folder so no page calls a third party. */
+
+@font-face {
+  font-family: 'Amiri';
+  src: url('Amiri-Regular.ttf') format('truetype');
+  font-display: swap;
+}
+
+:root {
+  --wash-top: #f7f0e9;
+  --wash-bottom: #e8cdbd;
+  --paper: #fffaf6;
+  --ink: #2b1f1a;
+  --ink-soft: #7a665c;
+  --accent: #a94a32;
+  --on-accent: #fff6f0;
+  --rule: rgba(43, 31, 26, 0.14);
+  --tint: rgba(169, 74, 50, 0.1);
+
+  --serif: 'Iowan Old Style', Charter, 'Bitstream Charter', 'Sitka Text', Cambria, Georgia, serif;
+  --arabic: 'Amiri', 'Geeza Pro', 'Noto Naskh Arabic', serif;
+
+  --measure: 36rem;
+  --page: 70rem;
+  --gutter: clamp(1rem, 4vw, 2.5rem);
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --wash-top: #1b1411;
+    --wash-bottom: #3a241d;
+    --paper: #2a1c17;
+    --ink: #f7ece6;
+    --ink-soft: #bba89e;
+    --accent: #e28c6f;
+    --on-accent: #1d120d;
+    --rule: rgba(247, 236, 230, 0.16);
+    --tint: rgba(226, 140, 111, 0.14);
+  }
+}
+
+:root[data-theme='dark'] {
+  --wash-top: #1b1411;
+  --wash-bottom: #3a241d;
+  --paper: #2a1c17;
+  --ink: #f7ece6;
+  --ink-soft: #bba89e;
+  --accent: #e28c6f;
+  --on-accent: #1d120d;
+  --rule: rgba(247, 236, 230, 0.16);
+  --tint: rgba(226, 140, 111, 0.14);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--wash-top) linear-gradient(180deg, var(--wash-top) 0, var(--wash-bottom) 100%)
+    no-repeat;
+  background-attachment: fixed;
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 1.125rem;
+  line-height: 1.65;
+  font-kerning: normal;
+  font-variant-numeric: oldstyle-nums;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: var(--accent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+}
+
+a:hover {
+  text-decoration-thickness: 2px;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.skip {
+  position: absolute;
+  left: var(--gutter);
+  top: -3rem;
+  padding: 0.5rem 0.9rem;
+  background: var(--paper);
+  color: var(--ink);
+  z-index: 10;
+}
+
+.skip:focus {
+  top: 0.75rem;
+}
+
+.wrap {
+  width: 100%;
+  max-width: var(--page);
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+}
+
+/* ---- Header and footer ---- */
+
+.masthead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: var(--ink);
+  text-decoration: none;
+  font-size: 1.25rem;
+  letter-spacing: 0.01em;
+}
+
+.brand svg {
+  width: 1.9rem;
+  height: 1.9rem;
+  color: var(--accent);
+}
+
+.masthead nav {
+  display: flex;
+  gap: clamp(0.9rem, 3vw, 1.75rem);
+  font-size: 1rem;
+}
+
+.masthead nav a {
+  color: var(--ink-soft);
+  text-decoration: none;
+}
+
+.masthead nav a:hover,
+.masthead nav a[aria-current='page'] {
+  color: var(--ink);
+}
+
+.colophon {
+  margin-top: clamp(4rem, 10vw, 7rem);
+  padding-top: 2rem;
+  padding-bottom: 3rem;
+  border-top: 1px solid var(--rule);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 1rem 2rem;
+  font-size: 0.95rem;
+  color: var(--ink-soft);
+}
+
+.colophon p {
+  margin: 0;
+}
+
+.colophon nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+}
+
+.colophon a {
+  color: var(--ink-soft);
+}
+
+/* ---- Home: opening ---- */
+
+.opening {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+  gap: clamp(2.5rem, 6vw, 5.5rem);
+  align-items: center;
+  padding-top: clamp(2rem, 6vw, 5rem);
+  padding-bottom: clamp(3rem, 8vw, 6rem);
+}
+
+.opening h1 {
+  margin: 0 0 1.5rem;
+  font-weight: 400;
+  font-size: clamp(2.5rem, 5.4vw, 4.25rem);
+  line-height: 1.04;
+  letter-spacing: -0.018em;
+  text-wrap: balance;
+}
+
+.opening .lede {
+  margin: 0 0 2rem;
+  max-width: 30rem;
+  font-size: 1.25rem;
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+
+.availability {
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.55rem 1rem 0.55rem 0.8rem;
+  border-radius: 999px;
+  background: var(--tint);
+  font-size: 1rem;
+}
+
+.availability::before {
+  content: '';
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+/* The one bold thing on the site: a real item, as the app shows it, with the
+   memorising controls the app has. */
+.specimen {
+  margin: 0;
+  padding: clamp(1.5rem, 4vw, 2.75rem);
+  background: var(--paper);
+  border-radius: 1.75rem 1.75rem 1.75rem 0.4rem;
+  box-shadow:
+    0 1px 0 var(--rule),
+    0 30px 60px -40px rgba(89, 38, 22, 0.45);
+}
+
+.specimen-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.specimen-head h2 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 400;
+  color: var(--ink-soft);
+}
+
+.specimen-head button {
+  font: inherit;
+  font-size: 0.95rem;
+  color: var(--accent);
+  background: none;
+  border: 0;
+  padding: 0.25rem 0;
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+}
+
+.arabic {
+  margin: 0 0 1.25rem;
+  font-family: var(--arabic);
+  font-size: clamp(1.8rem, 3.6vw, 2.6rem);
+  line-height: 2;
+  text-align: right;
+  color: var(--ink);
+}
+
+.transliteration {
+  margin: 0 0 0.75rem;
+  font-style: italic;
+  color: var(--ink);
+}
+
+.translation {
+  margin: 0 0 1.5rem;
+  color: var(--ink-soft);
+}
+
+.transliteration,
+.translation {
+  transition:
+    opacity 240ms ease,
+    filter 240ms ease;
+}
+
+.is-hidden {
+  opacity: 0.12;
+  filter: blur(6px);
+  user-select: none;
+}
+
+.source {
+  margin: 0;
+  padding-top: 1rem;
+  border-top: 1px solid var(--rule);
+  font-size: 0.95rem;
+  color: var(--ink-soft);
+}
+
+.source strong {
+  font-weight: 400;
+  color: var(--ink);
+}
+
+.practice {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 1.25rem;
+}
+
+.practice button {
+  font: inherit;
+  font-size: 0.95rem;
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  border: 1px solid var(--rule);
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.practice button[aria-pressed='true'] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+}
+
+/* ---- Home: sections ---- */
+
+.section {
+  padding-top: clamp(3rem, 7vw, 5rem);
+  display: grid;
+  grid-template-columns: minmax(0, 17rem) minmax(0, 1fr);
+  gap: 1rem clamp(2rem, 6vw, 5rem);
+}
+
+.section > h2 {
+  margin: 0;
+  font-weight: 400;
+  font-size: clamp(1.6rem, 2.8vw, 2.1rem);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+.section-body {
+  max-width: var(--measure);
+}
+
+.section-body > p:first-child {
+  margin-top: 0;
+}
+
+.section-body p {
+  margin: 0 0 1rem;
+}
+
+.quiet {
+  color: var(--ink-soft);
+}
+
+/* The day, as the app reads it: from Maghrib, because the Islamic day begins there. */
+.day {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-width: var(--measure);
+}
+
+.day li {
+  position: relative;
+  display: grid;
+  grid-template-columns: 6.5rem minmax(0, 1fr);
+  gap: 1.25rem;
+  padding: 0 0 1.4rem;
+}
+
+.day li::before {
+  content: '';
+  position: absolute;
+  left: 5.3rem;
+  top: 0.55em;
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  border: 1.5px solid var(--accent);
+  background: var(--paper);
+}
+
+.day li::after {
+  content: '';
+  position: absolute;
+  left: calc(5.3rem + 0.26rem);
+  top: 1.4em;
+  bottom: 0.2rem;
+  width: 1px;
+  background: var(--rule);
+}
+
+.day li:last-child::after {
+  display: none;
+}
+
+.day li:first-child::before {
+  background: var(--accent);
+}
+
+.day .when {
+  color: var(--ink-soft);
+}
+
+.day .what {
+  margin: 0;
+}
+
+.contents {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.contents li {
+  padding: 0.7rem 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.contents li:first-child {
+  padding-top: 0;
+}
+
+.never {
+  margin: 0.25rem 0 0;
+  padding-left: 1.2rem;
+}
+
+.never li {
+  margin-bottom: 0.35rem;
+}
+
+.pledge {
+  margin: 0 0 1rem;
+  font-size: clamp(1.35rem, 2.4vw, 1.7rem);
+  line-height: 1.35;
+}
+
+details {
+  border-bottom: 1px solid var(--rule);
+}
+
+details:first-of-type {
+  border-top: 1px solid var(--rule);
+}
+
+summary {
+  cursor: pointer;
+  padding: 0.9rem 2rem 0.9rem 0;
+  list-style: none;
+  position: relative;
+}
+
+summary::-webkit-details-marker {
+  display: none;
+}
+
+summary::after {
+  content: '+';
+  position: absolute;
+  right: 0.25rem;
+  top: 0.8rem;
+  color: var(--accent);
+  font-size: 1.3rem;
+  line-height: 1;
+  transition: transform 200ms ease;
+}
+
+details[open] summary::after {
+  transform: rotate(45deg);
+}
+
+details p {
+  margin: 0 0 1rem;
+  color: var(--ink-soft);
+}
+
+/* ---- Legal pages ---- */
+
+.legal {
+  max-width: 40rem;
+  padding-top: clamp(1.5rem, 5vw, 3.5rem);
+}
+
+.legal h1 {
+  margin: 0 0 0.5rem;
+  font-weight: 400;
+  font-size: clamp(2.2rem, 5vw, 3.2rem);
+  line-height: 1.08;
+  letter-spacing: -0.015em;
+}
+
+.legal .meta {
+  margin: 0 0 2.5rem;
+  color: var(--ink-soft);
+}
+
+.legal .summary {
+  margin: 0 0 2.5rem;
+  padding: 1.5rem 1.75rem;
+  background: var(--paper);
+  border-radius: 1.25rem 1.25rem 1.25rem 0.35rem;
+  font-size: 1.2rem;
+  line-height: 1.55;
+}
+
+.legal .summary p {
+  margin: 0 0 0.75rem;
+}
+
+.legal .summary p:last-child {
+  margin-bottom: 0;
+}
+
+.legal h2 {
+  margin: 2.75rem 0 0.75rem;
+  font-weight: 400;
+  font-size: 1.55rem;
+  line-height: 1.2;
+}
+
+.legal p,
+.legal li {
+  margin: 0 0 0.9rem;
+}
+
+.legal ul {
+  padding-left: 1.2rem;
+  margin: 0 0 1rem;
+}
+
+.legal .path {
+  white-space: nowrap;
+}
+
+/* ---- Small screens ---- */
+
+@media (max-width: 52rem) {
+  .opening {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .section {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 30rem) {
+  .masthead {
+    flex-wrap: wrap;
+  }
+
+  .day li {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.1rem;
+    padding-left: 1.5rem;
+  }
+
+  .day li::before {
+    left: 0;
+  }
+
+  .day li::after {
+    left: 0.26rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+  }
+}

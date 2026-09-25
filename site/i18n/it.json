@@ -1,0 +1,262 @@
+{
+  "common": {
+    "skip": "Vai al contenuto",
+    "brandHome": "Ihsaanly, home",
+    "nav": {
+      "label": "Sito",
+      "support": "Assistenza",
+      "privacy": "Privacy",
+      "terms": "Termini",
+      "donate": "Fai una donazione"
+    },
+    "footer": {
+      "label": "Note legali",
+      "copyright": "© {year} Mohd Inc.",
+      "privacy": "Informativa sulla privacy",
+      "terms": "Termini di utilizzo",
+      "donate": "Fai una donazione"
+    },
+    "language": {
+      "label": "Lingua"
+    },
+    "theme": {
+      "label": "Aspetto",
+      "current": "Aspetto: {mode}",
+      "system": "Sistema",
+      "light": "Chiaro",
+      "dark": "Scuro"
+    },
+    "suggest": {
+      "text": "Questa pagina è disponibile in {language}.",
+      "dismiss": "No grazie"
+    },
+    "governs": "Questa è una traduzione di cortesia. In caso di differenze con la <a href=\"{english}\">versione inglese</a>, prevale la versione inglese."
+  },
+
+  "home": {
+    "title": "Ihsaanly · La sunna che si adatta al momento",
+    "description": "Ihsaanly ti mostra la sunna che si adatta al momento, con la sua fonte. Privata, serena e gratuita, di Mohd Inc.",
+    "shareDescription": "La sunna che si adatta al momento, con la sua fonte.",
+    "shareImageAlt": "Ihsaanly: la sunna che si adatta al momento, e da dove viene.",
+
+    "hero": {
+      "title": "La sunna che si adatta al momento, e da dove viene.",
+      "lede": "Ihsaanly ti mostra ciò che è rilevante adesso: gli adhkar del mattino dopo l’alba, le due rak’a dopo Dhuhr, la du’a quando esci di casa. Ogni voce indica la sua fonte.",
+      "tryHint": "Provalo qui stesso: segna una preghiera, oppure apri una voce per vederne la fonte."
+    },
+
+    "stores": {
+      "appStorePrefix": "Scarica su",
+      "playPrefix": "Disponibile su",
+      "soon": "Ihsaanly arriverà presto su {store}."
+    },
+
+    "demo": {
+      "label": "Anteprima interattiva dell’app Ihsaanly",
+      "noscript": "Questa anteprima richiede JavaScript per funzionare. Tutto ciò che mostra si trova anche nell’app stessa."
+    },
+
+    "day": {
+      "title": "Tu segni la preghiera. La sunna compare.",
+      "intro": "Tocca Dhuhr quando l’hai pregata e il dhikr che la segue ti sta aspettando. L’app mostra la parte della giornata in cui ti trovi, mai un orario, così da non entrare mai in conflitto con gli orari della tua moschea.",
+      "maghribFirst": "La giornata inizia al Maghrib, e così anche quella dell’app.",
+      "timeline": {
+        "maghrib": "Maghrib",
+        "maghribWhat": "Due rak’a dopo la preghiera.",
+        "isha": "Isha",
+        "ishaWhat": "Due rak’a dopo, poi il Witr. Prima di dormire, Ayat al-Kursi, le tre Qul e la du’a per dormire.",
+        "fajr": "Fajr",
+        "fajrWhat": "La du’a al risveglio, e due rak’a prima della preghiera.",
+        "sunrise": "Alba",
+        "sunriseWhat": "Gli adhkar del mattino, e Duha una volta sorto il sole.",
+        "dhuhr": "Dhuhr",
+        "dhuhrWhat": "Due o quattro rak’a prima, e due dopo.",
+        "asr": "Asr",
+        "asrWhat": "Gli adhkar della sera, fino al ritorno del Maghrib."
+      },
+      "outro": "Dopo ogni preghiera, il tasbih e Ayat al-Kursi. Per i momenti che nessun orologio può cogliere, come uscire di casa, mettersi in viaggio o salire una rampa di scale, le du’a sono a un tocco di distanza su un widget della schermata Home."
+    },
+
+    "source": {
+      "title": "Ogni voce indica la sua fonte",
+      "intro": "Ogni atto indica da dove viene: il versetto, oppure la raccolta di hadith con il suo riferimento e la sua classificazione, e chi l’ha classificata quando la raccolta non lo indica da sé. Dove i sapienti divergono, l’app lo dichiara anziché scegliere al posto tuo.",
+      "plain": "Ogni voce spiega anche, con parole semplici, perché è importante e come farla."
+    },
+
+    "specimen": {
+      "next": "Mostra un’altra du’a",
+      "hideTransliteration": "Nascondi la traslitterazione",
+      "hideTranslation": "Nascondi la traduzione",
+      "leavingTitle": "Uscendo di casa",
+      "leavingSource": "Sunan Abi Dawud 5095.",
+      "leavingGrading": "Classificato sahih da al-Albani.",
+      "ridingTitle": "Partendo con un veicolo",
+      "ridingSource": "Corano 43:13.",
+      "ridingGrading": "Sunan Abi Dawud 2602, classificato sahih da al-Albani.",
+      "enteringTitle": "Rientrando a casa",
+      "enteringSource": "Sahih Muslim 2018."
+    },
+
+    "coming": {
+      "title": "Sapere cosa sta arrivando",
+      "fasting": "I giorni di digiuno appaiono in anticipo: i lunedì e i giovedì, i Giorni Bianchi, Ashura, il giorno di Arafa e i sei giorni di Shawwal. Sono contrassegnati come “previsto”, perché sono calcolati anziché osservati.",
+      "shift": "Se la data dell’Egira della tua comunità differisce, spostala fino a due giorni e tutto si adegua."
+    },
+
+    "calm": {
+      "title": "Calma per scelta",
+      "reminders": "Due o tre promemoria al giorno, non quindici, e nessuno durante le ore di silenzio. Ignora qualsiasi cosa senza doverti giustificare. Impara una du’a e segnala come conosciuta, e l’app smette di ricordartela.",
+      "owed": "Le preghiere e i digiuni che devi sono tenuti come un semplice conteggio da recuperare, mai un elenco di date. Non troverai:",
+      "neverStreaks": "Serie, punteggi o classifiche sugli atti di culto",
+      "neverFailed": "Una notifica che ti dice che hai fallito",
+      "neverPaywall": "Un muro a pagamento su qualsiasi contenuto religioso"
+    },
+
+    "inside": {
+      "title": "Cosa contiene",
+      "adhkar": "Adhkar del mattino e della sera, e il tasbih e Ayat al-Kursi dopo la preghiera",
+      "prayers": "Le preghiere sunna prima e dopo le preghiere obbligatorie, il Witr e Duha",
+      "duas": "Du’a per uscire e rientrare a casa, entrare in moschea, mangiare, dormire e svegliarsi, viaggiare, spostarsi in veicolo, salire e scendere",
+      "fasting": "Giorni di digiuno, dai lunedì e giovedì ai primi dieci giorni di Dhu al-Hijja",
+      "text": "Arabo, traslitterazione e traduzione insieme, con il numero di volte da ripetere",
+      "library": "Una biblioteca che puoi cercare per nome o per situazione, e un glossario dei suoi termini",
+      "widgets": "Dieci widget per la schermata Home, da ciò che è rilevante ora ai giorni a venire"
+    },
+
+    "private": {
+      "title": "Privata per impostazione predefinita",
+      "pledge": "I dati della tua pratica non lasciano mai il telefono, a meno che tu non scelga di inviarli.",
+      "none": "Nessun account, nessun server, nessuna analisi e nessuna pubblicità. L’app funziona interamente offline, e interamente senza un solo permesso: rifiuta la posizione e scegli invece la tua città.",
+      "free": "Ihsaanly è gratuita, senza nulla di bloccato. Leggi l’<a href=\"{privacy}\">informativa sulla privacy</a> per sapere esattamente cosa viene conservato e cosa può lasciare il tuo dispositivo."
+    },
+
+    "honest": {
+      "title": "Onesta su se stessa",
+      "review": "Il contenuto è redatto e in attesa di revisione da parte di un sapiente indicato per nome, e la schermata Informazioni dell’app lo dichiara. Quando un revisore lo avrà approvato, vi sarà accreditato.",
+      "languages": "L’inglese è l’originale. L’app parla anche arabo, francese, italiano, giapponese, hindi, urdu, somalo, mandarino e cantonese, e quelle traduzioni sono bozze in attesa di revisione da parte di madrelingua qualificati. Anche questa pagina è una traduzione in bozza."
+    },
+
+    "questions": {
+      "title": "Domande",
+      "timesQ": "Perché l’app non mostra gli orari di preghiera?",
+      "timesA": "È voluto. Ti dice in quale parte della giornata ti trovi, e sei tu a dirle quando hai pregato. Una fascia sbagliata di tre minuti è invisibile; un orologio sbagliato di tre minuti contraddice la tua moschea.",
+      "hijriQ": "La data dell’Egira non coincide con quella della mia moschea.",
+      "hijriA": "Vai su Altro, poi Data dell’Egira, e spostala fino a due giorni. Le date nell’app sono calcolate, e il calcolo e l’avvistamento locale spesso differiscono.",
+      "expectedQ": "Perché accanto ai giorni di digiuno c’è scritto “previsto”?",
+      "expectedA": "Perché sono calcolati, non osservati. Dove le letture differiscono, come il nove di Dhu al-Hijja a livello locale e il giorno della sosta a Makkah, l’app mostra entrambe le date anziché scegliere al posto tuo.",
+      "locationQ": "Non voglio condividere la mia posizione.",
+      "locationA": "Non devi mai farlo. Scegli invece la tua città, e tutto funziona.",
+      "notificationsQ": "Perché così pochi promemoria?",
+      "notificationsA": "Due o tre al giorno per impostazione predefinita, e nessuno per le preghiere obbligatorie a meno che tu non lo richieda. Hai quasi certamente già un’app per l’adhan.",
+      "brokenQ": "Qualcosa non funziona.",
+      "brokenA": "Vai su Altro, poi I tuoi dati, poi Invia un rapporto diagnostico. Ti mostrerà tutto ciò che contiene prima che venga inviato, e sei tu a scegliere dove va. Oppure scrivi a <a href=\"{email}\">support@ihsaanly.app</a>."
+    }
+  },
+
+  "privacy": {
+    "title": "Informativa sulla privacy",
+    "pageTitle": "Informativa sulla privacy · Ihsaanly",
+    "description": "Cosa conserva Ihsaanly sul tuo dispositivo, e gli unici due modi in cui qualcosa può uscirne.",
+    "meta": "Ihsaanly è pubblicata da Mohd Inc. Ultimo aggiornamento: {date}.",
+    "summaryAccount": "Ihsaanly non ha account, server né analisi. Le tue preghiere, le tue impostazioni e la tua pratica sono registrate sul tuo dispositivo e vi restano.",
+    "summaryNothing": "Niente lascia il tuo telefono a meno che tu non scelga di inviarlo.",
+
+    "storedTitle": "Cosa conserva l’app sul tuo dispositivo",
+    "storedMarks": "Quali preghiere hai segnato, e quando",
+    "storedCompleted": "Quali atti facoltativi hai completato",
+    "storedOwed": "Quanto devi in preghiere da recuperare",
+    "storedDay": "Quali voci hai messo nella tua giornata, e quali hai segnato come conosciute",
+    "storedSuggested": "Quale atto facoltativo ti è stato suggerito l’ultima volta, così da non essere chiesto due volte in una settimana",
+    "storedTravel": "Se sei in viaggio, e se la registrazione delle preghiere è sospesa",
+    "storedGender": "Se hai scelto Fratello, Sorella o preferito non rispondere quando hai configurato l’app. Questo decide solo se l’app propone di sospendere la registrazione delle preghiere, e non è usato per nient’altro",
+    "storedSettings": "Le tue impostazioni: posizione, metodo di calcolo, scarto della data dell’Egira, promemoria, lingua e aspetto",
+    "storedHome": "Se attivi i promemoria per quando esci di casa, le coordinate dell’unico luogo che hai impostato come casa",
+    "storedWhere": "Tutto ciò vive in un database sul tuo dispositivo. Non possiamo vedere nulla di tutto ciò.",
+
+    "locationTitle": "Posizione",
+    "locationRough": "Ihsaanly ha bisogno di una posizione approssimativa per calcolare le parti della giornata. Puoi concedere l’accesso alla posizione, oppure scegliere una città da un elenco integrato nell’app. L’app funziona pienamente in entrambi i casi, e funziona anche senza alcun permesso concesso.",
+    "locationNever": "Le tue coordinate sono usate sul tuo dispositivo per calcolare le fasce di preghiera e la data dell’Egira. <strong>Non vengono mai trasmesse</strong>, con un’unica eccezione che controlli tu: se invii un rapporto diagnostico, una loro versione arrotondata vi è inclusa. Vedi sotto.",
+    "locationGeofence": "Se attivi i promemoria per quando esci di casa, l’app monitora un’unica area attorno a un luogo che hai impostato. È disattivata per impostazione predefinita, usa il geofencing nativo del telefono, e la tua posizione non viene mai inviata da nessuna parte.",
+
+    "leaveTitle": "Cosa può lasciare il tuo dispositivo, e solo quando lo scegli tu",
+    "leaveTwo": "Due cose, entrambe da <em>Altro → I tuoi dati</em>, entrambe tramite il foglio di condivisione nativo del telefono, così scegli tu dove vanno.",
+    "leaveExport": "<strong>Esporta i miei dati.</strong> Le tue impostazioni e il registro completo della tua pratica, come testo leggibile, così puoi conservarlo o trasferirlo su un nuovo telefono.",
+    "leaveReport": "<strong>Invia un rapporto diagnostico.</strong> Per risolvere un problema. Contiene le tue impostazioni, il registro della tua pratica, le tue coordinate approssimative, il tuo dispositivo e la versione del sistema operativo, ed eventuali errori recenti. Prima dell’invio ti viene mostrata una schermata che elenca esattamente cosa contiene, e puoi leggere il rapporto per intero. Le coordinate nel rapporto sono arrotondate a circa cento metri. Niente viene inviato finché non scegli di inviarlo, e sei tu a scegliere dove va.",
+    "leaveReceive": "Riceviamo un rapporto diagnostico solo se ce ne invii uno.",
+
+    "donationsTitle": "Donazioni",
+    "donationsFree": "Ihsaanly è gratuita. Ogni sua parte è gratuita, e resta gratuita. Non esiste alcun livello a pagamento, niente è bloccato, e non c’è pubblicità.",
+    "donationsOptional": "Puoi fare una donazione facoltativa, che non sblocca nulla e non cambia nulla nell’app. Su Android, toccandola si apre il browser su donate.ihsaanly.app. Quella pagina non fa parte dell’app, e tutto ciò che raccoglie è coperto dalla sua propria informativa sulla privacy, non da questa. Non vediamo mai i tuoi dati di pagamento.",
+
+    "notTitle": "Cosa non facciamo",
+    "notAccount": "Nessun account, indirizzo e-mail o numero di telefono",
+    "notAds": "Nessuna pubblicità, e nessun identificativo pubblicitario",
+    "notAnalytics": "Nessuna analisi, telemetria o segnalazione di arresti anomali",
+    "notTracking": "Nessun tracciamento tra app o siti web",
+    "notSelling": "Nessuna vendita o condivisione di alcunché, perché non deteniamo nulla da vendere",
+
+    "siteTitle": "Questo sito web",
+    "siteText": "Questo sito non imposta cookie, non esegue analisi e non carica nulla da altre società. Come qualsiasi server web, l’host può conservare registri di accesso standard, come il tuo indirizzo IP e la pagina richiesta, per motivi di sicurezza e funzionamento.",
+    "siteStorage": "Se scegli una lingua o un aspetto, il tuo browser ricorda quella scelta sul tuo stesso dispositivo. Non ci viene mai inviata.",
+
+    "childrenTitle": "Minori",
+    "childrenText": "Ihsaanly non raccoglie nulla da nessuno, di qualsiasi età.",
+
+    "deleteTitle": "Eliminare i tuoi dati",
+    "deleteText": "<em>Altro → I tuoi dati → Elimina i miei dati</em> rimuove tutto sul dispositivo e fa ripartire l’app da capo. Eliminare l’app fa lo stesso, perché non vive da nessun’altra parte.",
+
+    "contactTitle": "Contatti"
+  },
+
+  "terms": {
+    "title": "Termini di utilizzo",
+    "pageTitle": "Termini di utilizzo · Ihsaanly",
+    "description": "I termini per l’utilizzo di Ihsaanly, pubblicata da Mohd Inc.",
+    "meta": "Ihsaanly è pubblicata da Mohd Inc. Ultimo aggiornamento: {date}.",
+    "summaryFree": "Ihsaanly è gratuita, per la tua pratica personale. È una compagna, non una sapiente: per tutto ciò che conta davvero, chiedi a una persona qualificata.",
+    "summaryMistakes": "Lavoriamo duramente per fare le cose per bene, ma non possiamo garantire l’assenza di errori.",
+
+    "whoTitle": "Chi siamo",
+    "whoText": "Ihsaanly (“l’app”) è pubblicata da Mohd Inc. (“noi”). I presenti termini si applicano all’app e a questo sito web. Utilizzando l’una o l’altro, li accetti. Se non li accetti, ti preghiamo di non utilizzare l’app.",
+
+    "useTitle": "Utilizzare l’app",
+    "useLicence": "Ti concediamo una licenza personale, non esclusiva e non trasferibile per utilizzare l’app sui dispositivi che possiedi o controlli, per la tua pratica personale. L’app è gratuita e non richiede alcun account.",
+    "useCopy": "Ti preghiamo di non copiare, modificare, vendere o ridistribuire l’app, né di provare a estrarne il codice sorgente, salvo nei casi in cui la legge te lo consenta.",
+
+    "religiousTitle": "Contenuto religioso",
+    "religiousGuide": "L’app presenta atti raccomandati con le loro fonti: il versetto, oppure la raccolta di hadith con il suo riferimento e la sua classificazione. È una guida alla pratica, non un parere religioso, e non sostituisce un sapiente qualificato. Dove i sapienti divergono, l’app lo dichiara; non decide al posto tuo.",
+    "religiousReview": "Il contenuto è in attesa di revisione da parte di un sapiente indicato per nome, e l’app lo dichiara nella sua schermata Informazioni. Le traduzioni diverse dall’inglese sono bozze in attesa di revisione da parte di madrelingua qualificati. Se trovi un errore, ti preghiamo di segnalarcelo.",
+
+    "datesTitle": "Fasce di preghiera e date",
+    "datesText": "Le parti della giornata, la data dell’Egira e i giorni di digiuno sono calcolati in base alla tua posizione e al metodo che scegli. Il calcolo e l’avvistamento locale della luna spesso differiscono, motivo per cui i giorni di digiuno sono contrassegnati come “previsto”. Dove la tua moschea o comunità indica diversamente, seguila.",
+
+    "dataTitle": "I tuoi dati",
+    "dataText": "Tutto ciò che l’app registra resta sul tuo dispositivo. Non ne deteniamo una copia, quindi non possiamo ripristinarla se il tuo telefono viene smarrito o l’app viene eliminata. Usa <strong>Altro → I tuoi dati → Esporta i miei dati</strong> se vuoi un backup. L’<a href=\"{privacy}\">informativa sulla privacy</a> spiega esattamente cosa viene conservato e cosa può lasciare il tuo dispositivo.",
+
+    "donationsTitle": "Donazioni",
+    "donationsText": "Qualsiasi donazione è volontaria, non sblocca nulla e non cambia nulla nell’app. Gli acquisti effettuati tramite l’App Store o Google Play sono gestiti da Apple o Google secondo le loro condizioni, comprese le loro politiche di rimborso.",
+
+    "storesTitle": "Store delle app",
+    "storesText": "Se hai scaricato l’app dall’App Store o da Google Play, si applicano anche le loro condizioni. I presenti termini riguardano solo te e Mohd Inc. Apple e Google non ne sono parte e non sono responsabili dell’app, dei suoi contenuti o della sua assistenza.",
+
+    "warrantyTitle": "Nessuna garanzia",
+    "warrantyText": "L’app e questo sito web sono forniti così come sono, senza garanzie di alcun tipo, nella misura consentita dalla legge. Non garantiamo che saranno sempre disponibili o privi di errori.",
+
+    "liabilityTitle": "Limiti della nostra responsabilità",
+    "liabilityText": "Nella misura consentita dalla legge, Mohd Inc. non è responsabile per eventuali perdite indirette o consequenziali derivanti dall’uso dell’app o di questo sito web, e la nostra responsabilità totale nei tuoi confronti è limitata all’importo che ci hai versato nei dodici mesi precedenti la richiesta. Nulla nei presenti termini limita i diritti di cui disponi ai sensi del diritto dei consumatori che non possono essere oggetto di rinuncia.",
+
+    "changesTitle": "Modifiche",
+    "changesText": "Potremmo aggiornare questi termini man mano che l’app evolve. In tal caso, modificheremo la data in cima a questa pagina. Continuare a utilizzare l’app dopo una modifica significa che accetti i nuovi termini.",
+
+    "lawTitle": "Legge applicabile",
+    "lawText": "I presenti termini sono regolati dalle leggi del Canada e della provincia in cui Mohd Inc. è costituita.",
+
+    "contactTitle": "Contatti"
+  },
+
+  "notFound": {
+    "pageTitle": "Pagina non trovata · Ihsaanly",
+    "title": "Questa pagina non c’è.",
+    "text": "L’indirizzo potrebbe contenere un errore, oppure la pagina potrebbe essere stata spostata. <a href=\"{home}\">Vai alla pagina iniziale</a>."
+  }
+}

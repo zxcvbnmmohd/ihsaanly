@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="{{v lang}}" dir="{{v dir}}" data-locale="{{v code}}">
+  <head>
+    {{> head}}
+    <script src="{{v asset:site.js}}" defer></script>
+  </head>
+  <body>
+    {{> header}}
+
+    <main id="main" class="wrap">
+      <article class="legal">
+        <h1>{{t privacy.title}}</h1>
+        <p class="meta">{{t privacy.meta}}</p>
+        {{v governs}}
+        <div class="summary">
+          <p>{{t privacy.summaryAccount}}</p>
+          <p>{{t privacy.summaryNothing}}</p>
+        </div>
+
+        <h2>{{t privacy.storedTitle}}</h2>
+        <ul>
+          <li>{{t privacy.storedMarks}}</li>
+          <li>{{t privacy.storedCompleted}}</li>
+          <li>{{t privacy.storedOwed}}</li>
+          <li>{{t privacy.storedDay}}</li>
+          <li>{{t privacy.storedSuggested}}</li>
+          <li>{{t privacy.storedTravel}}</li>
+          <li>{{t privacy.storedGender}}</li>
+          <li>{{t privacy.storedSettings}}</li>
+          <li>{{t privacy.storedHome}}</li>
+        </ul>
+        <p>{{t privacy.storedWhere}}</p>
+
+        <h2>{{t privacy.locationTitle}}</h2>
+        <p>{{t privacy.locationRough}}</p>
+        <p>{{t privacy.locationNever}}</p>
+        <p>{{t privacy.locationGeofence}}</p>
+
+        <h2>{{t privacy.leaveTitle}}</h2>
+        <p>{{t privacy.leaveTwo}}</p>
+        <p>{{t privacy.leaveExport}}</p>
+        <p>{{t privacy.leaveReport}}</p>
+        <p>{{t privacy.leaveReceive}}</p>
+
+        <h2>{{t privacy.donationsTitle}}</h2>
+        <p>{{t privacy.donationsFree}}</p>
+        <p>{{t privacy.donationsOptional}}</p>
+
+        <h2>{{t privacy.notTitle}}</h2>
+        <ul>
+          <li>{{t privacy.notAccount}}</li>
+          <li>{{t privacy.notAds}}</li>
+          <li>{{t privacy.notAnalytics}}</li>
+          <li>{{t privacy.notTracking}}</li>
+          <li>{{t privacy.notSelling}}</li>
+        </ul>
+
+        <h2>{{t privacy.siteTitle}}</h2>
+        <p>{{t privacy.siteText}}</p>
+        <p>{{t privacy.siteStorage}}</p>
+
+        <h2>{{t privacy.childrenTitle}}</h2>
+        <p>{{t privacy.childrenText}}</p>
+
+        <h2>{{t privacy.deleteTitle}}</h2>
+        <p>{{t privacy.deleteText}}</p>
+
+        <h2>{{t privacy.contactTitle}}</h2>
+        <p>
+          Mohd Inc.<br />
+          <a href="mailto:support@ihsaanly.app">support@ihsaanly.app</a>
+        </p>
+      </article>
+    </main>
+
+    {{> footer}}
+  </body>
+</html>

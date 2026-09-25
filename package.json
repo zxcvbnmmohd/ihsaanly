@@ -11,7 +11,8 @@
     "check": "bun run lint && bun run typecheck && bun run test && bun run validate:content && bun run doctor",
     "clean": "rm -rf .expo node_modules/.cache && expo start --clear",
     "test": "bun test",
-    "validate:content": "bun scripts/validate-content.ts"
+    "validate:content": "bun scripts/validate-content.ts",
+    "build:site": "bun scripts/build-site.ts"
   },
   "dependencies": {
     "@expo/ui": "~58.0.6",

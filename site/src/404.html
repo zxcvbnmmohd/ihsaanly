@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="{{v lang}}" dir="{{v dir}}" data-locale="{{v code}}">
+  <head>
+    {{> head}}
+    <meta name="robots" content="noindex" />
+    <script src="{{v asset:site.js}}" defer></script>
+  </head>
+  <body>
+    {{> header}}
+
+    <main id="main" class="wrap">
+      <article class="legal">
+        <h1>{{t notFound.title}}</h1>
+        <p>{{t notFound.text}}</p>
+      </article>
+    </main>
+
+    {{> footer}}
+  </body>
+</html>

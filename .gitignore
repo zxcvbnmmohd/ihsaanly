@@ -6,6 +6,9 @@ node_modules/
 # Expo
 .expo/
 dist/
+
+# The website, built by `bun run build:site`
+site/dist/
 web-build/
 expo-env.d.ts
 

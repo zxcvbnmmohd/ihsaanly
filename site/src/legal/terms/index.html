@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="{{v lang}}" dir="{{v dir}}" data-locale="{{v code}}">
+  <head>
+    {{> head}}
+    <script src="{{v asset:site.js}}" defer></script>
+  </head>
+  <body>
+    {{> header}}
+
+    <main id="main" class="wrap">
+      <article class="legal">
+        <h1>{{t terms.title}}</h1>
+        <p class="meta">{{t terms.meta}}</p>
+        {{v governs}}
+        <div class="summary">
+          <p>{{t terms.summaryFree}}</p>
+          <p>{{t terms.summaryMistakes}}</p>
+        </div>
+
+        <h2>{{t terms.whoTitle}}</h2>
+        <p>{{t terms.whoText}}</p>
+
+        <h2>{{t terms.useTitle}}</h2>
+        <p>{{t terms.useLicence}}</p>
+        <p>{{t terms.useCopy}}</p>
+
+        <h2>{{t terms.religiousTitle}}</h2>
+        <p>{{t terms.religiousGuide}}</p>
+        <p>{{t terms.religiousReview}}</p>
+
+        <h2>{{t terms.datesTitle}}</h2>
+        <p>{{t terms.datesText}}</p>
+
+        <h2>{{t terms.dataTitle}}</h2>
+        <p>{{t terms.dataText}}</p>
+
+        <h2>{{t terms.donationsTitle}}</h2>
+        <p>{{t terms.donationsText}}</p>
+
+        <h2>{{t terms.storesTitle}}</h2>
+        <p>{{t terms.storesText}}</p>
+
+        <h2>{{t terms.warrantyTitle}}</h2>
+        <p>{{t terms.warrantyText}}</p>
+
+        <h2>{{t terms.liabilityTitle}}</h2>
+        <p>{{t terms.liabilityText}}</p>
+
+        <h2>{{t terms.changesTitle}}</h2>
+        <p>{{t terms.changesText}}</p>
+
+        <h2>{{t terms.lawTitle}}</h2>
+        <p>{{t terms.lawText}}</p>
+
+        <h2>{{t terms.contactTitle}}</h2>
+        <p>
+          Mohd Inc.<br />
+          <a href="mailto:support@ihsaanly.app">support@ihsaanly.app</a>
+        </p>
+      </article>
+    </main>
+
+    {{> footer}}
+  </body>
+</html>

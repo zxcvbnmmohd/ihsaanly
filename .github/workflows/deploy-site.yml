@@ -1,0 +1,58 @@
+# Builds the website and uploads site/dist to the host over FTPS whenever
+# something the site is built from changes on production. The FTP password
+# lives only in the repository's secrets, never in the code.
+#
+# Secrets (Settings → Secrets and variables → Actions):
+#   FTP_SERVER      the FTP host, e.g. ftp.ihsaanly.app
+#   FTP_USERNAME    the FTP account, e.g. support@ihsaanly.app
+#   FTP_PASSWORD    its password
+#   FTP_SERVER_DIR  the web root on the host, ending in a slash, e.g. public_html/
+name: deploy-site
+
+on:
+  push:
+    branches: [production]
+    paths:
+      - 'site/**'
+      - 'scripts/build-site.ts'
+      - 'content/**'
+      - 'src/**'
+      - 'package.json'
+      - 'bun.lock'
+      - '.github/workflows/deploy-site.yml'
+  workflow_dispatch:
+
+# Never two uploads at once: the second would race the first's sync state.
+concurrency:
+  group: deploy-site
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: website
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: package.json
+
+      - run: bun install --frozen-lockfile
+
+      - name: Build the site
+        run: bun run build:site
+
+      # Pinned to the v4.4.0 commit: this step holds the FTP password, so a
+      # moved tag must not be able to change what runs. It uploads only what
+      # changed since the last deploy and removes files that no longer exist,
+      # so old hashed assets do not pile up on the host.
+      - name: Upload over FTPS
+        uses: SamKirkland/FTP-Deploy-Action@110f9186c050f71550953127052e77650219c287
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: ${{ secrets.FTP_SERVER_DIR }}
+          local-dir: ./site/dist/
+          protocol: ftps

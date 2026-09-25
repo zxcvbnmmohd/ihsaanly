@@ -1,0 +1,728 @@
+/* The interactive demo: a Pixel-style Android phone frame running a mini
+   Today/Library/item view, driven by site/demo/main.ts. Reuses the site's own
+   brand variables (accent, paper, wash) from site.css, and adds a light
+   approximation of Android's own Material 3 semantic colours for the screens
+   inside the phone. */
+
+:root {
+  --demo-bg: #fef7ff;
+  --demo-card: #f3edf7;
+  --demo-label: #1d1b20;
+  --demo-secondary: #49454f;
+  --demo-separator: #cac4d0;
+
+  /* Matches src/theme/palettes.ts: light.indicator */
+  --demo-indicator: rgba(169, 74, 50, 0.16);
+}
+
+/* Same two-guard pattern as site.css: the OS-media rule yields to an explicit
+   light override, and an explicit dark override wins regardless of the OS,
+   so the page's own theme switcher (data-theme) always has the last word. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --demo-bg: #141218;
+    --demo-card: #211f26;
+    --demo-label: #e6e0e9;
+    --demo-secondary: #cac4d0;
+    --demo-separator: #49454f;
+
+    /* Matches src/theme/palettes.ts: dark.indicator */
+    --demo-indicator: rgba(226, 140, 111, 0.22);
+  }
+}
+
+:root[data-theme='dark'] {
+  --demo-bg: #141218;
+  --demo-card: #211f26;
+  --demo-label: #e6e0e9;
+  --demo-secondary: #cac4d0;
+  --demo-separator: #49454f;
+
+  /* Matches src/theme/palettes.ts: dark.indicator */
+  --demo-indicator: rgba(226, 140, 111, 0.22);
+}
+
+.demo {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.demo-noscript {
+  margin: 0;
+  padding: 1.5rem;
+  color: var(--ink-soft);
+  text-align: center;
+}
+
+/* ---- The device frame: Pixel 10 Pro XL, Obsidian, drawn entirely in CSS ---- */
+
+.demo-phone {
+  --demo-screen-radius: 1.6rem;
+  --demo-bezel: 0.6rem;
+  position: relative;
+  padding: var(--demo-bezel);
+  border-radius: calc(var(--demo-screen-radius) + var(--demo-bezel));
+  background: linear-gradient(155deg, #303035, #131316 45%, #1c1c1f);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.09),
+    inset 0 0 0 2px rgba(0, 0, 0, 0.4),
+    0 30px 60px -30px rgba(0, 0, 0, 0.55);
+}
+
+/* Power button (shorter, higher) and volume rocker (longer, below it), both
+   protruding slightly past the frame's right edge. Obsidian in both schemes,
+   like the rest of the frame. */
+.demo-phone::before,
+.demo-phone::after {
+  content: '';
+  position: absolute;
+  right: -0.1rem;
+  width: 0.18rem;
+  border-radius: 0.12rem;
+  background: linear-gradient(90deg, #4a4a50, #161618);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.demo-phone::before {
+  top: 26%;
+  height: 2.6rem;
+}
+
+.demo-phone::after {
+  top: calc(26% + 3.4rem);
+  height: 4rem;
+}
+
+.demo-phone-screen {
+  width: min(22rem, calc(90vh * 1344 / 2992));
+  aspect-ratio: 1344 / 2992;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: var(--demo-screen-radius);
+  background: var(--demo-bg);
+}
+
+.demo-nav,
+.demo-content,
+.demo-tabbar-wrap {
+  font-family: var(--demo-ui-font, Roboto, 'Segoe UI', system-ui, sans-serif);
+  color: var(--demo-label);
+}
+
+/* ---- Per-language UI font stacks ----
+   Android's own system stack per script, with Amiri (the one webfont this
+   site ships) as the last-resort fallback for the two scripts it covers.
+   `--demo-ui-font` is read by .demo-nav/.demo-content/.demo-tabbar-wrap and
+   .demo-statusbar below; set on .demo-phone so :lang() only needs stating
+   once and both rules pick it up through inheritance. */
+
+.demo-phone:lang(ar) {
+  --demo-ui-font: 'Noto Sans Arabic', 'Segoe UI', Tahoma, Arial, Amiri, sans-serif;
+}
+
+.demo-phone:lang(ur) {
+  --demo-ui-font: 'Noto Nastaliq Urdu', 'Jameel Noori Nastaleeq', Amiri, sans-serif;
+}
+
+.demo-phone:lang(ja) {
+  --demo-ui-font: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', Meiryo, sans-serif;
+}
+
+.demo-phone:lang(zh) {
+  --demo-ui-font: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+}
+
+.demo-phone:lang(yue) {
+  --demo-ui-font: 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+}
+
+.demo-phone:lang(hi) {
+  --demo-ui-font: 'Noto Sans Devanagari', 'Nirmala UI', Arial, sans-serif;
+}
+
+/* ---- Status bar ---- */
+
+.demo-statusbar {
+  flex: none;
+  font-family: var(--demo-ui-font, Roboto, 'Segoe UI', system-ui, sans-serif);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 1.1rem 0.3rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.demo-statusbar-time {
+  line-height: 1;
+}
+
+.demo-camera {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 999px;
+  background: #000000;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.demo-statusbar-icons {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.32rem;
+}
+
+.demo-statusbar-icon svg {
+  display: block;
+  width: 1.05rem;
+  height: 1.05rem;
+}
+
+/* ---- Nav bar ---- */
+
+.demo-nav {
+  flex: none;
+  padding: 0.9rem 1rem 0.7rem;
+  background: var(--demo-bg);
+}
+
+.demo-nav-row {
+  display: flex;
+  align-items: center;
+  min-height: 1.6rem;
+}
+
+.demo-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+  border: 0;
+  background: none;
+  color: var(--demo-label);
+  margin-inline-end: 0.75rem;
+  padding-block: 0.2rem;
+  padding-inline: 0 0.3rem;
+  cursor: pointer;
+}
+
+.demo-back svg {
+  width: 1.35rem;
+  height: 1.35rem;
+}
+
+/* A chevron is a shape, not text — direction can't be expressed with a
+   logical property, so it is the one place that reads [dir='rtl'] directly. */
+[dir='rtl'] .demo-back svg {
+  transform: scaleX(-1);
+}
+
+.demo-nav-title-android {
+  margin: 0;
+  font-family: inherit;
+  font-weight: 500;
+  font-size: 1.15rem;
+}
+
+/* ---- Content ---- */
+
+.demo-content {
+  flex: 1;
+  overflow-y: auto;
+  background: var(--demo-bg);
+  -webkit-overflow-scrolling: touch;
+}
+
+.demo-content:focus {
+  outline: none;
+}
+
+.demo-screen-pad {
+  padding: 0.25rem 1.1rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.3rem;
+}
+
+.demo-date-line {
+  margin: 0;
+  font-size: 0.92rem;
+  color: var(--demo-secondary);
+}
+
+.demo-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.demo-group-title {
+  margin: 0;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.demo-quiet-line,
+.demo-footnote {
+  margin: 0;
+  color: var(--demo-secondary);
+  font-size: 0.9rem;
+}
+
+/* ---- Prayer strip ---- */
+
+.demo-prayer-strip {
+  display: flex;
+  gap: 0.45rem;
+}
+
+.demo-prayer {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  border: 0;
+  border-radius: 0.85rem;
+  padding: 0.7rem 0.2rem;
+  background: var(--demo-card);
+  cursor: pointer;
+}
+
+.demo-prayer-mark {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 999px;
+  border: 2px solid var(--demo-separator);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--on-accent);
+}
+
+.demo-prayer-mark svg {
+  width: 0.85rem;
+  height: 0.85rem;
+}
+
+.demo-prayer.is-done .demo-prayer-mark {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.demo-prayer.is-passed:not(.is-done) .demo-prayer-mark {
+  border-style: dashed;
+  opacity: 0.6;
+}
+
+.demo-prayer-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--demo-secondary);
+}
+
+.demo-prayer.is-done .demo-prayer-label {
+  color: var(--demo-label);
+}
+
+/* ---- Cards and rows ---- */
+
+.demo-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  text-align: start;
+  border: 0;
+  border-radius: 1rem;
+  padding: 1.15rem;
+  background: var(--demo-card);
+  cursor: default;
+  width: 100%;
+}
+
+button.demo-card {
+  cursor: pointer;
+}
+
+.demo-card-right-now {
+  flex-direction: row;
+  align-items: stretch;
+  gap: 1rem;
+}
+
+.demo-card-accent-bar {
+  width: 4px;
+  border-radius: 2px;
+  background: var(--accent);
+  flex: none;
+}
+
+.demo-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.demo-card-title {
+  font-family: inherit;
+  font-weight: 500;
+  font-size: 1.3rem;
+  line-height: 1.2;
+}
+
+.demo-card-detail {
+  font-size: 0.85rem;
+  color: var(--demo-secondary);
+}
+
+.demo-row {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.15rem;
+  border: 0;
+  border-bottom: 1px solid var(--demo-separator);
+  background: none;
+  padding: 0.55rem 0;
+  width: 100%;
+  text-align: start;
+  cursor: pointer;
+}
+
+.demo-row-title {
+  font-size: 1rem;
+}
+
+.demo-row-detail {
+  font-size: 0.82rem;
+  color: var(--demo-secondary);
+}
+
+.demo-up-next-distance {
+  color: var(--accent);
+  font-size: 0.88rem;
+}
+
+.demo-up-next-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  margin-top: 0.4rem;
+}
+
+.demo-up-next-label {
+  margin: 0;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--demo-secondary);
+}
+
+.demo-up-next-row {
+  border: 0;
+  background: none;
+  padding: 0.2rem 0;
+  text-align: start;
+  font-size: 0.98rem;
+  color: inherit;
+  cursor: pointer;
+}
+
+/* ---- Search / Library ---- */
+
+.demo-search {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.8rem;
+  border-radius: 1.6rem;
+  background: var(--demo-card);
+}
+
+.demo-search-icon svg {
+  width: 1.05rem;
+  height: 1.05rem;
+  color: var(--demo-secondary);
+}
+
+.demo-search-input {
+  flex: 1;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 0.98rem;
+  color: inherit;
+  min-width: 0;
+}
+
+.demo-search-input:focus {
+  outline: none;
+}
+
+.demo-library-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.demo-library-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: flex-start;
+}
+
+.demo-library-title {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.demo-pill-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.demo-pill {
+  font-size: 0.72rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  background: var(--tint);
+  color: var(--accent);
+}
+
+.demo-pill-emphasis {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+/* ---- Item detail ---- */
+
+.demo-item-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.3rem;
+}
+
+.demo-ruling-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.demo-unreviewed {
+  font-size: 0.85rem;
+  color: var(--demo-secondary);
+}
+
+.demo-hero {
+  align-items: center;
+  text-align: center;
+}
+
+.demo-arabic {
+  margin: 0;
+  font-family: 'Amiri', 'Geeza Pro', 'Noto Naskh Arabic', serif;
+  font-size: 1.5rem;
+  line-height: 2;
+  /* This paragraph carries its own dir="rtl" regardless of page language
+     (see render-item.ts), so "start" already resolves to the right. */
+  text-align: start;
+}
+
+.demo-arabic-hero {
+  font-size: 1.9rem;
+}
+
+.demo-transliteration {
+  margin: 0.2rem 0 0;
+  font-style: italic;
+  font-size: 0.95rem;
+}
+
+.demo-translation {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--demo-secondary);
+}
+
+.demo-center {
+  text-align: center;
+}
+
+.demo-labelled {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.demo-labelled-title {
+  margin: 0;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--demo-secondary);
+}
+
+.demo-body-text {
+  margin: 0;
+  font-size: 0.98rem;
+  line-height: 1.5;
+}
+
+.demo-how-list {
+  margin: 0;
+  padding-inline-start: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-size: 0.98rem;
+  line-height: 1.45;
+}
+
+.demo-part-card {
+  gap: 0.55rem;
+}
+
+.demo-part-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.demo-part-title {
+  font-weight: 600;
+  font-size: 0.98rem;
+}
+
+.demo-part-repeat {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+.demo-evidence-entry {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.demo-evidence-citation {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.demo-evidence-narration {
+  margin: 0;
+  font-size: 0.88rem;
+  font-style: italic;
+  color: var(--demo-secondary);
+}
+
+/* ---- Tab bar and gesture handle ---- */
+
+.demo-tabbar-wrap {
+  flex: none;
+  background: var(--demo-card);
+  border-top: 1px solid var(--demo-separator);
+}
+
+.demo-tabbar {
+  flex: none;
+}
+
+.demo-tabbar-inner {
+  display: flex;
+  padding: 0.55rem 0.3rem;
+}
+
+.demo-tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  border: 0;
+  background: none;
+  padding: 0.35rem 0.2rem;
+  color: var(--demo-secondary);
+  cursor: pointer;
+}
+
+.demo-tab.is-active {
+  color: var(--demo-label);
+}
+
+.demo-tab-icon {
+  display: inline-flex;
+  border-radius: 999px;
+  padding: 0.15rem 0.7rem;
+}
+
+.demo-tab-icon svg {
+  width: 1.3rem;
+  height: 1.3rem;
+}
+
+.demo-tab.is-active .demo-tab-icon {
+  background: var(--demo-indicator);
+}
+
+.demo-tab-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+}
+
+.demo-gesture-handle {
+  display: flex;
+  justify-content: center;
+  padding: 0.3rem 0 0.55rem;
+}
+
+.demo-gesture-handle::after {
+  content: '';
+  width: 8.5rem;
+  max-width: 34%;
+  height: 0.28rem;
+  border-radius: 999px;
+  background: var(--demo-label);
+  opacity: 0.55;
+}
+
+/* ---- Narrow screens: the frame fits the viewport ---- */
+
+@media (max-width: 30rem) {
+  .demo {
+    overflow-x: clip;
+  }
+
+  .demo-phone {
+    width: 100%;
+  }
+
+  .demo-phone-screen {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .demo-phone,
+  .demo-phone * {
+    transition: none;
+    animation: none;
+  }
+}

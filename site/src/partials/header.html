@@ -1,0 +1,55 @@
+<a class="skip" href="#main">{{t common.skip}}</a>
+
+<header class="wrap masthead">
+  <a class="brand" href="{{v url:home}}" aria-label="{{a common.brandHome}}">
+    <svg viewBox="0 0 100 100" aria-hidden="true" width="30" height="30">
+      <path
+        d="M50 7.6 62.4 20H80v17.6L92.4 50 80 62.4V80H62.4L50 92.4 37.6 80H20V62.4L7.6 50 20 37.6V20h17.6Z"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="6"
+        stroke-linejoin="round" />
+    </svg>
+    Ihsaanly
+  </a>
+  <div class="masthead-end">
+    <nav aria-label="{{a common.nav.label}}">
+      <a href="{{v url:support}}">{{t common.nav.support}}</a>
+      <a href="{{v url:privacy}}" {{v current:privacy}}>{{t common.nav.privacy}}</a>
+      <a href="{{v url:terms}}" {{v current:terms}}>{{t common.nav.terms}}</a>
+      <a href="{{v url:donate}}">{{t common.nav.donate}}</a>
+    </nav>
+    <div class="tools">
+      {{v languageMenu}}
+      <button
+        type="button"
+        class="tool theme-toggle"
+        data-theme-toggle
+        data-mode="system"
+        data-template="{{a common.theme.current}}"
+        data-system="{{a common.theme.system}}"
+        data-light="{{a common.theme.light}}"
+        data-dark="{{a common.theme.dark}}"
+        aria-label="{{a common.theme.label}}"
+        hidden>
+        <svg viewBox="0 0 24 24" aria-hidden="true" width="20" height="20">
+          <g data-icon="system">
+            <circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6" />
+            <path d="M12 4a8 8 0 0 1 0 16Z" fill="currentColor" />
+          </g>
+          <g data-icon="light">
+            <circle cx="12" cy="12" r="4" fill="currentColor" />
+            <path
+              d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"
+              stroke="currentColor"
+              stroke-width="1.6"
+              stroke-linecap="round" />
+          </g>
+          <g data-icon="dark">
+            <path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z" fill="currentColor" />
+          </g>
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>

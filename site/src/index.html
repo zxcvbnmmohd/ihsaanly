@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="{{v lang}}" dir="{{v dir}}" data-locale="{{v code}}">
+  <head>
+    {{> head}}
+    <link rel="stylesheet" href="{{v asset:demo.css}}" />
+    <script src="{{v asset:site.js}}" defer></script>
+    <script src="{{v asset:demo.js}}" defer></script>
+    {{v jsonLd}}
+  </head>
+  <body>
+    {{> header}}
+
+    <main id="main">
+      <div class="wrap opening">
+        <div>
+          <h1>{{t home.hero.title}}</h1>
+          <p class="lede">{{t home.hero.lede}}</p>
+          <div class="stores">
+            <a class="store" href="#" data-store="App Store" aria-disabled="true">
+              <svg viewBox="0 0 24 24" aria-hidden="true" width="26" height="26">
+                <path
+                  fill="currentColor"
+                  d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701" />
+              </svg>
+              <span><small>{{t home.stores.appStorePrefix}}</small> App Store</span>
+            </a>
+            <a class="store" href="#" data-store="Google Play" aria-disabled="true">
+              <svg viewBox="0 0 24 24" aria-hidden="true" width="26" height="26">
+                <path
+                  fill="currentColor"
+                  d="M22.018 13.298l-3.919 2.218-3.515-3.493 3.543-3.521 3.891 2.202a1.49 1.49 0 0 1 0 2.594zM1.337.924a1.486 1.486 0 0 0-.112.568v21.017c0 .217.045.419.124.6l11.155-11.087L1.337.924zm12.207 10.065l3.258-3.238L3.45.195a1.466 1.466 0 0 0-.946-.179l11.04 10.973zm0 2.067l-11 10.933c.298.036.612-.016.906-.183l13.324-7.54-3.23-3.21z" />
+              </svg>
+              <span><small>{{t home.stores.playPrefix}}</small> Google Play</span>
+            </a>
+          </div>
+          <p class="try-hint">{{t home.hero.tryHint}}</p>
+          <p
+            class="toast"
+            role="status"
+            aria-live="polite"
+            data-template="{{a home.stores.soon}}"></p>
+        </div>
+
+        <div class="demo" id="demo" role="region" aria-label="{{a home.demo.label}}">
+          <noscript>
+            <style>
+              .demo-phone {
+                display: none;
+              }
+            </style>
+            <p class="demo-noscript">{{t home.demo.noscript}}</p>
+          </noscript>
+          <div class="demo-phone" id="demo-phone">
+            <div class="demo-phone-screen">
+              <div class="demo-statusbar" id="demo-statusbar" aria-hidden="true"></div>
+              <div class="demo-nav" id="demo-nav"></div>
+              <div class="demo-content" id="demo-content" tabindex="-1">
+                <p class="demo-noscript">{{t home.demo.noscript}}</p>
+              </div>
+              <div class="demo-tabbar-wrap">
+                <div class="demo-tabbar" id="demo-tabbar"></div>
+                <div class="demo-gesture-handle" aria-hidden="true"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <section class="wrap section" aria-labelledby="day-title">
+        <h2 id="day-title">{{t home.day.title}}</h2>
+        <div class="section-body">
+          <p>{{t home.day.intro}}</p>
+          <p class="quiet">{{t home.day.maghribFirst}}</p>
+          <ol class="day">
+            <li>
+              <span class="when">{{t home.day.timeline.maghrib}}</span>
+              <p class="what">{{t home.day.timeline.maghribWhat}}</p>
+            </li>
+            <li>
+              <span class="when">{{t home.day.timeline.isha}}</span>
+              <p class="what">{{t home.day.timeline.ishaWhat}}</p>
+            </li>
+            <li>
+              <span class="when">{{t home.day.timeline.fajr}}</span>
+              <p class="what">{{t home.day.timeline.fajrWhat}}</p>
+            </li>
+            <li>
+              <span class="when">{{t home.day.timeline.sunrise}}</span>
+              <p class="what">{{t home.day.timeline.sunriseWhat}}</p>
+            </li>
+            <li>
+              <span class="when">{{t home.day.timeline.dhuhr}}</span>
+              <p class="what">{{t home.day.timeline.dhuhrWhat}}</p>
+            </li>
+            <li>
+              <span class="when">{{t home.day.timeline.asr}}</span>
+              <p class="what">{{t home.day.timeline.asrWhat}}</p>
+            </li>
+          </ol>
+          <p>{{t home.day.outro}}</p>
+        </div>
+      </section>
+
+      <section class="wrap section" aria-labelledby="source-title">
+        <h2 id="source-title">{{t home.source.title}}</h2>
+        <div class="section-body">
+          <p>{{t home.source.intro}}</p>
+          <p>{{t home.source.plain}}</p>
+          {{v specimen}}
+        </div>
+      </section>
+
+      <section class="wrap section" aria-labelledby="coming-title">
+        <h2 id="coming-title">{{t home.coming.title}}</h2>
+        <div class="section-body">
+          <p>{{t home.coming.fasting}}</p>
+          <p>{{t home.coming.shift}}</p>
+        </div>
+      </section>
+
+      <section class="wrap section" aria-labelledby="calm-title">
+        <h2 id="calm-title">{{t home.calm.title}}</h2>
+        <div class="section-body">
+          <p>{{t home.calm.reminders}}</p>
+          <p>{{t home.calm.owed}}</p>
+          <ul class="never">
+            <li>{{t home.calm.neverStreaks}}</li>
+            <li>{{t home.calm.neverFailed}}</li>
+            <li>{{t home.calm.neverPaywall}}</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="wrap section" aria-labelledby="inside-title">
+        <h2 id="inside-title">{{t home.inside.title}}</h2>
+        <div class="section-body">
+          <ul class="contents">
+            <li>{{t home.inside.adhkar}}</li>
+            <li>{{t home.inside.prayers}}</li>
+            <li>{{t home.inside.duas}}</li>
+            <li>{{t home.inside.fasting}}</li>
+            <li>{{t home.inside.text}}</li>
+            <li>{{t home.inside.library}}</li>
+            <li>{{t home.inside.widgets}}</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="wrap section" aria-labelledby="private-title">
+        <h2 id="private-title">{{t home.private.title}}</h2>
+        <div class="section-body">
+          <p class="pledge">{{t home.private.pledge}}</p>
+          <p>{{t home.private.none}}</p>
+          <p>{{t home.private.free}}</p>
+        </div>
+      </section>
+
+      <section class="wrap section" aria-labelledby="honest-title">
+        <h2 id="honest-title">{{t home.honest.title}}</h2>
+        <div class="section-body">
+          <p>{{t home.honest.review}}</p>
+          <p>{{t home.honest.languages}}</p>
+        </div>
+      </section>
+
+      <section class="wrap section" id="questions" aria-labelledby="questions-title">
+        <h2 id="questions-title">{{t home.questions.title}}</h2>
+        <div class="section-body">
+          <details>
+            <summary>{{t home.questions.timesQ}}</summary>
+            <p>{{t home.questions.timesA}}</p>
+          </details>
+          <details>
+            <summary>{{t home.questions.hijriQ}}</summary>
+            <p>{{t home.questions.hijriA}}</p>
+          </details>
+          <details>
+            <summary>{{t home.questions.expectedQ}}</summary>
+            <p>{{t home.questions.expectedA}}</p>
+          </details>
+          <details>
+            <summary>{{t home.questions.locationQ}}</summary>
+            <p>{{t home.questions.locationA}}</p>
+          </details>
+          <details>
+            <summary>{{t home.questions.notificationsQ}}</summary>
+            <p>{{t home.questions.notificationsA}}</p>
+          </details>
+          <details>
+            <summary>{{t home.questions.brokenQ}}</summary>
+            <p>{{t home.questions.brokenA}}</p>
+          </details>
+        </div>
+      </section>
+    </main>
+
+    {{> footer}}
+  </body>
+</html>

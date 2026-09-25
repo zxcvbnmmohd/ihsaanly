@@ -283,6 +283,7 @@ a:hover {
   top: calc(100% + 0.4rem);
   z-index: 30;
   min-width: 11rem;
+  max-width: calc(100vw - 2 * var(--gutter));
   margin: 0;
   padding: 0.4rem;
   list-style: none;
@@ -887,6 +888,22 @@ html:lang(ur) .legal .summary {
 
 /* ---- Small screens ---- */
 
+@media (max-width: 40rem) {
+  .store {
+    flex: 1 1 9rem;
+    max-width: 14rem;
+    min-width: 0;
+    justify-content: center;
+    padding-inline: 0.7rem;
+    font-size: 1.05rem;
+  }
+
+  /* A path through the app's screens may wrap rather than widen the page. */
+  .legal em {
+    white-space: normal;
+  }
+}
+
 @media (max-width: 52rem) {
   .opening {
     grid-template-columns: minmax(0, 1fr);
@@ -909,11 +926,29 @@ html:lang(ur) .legal .summary {
 
   .tools {
     order: 1;
+    margin-inline-start: auto;
   }
 
   .masthead nav {
     order: 2;
     width: 100%;
+  }
+
+  /* Privacy and Terms are in the footer of every page; the header keeps the
+     two links a visitor looks for first, so it stays two short rows in every
+     language. */
+  .masthead nav .nav-legal {
+    display: none;
+  }
+
+  /* The globe alone; the language's name stays for screen readers. */
+  .lang-current {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
   }
 
   .day li {

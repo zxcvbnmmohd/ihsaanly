@@ -16,7 +16,7 @@ import type { Place } from '@/location/place'
 import { DEFAULT_CALCULATION_PREFERENCES } from '@/prayer/calculation'
 import { PRAYERS, type Prayer } from '@/prayer/qada'
 import { prayerTimesAcross } from '@/prayer/times'
-import { buildWindows } from '@/prayer/windows'
+import { buildWindows, type WindowName } from '@/prayer/windows'
 import type { Strings } from '@/strings/en'
 
 /** How many days of look-ahead the demo offers under "Later this week". */
@@ -53,6 +53,8 @@ export interface TodayViewModel {
   hijri: string
   placeLabel: string
   prayers: PrayerEntry[]
+  /** The prayer whose window is open right now, or null when it's a boundary (sunrise) or no window applies. */
+  currentPrayer: Prayer | null
   rightNow: TodayEntry | null
   alsoNow: TodayEntry[]
   nothingElse: boolean
@@ -120,6 +122,12 @@ export function toggleMark(marks: PrayerMarks, prayer: Prayer, at: Date): Prayer
     return next
   }
   return { ...marks, [prayer]: at }
+}
+
+/** Sunrise is a boundary, not a prayer — the same rule `nextPrayerWindow` follows. */
+function currentPrayerFor(window: WindowName | null): Prayer | null {
+  if (window === null || window === 'sunrise') return null
+  return window
 }
 
 function itemEntry(id: string): TodayEntry | null {
@@ -262,6 +270,7 @@ export function buildToday(
       done: signals.prayedToday[prayer] !== undefined,
       passed: passed(prayer),
     })),
+    currentPrayer: currentPrayerFor(window),
     rightNow,
     alsoNow,
     nothingElse,

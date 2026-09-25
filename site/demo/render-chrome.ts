@@ -93,6 +93,7 @@ export function renderTabBar(
         role: 'tab',
         'aria-selected': String(selected),
         tabindex: selected ? '0' : '-1',
+        'data-demo-tab': def.tab,
       },
       onClick: () => handlers.onSelectTab(def.tab),
       children: [

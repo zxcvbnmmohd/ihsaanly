@@ -60,6 +60,7 @@ function prayerStrip(prayers: PrayerEntry[], onMark: (prayer: Prayer) => void): 
         role: 'checkbox',
         'aria-checked': String(entry.done),
         'aria-label': entry.name,
+        'data-prayer': entry.prayer,
       },
       onClick: () => onMark(entry.prayer),
       children: [

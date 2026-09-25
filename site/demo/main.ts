@@ -9,6 +9,12 @@ import { itemById } from '@/content'
 import type { Place } from '@/location/place'
 import type { Prayer } from '@/prayer/qada'
 import { defaultCityFor } from './cities'
+import {
+  coachHandleMarkPrayer,
+  coachHandleOpenItem,
+  coachHandleSelectTab,
+  renderCoach,
+} from './coach'
 import { demoCopyFor } from './demo-strings'
 import { buildSignals, buildToday, toggleMark } from './engine'
 import { buildItemDetail } from './item-detail'
@@ -76,6 +82,7 @@ function boot(): void {
 
   const handlers: ChromeHandlers = {
     onSelectTab: (tab: DemoTab) => {
+      coachHandleSelectTab()
       setState({ view: tab, previousTab: tab === 'more' ? getState().previousTab : tab })
     },
     onBack: () => {
@@ -84,6 +91,7 @@ function boot(): void {
   }
 
   const onOpenItem = (id: string): void => {
+    coachHandleOpenItem()
     const state = getState()
     const previousTab =
       state.view === 'today' || state.view === 'library' ? state.view : state.previousTab
@@ -91,6 +99,9 @@ function boot(): void {
   }
 
   const onMarkPrayer = (prayer: Prayer): void => {
+    // Decide before the state change re-renders: it needs this render's
+    // target, not the one the mark is about to produce.
+    coachHandleMarkPrayer(prayer)
     const state = getState()
     setState({ marks: toggleMark(state.marks, prayer, new Date()) })
   }
@@ -138,6 +149,11 @@ function boot(): void {
 
     renderTabBar(tabbarEl, activeTab, strings, demoCopy.tabsLabel, handlers)
     contentEl.scrollTop = scrollTop
+
+    // Positions itself from the live layout, so it must run after the
+    // scroll position above is restored, and only while Today's own
+    // content (the prayer strip, the "right now" card) is on screen.
+    if (state.view === 'today') renderCoach({ contentEl, tabbarEl }, today, demoCopy)
 
     if (focusedId) {
       const again = document.getElementById(focusedId)

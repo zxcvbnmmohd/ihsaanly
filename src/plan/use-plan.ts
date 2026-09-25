@@ -10,11 +10,13 @@ import { useEventSettings } from '@/events/store'
 import { useKnownItems } from '@/memorise/store'
 import { currentHomeTransition } from '@/events/geofence'
 import { useNotificationPreferences } from '@/notifications/store'
+import { useOnboarding } from '@/onboarding/store'
 import { useNow } from '@/time/use-now'
 
 import { useCompletedToday } from './completions'
 import { dayContextFor } from './day-context'
 import { useEnabledItems } from './enabled-store'
+import { attendsJumuah } from './jumuah'
 import { plan } from './plan'
 import { useUserState } from './user-state-store'
 import type { Plan, Signals } from './signals'
@@ -35,6 +37,7 @@ export function useSignals(): Signals | null {
   const hijriOffset = useHijriOffset()
   const now = useNow()
   const userState = useUserState()
+  const onboarding = useOnboarding()
   const notifications = useNotificationPreferences()
   const enabledItemIds = useEnabledItems()
   const events = useEventSettings()
@@ -66,6 +69,8 @@ export function useSignals(): Signals | null {
       ...(events.detectHome ? [currentHomeTransition()].filter((entry) => entry !== null) : []),
     ],
     userState,
+    // Resolved here so the planner decides Friday without ever seeing gender.
+    attendsJumuah: attendsJumuah(userState.jumuah, userState.travelling, onboarding.gender),
     preferences: {
       enabledItemIds,
       knownItemIds,

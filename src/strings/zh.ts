@@ -53,6 +53,7 @@ export const zh: Strings = {
     asr: '晡礼',
     maghrib: '昏礼',
     isha: '宵礼',
+    jumuah: '主麻',
   },
   window: {
     fajr: '晨礼',
@@ -61,6 +62,7 @@ export const zh: Strings = {
     asr: '傍晚',
     maghrib: '昏礼后',
     isha: '夜间',
+    jumuah: '主麻后',
   },
   notifications: {
     title: '提醒',
@@ -267,6 +269,13 @@ export const zh: Strings = {
     travellingDetail: '提供短礼，定时圣行拜暂且放下，斋戒改为可选而非预期。',
     paused: '暂停礼拜记录',
     pausedDetail: '不记录礼拜，也不会累积任何待补的礼拜。在你重新开启之前一直保持关闭。',
+    jumuah: '周五的主麻',
+    jumuahChoice: {
+      auto: '自动',
+      attend: '我参加主麻',
+      dhuhr: '我礼晌礼',
+    },
+    jumuahAutoDetail: '周五礼主麻，除非你在旅行中或选择了“姐妹”。',
   },
   hijri: {
     title: '伊斯兰历日期',

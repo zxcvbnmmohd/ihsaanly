@@ -40,8 +40,11 @@ const Trigger = z.discriminatedUnion('kind', [
   z.object({
     kind: z.literal('prayer'),
     // 'any' covers acts tied to every obligatory prayer rather than one of
-    // them, such as the dhikr after salah or the siwak before it.
-    prayer: z.union([Prayer, z.literal('any')]),
+    // them, such as the dhikr after salah or the siwak before it. 'jumuah'
+    // applies only on the user's Jumu'ah day, against the dhuhr mark and
+    // window, and on that day a 'dhuhr' trigger steps aside. It is a trigger,
+    // not a prayer: marks and qada stay dhuhr.
+    prayer: z.union([Prayer, z.literal('jumuah'), z.literal('any')]),
     when: z.enum(['before', 'after']),
   }),
   z.object({

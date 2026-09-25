@@ -58,6 +58,7 @@ export const ur: Strings = {
     asr: 'عصر',
     maghrib: 'مغرب',
     isha: 'عشاء',
+    jumuah: 'جمعہ',
   },
   window: {
     fajr: 'فجر',
@@ -66,6 +67,7 @@ export const ur: Strings = {
     asr: 'شام',
     maghrib: 'مغرب کے بعد',
     isha: 'رات',
+    jumuah: 'جمعہ کے بعد',
   },
   notifications: {
     title: 'یاد دہانیاں',
@@ -280,6 +282,13 @@ export const ur: Strings = {
     paused: 'نماز کا ریکارڈ روک دیں',
     pausedDetail:
       'نمازیں درج نہیں ہوتیں اور کوئی قضا جمع نہیں ہوتی۔ یہ اس وقت تک بند رہتا ہے جب تک آپ اسے دوبارہ نہ کھولیں۔',
+    jumuah: 'جمعے کے دن جمعہ',
+    jumuahChoice: {
+      auto: 'خودکار',
+      attend: 'جمعہ میں حاضری',
+      dhuhr: 'ظہر کی نماز',
+    },
+    jumuahAutoDetail: 'جمعے کے دن جمعہ، سوائے اس کے کہ آپ سفر میں ہوں یا آپ نے "بہن" چنا ہو۔',
   },
   hijri: {
     title: 'ہجری تاریخ',

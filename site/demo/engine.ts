@@ -8,6 +8,7 @@ import { itemById, items, resolveText } from '@/content'
 import { civilDateIn, civilDateKey } from '@/day/boundaries'
 import { dayContextFor } from '@/plan/day-context'
 import { DEFAULT_NOTIFICATION_PREFERENCES } from '@/plan/notification-preferences'
+import { attendsJumuah, prayerName, windowName } from '@/plan/jumuah'
 import { plan } from '@/plan/plan'
 import type { NextPrayer, PlannedItem, Signals } from '@/plan/signals'
 import { DEFAULT_USER_STATE } from '@/plan/user-state'
@@ -31,6 +32,8 @@ export interface TodayEntry {
 
 export interface NextPrayerEntry {
   prayer: Prayer
+  /** Jumu'ah in place of Dhuhr on a Friday. */
+  name: string
   distance: string
   before: TodayEntry[]
   after: TodayEntry[]
@@ -38,6 +41,8 @@ export interface NextPrayerEntry {
 
 export interface PrayerEntry {
   prayer: Prayer
+  /** Jumu'ah in place of Dhuhr on a Friday. */
+  name: string
   done: boolean
   passed: boolean
 }
@@ -93,6 +98,13 @@ export function buildSignals(place: Place, at: Date, marks: PrayerMarks): Signal
     completedToday: {},
     activeEvents: [],
     userState: DEFAULT_USER_STATE,
+    // A visitor has no onboarding answer, so the default resolves as it would
+    // for someone who skipped the question: Jumu'ah on Fridays.
+    attendsJumuah: attendsJumuah(
+      DEFAULT_USER_STATE.jumuah,
+      DEFAULT_USER_STATE.travelling,
+      'unspecified',
+    ),
     preferences: {
       enabledItemIds: items.filter((item) => item.defaultOn).map((item) => item.id),
       knownItemIds: [],
@@ -158,6 +170,7 @@ function toNext(next: NextPrayer | null, now: Date, strings: Strings): NextPraye
   if (!next) return null
   return {
     prayer: next.prayer,
+    name: prayerName(strings, next.prayer, next.jumuah),
     distance: distanceLabel((next.startsAt.getTime() - now.getTime()) / 60_000, strings),
     before: next.before.flatMap((id) => itemEntry(id) ?? []),
     after: next.after.flatMap((id) => itemEntry(id) ?? []),
@@ -234,7 +247,7 @@ export function buildToday(
   const hijri = signals.today.hijri
 
   return {
-    windowTitle: window ? strings.window[window] : strings.today.title,
+    windowTitle: window ? windowName(strings, window, planned.today.jumuah) : strings.today.title,
     gregorian: new Intl.DateTimeFormat(locale, {
       weekday: 'short',
       day: 'numeric',
@@ -245,6 +258,7 @@ export function buildToday(
     placeLabel,
     prayers: PRAYERS.map((prayer) => ({
       prayer,
+      name: prayerName(strings, prayer, planned.today.jumuah),
       done: signals.prayedToday[prayer] !== undefined,
       passed: passed(prayer),
     })),

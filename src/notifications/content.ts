@@ -1,6 +1,7 @@
 import { assertNever } from '@/assert-never'
 import { resolveText } from '@/content'
 import type { Item } from '@/content/schema'
+import { prayerName } from '@/plan/jumuah'
 import type { ScheduledNotification } from '@/plan/signals'
 import type { Strings } from '@/strings'
 
@@ -47,7 +48,9 @@ export function notificationContent(
           (reason === 'upcoming'
             ? strings.notifications.body.tomorrow
             : entry.window
-              ? strings.notifications.body.windowUntil(strings.prayer[entry.window.closes])
+              ? strings.notifications.body.windowUntil(
+                  prayerName(strings, entry.window.closes, entry.window.jumuah),
+                )
               : strings.notifications.body.window),
         at: entry.at,
         channelId: 'reminders',
@@ -65,7 +68,7 @@ export function notificationContent(
     case 'prayer':
       return {
         identifier: identifierFor(entry),
-        title: strings.prayer[entry.prayer],
+        title: prayerName(strings, entry.prayer, entry.jumuah),
         body: strings.notifications.body.prayerWindow,
         at: entry.at,
         channelId: 'prayers',

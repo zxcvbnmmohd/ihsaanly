@@ -60,6 +60,7 @@ export const so: Strings = {
     asr: 'Casar',
     maghrib: 'Maqrib',
     isha: 'Cishe',
+    jumuah: 'Jimce',
   },
   window: {
     fajr: 'Subax',
@@ -68,6 +69,7 @@ export const so: Strings = {
     asr: 'Galab',
     maghrib: 'Maqrib kadib',
     isha: 'Habeen',
+    jumuah: 'Jimce kadib',
   },
   notifications: {
     title: 'Xusuusiyeyaal',
@@ -287,6 +289,14 @@ export const so: Strings = {
     paused: 'Hakad geli diiwaangelinta salaadda',
     pausedDetail:
       'Salaadaha lama diiwaangelinayo, qadaana kuma soo kordhayso. Way dansanaanaysaa ilaa aad dib u shiddo.',
+    jumuah: 'Jimcaha maalinta Jimcaha',
+    jumuahChoice: {
+      auto: 'Si toos ah',
+      attend: 'Waxaan tukadaa Jimcaha',
+      dhuhr: 'Waxaan tukadaa Duhur',
+    },
+    jumuahAutoDetail:
+      'Jimce maalinta Jimcaha, haddii aadan safar ku jirin ama aadan dooran "Walaal (dhedig)".',
   },
   hijri: {
     title: 'Taariikhda Hijriga',

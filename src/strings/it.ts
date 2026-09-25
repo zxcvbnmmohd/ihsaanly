@@ -58,6 +58,7 @@ export const it: Strings = {
     asr: 'Asr',
     maghrib: 'Maghrib',
     isha: 'Isha',
+    jumuah: 'Jumu’ah',
   },
   window: {
     fajr: 'Fajr',
@@ -66,6 +67,7 @@ export const it: Strings = {
     asr: 'Sera',
     maghrib: 'Dopo Maghrib',
     isha: 'Notte',
+    jumuah: 'Dopo la Jumu’ah',
   },
   notifications: {
     title: 'Promemoria',
@@ -286,6 +288,14 @@ export const it: Strings = {
     paused: 'Sospendi la registrazione delle preghiere',
     pausedDetail:
       'Le preghiere non vengono registrate e non si accumula nulla da recuperare. Resta sospesa finché non la riattivi.',
+    jumuah: 'La Jumu’ah il venerdì',
+    jumuahChoice: {
+      auto: 'Automatico',
+      attend: 'Partecipo alla Jumu’ah',
+      dhuhr: 'Prego Dhuhr',
+    },
+    jumuahAutoDetail:
+      'La Jumu’ah il venerdì, a meno che tu sia in viaggio o abbia scelto «Sorella».',
   },
   hijri: {
     title: 'Data dell’Egira',

@@ -9,6 +9,7 @@ import { Screen } from '@/components/screen'
 import { Surface } from '@/components/surface'
 import type { HijriDate } from '@/hijri/calendar'
 import type { LocationProblem } from './onboarding'
+import { prayerNames } from '@/plan/jumuah'
 import type { Prayer } from '@/prayer/qada'
 import { useStrings } from '@/strings'
 import { colors, type Palette } from '@/theme/colors'
@@ -42,6 +43,8 @@ export interface FastingTodayEntry {
 
 export interface NextPrayerEntry {
   prayer: Prayer
+  /** It falls on the user's Jumu'ah day, so Dhuhr is named Jumu'ah. */
+  jumuah: boolean
   distance: string
   before: TodayEntry[]
   after: TodayEntry[]
@@ -60,6 +63,8 @@ export interface TodayScreenProps {
   locating: boolean
   locationProblem: LocationProblem
   onUseMyLocation: () => void
+  /** Today is the user's Jumu'ah day: the strip names Dhuhr Jumu'ah. Qada stays Dhuhr. */
+  jumuah: boolean
   /** One item not yet on Today, offered at most weekly. */
   suggestion: SuggestionEntry | null
   onAddSuggestion: (id: string) => void
@@ -304,6 +309,7 @@ export function TodayScreen({
   locating,
   locationProblem,
   onUseMyLocation,
+  jumuah,
   suggestion,
   onAddSuggestion,
   onDismissSuggestion,
@@ -415,7 +421,7 @@ export function TodayScreen({
         <Section title={strings.plan.prayers} accent={palette.accent}>
           <PrayerStrip
             prayers={prayers}
-            names={strings.prayer}
+            names={prayerNames(strings, jumuah)}
             palette={palette}
             onMark={onMarkPrayer}
           />
@@ -444,7 +450,7 @@ export function TodayScreen({
 
       {next && (next.before.length > 0 || next.after.length > 0) ? (
         <Section title={strings.plan.upNext} accent={palette.accent}>
-          <UpNextCard next={next} names={strings.prayer} palette={palette} />
+          <UpNextCard next={next} names={prayerNames(strings, next.jumuah)} palette={palette} />
         </Section>
       ) : null}
 

@@ -11,6 +11,7 @@ import {
 } from '@/prayer/windows'
 
 import { matchesDay, readingsDiverge } from './day-match'
+import { isJumuahAt, isJumuahDay, resolveTriggerPrayer } from './jumuah'
 import { isQuiet } from './quiet-hours'
 import type {
   DayContext,
@@ -76,8 +77,19 @@ const PRAYER_FOR_WINDOW: Partial<Record<WindowName, Prayer>> = {
   isha: 'isha',
 }
 
+/**
+ * The rawatib are the sunnah prayers tied to one named prayer. The sunnah
+ * after Jumu'ah counts: it steps aside on a journey as the Dhuhr sunnah does,
+ * which matters only for someone who chose to attend while travelling, since
+ * `auto` already means Dhuhr on a journey.
+ */
 function isRawatib(trigger: Trigger): boolean {
   return trigger.kind === 'prayer' && trigger.prayer !== 'any'
+}
+
+/** Whether today is this user's Jumu'ah day. */
+function jumuahToday(signals: Signals): boolean {
+  return isJumuahDay(signals.today, signals.attendsJumuah)
 }
 
 /**
@@ -120,13 +132,19 @@ function markAnswersPrayer(prayer: Prayer, mark: Date, windows: PrayerWindow[]):
   return window !== undefined && mark.getTime() <= window.endsAt.getTime() + AFTER_PRAYER_GRACE_MS
 }
 
-/** The most recent mark this trigger answers to, ignoring one that landed too late to count. */
+/**
+ * The most recent mark this trigger answers to, ignoring one that landed too
+ * late to count. A trigger that does not apply today (a dhuhr one on Jumu'ah,
+ * a jumuah one on any other day) answers to none.
+ */
 function latestMark(
   trigger: Extract<Trigger, { kind: 'prayer' }>,
   signals: Signals,
   windows: PrayerWindow[],
 ): Date | null {
-  const prayers = trigger.prayer === 'any' ? PRAYERS : [trigger.prayer]
+  const resolved = resolveTriggerPrayer(trigger.prayer, jumuahToday(signals))
+  if (resolved === null) return null
+  const prayers = resolved === 'any' ? PRAYERS : [resolved]
 
   return (
     prayers
@@ -191,6 +209,8 @@ function reasonFor(
 
     case 'prayer': {
       const prayed = Object.keys(signals.prayedToday)
+      const prayer = resolveTriggerPrayer(trigger.prayer, jumuahToday(signals))
+      if (prayer === null) return null
 
       if (trigger.when === 'after') {
         const latest = latestMark(trigger, signals, windows)
@@ -213,9 +233,9 @@ function reasonFor(
       // What the coming prayer asks for is still answered, by `next` on the
       // model: it lists before and after from the triggers rather than from
       // the moment, so it is stable all day and says how far off the prayer is.
-      const current = trigger.prayer === 'any' ? PRAYER_FOR_WINDOW[window.name] : trigger.prayer
+      const current = prayer === 'any' ? PRAYER_FOR_WINDOW[window.name] : prayer
       if (!current) return null
-      if (trigger.prayer !== 'any' && PRAYER_FOR_WINDOW[window.name] !== trigger.prayer) return null
+      if (prayer !== 'any' && PRAYER_FOR_WINDOW[window.name] !== prayer) return null
 
       return prayed.includes(current) ? null : 'before-prayer'
     }
@@ -295,8 +315,9 @@ function scheduleNotifications(signals: Signals, items: Item[]): ScheduledNotifi
 
   futureWindows(signals).forEach((window) => {
     const prayer = PRAYER_FOR_WINDOW[window.name]
+    const jumuah = isJumuahAt(window.startsAt, signals.timeZone, signals.attendsJumuah)
     if (prayer && notifications.prayers && admit(window.startsAt, false)) {
-      scheduled.push({ kind: 'prayer', prayer, at: window.startsAt })
+      scheduled.push({ kind: 'prayer', prayer, at: window.startsAt, jumuah })
     }
 
     const name = WINDOW_FOR[window.name]
@@ -311,7 +332,12 @@ function scheduleNotifications(signals: Signals, items: Item[]): ScheduledNotifi
             itemId: item.id,
             at: window.startsAt,
             reason: 'current-window',
-            window: { closes: WINDOW_CLOSES[name], endsAt: window.endsAt },
+            window: {
+              closes: WINDOW_CLOSES[name],
+              endsAt: window.endsAt,
+              // The window closes as the next one opens, on the same civil day.
+              jumuah: isJumuahAt(window.endsAt, signals.timeZone, signals.attendsJumuah),
+            },
           })
         })
     }
@@ -379,26 +405,32 @@ export function plan(signals: Signals): Plan {
 
   const nextWindow = nextPrayerWindow(signals.now, windows)
   const nextPrayer = nextWindow ? PRAYER_FOR_WINDOW[nextWindow.name] : undefined
+  // Decided for the next prayer's own day rather than today's, so the answer
+  // cannot drift if the next prayer ever falls after midnight.
+  const nextIsJumuah = nextWindow
+    ? isJumuahAt(nextWindow.startsAt, signals.timeZone, signals.attendsJumuah)
+    : false
   const asks = (when: 'before' | 'after'): string[] =>
     items
-      .filter(
-        (item) =>
-          item.trigger.kind === 'prayer' &&
-          item.trigger.when === when &&
-          (item.trigger.prayer === nextPrayer || item.trigger.prayer === 'any'),
-      )
+      .filter((item) => {
+        if (item.trigger.kind !== 'prayer' || item.trigger.when !== when) return false
+        const prayer = resolveTriggerPrayer(item.trigger.prayer, nextIsJumuah)
+        return prayer === nextPrayer || prayer === 'any'
+      })
       .map((item) => item.id)
 
   return {
     today: {
       hijri: signals.today.hijri,
       window: window?.name ?? null,
+      jumuah: jumuahToday(signals),
       now,
       done,
       next:
         nextWindow && nextPrayer
           ? {
               prayer: nextPrayer,
+              jumuah: nextIsJumuah,
               startsAt: nextWindow.startsAt,
               before: asks('before'),
               after: asks('after'),

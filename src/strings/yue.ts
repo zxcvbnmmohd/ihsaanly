@@ -52,6 +52,7 @@ export const yue: Strings = {
     asr: '晡禮',
     maghrib: '昏禮',
     isha: '宵禮',
+    jumuah: '主麻',
   },
   window: {
     fajr: '晨禮',
@@ -60,6 +61,7 @@ export const yue: Strings = {
     asr: '傍晚',
     maghrib: '昏禮之後',
     isha: '夜晚',
+    jumuah: '主麻之後',
   },
   notifications: {
     title: '提醒',
@@ -265,6 +267,13 @@ export const yue: Strings = {
     travellingDetail: '會提供短禮，常規聖行拜暫時放低，而齋戒只係提供選擇，唔係預期要做。',
     paused: '暫停禮拜記錄',
     pausedDetail: '禮拜唔會被記錄，亦唔會累積任何要補嘅。會一直暫停，直到你再開返為止。',
+    jumuah: '星期五嘅主麻',
+    jumuahChoice: {
+      auto: '自動',
+      attend: '我去主麻',
+      dhuhr: '我禮晌禮',
+    },
+    jumuahAutoDetail: '星期五禮主麻，除非你喺旅行中或者揀咗「姊妹」。',
   },
   hijri: {
     title: '伊斯蘭曆日期',

@@ -1,5 +1,6 @@
 import { itemById, items, resolveText } from '@/content'
 import { civilDateIn, civilDateKey } from '@/day/boundaries'
+import { prayerName, windowName } from '@/plan/jumuah'
 import { plan } from '@/plan/plan'
 import { dayContextFor } from '@/plan/day-context'
 import type { PlannedItem, Signals } from '@/plan/signals'
@@ -205,7 +206,7 @@ function modelAt(input: WidgetInput, at: Date): WidgetModel {
       before: strings.plan.before,
       after: strings.plan.after,
     },
-    window: planned.window ? strings.window[planned.window] : null,
+    window: planned.window ? windowName(strings, planned.window, planned.jumuah) : null,
     date: {
       gregorian: new Intl.DateTimeFormat(input.locale, {
         weekday: 'short',
@@ -221,7 +222,7 @@ function modelAt(input: WidgetInput, at: Date): WidgetModel {
     alsoNow: rest.flatMap((entry) => link(entry.itemId) ?? []),
     next: planned.next
       ? {
-          prayer: strings.prayer[planned.next.prayer],
+          prayer: prayerName(strings, planned.next.prayer, planned.next.jumuah),
           distance: distanceLabel(
             (planned.next.startsAt.getTime() - at.getTime()) / 60_000,
             strings,
@@ -233,8 +234,10 @@ function modelAt(input: WidgetInput, at: Date): WidgetModel {
     prayers: signals.userState.trackingPaused
       ? []
       : PRAYERS.map((prayer) => ({
-          name: strings.prayer[prayer],
-          short: strings.prayer[prayer].slice(0, 1),
+          // Each entry names its own day, so Friday's strip reads Jumu'ah and
+          // Saturday's, later in the same timeline, reads Dhuhr again.
+          name: prayerName(strings, prayer, planned.jumuah),
+          short: prayerName(strings, prayer, planned.jumuah).slice(0, 1),
           done: prayed[prayer] !== undefined,
           passed: passed(prayer),
         })),

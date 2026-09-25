@@ -582,6 +582,67 @@
       "reviewed": false
     },
     {
+      "id": "sunnah-after-jumuah",
+      "category": "prayer",
+      "title": {
+        "en": "The sunnah after Jumu’ah",
+        "ar": "سنة الجمعة البعدية"
+      },
+      "ruling": "sunnah-muakkadah",
+      "arabic": null,
+      "transliteration": null,
+      "translation": null,
+      "repeat": 1,
+      "evidence": [
+        {
+          "type": "hadith",
+          "collection": "Sahih Muslim",
+          "reference": "881",
+          "grading": "sahih",
+          "gradedBy": null,
+          "text": {
+            "en": "When one of you has prayed the Jumu'ah, let him pray four after it."
+          }
+        },
+        {
+          "type": "hadith",
+          "collection": "Sahih al-Bukhari",
+          "reference": "937",
+          "grading": "sahih",
+          "gradedBy": null,
+          "text": {
+            "en": "He would not pray after the Jumu'ah until he had left, and then he would pray two rak'ah."
+          }
+        }
+      ],
+      "trigger": {
+        "kind": "prayer",
+        "prayer": "jumuah",
+        "when": "after"
+      },
+      "defaultOn": true,
+      "note": {
+        "en": "Four rak'ah are narrated for after Jumu'ah, and two prayed at home. Scholars reconcile the two differently."
+      },
+      "audio": null,
+      "audioTranslation": null,
+      "why": {
+        "en": "The voluntary prayer after Jumu'ah, which on a Friday takes the place of the two rak'ah after Dhuhr. The Prophet ﷺ told those who pray Jumu'ah to pray four after it, and he himself prayed two once he had left for home."
+      },
+      "reminder": {
+        "en": "Prayed after Jumu'ah: four in the masjid, or two once you are home."
+      },
+      "how": [
+        {
+          "en": "After Jumu'ah and its dhikr, pray four rak'ah in the masjid, as two pairs."
+        },
+        {
+          "en": "Or pray two rak'ah once you are home."
+        }
+      ],
+      "reviewed": false
+    },
+    {
       "id": "morning-adhkar",
       "category": "adhkar",
       "title": {

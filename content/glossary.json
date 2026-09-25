@@ -120,6 +120,14 @@
         "en": "A teeth-cleaning twig, usually from the arak tree. Cleaning the teeth before prayer is recommended; a toothbrush serves the purpose too.",
         "ar": "عود لتنظيف الأسنان، من شجر الأراك غالبًا. تنظيف الأسنان قبل الصلاة مستحب، وفرشاة الأسنان تؤدي الغرض."
       }
+    },
+    {
+      "id": "jumuah",
+      "term": { "en": "Jumu'ah", "ar": "الجمعة" },
+      "definition": {
+        "en": "The Friday prayer: two rak'ah in congregation after a sermon, prayed in place of Dhuhr. Travellers and women are not obliged to attend, though they may. Whoever misses it prays Dhuhr.",
+        "ar": "صلاة يوم الجمعة: ركعتان في جماعة بعد خطبة، تُصلّى مكان الظهر. لا تجب على المسافر ولا على المرأة، ولهما أن يحضراها. ومن فاتته صلّى الظهر."
+      }
     }
   ]
 }

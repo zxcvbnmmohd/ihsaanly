@@ -14,6 +14,7 @@ import { useWidgetTimeline } from '@/widgets/use-timeline'
 import { useOnboarding } from '@/onboarding/store'
 import { useLocale } from '@/i18n/store'
 import { setEnabledItems, useEnabledItems } from '@/plan/enabled-store'
+import { windowName } from '@/plan/jumuah'
 import { plan } from '@/plan/plan'
 import { suggest, SUGGESTION_INTERVAL_MS, type Phase } from '@/plan/suggest'
 import { setSuggestion, useSuggestion } from '@/plan/suggestion-store'
@@ -72,6 +73,7 @@ function toNext(next: NextPrayer | null, now: Date, strings: Strings): NextPraye
   if (!next) return null
   return {
     prayer: next.prayer,
+    jumuah: next.jumuah,
     distance: distanceLabel((next.startsAt.getTime() - now.getTime()) / 60_000, strings),
     before: next.before.flatMap((id) => itemEntry(id) ?? []),
     after: next.after.flatMap((id) => itemEntry(id) ?? []),
@@ -231,12 +233,19 @@ export default function TodayRoute(): ReactElement {
 
   return (
     <>
-      <Stack.Screen options={{ title: window ? strings.window[window] : strings.today.title }} />
+      <Stack.Screen
+        options={{
+          title: window
+            ? windowName(strings, window, planned?.today.jumuah ?? false)
+            : strings.today.title,
+        }}
+      />
       <TodayScreen
         hasLocation={place !== null}
         locating={thing.locating}
         locationProblem={thing.problem}
         onUseMyLocation={useMyLocation}
+        jumuah={planned?.today.jumuah ?? false}
         gregorian={new Intl.DateTimeFormat(locale, {
           weekday: 'short',
           day: 'numeric',

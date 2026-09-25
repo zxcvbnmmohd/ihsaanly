@@ -92,7 +92,7 @@ Enforced by lint, so a violation fails `bun run check`.
   src/content/**            src/day/**              src/hijri/calendar.ts
   src/prayer/{calculation,times,windows,qada}.ts    src/location/{place,cities}.ts
   src/plan/{plan,day-match,day-context,signals,user-state,quiet-hours,
-             notification-preferences,history,presets,suggest}.ts
+             notification-preferences,history,presets,suggest,jumuah}.ts
   src/data/bundle.ts        src/memorise/reveal.ts  src/i18n/locale.ts
   src/assert-never.ts       src/fasting/ledger.ts
   ```
@@ -220,6 +220,33 @@ prayer mark for `after-prayer`, the window start otherwise. The tasbih after
 "any" prayer, done after Dhuhr, is therefore owed again after Asr. Do not
 replace this with "completed today hides", which was the first draft and is
 wrong for exactly that item. `TodayModel.done` carries the hidden entries.
+
+### On Fridays, Jumu'ah replaces Dhuhr for those who pray it
+
+`UserState.jumuah` is `auto` (default), `attend` or `dhuhr`, chosen on the
+Tracking screen. `attendsJumuah` in `src/plan/jumuah.ts` resolves it: `attend`
+and `dhuhr` mean what they say; `auto` is Jumu'ah unless travelling or the
+onboarding gender is `female`. It is resolved at the edge (`useSignals`, the
+site demo, the widget sample) into `Signals.attendsJumuah`, so the planner never
+sees gender. A Jumu'ah day is the civil Friday (`DayContext.weekday === 5`), not
+the Hijri one, for a user who attends. Rows written before the field existed
+parse through the schema's `.default('auto')`.
+
+Marks, storage, the `Prayer` type, qada and history stay `dhuhr`: Jumu'ah is
+recorded as the dhuhr mark and a missed one is made up as Dhuhr. Only names
+change, and every name goes through `prayerName` / `prayerNames` / `windowName`
+with that day's flag: `TodayModel.jumuah` for today, `NextPrayer.jumuah` for the
+next prayer's own day, and a `jumuah` flag on each prayer notification and on an
+item notification's closing window, decided per instant. The widget timeline
+gets it per entry because each entry runs its own `plan()`.
+
+A content trigger may name `prayer: 'jumuah'`. `resolveTriggerPrayer` decides:
+on the user's Jumu'ah day a `dhuhr` trigger does not apply and a `jumuah` one
+applies against the dhuhr mark and window; on any other day the reverse; `any`
+always applies. So the Dhuhr sunnah items vanish on a Friday and
+`sunnah-after-jumuah` appears after the dhuhr mark, within the usual grace. A
+`jumuah` trigger counts as rawatib, so a user who attends while travelling does
+not see it.
 
 ### `react-native-view-shot` is typed locally
 

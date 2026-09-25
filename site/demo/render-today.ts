@@ -50,11 +50,8 @@ function rightNowCard(entry: TodayEntry, onOpenItem: (id: string) => void): HTML
   })
 }
 
-function prayerStrip(
-  prayers: PrayerEntry[],
-  strings: Strings,
-  onMark: (prayer: Prayer) => void,
-): HTMLElement {
+/** Each entry carries its own name, so Friday's strip reads Jumu'ah without asking the table. */
+function prayerStrip(prayers: PrayerEntry[], onMark: (prayer: Prayer) => void): HTMLElement {
   const chips = prayers.map((entry) =>
     el('button', {
       className: `demo-prayer${entry.done ? ' is-done' : ''}${entry.passed && !entry.done ? ' is-passed' : ''}`,
@@ -62,7 +59,7 @@ function prayerStrip(
         type: 'button',
         role: 'checkbox',
         'aria-checked': String(entry.done),
-        'aria-label': strings.prayer[entry.prayer],
+        'aria-label': entry.name,
       },
       onClick: () => onMark(entry.prayer),
       children: [
@@ -70,7 +67,7 @@ function prayerStrip(
           className: 'demo-prayer-mark',
           html: entry.done ? iconCheck() : '',
         }),
-        el('span', { className: 'demo-prayer-label', text: strings.prayer[entry.prayer] }),
+        el('span', { className: 'demo-prayer-label', text: entry.name }),
       ],
     }),
   )
@@ -109,7 +106,7 @@ function upNextCard(
     children: [
       el('span', {
         className: 'demo-card-title',
-        text: strings.prayer[next.prayer],
+        text: next.name,
       }),
       el('span', { className: 'demo-up-next-distance', text: next.distance }),
       list(strings.plan.before, next.before),
@@ -129,10 +126,7 @@ export function renderToday(
     text: [model.gregorian, model.hijri, model.placeLabel].filter(Boolean).join(' · '),
   })
 
-  const prayers = section(
-    strings.plan.prayers,
-    prayerStrip(model.prayers, strings, handlers.onMarkPrayer),
-  )
+  const prayers = section(strings.plan.prayers, prayerStrip(model.prayers, handlers.onMarkPrayer))
 
   const rightNow = model.rightNow
     ? section(strings.plan.rightNow, rightNowCard(model.rightNow, handlers.onOpenItem))

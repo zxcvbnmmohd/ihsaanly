@@ -462,6 +462,20 @@
       "evidence": [
         "Il n’est pas de jours où les bonnes œuvres sont plus aimées d’Allah que ces dix jours."
       ]
+    },
+    "sunnah-after-jumuah": {
+      "title": "La sunna après la Joumou’a",
+      "why": "La prière surérogatoire après la Joumou’a, qui remplace le vendredi les deux rak’at après Dhuhr. Le Prophète ﷺ a demandé à ceux qui prient la Joumou’a d’en prier quatre après elle, et lui-même en priait deux une fois parti chez lui.",
+      "how": [
+        "Après la Joumou’a et ses invocations, priez quatre rak’at à la mosquée, deux par deux.",
+        "Ou priez deux rak’at une fois rentré chez vous."
+      ],
+      "reminder": "À prier après la Joumou’a : quatre à la mosquée, ou deux une fois chez vous.",
+      "note": "Quatre rak’at sont rapportées après la Joumou’a, et deux priées à la maison. Les savants concilient les deux de différentes manières.",
+      "evidence": [
+        "Lorsque l’un de vous a prié la Joumou’a, qu’il en prie quatre après elle.",
+        "Il ne priait pas après la Joumou’a avant d’être parti, puis il priait deux rak’at."
+      ]
     }
   },
   "glossary": {
@@ -524,6 +538,10 @@
     "siwak": {
       "term": "Siwak",
       "definition": "Un bâtonnet pour se nettoyer les dents, généralement tiré de l’arbre arak. Se nettoyer les dents avant la prière est recommandé ; une brosse à dents fait aussi l’affaire."
+    },
+    "jumuah": {
+      "term": "Joumou’a",
+      "definition": "La prière du vendredi : deux rak’at en assemblée après un sermon, priées à la place de Dhuhr. Le voyageur et la femme ne sont pas tenus d’y assister, mais peuvent le faire. Celui qui la manque prie Dhuhr."
     }
   }
 }

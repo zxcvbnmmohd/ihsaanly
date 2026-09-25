@@ -59,6 +59,7 @@ export const hi: Strings = {
     asr: 'अस्र',
     maghrib: 'मग़रिब',
     isha: 'इशा',
+    jumuah: 'जुमा',
   },
   window: {
     fajr: 'फ़ज्र',
@@ -67,6 +68,7 @@ export const hi: Strings = {
     asr: 'शाम',
     maghrib: 'मग़रिब के बाद',
     isha: 'रात',
+    jumuah: 'जुमा के बाद',
   },
   notifications: {
     title: 'रिमाइंडर',
@@ -282,6 +284,13 @@ export const hi: Strings = {
     paused: 'नमाज़ ट्रैकिंग रोकें',
     pausedDetail:
       'नमाज़ें दर्ज नहीं होतीं और कोई क़ज़ा नहीं जुड़ती। जब तक आप फिर से चालू न करें, यह बंद रहता है।',
+    jumuah: 'जुमे के दिन जुमा',
+    jumuahChoice: {
+      auto: 'अपने-आप',
+      attend: 'जुमा में हाज़िरी',
+      dhuhr: 'ज़ुहर की नमाज़',
+    },
+    jumuahAutoDetail: 'जुमे के दिन जुमा, सिवाय जब आप सफ़र में हों या आपने "बहन" चुना हो।',
   },
   hijri: {
     title: 'हिजरी तारीख़',

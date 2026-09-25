@@ -53,6 +53,7 @@ export const ja: Strings = {
     asr: 'アスル',
     maghrib: 'マグリブ',
     isha: 'イシャー',
+    jumuah: 'ジュムア',
   },
   window: {
     fajr: 'ファジュル',
@@ -61,6 +62,7 @@ export const ja: Strings = {
     asr: '夕方',
     maghrib: 'マグリブの後',
     isha: '夜',
+    jumuah: 'ジュムアの後',
   },
   notifications: {
     title: 'リマインダー',
@@ -276,6 +278,13 @@ export const ja: Strings = {
       '礼拝の短縮が案内され、定例のスンナの礼拝は控えめになり、断食は求められるものではなく任意として案内されます。',
     paused: '礼拝の記録を一時停止',
     pausedDetail: '礼拝は記録されず、補う礼拝も増えません。自分でオンに戻すまで停止したままです。',
+    jumuah: '金曜日のジュムア',
+    jumuahChoice: {
+      auto: '自動',
+      attend: 'ジュムアに参加する',
+      dhuhr: 'ズフルを礼拝する',
+    },
+    jumuahAutoDetail: '旅行中か「女性」を選んだ場合を除き、金曜日はジュムアになります。',
   },
   hijri: {
     title: 'ヒジュラ暦の日付',

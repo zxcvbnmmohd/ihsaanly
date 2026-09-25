@@ -44,6 +44,12 @@ export interface Signals {
   completedToday: Partial<Record<string, Date>>
   activeEvents: string[]
   userState: UserState
+  /**
+   * Whether this user prays Jumu'ah rather than Dhuhr on a Friday, resolved at
+   * the edge by `attendsJumuah` so the planner never learns the onboarding
+   * gender it is derived from.
+   */
+  attendsJumuah: boolean
   preferences: Preferences
 }
 
@@ -67,6 +73,8 @@ export interface PlannedItem {
 /** What the next prayer asks of you, from content rather than from the moment. */
 export interface NextPrayer {
   prayer: Prayer
+  /** The prayer falls on the user's Jumu'ah day, so a dhuhr is named Jumu'ah. */
+  jumuah: boolean
   startsAt: Date
   before: string[]
   after: string[]
@@ -75,6 +83,8 @@ export interface NextPrayer {
 export interface TodayModel {
   hijri: HijriDate
   window: WindowName | null
+  /** Today is the user's Jumu'ah day: name Dhuhr and its window Jumu'ah. */
+  jumuah: boolean
   /** Everything that applies right now, best first. `rightNow` is its head. */
   now: PlannedItem[]
   /** Relevant right now but already done for this occasion. */
@@ -91,13 +101,16 @@ export interface ItemNotification {
   itemId: string
   at: Date
   reason: PlanReason
-  window: { closes: Prayer; endsAt: Date } | null
+  /** `jumuah` says the closing prayer is a Friday's Jumu'ah, so the words name it so. */
+  window: { closes: Prayer; endsAt: Date; jumuah: boolean } | null
 }
 
 /** One per prayer window opening, only when the user asked for them. */
 export interface PrayerNotification {
   kind: 'prayer'
   prayer: Prayer
+  /** This window opens on the user's Jumu'ah day. */
+  jumuah: boolean
   at: Date
 }
 

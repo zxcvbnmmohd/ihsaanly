@@ -48,6 +48,7 @@ export const en = {
     asr: 'Asr',
     maghrib: 'Maghrib',
     isha: 'Isha',
+    jumuah: "Jumu'ah",
   },
   window: {
     fajr: 'Fajr',
@@ -56,6 +57,7 @@ export const en = {
     asr: 'Evening',
     maghrib: 'After Maghrib',
     isha: 'Night',
+    jumuah: "After Jumu'ah",
   },
   notifications: {
     title: 'Reminders',
@@ -271,6 +273,13 @@ export const en = {
     paused: 'Pause prayer tracking',
     pausedDetail:
       'Prayers are not recorded and nothing accrues to make up. It stays off until you turn it back on.',
+    jumuah: "Jumu'ah on Fridays",
+    jumuahChoice: {
+      auto: 'Automatic',
+      attend: "I attend Jumu'ah",
+      dhuhr: 'I pray Dhuhr',
+    },
+    jumuahAutoDetail: "Jumu'ah on Fridays unless you're travelling or chose Sister.",
   },
   hijri: {
     title: 'Hijri date',

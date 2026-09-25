@@ -154,7 +154,7 @@ module.exports = [
       'src/hijri/calendar.ts',
       'src/prayer/{calculation,times,windows,qada}.ts',
       'src/location/{place,cities}.ts',
-      'src/plan/{plan,day-match,day-context,signals,user-state,quiet-hours,notification-preferences,history,presets,suggest}.ts',
+      'src/plan/{plan,day-match,day-context,signals,user-state,quiet-hours,notification-preferences,history,presets,suggest,jumuah}.ts',
       'src/data/bundle.ts',
       'src/memorise/reveal.ts',
       'src/i18n/locale.ts',

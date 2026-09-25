@@ -58,6 +58,7 @@ export const fr: Strings = {
     asr: 'Asr',
     maghrib: 'Maghrib',
     isha: 'Isha',
+    jumuah: 'Joumou’a',
   },
   window: {
     fajr: 'Fajr',
@@ -66,6 +67,7 @@ export const fr: Strings = {
     asr: 'Soir',
     maghrib: 'Après Maghrib',
     isha: 'Nuit',
+    jumuah: 'Après la Joumou’a',
   },
   notifications: {
     title: 'Rappels',
@@ -289,6 +291,14 @@ export const fr: Strings = {
     paused: 'Suspendre le suivi des prières',
     pausedDetail:
       'Les prières ne sont pas enregistrées et rien ne s’accumule à rattraper. Le suivi reste suspendu jusqu’à ce que vous le réactiviez.',
+    jumuah: 'La Joumou’a le vendredi',
+    jumuahChoice: {
+      auto: 'Automatique',
+      attend: 'J’assiste à la Joumou’a',
+      dhuhr: 'Je prie Dhuhr',
+    },
+    jumuahAutoDetail:
+      'La Joumou’a le vendredi, sauf si vous êtes en voyage ou avez choisi « Sœur ».',
   },
   hijri: {
     title: 'Date hégirienne',

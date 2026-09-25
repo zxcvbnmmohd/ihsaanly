@@ -71,7 +71,8 @@ function signals(items: Item[], enabled: string[] = [], known: string[] = []): S
     prayedToday: {},
     completedToday: {},
     activeEvents: [],
-    userState: { travelling: false, trackingPaused: false },
+    userState: { travelling: false, trackingPaused: false, jumuah: 'auto' },
+    attendsJumuah: true,
     preferences: {
       enabledItemIds: enabled,
       knownItemIds: known,

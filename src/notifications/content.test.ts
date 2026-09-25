@@ -41,7 +41,7 @@ describe('notification words', () => {
         itemId: 'evening-adhkar',
         at,
         reason: 'current-window',
-        window: { closes: 'maghrib', endsAt },
+        window: { closes: 'maghrib', endsAt, jumuah: false },
       },
       [teaching],
       en,
@@ -60,7 +60,7 @@ describe('notification words', () => {
         itemId: 'evening-adhkar',
         at,
         reason: 'current-window',
-        window: { closes: 'maghrib', endsAt },
+        window: { closes: 'maghrib', endsAt, jumuah: false },
       },
       [englishOnly],
       en,
@@ -76,7 +76,7 @@ describe('notification words', () => {
         itemId: 'evening-adhkar',
         at,
         reason: 'current-window',
-        window: { closes: 'maghrib', endsAt },
+        window: { closes: 'maghrib', endsAt, jumuah: false },
       },
       [item],
       en,
@@ -103,10 +103,48 @@ describe('notification words', () => {
   })
 
   it('names the prayer on its own channel', () => {
-    const content = notificationContent({ kind: 'prayer', prayer: 'fajr', at }, [item], en)
+    const content = notificationContent(
+      { kind: 'prayer', prayer: 'fajr', at, jumuah: false },
+      [item],
+      en,
+    )
     expect(content?.title).toBe(en.prayer.fajr)
     expect(content?.channelId).toBe('prayers')
     expect(content?.categoryIdentifier).toBeUndefined()
+  })
+
+  it("names Jumu'ah, not Dhuhr, when the prayer falls on the user's Jumu'ah day", () => {
+    const friday = notificationContent(
+      { kind: 'prayer', prayer: 'dhuhr', at, jumuah: true },
+      [item],
+      en,
+    )
+    const otherDay = notificationContent(
+      { kind: 'prayer', prayer: 'dhuhr', at, jumuah: false },
+      [item],
+      en,
+    )
+    expect(friday?.title).toBe("Jumu'ah")
+    expect(otherDay?.title).toBe('Dhuhr')
+    // The identifier and payload stay dhuhr: Jumu'ah is recorded as the dhuhr mark.
+    expect(friday?.identifier).toBe(otherDay?.identifier ?? '')
+    expect(friday?.data).toEqual({ v: 1, kind: 'prayer', prayer: 'dhuhr' })
+  })
+
+  it("says the morning window is open until Jumu'ah on a Friday", () => {
+    const morning: Item = { ...item, id: 'morning-adhkar', reminder: null }
+    const content = notificationContent(
+      {
+        kind: 'item',
+        itemId: 'morning-adhkar',
+        at,
+        reason: 'current-window',
+        window: { closes: 'dhuhr', endsAt, jumuah: true },
+      },
+      [morning],
+      en,
+    )
+    expect(content?.body).toBe("Open until Jumu'ah.")
   })
 
   it('returns nothing for an unknown item', () => {

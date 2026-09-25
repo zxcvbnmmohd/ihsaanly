@@ -64,6 +64,7 @@ export const ar: Strings = {
     asr: 'العصر',
     maghrib: 'المغرب',
     isha: 'العشاء',
+    jumuah: 'الجمعة',
   },
   window: {
     fajr: 'الفجر',
@@ -72,6 +73,7 @@ export const ar: Strings = {
     asr: 'المساء',
     maghrib: 'بعد المغرب',
     isha: 'الليل',
+    jumuah: 'بعد الجمعة',
   },
   notifications: {
     title: 'التنبيهات',
@@ -287,6 +289,13 @@ export const ar: Strings = {
     travellingDetail: 'يُتاح القصر، وتتنحّى السنن الرواتب، ويُعرض الصيام ولا يُنتظر.',
     paused: 'إيقاف تتبع الصلاة',
     pausedDetail: 'لا تُسجَّل الصلوات ولا يتراكم قضاء. يبقى متوقفًا حتى تعيد تشغيله.',
+    jumuah: 'صلاة الجمعة',
+    jumuahChoice: {
+      auto: 'تلقائي',
+      attend: 'أحضر صلاة الجمعة',
+      dhuhr: 'أصلي الظهر',
+    },
+    jumuahAutoDetail: 'الجمعة يوم الجمعة، إلا إن كنت مسافرًا أو اخترت «أخت».',
   },
   hijri: {
     title: 'التاريخ الهجري',

@@ -26,6 +26,7 @@ export const todayFixture: TodayScreenProps = {
   locating: false,
   locationProblem: null,
   onUseMyLocation: noop,
+  jumuah: false,
   suggestion: {
     id: 'fast-monday',
     title: 'Fasting on Monday',
@@ -44,6 +45,7 @@ export const todayFixture: TodayScreenProps = {
   ],
   next: {
     prayer: 'maghrib',
+    jumuah: false,
     distance: 'In about 2 hours',
     before: [],
     after: [
@@ -80,6 +82,37 @@ export const todayFixture: TodayScreenProps = {
   onRecordFastOwed: noop,
   onUndoFastOwed: noop,
   locationHref: '/location',
+}
+
+/** A Friday morning for someone who prays Jumu'ah: the strip and Up next name it. */
+export const todayOnJumuahFixture: TodayScreenProps = {
+  ...todayFixture,
+  jumuah: true,
+  gregorian: 'Fri 25 Sep',
+  now: [
+    { id: 'morning-adhkar', title: 'Morning adhkar', detail: null, href: '/item/morning-adhkar' },
+  ],
+  next: {
+    prayer: 'dhuhr',
+    jumuah: true,
+    distance: 'In about 2 hours',
+    before: [],
+    after: [
+      {
+        id: 'sunnah-after-jumuah',
+        title: "Four rak'ah after Jumu'ah",
+        detail: null,
+        href: '/item/sunnah-after-jumuah',
+      },
+    ],
+  },
+  prayers: [
+    { prayer: 'fajr', done: true, passed: false },
+    { prayer: 'dhuhr', done: false, passed: false },
+    { prayer: 'asr', done: false, passed: false },
+    { prayer: 'maghrib', done: false, passed: false },
+    { prayer: 'isha', done: false, passed: false },
+  ],
 }
 
 /** A Ramadan day, with today already noted as not fasting. */
@@ -277,7 +310,7 @@ export const calculationFixture: CalculationScreenProps = {
 }
 
 export const trackingFixture: TrackingScreenProps = {
-  userState: { travelling: true, trackingPaused: false },
+  userState: { travelling: true, trackingPaused: false, jumuah: 'auto' },
   showPause: true,
   onChange: noop,
 }

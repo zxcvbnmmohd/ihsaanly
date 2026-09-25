@@ -4,6 +4,7 @@ import { writeFileSync } from 'node:fs'
 
 import { items } from '../src/content'
 import { dayContextFor } from '../src/plan/day-context'
+import { attendsJumuah } from '../src/plan/jumuah'
 import { DEFAULT_NOTIFICATION_PREFERENCES } from '../src/plan/notification-preferences'
 import { DEFAULT_USER_STATE } from '../src/plan/user-state'
 import { DEFAULT_CALCULATION_PREFERENCES } from '../src/prayer/calculation'
@@ -34,6 +35,11 @@ const [sample] = widgetTimeline({
     completedToday: {},
     activeEvents: [],
     userState: DEFAULT_USER_STATE,
+    attendsJumuah: attendsJumuah(
+      DEFAULT_USER_STATE.jumuah,
+      DEFAULT_USER_STATE.travelling,
+      'unspecified',
+    ),
     preferences: {
       enabledItemIds: items.filter((item) => item.defaultOn).map((item) => item.id),
       knownItemIds: [],

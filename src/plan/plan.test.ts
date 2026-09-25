@@ -92,7 +92,8 @@ function makeSignals(items: Item[], overrides: Partial<Signals> = {}): Signals {
     prayedToday: {},
     completedToday: {},
     activeEvents: [],
-    userState: { travelling: false, trackingPaused: false },
+    userState: { travelling: false, trackingPaused: false, jumuah: 'auto' },
+    attendsJumuah: true,
     preferences: {
       enabledItemIds: items.map((item) => item.id),
       knownItemIds: [],
@@ -216,7 +217,7 @@ describe('user state overrides selection', () => {
     const result = plan(
       makeSignals([rawatib, dhikr, eveningAdhkar], {
         prayedToday: { dhuhr: justNow },
-        userState: { travelling: false, trackingPaused: true },
+        userState: { travelling: false, trackingPaused: true, jumuah: 'auto' },
       }),
     )
     expect(result.today.rightNow?.itemId).toBe('evening-adhkar')
@@ -226,7 +227,7 @@ describe('user state overrides selection', () => {
     const result = plan(
       makeSignals([rawatib, dhikr], {
         prayedToday: { dhuhr: justNow },
-        userState: { travelling: true, trackingPaused: false },
+        userState: { travelling: true, trackingPaused: false, jumuah: 'auto' },
       }),
     )
     expect(result.today.rightNow?.itemId).toBe('after-any')
@@ -242,7 +243,7 @@ describe('travelling', () => {
       today: { ...dayContext(0, { month: 4, day: 6 }), weekday: 1 },
       prayedToday: { dhuhr: justNow },
       activeEvents: ['travel'],
-      userState: { travelling: true, trackingPaused: false },
+      userState: { travelling: true, trackingPaused: false, jumuah: 'auto' },
       ...extra,
     })
 

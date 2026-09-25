@@ -460,6 +460,20 @@
       "evidence": [
         "Non ci sono giorni in cui le buone azioni siano più amate da Allah di questi dieci giorni."
       ]
+    },
+    "sunnah-after-jumuah": {
+      "title": "La sunna dopo la Jumu’ah",
+      "why": "La preghiera volontaria dopo la Jumu’ah, che il venerdì prende il posto delle due rak’a dopo Dhuhr. Il Profeta ﷺ disse a chi prega la Jumu’ah di pregarne quattro dopo, ed egli stesso ne pregava due una volta andato a casa.",
+      "how": [
+        "Dopo la Jumu’ah e il suo dhikr, prega quattro rak’a in moschea, a due a due.",
+        "Oppure prega due rak’a una volta a casa."
+      ],
+      "reminder": "Si prega dopo la Jumu’ah: quattro in moschea, o due una volta a casa.",
+      "note": "Dopo la Jumu’ah sono tramandate quattro rak’a, e due pregate a casa. I sapienti conciliano le due cose in modi diversi.",
+      "evidence": [
+        "Quando uno di voi ha pregato la Jumu’ah, ne preghi quattro dopo di essa.",
+        "Non pregava dopo la Jumu’ah finché non se n’era andato, e poi pregava due rak’a."
+      ]
     }
   },
   "glossary": {
@@ -522,6 +536,10 @@
     "siwak": {
       "term": "Siwak",
       "definition": "Un rametto per pulire i denti, di solito dell’albero di arak. Pulire i denti prima della preghiera è raccomandato; anche lo spazzolino serve allo scopo."
+    },
+    "jumuah": {
+      "term": "Jumu’ah",
+      "definition": "La preghiera del venerdì: due rak’a in congregazione dopo un sermone, pregate al posto di Dhuhr. Chi è in viaggio e le donne non sono tenuti a parteciparvi, ma possono farlo. Chi la perde prega Dhuhr."
     }
   }
 }

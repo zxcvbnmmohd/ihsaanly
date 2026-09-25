@@ -461,6 +461,20 @@
         "Wax sadaqo ah bixi."
       ],
       "evidence": ["Ma jiraan maalmo camal wanaagsan Alle ugu jecel yahay tobankan maalmood."]
+    },
+    "sunnah-after-jumuah": {
+      "title": "Sunnada Jimcaha kadib",
+      "why": "Salaadda sunnada ah ee Jimcaha kadib, oo maalinta Jimcaha beddesha labada rakco ee Duhurka kadib. Nabiga ﷺ wuxuu faray kuwa tukada Jimcaha inay afar tukadaan kadib, isaguna wuxuu tukan jiray laba markuu gurigiisa u ambabaxo.",
+      "how": [
+        "Jimcaha iyo dikrigeeda kadib, masjidka ku tuko afar rakco, laba laba.",
+        "Ama tuko laba rakco markaad guriga gaarto."
+      ],
+      "reminder": "Jimcaha kadib ayaa la tukadaa: afar masjidka, ama laba guriga.",
+      "note": "Jimcaha kadib waxaa laga weriyey afar rakco, iyo laba guriga lagu tukado. Culimadu si kala duwan ayay labadaas isu waafajiyaan.",
+      "evidence": [
+        "Marka midkiin tukado Jimcaha, ha tukado afar kadib.",
+        "Jimcaha kadib ma tukan jirin ilaa uu ka tago, kadibna wuxuu tukan jiray laba rakco."
+      ]
     }
   },
   "glossary": {
@@ -523,6 +537,10 @@
     "siwak": {
       "term": "Caday (siwaak)",
       "definition": "Laan ilkaha lagu cadaysto, inta badan geedka arakta. Ilkaha oo la nadiifiyo salaadda ka hor waa la jecel yahay; burush ilkeedna isla shaqadaas ayuu qabtaa."
+    },
+    "jumuah": {
+      "term": "Jimce",
+      "definition": "Salaadda Jimcaha: laba rakco oo jameec ah khudbad kadib, oo lagu tukado meesha Duhurka. Musaafirka iyo haweenka kuma waajibto inay ka qaybgalaan, laakiin way ka qaybgeli karaan. Qofkii ka dhaafa wuxuu tukanayaa Duhur."
     }
   }
 }

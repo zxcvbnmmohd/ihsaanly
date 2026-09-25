@@ -244,9 +244,24 @@ A content trigger may name `prayer: 'jumuah'`. `resolveTriggerPrayer` decides:
 on the user's Jumu'ah day a `dhuhr` trigger does not apply and a `jumuah` one
 applies against the dhuhr mark and window; on any other day the reverse; `any`
 always applies. So the Dhuhr sunnah items vanish on a Friday and
-`sunnah-after-jumuah` appears after the dhuhr mark, within the usual grace. A
-`jumuah` trigger counts as rawatib, so a user who attends while travelling does
-not see it.
+`sunnah-after-jumuah` appears after the dhuhr mark, within the usual grace. The
+rawatib are `prayer`-category items on a named-prayer trigger, so a user who
+attends while travelling does not see the sunnah after Jumu'ah, but does keep
+`ghusl-friday` and `early-to-jumuah` (category `masjid`, `jumuah`/`before`).
+Like every "before", those two enter `now` only once the Dhuhr window opens;
+in the morning they are listed under `next.before`.
+
+What Friday asks of everyone is not tied to attendance. `kahf-friday` and
+`salawat-friday` use `{ kind: 'day', day: 'friday' }`, which matches
+`DayContext.hijriWeekday`: the weekday of the Islamic day, which turns at
+Maghrib like `hijri`, so they run from Thursday's Maghrib to Friday's. Fasting
+Monday and Thursday keep the civil `weekday`, as does Jumu'ah. Because today
+after Maghrib and tomorrow's daytime are then the same Islamic day, the
+look-ahead drops a day item already listed as today when tomorrow carries
+today's Hijri date. A `friday` day item carries no "expected" caveat.
+`friday-last-hour` is the evening window narrowed by `day: 'friday'`
+(`matchesWindowDay`, civil weekday, since the window never crosses Maghrib),
+in `reasonFor` and in the window reminders alike.
 
 ### `react-native-view-shot` is typed locally
 

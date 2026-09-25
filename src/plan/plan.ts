@@ -1,6 +1,6 @@
 import { assertNever } from '@/assert-never'
 import type { Item, Ruling, Trigger } from '@/content/schema'
-import { civilDateIn, isSameCivilDate, shiftDays } from '@/day/boundaries'
+import { civilDateIn, isSameCivilDate, shiftDays, weekdayOf } from '@/day/boundaries'
 import { PRAYERS } from '@/prayer/qada'
 import {
   buildWindows,
@@ -10,7 +10,7 @@ import {
   type WindowName,
 } from '@/prayer/windows'
 
-import { matchesDay, readingsDiverge } from './day-match'
+import { matchesDay, matchesWindowDay, readingsDiverge } from './day-match'
 import { isJumuahAt, isJumuahDay, resolveTriggerPrayer } from './jumuah'
 import { isQuiet } from './quiet-hours'
 import type {
@@ -81,10 +81,13 @@ const PRAYER_FOR_WINDOW: Partial<Record<WindowName, Prayer>> = {
  * The rawatib are the sunnah prayers tied to one named prayer. The sunnah
  * after Jumu'ah counts: it steps aside on a journey as the Dhuhr sunnah does,
  * which matters only for someone who chose to attend while travelling, since
- * `auto` already means Dhuhr on a journey.
+ * `auto` already means Dhuhr on a journey. The ghusl for Jumu'ah and going
+ * early share its trigger but are not prayers, so they stay for whoever
+ * attends; the category is what tells them apart.
  */
-function isRawatib(trigger: Trigger): boolean {
-  return trigger.kind === 'prayer' && trigger.prayer !== 'any'
+function isRawatib(item: Item): boolean {
+  const { trigger } = item
+  return item.category === 'prayer' && trigger.kind === 'prayer' && trigger.prayer !== 'any'
 }
 
 /** Whether today is this user's Jumu'ah day. */
@@ -96,9 +99,13 @@ function jumuahToday(signals: Signals): boolean {
  * On a journey fasting is a concession, not an expectation. It is still
  * offered, but never as something owed.
  */
-/** Anything derived from a calculated calendar is offered, never asserted. */
+/**
+ * Anything derived from a calculated calendar is offered, never asserted.
+ * Friday is not: no calendar is consulted to know it, and it is no fast, which
+ * is what the Monday and Thursday caveat speaks to.
+ */
 function caveatFor(item: Item, day: DayContext): PlannedItem['caveat'] {
-  if (item.trigger.kind !== 'day') return undefined
+  if (item.trigger.kind !== 'day' || item.trigger.day === 'friday') return undefined
   return readingsDiverge(day) ? 'confirm-locally' : 'expected'
 }
 
@@ -113,7 +120,7 @@ function availableItems(signals: Signals): Item[] {
   return signals.items.filter((item) => {
     if (!enabled.has(item.id)) return false
     if (trackingPaused && item.trigger.kind === 'prayer') return false
-    if (travelling && isRawatib(item.trigger)) return false
+    if (travelling && isRawatib(item)) return false
     return true
   })
 }
@@ -204,6 +211,7 @@ function reasonFor(
 
     case 'window': {
       const current = window ? WINDOW_FOR[window.name] : undefined
+      if (!matchesWindowDay(trigger.day, signals.today.weekday)) return null
       return current === trigger.window ? 'current-window' : null
     }
 
@@ -259,10 +267,30 @@ function byRelevance(items: Item[]): (left: PlannedItem, right: PlannedItem) => 
     rulingOf(left.itemId) - rulingOf(right.itemId)
 }
 
+function isSameHijriDay(left: DayContext, right: DayContext): boolean {
+  return (
+    left.hijri.year === right.hijri.year &&
+    left.hijri.month === right.hijri.month &&
+    left.hijri.day === right.hijri.day
+  )
+}
+
+/**
+ * After Maghrib, today already carries tomorrow's Islamic day, so the daytime
+ * of tomorrow is the day in progress rather than one to prepare for. An item
+ * that is already today's is not listed again as tomorrow's: al-Kahf on a
+ * Thursday night is Friday's and today's, not both.
+ */
 function lookAhead(items: Item[], upcoming: DayContext[], signals: Signals): PlannedItem[] {
+  const alreadyToday = (item: Item, day: DayContext): boolean =>
+    item.trigger.kind === 'day' &&
+    isSameHijriDay(day, signals.today) &&
+    matchesDay(item.trigger.day, signals.today)
+
   return upcoming.flatMap((day, index) =>
     items
       .filter((item) => item.trigger.kind === 'day' && matchesDay(item.trigger.day, day))
+      .filter((item) => !alreadyToday(item, day))
       .map((item) => ({
         itemId: item.id,
         reason: 'upcoming' as const,
@@ -322,8 +350,14 @@ function scheduleNotifications(signals: Signals, items: Item[]): ScheduledNotifi
 
     const name = WINDOW_FOR[window.name]
     if (name) {
+      const weekday = weekdayOf(civilDateIn(window.startsAt, signals.timeZone))
       items
-        .filter((item) => item.trigger.kind === 'window' && item.trigger.window === name)
+        .filter(
+          (item) =>
+            item.trigger.kind === 'window' &&
+            item.trigger.window === name &&
+            matchesWindowDay(item.trigger.day, weekday),
+        )
         .filter((item) => isRemindable(item, signals, 'windows'))
         .forEach((item) => {
           if (!admit(window.startsAt, true)) return

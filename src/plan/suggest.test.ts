@@ -66,6 +66,7 @@ function signals(items: Item[], enabled: string[] = [], known: string[] = []): S
       hijri: { year: 1448, month: 3, day: 25 },
       hijriCalculated: { year: 1448, month: 3, day: 25 },
       weekday: 4,
+      hijriWeekday: 4,
     },
     upcoming: [],
     prayedToday: {},

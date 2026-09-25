@@ -2395,6 +2395,287 @@
       "reviewed": false,
       "audio": null,
       "audioTranslation": null
+    },
+    {
+      "id": "ghusl-friday",
+      "category": "masjid",
+      "title": {
+        "en": "Ghusl for Jumu’ah",
+        "ar": "غسل الجمعة"
+      },
+      "ruling": "sunnah-muakkadah",
+      "arabic": null,
+      "transliteration": null,
+      "translation": null,
+      "repeat": 1,
+      "evidence": [
+        {
+          "type": "hadith",
+          "collection": "Sahih al-Bukhari",
+          "reference": "877",
+          "grading": "sahih",
+          "gradedBy": null,
+          "text": {
+            "en": "When one of you comes to the Jumu'ah, let him perform ghusl."
+          }
+        },
+        {
+          "type": "hadith",
+          "collection": "Sahih al-Bukhari",
+          "reference": "880",
+          "grading": "sahih",
+          "gradedBy": null,
+          "text": {
+            "en": "Ghusl on Friday is obligatory upon everyone who has reached puberty, and that he use the siwak and apply perfume if he has some."
+          }
+        }
+      ],
+      "trigger": {
+        "kind": "prayer",
+        "prayer": "jumuah",
+        "when": "before"
+      },
+      "defaultOn": true,
+      "note": {
+        "en": "Most scholars hold the ghusl for Jumu'ah a strongly recommended sunnah. Some hold it obligatory, reading the word “obligatory” (wajib) in the hadith literally."
+      },
+      "audio": null,
+      "audioTranslation": null,
+      "why": {
+        "en": "A full bath before going to Jumu'ah, with the siwak and perfume if you have some. The Prophet ﷺ told whoever comes to Jumu'ah to bathe for it, and named the siwak and perfume alongside it."
+      },
+      "reminder": {
+        "en": "Before Jumu'ah: a ghusl, the siwak, and perfume if you have some."
+      },
+      "how": [
+        {
+          "en": "Before setting out for Jumu'ah, wash the whole body."
+        },
+        {
+          "en": "Clean your teeth with a siwak or a brush."
+        },
+        {
+          "en": "Put on perfume if you have some."
+        }
+      ],
+      "reviewed": false
+    },
+    {
+      "id": "early-to-jumuah",
+      "category": "masjid",
+      "title": {
+        "en": "Going early to Jumu’ah",
+        "ar": "التبكير إلى الجمعة"
+      },
+      "ruling": "sunnah",
+      "arabic": null,
+      "transliteration": null,
+      "translation": null,
+      "repeat": 1,
+      "evidence": [
+        {
+          "type": "hadith",
+          "collection": "Sahih al-Bukhari",
+          "reference": "881",
+          "grading": "sahih",
+          "gradedBy": null,
+          "text": {
+            "en": "Whoever performs ghusl on Friday like the ghusl for janabah and then goes to the prayer, it is as if he had offered a camel; whoever goes in the second hour, as if he had offered a cow; in the third hour, a horned ram; in the fourth hour, a hen; in the fifth hour, an egg. When the imam comes out, the angels come in to listen to the reminder."
+          }
+        }
+      ],
+      "trigger": {
+        "kind": "prayer",
+        "prayer": "jumuah",
+        "when": "before"
+      },
+      "defaultOn": true,
+      "note": null,
+      "audio": null,
+      "audioTranslation": null,
+      "why": {
+        "en": "Setting out for Jumu'ah well before the imam comes out. The Prophet ﷺ likened whoever goes in the first hour to someone offering a camel, and each later hour to a smaller offering, down to an egg. When the imam comes out, the angels come in to listen."
+      },
+      "reminder": {
+        "en": "Going early to Jumu'ah: the earliest hour is likened to offering a camel."
+      },
+      "how": [
+        {
+          "en": "After your ghusl, set out for the masjid early, well before the imam comes out."
+        },
+        {
+          "en": "Wait in the masjid until the imam comes out for the sermon."
+        }
+      ],
+      "reviewed": false
+    },
+    {
+      "id": "kahf-friday",
+      "category": "adhkar",
+      "title": {
+        "en": "Surah al-Kahf on Friday",
+        "ar": "سورة الكهف يوم الجمعة"
+      },
+      "ruling": "sunnah",
+      "arabic": null,
+      "transliteration": null,
+      "translation": null,
+      "repeat": 1,
+      "evidence": [
+        {
+          "type": "hadith",
+          "collection": "al-Hakim and al-Bayhaqi",
+          "reference": "(Sahih al-Jami' 6470)",
+          "grading": "sahih",
+          "gradedBy": "al-Albani",
+          "text": {
+            "en": "Whoever reads Surat al-Kahf on Friday, light will shine for him between the two Fridays."
+          }
+        }
+      ],
+      "trigger": {
+        "kind": "day",
+        "day": "friday"
+      },
+      "defaultOn": true,
+      "note": {
+        "en": "Since the Islamic day begins at Maghrib, scholars commonly hold that its time runs from Maghrib on Thursday until Maghrib on Friday. This app shows it for that span."
+      },
+      "audio": null,
+      "audioTranslation": null,
+      "why": {
+        "en": "Al-Kahf, the eighteenth surah of the Quran, read once on Friday. The Prophet ﷺ said that whoever reads it on Friday has light shining for him between that Friday and the next."
+      },
+      "reminder": {
+        "en": "Friday begins at Maghrib tonight. Surah al-Kahf, read before the next Maghrib, brings light between the two Fridays."
+      },
+      "how": [
+        {
+          "en": "Open Surah al-Kahf, the 18th surah, in a mushaf or a Quran app."
+        },
+        {
+          "en": "Read it in one sitting, or in parts across the day."
+        },
+        {
+          "en": "Its time runs from Maghrib on Thursday until Maghrib on Friday."
+        }
+      ],
+      "reviewed": false
+    },
+    {
+      "id": "salawat-friday",
+      "category": "adhkar",
+      "title": {
+        "en": "Abundant salawat on the Prophet ﷺ",
+        "ar": "الإكثار من الصلاة على النبي ﷺ"
+      },
+      "ruling": "sunnah",
+      "arabic": null,
+      "transliteration": null,
+      "translation": null,
+      "repeat": 1,
+      "evidence": [
+        {
+          "type": "hadith",
+          "collection": "Sunan Abi Dawud",
+          "reference": "1047",
+          "grading": "sahih",
+          "gradedBy": "al-Albani",
+          "text": {
+            "en": "Among the best of your days is Friday … so send abundant blessings upon me on it, for your blessings are presented to me."
+          }
+        }
+      ],
+      "trigger": {
+        "kind": "day",
+        "day": "friday"
+      },
+      "defaultOn": true,
+      "note": null,
+      "audio": null,
+      "audioTranslation": null,
+      "why": {
+        "en": "Sending blessings on the Prophet ﷺ many times through Friday. He named Friday among the best of days and told his followers to send abundant blessings on him in it, for their blessings are presented to him."
+      },
+      "reminder": {
+        "en": "Tomorrow is Friday. Send abundant blessings on the Prophet ﷺ through it; they are presented to him."
+      },
+      "how": [
+        {
+          "en": "Send blessings on the Prophet ﷺ in any words you know, such as the salah on him recited in the tashahhud."
+        },
+        {
+          "en": "Say it any number of times; the more, the better."
+        },
+        {
+          "en": "Return to it through the day."
+        }
+      ],
+      "reviewed": false
+    },
+    {
+      "id": "friday-last-hour",
+      "category": "adhkar",
+      "title": {
+        "en": "Du’a in the last hour of Friday",
+        "ar": "الدعاء في آخر ساعة من يوم الجمعة"
+      },
+      "ruling": "sunnah",
+      "arabic": null,
+      "transliteration": null,
+      "translation": null,
+      "repeat": 1,
+      "evidence": [
+        {
+          "type": "hadith",
+          "collection": "Sahih al-Bukhari",
+          "reference": "935",
+          "grading": "sahih",
+          "gradedBy": null,
+          "text": {
+            "en": "In it there is an hour: no Muslim servant happens upon it while standing in prayer, asking Allah for something, except that He gives it to him."
+          }
+        },
+        {
+          "type": "hadith",
+          "collection": "Sunan Abi Dawud",
+          "reference": "1048",
+          "grading": "sahih",
+          "gradedBy": "al-Albani",
+          "text": {
+            "en": "…so seek it in the last hour after Asr."
+          }
+        }
+      ],
+      "trigger": {
+        "kind": "window",
+        "window": "evening",
+        "day": "friday"
+      },
+      "defaultOn": true,
+      "note": {
+        "en": "Scholars name several times for this hour. The last hour after Asr is among the strongest views; some hold it is while the imam sits, until the prayer ends."
+      },
+      "audio": null,
+      "audioTranslation": null,
+      "why": {
+        "en": "Friday holds an hour in which du'a is answered. The Prophet ﷺ said that no Muslim meets it, asking Allah for something, without being given it, and said to seek it in the last hour after Asr."
+      },
+      "reminder": {
+        "en": "The last hour of Friday is here. Ask Allah for what you need before Maghrib."
+      },
+      "how": [
+        {
+          "en": "Between Asr and Maghrib on Friday, set some time aside."
+        },
+        {
+          "en": "Ask Allah for what you need, for yourself and for others."
+        },
+        {
+          "en": "Keep asking until Maghrib if you can."
+        }
+      ],
+      "reviewed": false
     }
   ]
 }

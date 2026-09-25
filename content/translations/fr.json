@@ -476,6 +476,75 @@
         "Lorsque l’un de vous a prié la Joumou’a, qu’il en prie quatre après elle.",
         "Il ne priait pas après la Joumou’a avant d’être parti, puis il priait deux rak’at."
       ]
+    },
+    "ghusl-friday": {
+      "title": "Le ghusl de la Joumou’a",
+      "why": "Un lavage complet du corps avant d’aller à la Joumou’a, avec le siwak et du parfum si l’on en a. Le Prophète ﷺ a demandé à celui qui vient à la Joumou’a de se laver pour elle, et a cité le siwak et le parfum avec ce lavage.",
+      "how": [
+        "Avant de partir pour la Joumou’a, lavez tout le corps.",
+        "Nettoyez-vous les dents avec un siwak ou une brosse.",
+        "Mettez du parfum si vous en avez."
+      ],
+      "reminder": "Avant la Joumou’a : le ghusl, le siwak, et du parfum si vous en avez.",
+      "note": "La plupart des savants tiennent le ghusl de la Joumou’a pour une sunna fortement recommandée. Certains le tiennent pour obligatoire, en prenant à la lettre le mot « obligatoire » (wajib) du hadith.",
+      "evidence": [
+        "Lorsque l’un de vous vient à la Joumou’a, qu’il fasse le ghusl.",
+        "Le ghusl le vendredi est obligatoire pour tout pubère, ainsi que d’utiliser le siwak et de se parfumer s’il trouve du parfum."
+      ]
+    },
+    "early-to-jumuah": {
+      "title": "Partir tôt pour la Joumou’a",
+      "why": "Partir pour la Joumou’a bien avant que l’imam ne sorte. Le Prophète ﷺ a comparé celui qui y va à la première heure à celui qui offre un chameau, et chaque heure suivante à une offrande plus petite, jusqu’à un œuf. Quand l’imam sort, les anges viennent écouter.",
+      "how": [
+        "Après le ghusl, partez tôt pour la mosquée, bien avant que l’imam ne sorte.",
+        "Attendez à la mosquée jusqu’à ce que l’imam sorte pour le sermon."
+      ],
+      "reminder": "Partir tôt pour la Joumou’a : la première heure est comparée à l’offrande d’un chameau.",
+      "evidence": [
+        "Celui qui fait le vendredi un ghusl semblable à celui de la janaba puis se rend à la prière, c’est comme s’il avait offert un chameau ; celui qui s’y rend à la deuxième heure, comme s’il avait offert une vache ; à la troisième heure, un bélier à cornes ; à la quatrième heure, une poule ; à la cinquième heure, un œuf. Quand l’imam sort, les anges viennent écouter le rappel."
+      ]
+    },
+    "kahf-friday": {
+      "title": "La sourate al-Kahf le vendredi",
+      "why": "Al-Kahf, la dix-huitième sourate du Coran, lue une fois le vendredi. Le Prophète ﷺ a dit que celui qui la lit le vendredi voit une lumière briller pour lui d’un vendredi à l’autre.",
+      "how": [
+        "Ouvrez la sourate al-Kahf, la 18e sourate, dans un mushaf ou une application de Coran.",
+        "Lisez-la d’une traite, ou en plusieurs parties au fil de la journée.",
+        "Son temps va du Maghrib du jeudi au Maghrib du vendredi."
+      ],
+      "reminder": "Le vendredi commence au Maghrib ce soir. La sourate al-Kahf, lue avant le prochain Maghrib, est une lumière entre les deux vendredis.",
+      "note": "Le jour islamique commençant au Maghrib, les savants tiennent couramment que son temps va du Maghrib du jeudi au Maghrib du vendredi. L’application l’affiche sur cette période.",
+      "evidence": [
+        "Celui qui lit la sourate al-Kahf le vendredi, une lumière brillera pour lui entre les deux vendredis."
+      ]
+    },
+    "salawat-friday": {
+      "title": "Multiplier les salawat sur le Prophète ﷺ",
+      "why": "Prier sur le Prophète ﷺ de nombreuses fois au cours du vendredi. Il a compté le vendredi parmi les meilleurs des jours et a demandé de multiplier ce jour-là les prières sur lui, car elles lui sont présentées.",
+      "how": [
+        "Priez sur le Prophète ﷺ avec les mots que vous connaissez, comme la prière sur lui récitée dans le tachahoud.",
+        "Dites-la autant de fois que vous le pouvez, sans nombre fixé.",
+        "Revenez-y tout au long de la journée."
+      ],
+      "reminder": "Demain, c’est vendredi. Multipliez-y les prières sur le Prophète ﷺ : elles lui sont présentées.",
+      "evidence": [
+        "Parmi les meilleurs de vos jours est le vendredi … multipliez donc sur moi la prière ce jour-là, car vos prières me sont présentées."
+      ]
+    },
+    "friday-last-hour": {
+      "title": "L’invocation à la dernière heure du vendredi",
+      "why": "Le vendredi contient une heure où l’invocation est exaucée. Le Prophète ﷺ a dit qu’aucun musulman ne la rencontre en demandant quelque chose à Allah sans qu’Il le lui accorde, et a dit de la chercher à la dernière heure après Asr.",
+      "how": [
+        "Entre Asr et Maghrib le vendredi, réservez un moment.",
+        "Demandez à Allah ce dont vous avez besoin, pour vous et pour les autres.",
+        "Continuez à demander jusqu’au Maghrib si vous le pouvez."
+      ],
+      "reminder": "La dernière heure du vendredi est là. Demandez à Allah ce dont vous avez besoin avant le Maghrib.",
+      "note": "Les savants citent plusieurs moments pour cette heure. La dernière heure après Asr est parmi les avis les plus forts ; certains tiennent qu’elle va du moment où l’imam s’assoit jusqu’à la fin de la prière.",
+      "evidence": [
+        "Il s’y trouve une heure : aucun serviteur musulman ne la rencontre, debout en prière, demandant quelque chose à Allah le Très-Haut, sans qu’Il le lui accorde.",
+        "… cherchez-la donc à la dernière heure après Asr."
+      ]
     }
   },
   "glossary": {
@@ -542,6 +611,14 @@
     "jumuah": {
       "term": "Joumou’a",
       "definition": "La prière du vendredi : deux rak’at en assemblée après un sermon, priées à la place de Dhuhr. Le voyageur et la femme ne sont pas tenus d’y assister, mais peuvent le faire. Celui qui la manque prie Dhuhr."
+    },
+    "ghusl": {
+      "term": "Ghusl",
+      "definition": "Le grand lavage de purification : laver tout le corps avec de l’eau. Il est requis pour sortir de certains états, comme après les menstrues, et avant la Joumou’a il est une sunna, que certains tiennent pour obligatoire."
+    },
+    "salawat": {
+      "term": "Salawat",
+      "definition": "Prier sur le Prophète ﷺ, c’est-à-dire demander à Allah de le bénir et de l’honorer, par exemple : « Allahumma salli ‘ala Muhammad ». Elle fait partie du tachahoud dans la prière, et peut se dire à tout moment."
     }
   }
 }

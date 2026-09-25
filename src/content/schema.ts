@@ -36,7 +36,13 @@ const QuranEvidence = z.object({
 const Evidence = z.discriminatedUnion('type', [HadithEvidence, QuranEvidence])
 
 const Trigger = z.discriminatedUnion('kind', [
-  z.object({ kind: z.literal('window'), window: z.enum(['morning', 'evening']) }),
+  z.object({
+    kind: z.literal('window'),
+    window: z.enum(['morning', 'evening']),
+    // Narrows the window to one weekday, as the last hour of Friday is the
+    // evening window on a Friday only. Absent means every day.
+    day: z.enum(['friday']).optional(),
+  }),
   z.object({
     kind: z.literal('prayer'),
     // 'any' covers acts tied to every obligatory prayer rather than one of
@@ -52,6 +58,9 @@ const Trigger = z.discriminatedUnion('kind', [
     day: z.enum([
       'monday',
       'thursday',
+      // The Islamic Friday, Thursday's Maghrib to Friday's, for what is
+      // done on the day and its night rather than at Jumu'ah.
+      'friday',
       'white-days',
       'ashura',
       'arafah',

@@ -128,6 +128,22 @@
         "en": "The Friday prayer: two rak'ah in congregation after a sermon, prayed in place of Dhuhr. Travellers and women are not obliged to attend, though they may. Whoever misses it prays Dhuhr.",
         "ar": "صلاة يوم الجمعة: ركعتان في جماعة بعد خطبة، تُصلّى مكان الظهر. لا تجب على المسافر ولا على المرأة، ولهما أن يحضراها. ومن فاتته صلّى الظهر."
       }
+    },
+    {
+      "id": "ghusl",
+      "term": { "en": "Ghusl", "ar": "الغسل" },
+      "definition": {
+        "en": "The full bath of purification: washing the whole body with water. It is required to end some states, such as menstruation, and before Jumu'ah it is a sunnah, which some hold obligatory.",
+        "ar": "طهارة كاملة بغسل الجسد كله بالماء. يجب في أحوال، كانقضاء الحيض، وهو قبل الجمعة سنة، وقال بعض العلماء بوجوبه."
+      }
+    },
+    {
+      "id": "salawat",
+      "term": { "en": "Salawat", "ar": "الصلاة على النبي ﷺ" },
+      "definition": {
+        "en": "Sending blessings on the Prophet ﷺ: asking Allah to bless and honour him, as in “Allahumma salli ‘ala Muhammad”. It is part of the tashahhud in prayer and may be said at any time.",
+        "ar": "أن تسأل الله أن يصلّي على النبي ﷺ ويسلّم عليه، كقول: اللهم صلِّ على محمد. وهي من التشهد في الصلاة، وتُقال في كل وقت."
+      }
     }
   ]
 }

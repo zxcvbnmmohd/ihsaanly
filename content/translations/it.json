@@ -474,6 +474,75 @@
         "Quando uno di voi ha pregato la Jumu’ah, ne preghi quattro dopo di essa.",
         "Non pregava dopo la Jumu’ah finché non se n’era andato, e poi pregava due rak’a."
       ]
+    },
+    "ghusl-friday": {
+      "title": "Il ghusl della Jumu’ah",
+      "why": "Un lavaggio completo del corpo prima di andare alla Jumu’ah, con il siwak e il profumo se se ne ha. Il Profeta ﷺ disse a chi viene alla Jumu’ah di lavarsi per essa, e nominò con il lavaggio il siwak e il profumo.",
+      "how": [
+        "Prima di uscire per la Jumu’ah, lava tutto il corpo.",
+        "Pulisci i denti con il siwak o con lo spazzolino.",
+        "Metti del profumo, se ne hai."
+      ],
+      "reminder": "Prima della Jumu’ah: il ghusl, il siwak e il profumo, se ne hai.",
+      "note": "La maggior parte dei sapienti ritiene il ghusl della Jumu’ah una sunna fortemente raccomandata. Alcuni lo ritengono obbligatorio, prendendo alla lettera la parola «obbligatorio» (wajib) nell’hadith.",
+      "evidence": [
+        "Quando uno di voi viene alla Jumu’ah, faccia il ghusl.",
+        "Il ghusl il venerdì è obbligatorio per ogni pubere, e che usi il siwak e si metta del profumo se ne trova."
+      ]
+    },
+    "early-to-jumuah": {
+      "title": "Andare presto alla Jumu’ah",
+      "why": "Uscire per la Jumu’ah molto prima che l’imam esca. Il Profeta ﷺ paragonò chi va nella prima ora a chi offre un cammello, e ogni ora successiva a un’offerta più piccola, fino a un uovo. Quando l’imam esce, gli angeli entrano ad ascoltare.",
+      "how": [
+        "Dopo il ghusl, esci presto per la moschea, molto prima che l’imam esca.",
+        "Attendi in moschea finché l’imam non esce per il sermone."
+      ],
+      "reminder": "Andare presto alla Jumu’ah: la prima ora è paragonata all’offerta di un cammello.",
+      "evidence": [
+        "Chi fa il venerdì un ghusl come quello della janaba e poi va alla preghiera, è come se avesse offerto un cammello; chi va nella seconda ora, come se avesse offerto una vacca; nella terza ora, un montone cornuto; nella quarta ora, una gallina; nella quinta ora, un uovo. Quando l’imam esce, gli angeli entrano ad ascoltare il ricordo."
+      ]
+    },
+    "kahf-friday": {
+      "title": "La sura al-Kahf il venerdì",
+      "why": "Al-Kahf, la diciottesima sura del Corano, letta una volta il venerdì. Il Profeta ﷺ disse che chi la legge il venerdì vede risplendere per sé una luce tra un venerdì e l’altro.",
+      "how": [
+        "Apri la sura al-Kahf, la 18ª sura, in un mushaf o in un’app del Corano.",
+        "Leggila in una sola volta, o in parti durante la giornata.",
+        "Il suo tempo va dal Maghrib del giovedì al Maghrib del venerdì."
+      ],
+      "reminder": "Il venerdì comincia stasera al Maghrib. La sura al-Kahf, letta prima del prossimo Maghrib, è luce tra i due venerdì.",
+      "note": "Poiché il giorno islamico comincia al Maghrib, i sapienti ritengono comunemente che il suo tempo vada dal Maghrib del giovedì al Maghrib del venerdì. L’app la mostra in questo arco di tempo.",
+      "evidence": [
+        "Chi legge la sura al-Kahf il venerdì, una luce risplenderà per lui tra i due venerdì."
+      ]
+    },
+    "salawat-friday": {
+      "title": "Abbondanti salawat sul Profeta ﷺ",
+      "why": "Invocare benedizioni sul Profeta ﷺ molte volte nel corso del venerdì. Egli contò il venerdì tra i giorni migliori e chiese di invocare in esso abbondanti benedizioni su di lui, perché gli vengono presentate.",
+      "how": [
+        "Invoca benedizioni sul Profeta ﷺ con le parole che conosci, come quelle recitate nel tashahhud.",
+        "Dille quante volte puoi, senza un numero fisso.",
+        "Ritorna ad esse per tutta la giornata."
+      ],
+      "reminder": "Domani è venerdì. Invoca in esso abbondanti benedizioni sul Profeta ﷺ: gli vengono presentate.",
+      "evidence": [
+        "Tra i migliori dei vostri giorni c’è il venerdì … invocate dunque su di me abbondanti benedizioni in esso, perché le vostre benedizioni mi vengono presentate."
+      ]
+    },
+    "friday-last-hour": {
+      "title": "La du’a nell’ultima ora del venerdì",
+      "why": "Il venerdì racchiude un’ora in cui la du’a viene esaudita. Il Profeta ﷺ disse che nessun musulmano la incontra chiedendo qualcosa ad Allah senza che Egli glielo conceda, e disse di cercarla nell’ultima ora dopo Asr.",
+      "how": [
+        "Tra Asr e Maghrib del venerdì, metti da parte un po’ di tempo.",
+        "Chiedi ad Allah ciò di cui hai bisogno, per te e per gli altri.",
+        "Continua a chiedere fino al Maghrib, se puoi."
+      ],
+      "reminder": "È l’ultima ora del venerdì. Chiedi ad Allah ciò di cui hai bisogno prima del Maghrib.",
+      "note": "I sapienti indicano diversi momenti per quest’ora. L’ultima ora dopo Asr è tra le opinioni più forti; alcuni ritengono che vada da quando l’imam si siede fino alla fine della preghiera.",
+      "evidence": [
+        "In esso c’è un’ora: nessun servo musulmano la incontra mentre è in piedi in preghiera, chiedendo qualcosa ad Allah l’Altissimo, senza che Egli gliela conceda.",
+        "… cercatela dunque nell’ultima ora dopo Asr."
+      ]
     }
   },
   "glossary": {
@@ -540,6 +609,14 @@
     "jumuah": {
       "term": "Jumu’ah",
       "definition": "La preghiera del venerdì: due rak’a in congregazione dopo un sermone, pregate al posto di Dhuhr. Chi è in viaggio e le donne non sono tenuti a parteciparvi, ma possono farlo. Chi la perde prega Dhuhr."
+    },
+    "ghusl": {
+      "term": "Ghusl",
+      "definition": "Il lavaggio completo di purificazione: lavare tutto il corpo con l’acqua. È richiesto per uscire da alcuni stati, come dopo il ciclo mestruale, e prima della Jumu’ah è una sunna, che alcuni ritengono obbligatoria."
+    },
+    "salawat": {
+      "term": "Salawat",
+      "definition": "Invocare benedizioni sul Profeta ﷺ, cioè chiedere ad Allah di benedirlo e onorarlo, come in «Allahumma salli ‘ala Muhammad». Fa parte del tashahhud nella preghiera e si può dire in ogni momento."
     }
   }
 }

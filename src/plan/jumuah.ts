@@ -1,5 +1,5 @@
 import { assertNever } from '@/assert-never'
-import { civilDateIn } from '@/day/boundaries'
+import { civilDateIn, weekdayOf } from '@/day/boundaries'
 import type { WindowName } from '@/prayer/windows'
 import type { Strings } from '@/strings/en'
 
@@ -51,9 +51,7 @@ export function isJumuahDay(day: Pick<DayContext, 'weekday'>, attends: boolean):
 
 /** The same question for an instant, where no DayContext exists: a window start, a widget entry. */
 export function isJumuahAt(instant: Date, timeZone: string, attends: boolean): boolean {
-  const civil = civilDateIn(instant, timeZone)
-  const weekday = new Date(Date.UTC(civil.year, civil.month - 1, civil.day)).getUTCDay()
-  return isJumuahDay({ weekday }, attends)
+  return isJumuahDay({ weekday: weekdayOf(civilDateIn(instant, timeZone)) }, attends)
 }
 
 /**

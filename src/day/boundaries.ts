@@ -42,6 +42,11 @@ export function shiftDays(date: CivilDate, days: number): CivilDate {
   }
 }
 
+/** 0 = Sunday, as `Date#getDay` counts. The date is read as a calendar day, never as an instant. */
+export function weekdayOf(date: CivilDate): number {
+  return new Date(Date.UTC(date.year, date.month - 1, date.day)).getUTCDay()
+}
+
 export function logDay(instant: Date, timeZone: string): CivilDate {
   return civilDateIn(instant, timeZone)
 }

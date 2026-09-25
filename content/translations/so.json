@@ -475,6 +475,75 @@
         "Marka midkiin tukado Jimcaha, ha tukado afar kadib.",
         "Jimcaha kadib ma tukan jirin ilaa uu ka tago, kadibna wuxuu tukan jiray laba rakco."
       ]
+    },
+    "ghusl-friday": {
+      "title": "Qubeyska Jimcaha",
+      "why": "Jidhka oo dhan oo la maydho ka hor intaan Jimcaha loo tegin, caday iyo cadar haddii la hayo. Nabiga ﷺ wuxuu faray qofkii Jimcaha imanaya inuu u qubeysto, wuxuuna la xusay cadayga iyo cadarka.",
+      "how": [
+        "Intaadan Jimcaha u bixin, jidhkaaga oo dhan maydh.",
+        "Ilkaha ku nadiifi caday ama burush.",
+        "Cadar isku mari haddaad haysato."
+      ],
+      "reminder": "Jimcaha ka hor: qubeys, caday, iyo cadar haddaad haysato.",
+      "note": "Culimada intooda badani waxay qubeyska Jimcaha u arkaan sunno la adkeeyey. Qaar baa waajib u arka, iyagoo erayga “waajib” ee xadiiska u qaata macnihiisa tooska ah.",
+      "evidence": [
+        "Marka midkiin Jimcaha yimaado, ha qubeysto.",
+        "Qubeyska maalinta Jimcaha waa waajib qof kasta oo qaan-gaar ah, iyo inuu cadaysto oo cadar isku mariyo haddii uu helo."
+      ]
+    },
+    "early-to-jumuah": {
+      "title": "Hore u aadidda Jimcaha",
+      "why": "Jimcaha oo loo baxo waqti dheer ka hor intaan imaamku soo bixin. Nabiga ﷺ wuxuu qofka saacadda koowaad taga u ekeysiiyey mid geel bixiyey, saacad kasta oo ka dambaysana wax ka yar, ilaa ukun. Marka imaamku soo baxo, malaa’igtu waxay u yimaadaan inay dhegaystaan.",
+      "how": [
+        "Qubeyska kadib, hore ugu bax masjidka, waqti dheer ka hor intaan imaamku soo bixin.",
+        "Masjidka ku sug ilaa imaamku u soo baxo khudbadda."
+      ],
+      "reminder": "Hore u aad Jimcaha: saacadda koowaad waxaa loo ekeysiiyey geel la bixiyey.",
+      "evidence": [
+        "Qofkii maalinta Jimcaha qubeysta qubeyska janaabada oo kale, kadibna salaadda u aada, waa sidii isagoo geel bixiyey; qofkii saacadda labaad taga, sidii isagoo lo’ bixiyey; saacadda saddexaad, wan gees leh; saacadda afraad, digaagad; saacadda shanaad, ukun. Marka imaamku soo baxo, malaa’igtu waxay u yimaadaan inay dhegaystaan xusuusta."
+      ]
+    },
+    "kahf-friday": {
+      "title": "Suuratul Kahf maalinta Jimcaha",
+      "why": "Suuratul Kahf, suuradda siddeed iyo tobnaad ee Qur’aanka, oo mar la akhriyo maalinta Jimcaha. Nabiga ﷺ wuxuu yiri qofkii akhriya maalinta Jimcaha, nuur baa u iftiima inta u dhexeysa labada Jimce.",
+      "how": [
+        "Fur Suuratul Kahf, suuradda 18aad, mushaf ama app Qur’aan ah.",
+        "Hal fadhi ku akhri, ama qaybo maalinta oo dhan.",
+        "Waqtigeedu waa Maqribka Khamiista ilaa Maqribka Jimcaha."
+      ],
+      "reminder": "Jimcuhu wuxuu bilaabmayaa Maqribka caawa. Suuratul Kahf, haddaad akhrido Maqribka xiga ka hor, waa nuur labada Jimce dhexdooda.",
+      "note": "Maadaama maalinta Islaamku ay ka bilaabato Maqribka, culimadu waxay inta badan yiraahdaan waqtigeedu waa Maqribka Khamiista ilaa Maqribka Jimcaha. App-ku muddadaas ayuu muujiyaa.",
+      "evidence": [
+        "Qofkii akhriya Suuratul Kahf maalinta Jimcaha, nuur baa u iftiimi doona inta u dhexeysa labada Jimce."
+      ]
+    },
+    "salawat-friday": {
+      "title": "Salawaad badan oo Nabiga ﷺ loo diro",
+      "why": "Nabiga ﷺ in badan oo salli loogu diro maalinta Jimcaha. Wuxuu Jimcaha ku tiriyey maalmaha ugu wanaagsan, wuxuuna faray in maalintaas salli badan loogu diro, maxaa yeelay waa loo soo bandhigaa.",
+      "how": [
+        "Nabiga ﷺ salli ugu dir erayada aad taqaan, sida salliga lagu akhriyo tashahudka.",
+        "Tiro go’an ma leh; inta aad kartid ku badi.",
+        "Maalinta oo dhan dib ugu noqo."
+      ],
+      "reminder": "Berri waa Jimce. Maalintaas Nabiga ﷺ salli badan u dir; waa loo soo bandhigaa.",
+      "evidence": [
+        "Maalmihiinna kuwa ugu fiican waxaa ka mid ah maalinta Jimcaha … ee maalintaas igu badiya salliga, maxaa yeelay salligiinnu waa la ii soo bandhigaa."
+      ]
+    },
+    "friday-last-hour": {
+      "title": "Ducada saacadda ugu dambaysa ee Jimcaha",
+      "why": "Maalinta Jimcaha waxaa ku jirta saacad ducada lagu aqbalo. Nabiga ﷺ wuxuu yiri qof Muslim ah oo la kulma isagoo Alle wax weydiinaya, Alle waa siiyaa, wuxuuna yiri ka raadiya saacadda ugu dambaysa Casarka kadib.",
+      "how": [
+        "Maalinta Jimcaha, inta u dhexeysa Casarka iyo Maqribka, waqti u qoondee.",
+        "Alle weydii waxaad u baahan tahay, adiga iyo dadka kaleba.",
+        "Haddaad kartid, sii wad weydiinta ilaa Maqribka."
+      ],
+      "reminder": "Waa saacadda ugu dambaysa ee Jimcaha. Maqribka ka hor, Alle weydii waxaad u baahan tahay.",
+      "note": "Culimadu waxay saacaddan u sheegeen waqtiyo dhowr ah. Saacadda ugu dambaysa Casarka kadib waa mid ka mid ah aragtiyaha ugu xoogga badan; qaar baa yiraahda waa marka imaamku fadhiisto ilaa salaaddu dhammaato.",
+      "evidence": [
+        "Waxaa ku jirta saacad: addoon Muslim ah oo la kulma isagoo taagan oo tukanaya, Alle Sarreeyaha wax weydiinaya, Alle waa siiyaa.",
+        "… ee ka raadiya saacadda ugu dambaysa Casarka kadib."
+      ]
     }
   },
   "glossary": {
@@ -541,6 +610,14 @@
     "jumuah": {
       "term": "Jimce",
       "definition": "Salaadda Jimcaha: laba rakco oo jameec ah khudbad kadib, oo lagu tukado meesha Duhurka. Musaafirka iyo haweenka kuma waajibto inay ka qaybgalaan, laakiin way ka qaybgeli karaan. Qofkii ka dhaafa wuxuu tukanayaa Duhur."
+    },
+    "ghusl": {
+      "term": "Qubeys (ghusl)",
+      "definition": "Maydhashada daahirnimada ee buuxda: jidhka oo dhan oo biyo lagu maydho. Waa lagama maarmaan marka xaalado qaarkood dhammaadaan, sida caadada kadib, Jimcaha ka horna waa sunno, oo qaar waajib u arkaan."
+    },
+    "salawat": {
+      "term": "Salawaad",
+      "definition": "Salli u dirista Nabiga ﷺ, taas oo ah in Alle laga baryo inuu u naxariisto oo sharfo, sida “Allaahumma salli calaa Muxammad”. Waa qayb ka mid ah tashahudka salaadda, waqti kastana waa la oran karaa."
     }
   }
 }

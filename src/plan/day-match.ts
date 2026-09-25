@@ -4,9 +4,11 @@ import type { Trigger } from '@/content/schema'
 import type { DayContext } from './signals'
 
 type DayTrigger = Extract<Trigger, { kind: 'day' }>['day']
+type WindowDay = NonNullable<Extract<Trigger, { kind: 'window' }>['day']>
 
 const MONDAY = 1
 const THURSDAY = 4
+const FRIDAY = 5
 const WHITE_DAYS = [13, 14, 15]
 
 const MUHARRAM = 1
@@ -38,6 +40,12 @@ export function matchesDay(day: DayTrigger, context: DayContext): boolean {
       return weekday === MONDAY
     case 'thursday':
       return weekday === THURSDAY
+    case 'friday':
+      // Fasting Monday and Thursday keep the civil weekday, since a fast is
+      // kept in the daytime. What Friday asks of everyone — al-Kahf, the
+      // salawat — belongs to the Islamic day, which begins at Thursday's
+      // Maghrib, so it follows the same boundary as the Hijri date.
+      return context.hijriWeekday === FRIDAY
     case 'white-days':
       return WHITE_DAYS.includes(hijri.day)
     case 'ashura':
@@ -52,6 +60,22 @@ export function matchesDay(day: DayTrigger, context: DayContext): boolean {
       return hijri.month === DHUL_HIJJAH && hijri.day <= 10
     case 'ramadan':
       return hijri.month === RAMADAN
+    default:
+      return assertNever(day)
+  }
+}
+
+/**
+ * Whether a window trigger narrowed to one weekday applies on a civil day. An
+ * adhkar window never crosses Maghrib, so the civil weekday and the Islamic one
+ * agree for its whole length.
+ */
+export function matchesWindowDay(day: WindowDay | undefined, weekday: number): boolean {
+  if (day === undefined) return true
+
+  switch (day) {
+    case 'friday':
+      return weekday === FRIDAY
     default:
       return assertNever(day)
   }

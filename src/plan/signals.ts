@@ -15,8 +15,13 @@ export interface DayContext {
   hijri: HijriDate
   /** Umm al-Qura with no offset, which is what Makkah follows. */
   hijriCalculated: HijriDate
-  /** 0 = Sunday, matching Date#getDay. */
+  /** 0 = Sunday, matching Date#getDay. The civil day's: fasting Monday and Jumu'ah follow it. */
   weekday: number
+  /**
+   * The weekday of the Islamic day, which turns at Maghrib like `hijri`: after
+   * Thursday's Maghrib it is already Friday. Equal to `weekday` until Maghrib.
+   */
+  hijriWeekday: number
 }
 
 export interface Preferences {

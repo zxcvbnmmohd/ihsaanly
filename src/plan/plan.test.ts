@@ -78,6 +78,7 @@ function dayContext(
     hijri: { year: 1448, month: hijri.month, day: hijri.day },
     hijriCalculated: { year: 1448, month: calculated.month, day: calculated.day },
     weekday: at.getDay(),
+    hijriWeekday: at.getDay(),
   }
 }
 
@@ -116,7 +117,13 @@ function itemIds(entries: ScheduledNotification[]): string[] {
 const eveningAdhkar = makeItem('evening-adhkar', { kind: 'window', window: 'evening' })
 const morningAdhkar = makeItem('morning-adhkar', { kind: 'window', window: 'morning' })
 const leavingHome = makeItem('leaving-home', { kind: 'event', event: 'leaving-home' })
-const rawatib = makeItem('after-dhuhr', { kind: 'prayer', prayer: 'dhuhr', when: 'after' })
+// A rawatib is a prayer: the category is what sets it apart from the ghusl for
+// Jumu'ah, which shares a named-prayer trigger and stays on a journey.
+const rawatib = makeItem(
+  'after-dhuhr',
+  { kind: 'prayer', prayer: 'dhuhr', when: 'after' },
+  { category: 'prayer' },
+)
 const dhikr = makeItem('after-any', { kind: 'prayer', prayer: 'any', when: 'after' })
 const whiteDays = makeItem('white-days', { kind: 'day', day: 'white-days' })
 

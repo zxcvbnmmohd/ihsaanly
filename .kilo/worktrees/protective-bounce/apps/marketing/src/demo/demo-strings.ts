@@ -1,0 +1,85 @@
+// Copy that exists only in the demo, with no home in the app's own string
+// tables: the tab list's accessibility label and the coach bubbles. Kept to
+// the same shape and caveat as the core string tables — English is the source; every other line below is a draft, written in one
+// pass and not yet reviewed by a qualified speaker.
+
+import type { SupportedLanguage } from '@ihsaanly/core/i18n/locale'
+
+export interface DemoCopy {
+  tabsLabel: string
+  /** Coach step "mark": points at the prayer chip whose window is current (or the fallback). */
+  coachMarkPrayer: (prayer: string) => string
+  /** Coach step "open", with an item card to point at. */
+  coachOpenItem: string
+  /** Coach step "open", falling back to the Library tab when no item card is showing. */
+  coachOpenLibrary: string
+}
+
+const DEMO_COPY: Record<SupportedLanguage, DemoCopy> = {
+  en: {
+    tabsLabel: 'Tabs',
+    coachMarkPrayer: (prayer: string): string => `Tap to mark ${prayer} as prayed`,
+    coachOpenItem: 'Tap to see where it comes from',
+    coachOpenLibrary: 'Browse the library',
+  },
+  ar: {
+    tabsLabel: 'علامات التبويب',
+    coachMarkPrayer: (prayer: string): string => `اضغط لتسجيل ${prayer} كمُصلّاة`,
+    coachOpenItem: 'اضغط لمعرفة مصدره',
+    coachOpenLibrary: 'تصفح المكتبة',
+  },
+  fr: {
+    tabsLabel: 'Onglets',
+    coachMarkPrayer: (prayer: string): string => `Touchez pour marquer ${prayer} comme priée`,
+    coachOpenItem: "Touchez pour voir d'où cela vient",
+    coachOpenLibrary: 'Parcourir la bibliothèque',
+  },
+  hi: {
+    tabsLabel: 'टैब',
+    coachMarkPrayer: (prayer: string): string => `${prayer} को पढ़ी हुई अंकित करने के लिए थपथपाएं`,
+    coachOpenItem: 'यह कहाँ से आया है यह देखने के लिए थपथपाएं',
+    coachOpenLibrary: 'लाइब्रेरी ब्राउज़ करें',
+  },
+  it: {
+    tabsLabel: 'Schede',
+    coachMarkPrayer: (prayer: string): string => `Tocca per segnare ${prayer} come pregata`,
+    coachOpenItem: 'Tocca per vedere da dove viene',
+    coachOpenLibrary: 'Sfoglia la biblioteca',
+  },
+  ja: {
+    tabsLabel: 'タブ',
+    coachMarkPrayer: (prayer: string): string => `${prayer}を礼拝済みにするにはタップ`,
+    coachOpenItem: '出典を見るにはタップ',
+    coachOpenLibrary: 'ライブラリを見る',
+  },
+  so: {
+    tabsLabel: 'Tabbada',
+    coachMarkPrayer: (prayer: string): string =>
+      `Riix si aad ${prayer} u calaamadiso in la tukaday`,
+    coachOpenItem: 'Riix si aad u aragto halka ay ka timid',
+    coachOpenLibrary: 'Baadh maktabadda',
+  },
+  ur: {
+    tabsLabel: 'ٹیبز',
+    coachMarkPrayer: (prayer: string): string =>
+      `${prayer} کو پڑھی ہوئی نشان زد کرنے کے لیے تھپتھپائیں`,
+    coachOpenItem: 'یہ کہاں سے آیا دیکھنے کے لیے تھپتھپائیں',
+    coachOpenLibrary: 'کتب خانہ دیکھیں',
+  },
+  yue: {
+    tabsLabel: '分頁',
+    coachMarkPrayer: (prayer: string): string => `輕觸將${prayer}標記為已禮`,
+    coachOpenItem: '輕觸睇吓出處',
+    coachOpenLibrary: '瀏覽資料庫',
+  },
+  zh: {
+    tabsLabel: '标签页',
+    coachMarkPrayer: (prayer: string): string => `点击将${prayer}标记为已礼`,
+    coachOpenItem: '点击查看出处',
+    coachOpenLibrary: '浏览资料库',
+  },
+}
+
+export function demoCopyFor(language: SupportedLanguage): DemoCopy {
+  return DEMO_COPY[language]
+}

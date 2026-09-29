@@ -1,0 +1,77 @@
+/* Generated from tokens.ts by `bun run generate` in tooling/tailwind. Do not edit. */
+
+@font-face {
+  font-family: 'Amiri';
+  src: url('./fonts/Amiri-Regular.woff2') format('woff2'), url('./fonts/Amiri-Regular.ttf') format('truetype');
+  font-display: swap;
+}
+
+:root {
+  color-scheme: light dark;
+}
+
+/* A page may force a theme with data-theme on <html>, over the system's. */
+:root[data-theme='dark'] {
+  --color-wash-top: #1b1411;
+  --color-wash-bottom: #3a241d;
+  --color-accent: #e28c6f;
+  --color-accent-ink: #e28c6f;
+  --color-on-accent: #1d120d;
+  --color-paper: #2a1c17;
+  --color-ink: #f7ece6;
+  --color-ink-secondary: #bba89e;
+  --color-ink-soft: #bba89e;
+  --color-knob: #fffaf6;
+  --color-surface: rgba(255, 246, 240, 0.08);
+  --color-indicator: rgba(226, 140, 111, 0.22);
+  --color-rule: rgba(247, 236, 230, 0.16);
+  --color-tint: rgba(226, 140, 111, 0.14);
+  --color-system-label: #ffffff;
+  --color-system-secondary-label: rgba(235, 235, 245, 0.6);
+  --color-system-separator: #38383a;
+  --color-system-background: #000000;
+  --color-system-secondary-background: #1c1c1e;
+  --color-system-tint: #0a84ff;
+  --color-system-on-tint: #000000;
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-theme='light'] {
+    --color-wash-top: #f7f0e9;
+    --color-wash-bottom: #e8cdbd;
+    --color-accent: #a94a32;
+    --color-accent-ink: #93402b;
+    --color-on-accent: #fff6f0;
+    --color-paper: #fffaf6;
+    --color-ink: #2b1f1a;
+    --color-ink-secondary: #7a665c;
+    --color-ink-soft: #66564d;
+    --color-knob: #fffaf6;
+    --color-surface: rgba(255, 250, 246, 0.78);
+    --color-indicator: rgba(169, 74, 50, 0.16);
+    --color-rule: rgba(43, 31, 26, 0.14);
+    --color-tint: rgba(169, 74, 50, 0.1);
+    --color-system-label: #000000;
+    --color-system-secondary-label: #3c3c43;
+    --color-system-separator: #c6c6c8;
+    --color-system-background: #ffffff;
+    --color-system-secondary-background: #f2f2f7;
+    --color-system-tint: #007aff;
+    --color-system-on-tint: #ffffff;
+    color-scheme: light;
+  }
+}
+
+/* Dark when data-theme="dark", or when the system prefers dark and the page
+   has not forced light. */
+@custom-variant dark {
+  &:where([data-theme='dark'], [data-theme='dark'] *) {
+    @slot;
+  }
+  @media (prefers-color-scheme: dark) {
+    &:where(:not([data-theme='light'], [data-theme='light'] *)) {
+      @slot;
+    }
+  }
+}

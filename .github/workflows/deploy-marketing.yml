@@ -1,0 +1,39 @@
+# Deploys the marketing site (ihsaanly.app) whenever something it is built from
+# changes on development or production. The build and upload live in deploy-ftp.yml.
+#
+# Uploads to …/marketing/<branch>/ (ihsaanly.app, dev.ihsaanly.app).
+# See apps/companion/HOSTING.md for the host layout.
+name: deploy-marketing
+
+on:
+  push:
+    branches: [development, production]
+    paths:
+      - 'apps/marketing/**'
+      # The demo renders the shared screens (ui) over the shared domain (core,
+      # content included), styled by the shared Tailwind tokens and web glue.
+      - 'packages/core/**'
+      - 'packages/ui/**'
+      - 'packages/web/**'
+      - 'tooling/**'
+      - 'bun.lock'
+      - '.github/workflows/deploy-marketing.yml'
+      - '.github/workflows/deploy-ftp.yml'
+  workflow_dispatch:
+
+# Never two uploads at once: the second would race the first's sync state.
+concurrency:
+  group: deploy-marketing-${{ github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: github.ref_name == 'development' || github.ref_name == 'production'
+    uses: ./.github/workflows/deploy-ftp.yml
+    with:
+      filter: '@ihsaanly/marketing'
+      local-dir: ./apps/marketing/dist/client/
+      app: marketing
+      # The GitHub environment is named after the branch.
+      environment: ${{ github.ref_name }}
+    secrets: inherit

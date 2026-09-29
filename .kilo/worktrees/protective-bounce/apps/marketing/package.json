@@ -1,0 +1,50 @@
+{
+  "name": "@ihsaanly/marketing",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite dev",
+    "build": "vite build && bun scripts/postbuild.ts && bun test ./test",
+    "preview": "bun scripts/serve.ts",
+    "lint": "biome check .",
+    "format": "biome check --write .",
+    "typecheck": "tsc --noEmit",
+    "test": "bun test ./src",
+    "check": "bun run lint && bun run typecheck && bun run test && bun run build",
+    "clean": "rm -rf dist",
+    "og": "bun scripts/og-images.ts"
+  },
+  "dependencies": {
+    "@tanstack/react-router": "^1.170.40",
+    "@tanstack/react-start": "^1.168.59",
+    "@tanstack/start-static-server-functions": "^1.167.38",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "zod": "catalog:",
+    "react-native-web": "catalog:",
+    "react-native-css": "catalog:",
+    "@ihsaanly/tailwind": "workspace:*",
+    "@ihsaanly/core": "workspace:*",
+    "@ihsaanly/ui": "workspace:*",
+    "expo-blur": "~58.0.1",
+    "expo-glass-effect": "~58.0.2",
+    "expo-haptics": "~58.0.1",
+    "expo-image": "~58.0.6",
+    "expo-linear-gradient": "~58.0.1",
+    "react-native-reanimated": "4.7.0",
+    "react-native-safe-area-context": "~5.9.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "4.3.3",
+    "@types/bun": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "~19.3.0",
+    "@vitejs/plugin-react": "^6.1.1",
+    "tailwindcss": "catalog:",
+    "typescript": "catalog:",
+    "vite": "^8.3.1",
+    "@ihsaanly/lint": "workspace:*",
+    "@ihsaanly/tsconfig": "workspace:*"
+  }
+}

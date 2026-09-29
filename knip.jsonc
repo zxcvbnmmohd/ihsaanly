@@ -1,0 +1,61 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema-jsonc.json",
+  // Dependency problems fail `bun run check`. Unused files and exports are
+  // reported as warnings for review rather than blocking.
+  "rules": {
+    "files": "warn",
+    "exports": "warn",
+    "types": "warn"
+  },
+  "workspaces": {
+    ".": {
+      "ignoreDependencies": [
+        // cz-git runs through commitizen
+        "commitizen",
+        // installs the git hooks from lefthook.json, never imported
+        "lefthook"
+      ]
+    },
+    "apps/mobile": {
+      "entry": ["scripts/*.ts", "plugins/*.js"],
+      // Guessed by knip's Expo plugin from app.json keys; expo-doctor decides
+      // which config packages are actually required.
+      "ignoreDependencies": ["expo-updates", "expo-system-ui"]
+    },
+    "packages/core": {
+      // Consumers import any module through the `./*` export; tests are the
+      // package's own entry points.
+      "entry": ["src/**/*.test.ts"]
+    },
+    "apps/marketing": {
+      "entry": ["src/routes/**/*.tsx", "scripts/*.ts", "test/*.ts"]
+    },
+    "packages/state": {
+      // Consumers import any module through the `./*` export; tests are the
+      // package's own entry points.
+      "entry": ["src/**/*.test.ts"]
+    },
+    "packages/cloud": {
+      // Apps import the platform flows through the `./*` export; the rules
+      // suite runs under the emulator via `test:rules`.
+      "entry": ["src/**/*.test.ts", "src/firebase/flows/*.ts", "test/*.ts"]
+    },
+    "packages/web": {
+      // Both web apps import through the subpath exports.
+      "entry": ["src/*.{ts,tsx}", "src/hosting/*.ts"]
+    },
+    "apps/companion": {
+      "entry": ["src/routes/**/*.tsx", "scripts/*.ts", "test/*.ts"]
+    },
+    "packages/ui": {
+      // Apps import any screen or component through the subpath exports;
+      // tests are the package's own entry points.
+      "entry": [
+        "src/screens/*.{ts,tsx}",
+        "src/components/*.tsx",
+        "src/today/*.{ts,tsx}",
+        "src/*.{ts,tsx}"
+      ]
+    }
+  }
+}

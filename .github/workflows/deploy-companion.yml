@@ -1,0 +1,36 @@
+# Deploys the web app (companion.ihsaanly.app) whenever something it is built
+# from changes on development or production. The build and upload live in deploy-ftp.yml.
+#
+# Uploads to …/companion/<branch>/ (companion.ihsaanly.app, dev.companion.ihsaanly.app).
+# See apps/companion/HOSTING.md.
+name: deploy-companion
+
+on:
+  push:
+    branches: [development, production]
+    paths:
+      - 'apps/companion/**'
+      # The app is the shared screens (ui) over the shared stores (state) and
+      # domain (core), with the shared web glue and Tailwind tokens.
+      - 'packages/**'
+      - 'tooling/**'
+      - 'bun.lock'
+      - '.github/workflows/deploy-companion.yml'
+      - '.github/workflows/deploy-ftp.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-companion-${{ github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: github.ref_name == 'development' || github.ref_name == 'production'
+    uses: ./.github/workflows/deploy-ftp.yml
+    with:
+      filter: '@ihsaanly/companion'
+      local-dir: ./apps/companion/dist/
+      app: companion
+      # The GitHub environment is named after the branch.
+      environment: ${{ github.ref_name }}
+    secrets: inherit

@@ -1,0 +1,61 @@
+{
+  "cSpell.words": [
+    "adhkar",
+    "Amiri",
+    "biomejs",
+    "bunx",
+    "commitlint",
+    "Dhuhr",
+    "dhikr",
+    "dua",
+    "duas",
+    "Duha",
+    "Fajr",
+    "hadith",
+    "hreflang",
+    "Ihsaanly",
+    "Isha",
+    "jitless",
+    "knip",
+    "lefthook",
+    "Maghrib",
+    "nativewind",
+    "prerender",
+    "prerendered",
+    "qada",
+    "sunnah",
+    "tanstack",
+    "turborepo",
+    "Witr"
+  ],
+  "editor.codeActionsOnSave": {
+    "source.fixAll.biome": "explicit",
+    "source.organizeImports.biome": "explicit"
+  },
+  "editor.defaultFormatter": "biomejs.biome",
+  "editor.formatOnSave": true,
+  "[json]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[markdown]": {
+    "editor.defaultFormatter": "DavidAnson.vscode-markdownlint",
+    "editor.minimap.enabled": false
+  },
+  "markdown.extension.toc.levels": "2..6",
+  "tailwindCSS.classAttributes": [
+    "className",
+    "contentContainerClassName",
+    "columnWrapperClassName",
+    "ListHeaderComponentClassName",
+    "ListFooterComponentClassName"
+  ],
+  "tailwindCSS.includeLanguages": {
+    "typescriptreact": "javascript"
+  },
+  "tailwindCSS.experimental.configFile": "apps/mobile/global.css",
+  "[css]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true
+}

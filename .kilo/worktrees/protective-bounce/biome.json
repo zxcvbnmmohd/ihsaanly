@@ -1,0 +1,242 @@
+{
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
+  "files": {
+    "includes": [
+      "**",
+      "!**/node_modules",
+      "!**/dist",
+      "!**/.expo",
+      "!**/.turbo",
+      "!**/expo-env.d.ts",
+      "!apps/mobile/ios",
+      "!apps/mobile/android",
+      "!**/.kilo",
+      "!**/*.svg",
+      "!**/routeTree.gen.ts",
+      "!tooling/tailwind/theme.css",
+      "!tooling/tailwind/web.css"
+    ]
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineWidth": 100,
+    "lineEnding": "lf"
+  },
+  "javascript": {
+    "globals": ["__DEV__"],
+    "formatter": {
+      "quoteStyle": "single",
+      "jsxQuoteStyle": "double",
+      "semicolons": "asNeeded",
+      "trailingCommas": "all",
+      "arrowParentheses": "always",
+      "bracketSameLine": true
+    }
+  },
+  "css": {
+    "parser": {
+      "tailwindDirectives": true
+    },
+    "formatter": {
+      "enabled": true,
+      "quoteStyle": "single"
+    },
+    "linter": {
+      "enabled": false
+    }
+  },
+  "assist": {
+    "enabled": true,
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
+  },
+  "plugins": [
+    "packages/lint/plugins/rtl-logical-styles.grit",
+    "packages/lint/plugins/no-clock-times.grit",
+    "packages/lint/plugins/expo-env-vars.grit",
+    "packages/lint/plugins/prefer-box-shadow.grit"
+  ],
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "preset": "recommended",
+      "style": {
+        "noNonNullAssertion": "error",
+        "useConsistentTypeDefinitions": {
+          "level": "error",
+          "options": {
+            "style": "interface"
+          }
+        }
+      },
+      "suspicious": {
+        "noExplicitAny": "error",
+        "useIterableCallbackReturn": "off",
+        "noArrayIndexKey": "off",
+        "noShadowRestrictedNames": "off"
+      },
+      "nursery": {
+        "useSortedClasses": {
+          "level": "error",
+          "fix": "safe",
+          "options": {
+            "attributes": [
+              "className",
+              "contentContainerClassName",
+              "columnWrapperClassName",
+              "ListHeaderComponentClassName",
+              "ListFooterComponentClassName"
+            ]
+          }
+        },
+        "noFloatingPromises": "error",
+        "noMisusedPromises": "error",
+        "useAwaitThenable": "error"
+      },
+      "correctness": {
+        "useExhaustiveDependencies": "warn",
+        "noVoidTypeReturn": "off"
+      },
+      "complexity": {
+        "useOptionalChain": "off",
+        "noUselessSwitchCase": "off",
+        "noUselessFragments": "off"
+      },
+      "performance": {
+        "noAccumulatingSpread": "off"
+      }
+    }
+  },
+  "overrides": [
+    {
+      "includes": ["**/*.ts", "**/*.tsx"],
+      "plugins": ["packages/lint/plugins/require-assets-only.grit"]
+    },
+    {
+      "includes": ["**/*.ts", "**/*.tsx", "!apps/mobile/src/widgets/**"],
+      "plugins": ["packages/lint/plugins/explicit-return-types.grit"]
+    },
+    {
+      "includes": [
+        "apps/mobile/src/**/*.ts",
+        "apps/mobile/src/**/*.tsx",
+        "packages/core/src/**/*.ts",
+        "packages/ui/src/**/*.ts",
+        "packages/ui/src/**/*.tsx"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "useFilenamingConvention": {
+              "level": "error",
+              "options": {
+                "filenameCases": ["kebab-case"],
+                "match": "(?:[+]|\\[)?(.+?)\\]?[.](.+)"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "apps/mobile/src/**/*.ts",
+        "apps/mobile/src/**/*.tsx",
+        "!apps/mobile/src/app/**",
+        "!apps/mobile/src/widgets/**",
+        "packages/core/src/**/*.ts",
+        "packages/ui/src/**/*.ts",
+        "packages/ui/src/**/*.tsx",
+        "apps/marketing/src/**/*.ts",
+        "apps/marketing/src/**/*.tsx"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "noDefaultExport": "error"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["packages/core/src/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "paths": {
+                  "react": "Domain modules stay free of React.",
+                  "react-native": "Domain modules stay free of React Native."
+                },
+                "patterns": [
+                  {
+                    "group": ["expo-*", "@expo/*"],
+                    "message": "Domain modules stay free of native modules."
+                  },
+                  {
+                    "group": ["@/storage/*"],
+                    "message": "Domain modules do not read or write storage."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": ["packages/ui/src/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "paths": {
+                  "expo-router": "Screens take links from useUi().Link; the host owns the router."
+                },
+                "patterns": [
+                  {
+                    "group": ["@/*"],
+                    "message": "@ihsaanly/ui never imports the app; take it as a prop or through UiProvider."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "apps/marketing/src/**/*.ts",
+        "apps/marketing/src/**/*.tsx",
+        "!apps/marketing/src/routes/**"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "useFilenamingConvention": {
+              "level": "error",
+              "options": {
+                "filenameCases": ["kebab-case"]
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

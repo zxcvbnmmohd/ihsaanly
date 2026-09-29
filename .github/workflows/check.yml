@@ -1,0 +1,78 @@
+# The same gate as `bun run check`, which AGENTS.md names as the thing to run
+# before calling work done. Nothing here needs EAS or store credentials: it is
+# lint, types, tests and the content validator, so it stays free and fast.
+name: check
+
+on:
+  push:
+    branches: [development, production]
+  pull_request:
+
+concurrency:
+  group: check-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/mobile
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: package.json
+
+      - run: bun install --frozen-lockfile
+        working-directory: .
+
+      # Biome lints and format-checks every workspace from the root config.
+      - name: Lint
+        run: bun run lint
+        working-directory: .
+
+      - name: Unused code
+        run: bun run knip
+        working-directory: .
+
+      - name: Typecheck
+        run: bun run typecheck
+        working-directory: .
+
+      - name: Test
+        run: bun run test
+        working-directory: .
+
+      # Builds both web apps and runs their output, CSP and headless Chrome
+      # checks, the same gate the deploys use.
+      - name: Build and verify the web apps
+        run: bunx turbo build --filter=@ihsaanly/marketing --filter=@ihsaanly/companion
+        working-directory: .
+
+      # Warns rather than fails while content is unreviewed, which is deliberate:
+      # see `releaseWarningsFor` in packages/core/src/content/validate.ts.
+      - name: Validate content
+        run: bun run validate:content
+
+  # Firestore security rules against the emulator, which needs a JDK. Kept out
+  # of `check` so the main gate never waits on Java or the emulator download.
+  rules:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: package.json
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - run: bun install --frozen-lockfile
+
+      - name: Firestore rules
+        run: bun run --cwd packages/cloud test:rules

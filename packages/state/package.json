@@ -1,0 +1,49 @@
+{
+  "name": "@ihsaanly/state",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Ihsaanly's stores and hooks: on-device storage behind one seam, the daily-plan signals, and the preference stores the screens read. No screens, no router; the mobile app and a future web companion both import it.",
+  "type": "module",
+  "exports": {
+    "./strings": "./src/strings/index.ts",
+    "./capabilities": {
+      "browser": "./src/capabilities.web.ts",
+      "default": "./src/capabilities.ts"
+    },
+    "./i18n/direction": {
+      "browser": "./src/i18n/direction.web.ts",
+      "default": "./src/i18n/direction.ts"
+    },
+    "./storage/backend": {
+      "browser": "./src/storage/backend.web.ts",
+      "default": "./src/storage/backend.ts"
+    },
+    "./*": "./src/*.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "bun test"
+  },
+  "dependencies": {
+    "@ihsaanly/cloud": "workspace:*",
+    "@ihsaanly/core": "workspace:*",
+    "@ihsaanly/ui": "workspace:*",
+    "zod": "catalog:"
+  },
+  "peerDependencies": {
+    "expo": "*",
+    "expo-constants": "*",
+    "expo-file-system": "*",
+    "expo-sqlite": "*",
+    "react": "*",
+    "react-native": "*"
+  },
+  "devDependencies": {
+    "@ihsaanly/lint": "workspace:*",
+    "@ihsaanly/tsconfig": "workspace:*",
+    "@types/bun": "catalog:",
+    "@types/react": "catalog:",
+    "react-native-css": "catalog:",
+    "typescript": "catalog:"
+  }
+}

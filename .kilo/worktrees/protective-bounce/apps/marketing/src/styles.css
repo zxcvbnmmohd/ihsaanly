@@ -1,0 +1,128 @@
+@import 'tailwindcss' important;
+/* Colours, fonts, Amiri and the dark variant: the setup every Ihsaanly app
+   shares. Add tokens in tooling/tailwind/tokens.ts. */
+@import '@ihsaanly/tailwind/theme.css';
+@import '@ihsaanly/tailwind/web.css';
+@import './demo/demo.css';
+@source '../../../packages/ui/src';
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--color-wash-top)
+      linear-gradient(180deg, var(--color-wash-top) 0, var(--color-wash-bottom) 100%) no-repeat;
+    background-attachment: fixed;
+    color: var(--color-ink);
+    font-family: var(--font-serif);
+    font-size: 1.125rem;
+    line-height: 1.65;
+    font-kerning: normal;
+    font-variant-numeric: oldstyle-nums;
+  }
+
+  a {
+    color: var(--color-accent-ink);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.18em;
+  }
+
+  a:hover {
+    text-decoration-thickness: 2px;
+  }
+
+  strong {
+    font-weight: 700;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+}
+
+/* ---- Scripts ----
+   Scoped to the page's own language on <html>, so the Arabic dua on an
+   English page and the romanised line on an Arabic one keep their own faces.
+   Left unlayered so it always wins over a component's own utility classes. */
+
+html:lang(ar) body {
+  font-family: var(--font-arabic);
+  font-size: 1.25rem;
+  line-height: 1.85;
+}
+
+html:lang(ur) body {
+  font-family: var(--font-urdu);
+  line-height: 2.2;
+}
+
+html:lang(ja) body {
+  font-family: var(--font-japanese);
+}
+
+html:lang(zh-Hans) body {
+  font-family: var(--font-chinese-hans);
+}
+
+html:lang(yue) body {
+  font-family: var(--font-chinese-hant);
+}
+
+html:lang(hi) body {
+  font-family: var(--font-devanagari);
+  line-height: 1.8;
+}
+
+/* Cursive scripts break apart under letter-spacing, and CJK and Devanagari
+   need taller lines than the Latin display settings allow. */
+html:is(:lang(ar), :lang(ur), :lang(ja), :lang(zh), :lang(yue), :lang(hi)) :is(h1, h2, .brand) {
+  letter-spacing: 0;
+}
+
+html:is(:lang(ar), :lang(ja), :lang(zh), :lang(yue), :lang(hi)) :is(.opening h1, .legal h1) {
+  line-height: 1.3;
+}
+
+html:lang(ur) :is(.opening h1, .legal h1, .section > h2, .legal h2, .pledge) {
+  line-height: 1.9;
+}
+
+html:lang(ur) .opening .lede,
+html:lang(ur) .legal .summary {
+  line-height: 2.1;
+}
+
+/* The wordmark keeps its Latin face everywhere. */
+.brand {
+  font-family: var(--font-serif);
+}
+
+/* <em> in legal copy marks a path through the app's screens. */
+.legal em {
+  font-style: inherit;
+  white-space: nowrap;
+}
+
+/* A path through the app's screens may wrap rather than widen the page. */
+@media (max-width: 40rem) {
+  .legal em {
+    white-space: normal;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+    scroll-behavior: auto !important;
+  }
+}

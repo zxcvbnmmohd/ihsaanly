@@ -1,0 +1,45 @@
+{
+  "name": "@ihsaanly/web",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Web-host code shared by Ihsaanly's web apps (marketing, companion): the react-native-web Vite setup, static-hosting CSP/headers/.htaccess, a preview server, theme and small presentational pieces.",
+  "type": "module",
+  "exports": {
+    "./vite": "./src/vite.ts",
+    "./theme": "./src/theme.ts",
+    "./ui-provider": "./src/ui-provider.tsx",
+    "./local-storage": "./src/local-storage.ts",
+    "./zod-jitless": "./src/zod-jitless.ts",
+    "./icons": "./src/icons.tsx",
+    "./store-badges": "./src/store-badges.tsx",
+    "./app-links": "./src/app-links.ts",
+    "./styles.css": "./src/styles.css",
+    "./hosting/csp": "./src/hosting/csp.ts",
+    "./hosting/htaccess": "./src/hosting/htaccess.ts",
+    "./hosting/serve": "./src/hosting/serve.ts",
+    "./hosting/chrome": "./src/hosting/chrome.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "bun test"
+  },
+  "dependencies": {
+    "@ihsaanly/core": "workspace:*",
+    "@ihsaanly/tailwind": "workspace:*",
+    "@ihsaanly/ui": "workspace:*",
+    "tailwindcss": "catalog:",
+    "zod": "catalog:"
+  },
+  "peerDependencies": {
+    "react": "*",
+    "vite": "*"
+  },
+  "devDependencies": {
+    "@ihsaanly/lint": "workspace:*",
+    "@ihsaanly/tsconfig": "workspace:*",
+    "@types/bun": "catalog:",
+    "@types/react": "catalog:",
+    "typescript": "catalog:",
+    "vite": "^8.3.1"
+  }
+}

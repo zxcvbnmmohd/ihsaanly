@@ -1,0 +1,64 @@
+# Deploys Firestore rules and indexes when they change: development →
+# ihsaanly-development, production → ihsaanly-production (the aliases in
+# packages/cloud/.firebaserc). The rules suite gates it, so a rule that fails
+# its tests never reaches a live project.
+#
+# Secret (Settings → Environments → "development" / "production"):
+#   FIREBASE_SERVICE_ACCOUNT  JSON key of a service account in that project with
+#                             Firebase Rules Admin + Cloud Datastore Index Admin
+#                             + Service Usage Consumer — nothing broader.
+#
+# ponytail: a JSON key; Workload Identity Federation (keyless) is the upgrade.
+name: deploy-firestore
+
+on:
+  push:
+    branches: [development, production]
+    paths:
+      - 'packages/cloud/firestore.rules'
+      - 'packages/cloud/firestore.indexes.json'
+      - 'packages/cloud/firebase.json'
+      - 'packages/cloud/.firebaserc'
+      - 'packages/cloud/test/**'
+      - '.github/workflows/deploy-firestore.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-firestore-${{ github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: github.ref_name == 'development' || github.ref_name == 'production'
+    environment: ${{ github.ref_name }}
+    defaults:
+      run:
+        working-directory: packages/cloud
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: package.json
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - run: bun install --frozen-lockfile
+        working-directory: .
+
+      - name: Rules tests (emulator)
+        run: bun run test:rules
+
+      # Pinned to the v3.0.0 commit: this step handles the service-account key.
+      - uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+
+      - name: Deploy rules + indexes
+        run: >
+          bunx firebase-tools@15 deploy --only firestore --non-interactive
+          -P ${{ github.ref_name }}

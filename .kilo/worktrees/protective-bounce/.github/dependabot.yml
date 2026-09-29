@@ -1,0 +1,9 @@
+# Actions only. npm is deliberately excluded: AGENTS.md pins nativewind,
+# react-native-css and lightningcss exactly, and every Expo package must come
+# from `npx expo install --fix` rather than from a version bump.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly

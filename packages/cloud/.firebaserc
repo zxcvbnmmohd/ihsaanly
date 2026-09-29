@@ -1,0 +1,7 @@
+{
+  "projects": {
+    "default": "ihsaanly-development",
+    "development": "ihsaanly-development",
+    "production": "ihsaanly-production"
+  }
+}

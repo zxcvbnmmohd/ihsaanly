@@ -1,0 +1,13 @@
+{
+  "extends": "@ihsaanly/tsconfig/base.json",
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["DOM", "ES2023"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "resolveJsonModule": true,
+    "types": ["bun", "react-native-css/types"]
+  },
+  "include": ["src", "env.d.ts"]
+}

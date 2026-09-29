@@ -1,0 +1,25 @@
+{
+  "name": "Ihsaanly",
+  "short_name": "Ihsaanly",
+  "start_url": "/",
+  "display": "browser",
+  "background_color": "#f7f0e9",
+  "theme_color": "#f7f0e9",
+  "icons": [
+    {
+      "src": "/assets/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/star.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

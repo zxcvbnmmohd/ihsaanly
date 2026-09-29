@@ -1,0 +1,41 @@
+@import 'tailwindcss' important;
+/* Colours, fonts, Amiri and the dark variant: the setup every Ihsaanly app
+   shares. Add tokens in tooling/tailwind/tokens.ts. */
+@import '@ihsaanly/tailwind/theme.css';
+@import '@ihsaanly/tailwind/web.css';
+@source '../../../packages/ui/src';
+/* This package's own components (e.g. store-badges.tsx) are outside a host
+   app's own source tree, so Tailwind needs telling to scan them too. */
+@source '.';
+
+/* ---- Scripts ----
+   Scoped to the page's own language on <html>, so a script gets its own
+   face wherever it is written on the page. */
+
+html:lang(ar) body {
+  font-family: var(--font-arabic);
+  font-size: 1.25rem;
+  line-height: 1.85;
+}
+
+html:lang(ur) body {
+  font-family: var(--font-urdu);
+  line-height: 2.2;
+}
+
+html:lang(ja) body {
+  font-family: var(--font-japanese);
+}
+
+html:lang(zh-Hans) body {
+  font-family: var(--font-chinese-hans);
+}
+
+html:lang(yue) body {
+  font-family: var(--font-chinese-hant);
+}
+
+html:lang(hi) body {
+  font-family: var(--font-devanagari);
+  line-height: 1.8;
+}

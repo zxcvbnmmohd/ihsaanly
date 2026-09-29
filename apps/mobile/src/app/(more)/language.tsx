@@ -1,0 +1,20 @@
+import { type SupportedLanguage, supportedLanguageOf } from '@ihsaanly/core/i18n/locale'
+import { chooseLanguage, useLocale } from '@ihsaanly/state/i18n/store'
+import { useStrings } from '@ihsaanly/state/strings'
+import { LanguageScreen } from '@ihsaanly/ui/screens/language'
+import type { ReactElement } from 'react'
+import { Alert } from 'react-native'
+
+export default function LanguageRoute(): ReactElement {
+  const language = supportedLanguageOf(useLocale())
+  const strings = useStrings()
+
+  // Android reloads itself. iOS cannot, so the one honest thing is to say so
+  // rather than leave the screen half turned around.
+  const select = (chosen: SupportedLanguage): void => {
+    if (!chooseLanguage(chosen)) return
+    Alert.alert(strings.language.reopenTitle, strings.language.reopenBody)
+  }
+
+  return <LanguageScreen language={language} onSelect={select} />
+}

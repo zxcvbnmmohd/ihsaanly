@@ -1,0 +1,111 @@
+import { describe, expect, it } from 'bun:test'
+
+import { en } from '../strings/en'
+import {
+  DEFAULT_LOCALE,
+  isRightToLeft,
+  LOCALE_INFO,
+  languageOf,
+  localeForLanguage,
+  resolveLocale,
+  SUPPORTED_LANGUAGES,
+  supportedLanguageOf,
+} from './locale'
+
+describe('resolving a locale', () => {
+  it('prefers an exact match', () => {
+    expect(resolveLocale(['en-GB'])).toBe('en-GB')
+  })
+
+  it('falls back to the same language in another region', () => {
+    expect(resolveLocale(['en-AU'])).toBe('en-CA')
+  })
+
+  it('falls back to the default when nothing matches', () => {
+    expect(resolveLocale(['de-DE'])).toBe(DEFAULT_LOCALE)
+  })
+
+  it('takes the first preference that can be served', () => {
+    expect(resolveLocale(['de-DE', 'ar'])).toBe('ar')
+  })
+
+  it('handles an empty preference list', () => {
+    expect(resolveLocale([])).toBe(DEFAULT_LOCALE)
+  })
+})
+
+describe('direction', () => {
+  it('knows Arabic reads right to left', () => {
+    expect(isRightToLeft('ar')).toBe(true)
+  })
+
+  it('knows English does not', () => {
+    expect(isRightToLeft('en-CA')).toBe(false)
+  })
+
+  it('reads the language out of a region-qualified locale', () => {
+    expect(languageOf('en-CA')).toBe('en')
+    expect(languageOf('ar')).toBe('ar')
+  })
+})
+
+describe('choosing a language', () => {
+  it("takes the device's own English when we ship it", () => {
+    expect(localeForLanguage('en', ['en-GB', 'fr-FR'])).toBe('en-GB')
+  })
+
+  it('falls back to a shipped English for an unshipped region', () => {
+    expect(localeForLanguage('en', ['en-AU'])).toBe('en-CA')
+  })
+
+  it('ignores device locales in other languages', () => {
+    expect(localeForLanguage('en', ['fr-FR', 'en-US'])).toBe('en-US')
+  })
+
+  it('still finds English on a device with none', () => {
+    expect(localeForLanguage('en', ['ja-JP'])).toBe('en-CA')
+  })
+
+  it('finds Arabic on a device with only English', () => {
+    expect(localeForLanguage('ar', ['en-US'])).toBe('ar')
+  })
+
+  it('reduces a stored locale to the language the user picked', () => {
+    expect(supportedLanguageOf('en-GB')).toBe('en')
+    expect(supportedLanguageOf('ar')).toBe('ar')
+  })
+})
+
+describe('Chinese on a device', () => {
+  it('reads Hong Kong and Macau as Cantonese', () => {
+    expect(resolveLocale(['zh-Hant-HK'])).toBe('yue')
+    expect(resolveLocale(['zh-MO'])).toBe('yue')
+  })
+
+  it('reads the mainland and Taiwan as Mandarin', () => {
+    expect(resolveLocale(['zh-Hans-CN'])).toBe('zh-Hans')
+    expect(resolveLocale(['zh-Hant-TW'])).toBe('zh-Hans')
+  })
+
+  it('reads Urdu as right to left', () => {
+    expect(isRightToLeft('ur')).toBe(true)
+  })
+})
+
+describe('LOCALE_INFO', () => {
+  it('covers every supported language, in order', () => {
+    expect(LOCALE_INFO.map((info) => info.code)).toEqual([...SUPPORTED_LANGUAGES])
+  })
+
+  it('agrees with the English string table on every native name', () => {
+    for (const info of LOCALE_INFO) {
+      expect(info.nativeName).toBe(en.language.names[info.code])
+    }
+  })
+
+  it('agrees with isRightToLeft on direction', () => {
+    for (const info of LOCALE_INFO) {
+      expect(info.dir).toBe(isRightToLeft(info.code) ? 'rtl' : 'ltr')
+    }
+  })
+})

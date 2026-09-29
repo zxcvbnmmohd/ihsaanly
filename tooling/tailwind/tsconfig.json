@@ -1,0 +1,10 @@
+{
+  "extends": "@ihsaanly/tsconfig/base.json",
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "types": ["bun"]
+  },
+  "include": ["*.ts", "scripts/*.ts"]
+}

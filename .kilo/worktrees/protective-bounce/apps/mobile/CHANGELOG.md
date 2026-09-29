@@ -1,0 +1,281 @@
+# Changelog
+
+All notable changes to Ihsaanly are recorded here. The format follows
+[Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project adheres to
+[Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+`package.json` carries the development version recorded here. `app.json` carries the
+store-facing version, which stays at `1.0.0` until first submission.
+
+## [Unreleased]
+
+Work is tracked as issues on the repository. The product specification is issue #1;
+`docs/PRD.md` and `docs/SPEC.md` hold the requirements and the decision log.
+
+### Added
+
+- **About and Delete my data.** More gains an About screen with the version,
+  the content review status and a plain privacy statement. The Data screen
+  gains Delete my data, with a confirmation, which clears everything on the
+  device and starts the app over. The Location screen shows the chosen place
+  on the map. Pausing prayer tracking now stops missed prayers accruing and
+  hides the prayer strip, as the specification always said. Moon-sighting
+  authorities moved to the foot of the Hijri date screen.
+- **Paths for each starting point.** Onboarding offers a third preset, "Just
+  starting", of five things to carry from day one, and says who each preset
+  is for. Today shows one "Try one more" card a week for an item not yet on
+  the day, with its why and a one-tap Add or Not now; fasting waits three
+  weeks. A new To make up screen under More lets someone returning set what
+  they owe from before tracking began and record several make-ups at once.
+- **Content that teaches.** Every item now opens with a plain "Why" and
+  numbered "How" steps, and its ruling label links to a glossary of the words
+  the app uses, in English and Arabic. Eleven new items: the rawatib before
+  Dhuhr and after Maghrib and Isha, Witr, coming home, going up and down,
+  setting off in a vehicle, the adhkar before sleep, night prayer in Ramadan
+  and the first ten days of Dhul Hijjah. Every item has an Arabic title. All
+  32 items are marked awaiting review, and say so on screen.
+- **Reminders that land and last.** Tapping a reminder opens its item; Done
+  and Later actions work from the notification shade, including while the app
+  is closed on Android. The schedule now covers a week, so reminders no longer
+  stop after two days unopened. Bodies say until which prayer a window is
+  open; the fasting look-ahead arrives twenty minutes after the evening
+  adhkar instead of stacked on it. The Prayer reminders switch now does
+  something: one notification when each prayer's window opens, on its own
+  channel. The Reminders screen shows the system permission with a way to the
+  settings when denied, a per-item list, and a test reminder.
+- **An item can be marked done.** Item detail gains Done and Undo, a tap
+  counter for repeated dhikr that completes at the target, On Today and Remind
+  me switches, and Share as text or as an image card. A completion hides the
+  item for its current occasion only; History's "Completed" group now fills,
+  and undone or unmarked entries no longer count there.
+- **The Library shows state and filters.** Rows carry "On Today" and "Known"
+  pills, a chip row filters All / On Today / Known with counts, and sections
+  sort by their translated name.
+- **Today answers "what now, and what next".** Every sunnah open right now is
+  listed, best first, with the rest under "Also now" instead of being dropped.
+  Marking a prayer puts its after-prayer sunnah at the top for an hour. An "Up
+  next" card names the next prayer with a rough distance ("in about an hour")
+  and what content asks before and after it. The header names the place.
+- **Appearance** in More: System, Light or Dark. On Android a local native
+  module applies the stored mode when the process starts, so a cold start opens
+  in the chosen scheme; a live change recreates the activity.
+- A `Button` primitive with light haptic feedback, and `expo-linear-gradient`.
+- Amiri, bundled through the `expo-font` config plugin, for all Arabic text.
+- `useStrings()`: interface copy resolves per language. English and a
+  complete Arabic draft ship; the Arabic awaits review by a qualified speaker
+  before release.
+
+### Changed
+
+- Onboarding is six steps with page dots, Back, Skip past the introduction, a
+  fixed footer and motion between steps. Two screens say what the app is, then
+  four set it up. Language and appearance are chosen on the first screen.
+- The notification permission is requested by the "Allow reminders" button on
+  the Reminders step, not silently from the Today tab afterwards.
+- A declined or unavailable location during onboarding is named on the step.
+- The starting point is two presets, Essentials or Everything, instead of
+  twenty-one toggles.
+- Onboarding carries a warm gradient wash and an eight-point-star motif. Today
+  stays undecorated, as the spec asks.
+- Switching to or from Arabic reloads the app so the layout direction applies
+  at once, instead of asking the user to restart.
+
+### Changed
+
+- The three tabs carry the onboarding design language: the brand wash, serif
+  display headings, accent section captions, and a native tab bar branded
+  through its own tint rather than reimplemented.
+- **Today** leads with a hero card for what the moment calls for, and collapses
+  five stacked prayer cards into one strip of marks.
+- **Library** shows each ruling as a pill; **More** groups its eleven rows
+  under Prayer, App and Your practice.
+- Every settings screen uses the control its choice deserves: switches for
+  on/off, a ring for one-of-many. The checkmark row is gone from both.
+- The app opens on Today. It opened on Library, because `/` resolves to the
+  alphabetically first route group; the group holding Today is now `(home)`.
+
+### Removed
+
+- `expo-localization`. Its module re-applied the RTL flags from static
+  resources on every React instance start, which erased a runtime language
+  change on the reload meant to apply it. The device locale comes from `Intl`.
+- `expo-system-ui`. It was never imported, and its Android lifecycle listener
+  re-applied the static interface style on every activity creation, which
+  defeated the Appearance override. See AGENTS.md before reinstalling it.
+
+### Blocked on external dependencies
+
+- No release is possible until a named, qualified reviewer signs off on the content.
+  The build warns on every run while `reviewedBy` is unset.
+- Audio, memorisation and in-car support depend on Arabic recitations that can be
+  distributed with permission.
+- iOS widgets and shared storage require an Apple Developer Program membership.
+
+## [0.1.0] - 2026-09-17
+
+First working skeleton. Nothing is user-ready; the app runs, navigates and renders
+real content with its evidence attached.
+
+### Added
+
+- **Three-tab shell** — Today, Library and More, each a native stack with large titles.
+- **Content schema** — a versioned, strongly typed document describing every religious
+  item: ruling, Arabic, transliteration, translation, repetition count, evidence,
+  trigger and scholarly note. Localised fields are keyed by language.
+- **Build-time content validation** — `bun run validate:content`, part of `bun run check`.
+  The document is validated once at build rather than at app startup.
+- **The grading gate** — an item citing a collection that does not carry its own
+  authentication must name a grader, or the build fails. Bukhari and Muslim are
+  exempt because the collection carries the grading. Ungraded religious content
+  cannot ship by accident.
+- **Document integrity checks** — duplicate item ids and text in an undeclared
+  language both fail the build.
+- **Release warnings** — unreviewed content, unnamed translation sources and missing
+  recitations are surfaced on every build without failing it.
+- **Library** — browse items and open a detail view showing Arabic, transliteration,
+  translation, repetition count, any scholarly note, and a citation panel giving
+  collection, reference, grading and grader.
+- **Twenty content items**, covering every trigger kind: contextual duas (leaving
+  home, entering the masjid, travel, sleeping, waking, eating), prayer-bound acts
+  (before Fajr, around Dhuhr, tasbih and Ayat al-Kursi after prayer, siwak),
+  time windows (morning and evening adhkar, Duha) and calendar days (Monday,
+  Thursday, the White Days, Ashura, Arafah, six of Shawwal). **Every reference is
+  pending verification by a reviewer**; the build warns until one is named.
+- **Prayer triggers accept `any`**, for acts tied to every obligatory prayer
+  rather than one of them, such as the dhikr after salah.
+- **A warning when one citation carries two different narrations.** A long hadith
+  quoted in parts is legitimate, which is why this warns rather than fails — but
+  it is equally how a wrong reference number reveals itself.
+- **Strings module** — every user-facing string resolves through one place.
+- **Right-to-left safeguards** — a lint rule rejects `left`/`right` in style objects
+  and directional Tailwind utilities in favour of logical directions, so adding Arabic
+  and RTL later is additive rather than a rewrite. Arabic text is right-aligned via
+  writing direction rather than a hardcoded side.
+- **Test suite** — `bun test`, covering the grading gate, document integrity,
+  release warnings and city search.
+- **Location** — coordinates come from the device or from a city the user picks,
+  and nothing downstream can tell which. Declining the permission is a supported
+  path, not a dead end: search 7,329 cities offline instead. Coordinates are used
+  on-device to derive prayer windows and are never transmitted.
+- **Screens separated from routes** — routes in `src/app/` own data, hooks,
+  navigation and side effects; screens in `src/screens/` are pure presentational
+  components driven entirely by exported props. `src/screens/fixtures.ts` supplies
+  mock props for each, so a screen can be rendered without a device, a database or
+  a navigator.
+- **Onboarding** — five steps, each with an answer already chosen.
+- **Library search** by name or situation, grouped by category.
+- **Contextual events** — one optional home geofence, honest about being
+  approximate, plus manual states for the moments no sensor can find.
+- **History** in More — reflective, never a score, never on Today.
+- **Export, import and a diagnostic bundle**, all user-initiated, all readable text.
+- **Memorisation** — listen, repeat, check; a known item leaves the reminder rotation.
+- **Language and right-to-left**, with a language offered only once its content is
+  complete and reviewed.
+- **Two widgets** reading a snapshot rather than the database.
+- **Notifications.** Two or three a day by default, derived from the plan rather
+  than scheduled ad hoc. Reminders for the obligatory prayers are off unless
+  asked for: an adhan app already does that, and a duplicate is what gets an app
+  deleted in its first week. Quiet hours, a daily cap, and a per-item override
+  that beats its category. Nothing ever says you failed at something.
+- **Re-arming is idempotent** — cancel then schedule, keyed on the schedule's
+  contents rather than the plan object, so the minute-by-minute rebuild does not
+  churn the pending queue. It re-arms when the app returns to the foreground.
+- **Calendar occasions, never asserted.** Every day derived from a calculated
+  calendar is labelled as expected. Where the user's adjusted calendar and the
+  plain calculated one disagree about a day, it says so and asks them to confirm
+  with their own authority.
+- **Arafah on both readings.** Some hold it is the ninth of Dhul Hijjah locally,
+  others the day of standing in Makkah. In a year where those fall differently,
+  both are surfaced — the app does not choose.
+- **Moon-sighting bodies**, listed by region under More, with an explicit
+  statement that the app endorses none of them. Names only: a wrong or dead link
+  would be worse than none.
+- **Travelling and paused tracking**, two manual switches under More. Neither is
+  ever inferred. Travelling offers shortening, steps the regular sunnah prayers
+  aside, raises the travel duas, and offers fasting rather than expecting it.
+  Pausing removes prayer items and stops anything accruing to make up; it is
+  labelled neutrally, asks for no explanation, and never expires on its own.
+- **Shortening the prayer on a journey**, on its Qur'anic basis, with a note that
+  scholars differ on whether it is obligatory or a concession.
+- **Marking prayers, and the sunnah that follows.** Tapping to say a prayer was
+  performed reveals the sunnah attached to it. Marks are persisted against the
+  local calendar day.
+- **An append-only event log.** Nothing is ever updated or deleted, so a make-up
+  is a new fact rather than an erased one. Each entry records what, when, the
+  window it belonged to, and a signed offset saying how early or late it was.
+- **Make-up shown as a count per prayer**, never as a dated list. A prayer
+  accrues only once its window has closed unmarked, and nothing is backfilled
+  before the first run — installing the app does not hand someone a debt they
+  never agreed to track.
+- **The decision function** — one pure function takes a snapshot of the world
+  and returns everything the product decides: what is relevant right now, what
+  is nearby, what is coming, and the notification schedule. It touches no clock,
+  no device and no storage, so it is tested with fixtures and no simulator.
+  Today renders entirely from its output.
+- **Selection rules**: paused tracking removes every prayer item; travelling
+  suppresses the rawatib while keeping the dhikr after prayer; memorised items
+  leave the reminder rotation but stay in the Library; the notification schedule
+  respects a daily budget and the platform's pending limit.
+- **The Hijri date**, shown on Today and computed with Umm al-Qura. It turns at
+  Maghrib, not midnight, and is always captioned as calculated rather than
+  certain, pointing at the authority the user's community follows.
+- **Two day boundaries, deliberately separate.** `hijriDay` turns at Maghrib and
+  governs the Hijri date, fasting and date-based triggers. `logDay` is the local
+  calendar day and governs the prayer log, because a history filed against the
+  Islamic day would put Tuesday evening's Maghrib and Isha under Wednesday.
+- **Hijri offset** from minus two to plus two days, so a user whose community
+  follows local moon sighting can make the app agree with their mosque.
+- **Prayer windows** — computed on-device from coordinates, never shown as clock
+  times. Today names the part of the day you are in. Asr opinion, high-latitude
+  rule and calculation method are all adjustable in settings; Asr defaults to the
+  standard opinion, which cannot be derived from coordinates.
+- **Polar regions** — inside the polar circle the high-latitude rule alone still
+  produces no Isha, so a nearest-day fallback is applied. This is a fallback, not
+  a ruling, and is flagged for the content reviewer.
+- **A lint rule enforcing that no clock time is ever rendered**, alongside the
+  right-to-left rule. Both encode product decisions that are easy to break by
+  accident later.
+- **Storage** — one SQLite database with forward-only migrations under
+  `PRAGMA user_version`, holding preferences now and the event log later. Its
+  directory is controlled by a single switch, so moving into a shared app-group
+  container once an Apple Developer Program membership exists is a one-line change.
+
+### Changed
+
+- **Seven more conventions enforced by lint**: no semicolons, no `any`, no
+  non-null assertions, named exports outside routes, a pure domain layer that
+  cannot import React, React Native, native modules or storage, kebab-case file
+  names, and an `assertNever` helper for exhaustive unions.
+- **Explicit return types on every function and component**, enforced by lint.
+  Callbacks passed to an already-typed prop are exempt. Component props moved
+  from inline object literals to named interfaces.
+- **Two further code conventions are now enforced by lint**: one typed `useState` per file
+  holding a single state object, and `interface` over `type` for object shapes.
+  The first is a local ESLint rule; scattered state hooks drift out of sync and
+  hide what a component actually holds.
+
+- Route groups renamed from Home/Settings to Today/Library/More.
+- Shared stack header options moved into a hook, because Android Material colours
+  only re-resolve when read during render with a colour-scheme subscription.
+- Six `expo-*` packages brought to the patch versions the SDK expects. `expo-doctor`
+  was already failing on this beforehand.
+- `bun run check` now runs lint, typecheck, tests, content validation and doctor.
+
+### Fixed
+
+- Android screens rendered content behind the header and under the status bar.
+  Transparent headers with large titles are an iOS pattern relying on
+  `contentInsetAdjustmentBehavior`, which Android does not have; Android now
+  gets an opaque header that occupies layout space.
+
+- `Surface` failed to typecheck against React Native 0.88, whose exported
+  `ViewStyle` includes web position values that component style props reject.
+  It now types its style prop from `ViewProps` and composes with an array.
+
+### Removed
+
+- The delivery Live Activity and counter demo no longer run from a route. The widget
+  examples remain in the tree as reference for the widget work in a later release.
+
+[Unreleased]: https://github.com/zxcvbnmmohd/ihsaanly/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/zxcvbnmmohd/ihsaanly/releases/tag/v0.1.0

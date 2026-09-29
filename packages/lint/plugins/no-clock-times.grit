@@ -1,0 +1,7 @@
+// Prayer times are never rendered as clock times.
+language js
+
+JsStaticMemberExpression(member=$m) where {
+  $m <: r"^(?:toLocaleTimeString|toTimeString)$",
+  register_diagnostic(span=$m, message="Prayer times are never rendered as clock times. A window three minutes out is invisible; a clock three minutes out is a bug report.", severity="error")
+}

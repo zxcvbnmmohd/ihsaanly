@@ -1,0 +1,61 @@
+{
+  "name": "@ihsaanly/monorepo",
+  "private": true,
+  "description": "Ihsaanly: the offline-first Sunnah companion (Expo app) and its marketing site (TanStack Start) and web app (TanStack Router SPA).",
+  "packageManager": "bun@1.4.2",
+  "workspaces": {
+    "packages": [
+      "apps/*",
+      "packages/*",
+      "tooling/*"
+    ],
+    "catalog": {
+      "react": "19.3.0",
+      "react-dom": "19.3.0",
+      "@types/react": "~19.3.0",
+      "typescript": "~6.0.3",
+      "zod": "^4.6.5",
+      "@types/bun": "^1.4.2",
+      "tailwindcss": "4.3.3",
+      "react-native-web": "~0.21.0",
+      "react-native-css": "3.1.0-rc.0",
+      "nativewind": "5.0.0-rc.0"
+    }
+  },
+  "scripts": {
+    "dev": "turbo run dev",
+    "dev:mobile": "turbo run dev --filter=@ihsaanly/mobile",
+    "dev:marketing": "turbo run dev --filter=@ihsaanly/marketing",
+    "dev:companion": "turbo run dev --filter=@ihsaanly/companion",
+    "dev:extension": "turbo run dev --filter=@ihsaanly/extension",
+    "build": "turbo run build",
+    "lint": "biome check .",
+    "format": "biome check --write .",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "knip": "knip",
+    "check": "bun run lint && bun run typecheck && bun run test && bun run knip",
+    "outdated": "bun outdated -r",
+    "commit": "git cz",
+    "clean": "turbo run clean && rm -rf .turbo node_modules apps/*/node_modules packages/*/node_modules"
+  },
+  "config": {
+    "commitizen": {
+      "path": "node_modules/cz-git",
+      "useEmoji": true
+    }
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.14",
+    "@commitlint/config-conventional": "^21.2.3",
+    "commitizen": "^4.3.2",
+    "cz-git": "^1.14.0",
+    "lefthook": "^2.1.14",
+    "turbo": "2.11.4",
+    "knip": "^6.38.0",
+    "@commitlint/cli": "^21.2.3"
+  },
+  "overrides": {
+    "lightningcss": "1.30.1"
+  }
+}

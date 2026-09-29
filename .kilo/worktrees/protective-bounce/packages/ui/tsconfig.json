@@ -1,0 +1,16 @@
+{
+  "extends": "@ihsaanly/tsconfig/base.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "lib": ["DOM", "ESNext"],
+    "target": "ESNext",
+    "module": "preserve",
+    "moduleDetection": "force",
+    "moduleResolution": "bundler",
+    "customConditions": ["react-native"],
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "types": ["bun", "react-native-css/types"]
+  },
+  "include": ["src", "env.d.ts"]
+}

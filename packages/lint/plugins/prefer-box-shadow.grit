@@ -1,0 +1,7 @@
+// Port of eslint-plugin-expo's prefer-box-shadow.
+language js
+
+JsPropertyObjectMember(name=$key) where {
+  $key <: r"^(?:shadowColor|shadowOffset|shadowOpacity|shadowRadius|elevation)$",
+  register_diagnostic(span=$key, message="Use boxShadow instead of the legacy shadow* and elevation style props.", severity="error")
+}

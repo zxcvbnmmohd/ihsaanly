@@ -1,0 +1,484 @@
+import { assertNever } from '../assert-never'
+import type { Item, Ruling, Trigger } from '../content/schema'
+import { civilDateIn, isSameCivilDate, shiftDays, weekdayOf } from '../day/boundaries'
+import { PRAYERS } from '../prayer/qada'
+import {
+  buildWindows,
+  nextPrayerWindow,
+  type PrayerWindow,
+  type WindowName,
+  windowAt,
+} from '../prayer/windows'
+
+import { matchesDay, matchesWindowDay, readingsDiverge } from './day-match'
+import { isJumuahAt, isJumuahDay, resolveTriggerPrayer } from './jumuah'
+import { isQuiet } from './quiet-hours'
+import type {
+  DayContext,
+  Plan,
+  PlannedItem,
+  PlanReason,
+  Prayer,
+  ScheduledNotification,
+  Signals,
+} from './signals'
+
+/** Apple keeps roughly 64 pending local notifications. Leave headroom. */
+const MAX_PENDING_NOTIFICATIONS = 60
+
+/**
+ * The look-ahead goes out the evening before, which is also when the evening
+ * adhkar open. Shifting it keeps the two from arriving as one stacked pair.
+ */
+const LOOK_AHEAD_OFFSET_MS = 20 * 60_000
+
+/** The prayer whose arrival closes each adhkar window. */
+const WINDOW_CLOSES: Record<'morning' | 'evening', Prayer> = {
+  morning: 'dhuhr',
+  evening: 'maghrib',
+}
+
+/**
+ * Post-prayer adhkar belong to the minutes after the prayer. Inside this grace
+ * they lead the screen, which is the promise onboarding makes; after it the
+ * window item returns and they stop being noise five hours later.
+ */
+const AFTER_PRAYER_GRACE_MS = 60 * 60_000
+
+const REASON_RANK: Record<PlanReason, number> = {
+  'active-event': 0,
+  'after-prayer': 1,
+  'current-window': 2,
+  'before-prayer': 3,
+  today: 4,
+  upcoming: 5,
+}
+
+export const RULING_RANK: Record<Ruling, number> = {
+  fard: 0,
+  wajib: 1,
+  'sunnah-muakkadah': 2,
+  sunnah: 3,
+  mustahabb: 4,
+  mubah: 5,
+}
+
+const WINDOW_FOR: Partial<Record<WindowName, 'morning' | 'evening'>> = {
+  sunrise: 'morning',
+  asr: 'evening',
+}
+
+/** The prayer a window belongs to, where it has one. */
+const PRAYER_FOR_WINDOW: Partial<Record<WindowName, Prayer>> = {
+  fajr: 'fajr',
+  dhuhr: 'dhuhr',
+  asr: 'asr',
+  maghrib: 'maghrib',
+  isha: 'isha',
+}
+
+/**
+ * The rawatib are the sunnah prayers tied to one named prayer. The sunnah
+ * after Jumu'ah counts: it steps aside on a journey as the Dhuhr sunnah does,
+ * which matters only for someone who chose to attend while travelling, since
+ * `auto` already means Dhuhr on a journey. The ghusl for Jumu'ah and going
+ * early share its trigger but are not prayers, so they stay for whoever
+ * attends; the category is what tells them apart.
+ */
+function isRawatib(item: Item): boolean {
+  const { trigger } = item
+  return item.category === 'prayer' && trigger.kind === 'prayer' && trigger.prayer !== 'any'
+}
+
+/** Whether today is this user's Jumu'ah day. */
+function jumuahToday(signals: Signals): boolean {
+  return isJumuahDay(signals.today, signals.attendsJumuah)
+}
+
+/**
+ * On a journey fasting is a concession, not an expectation. It is still
+ * offered, but never as something owed.
+ */
+/**
+ * Anything derived from a calculated calendar is offered, never asserted.
+ * Friday is not: no calendar is consulted to know it, and it is no fast, which
+ * is what the Monday and Thursday caveat speaks to.
+ */
+function caveatFor(item: Item, day: DayContext): PlannedItem['caveat'] {
+  if (item.trigger.kind !== 'day' || item.trigger.day === 'friday') return undefined
+  return readingsDiverge(day) ? 'confirm-locally' : 'expected'
+}
+
+function isOptional(item: Item, signals: Signals): boolean {
+  return signals.userState.travelling && item.category === 'fasting'
+}
+
+function availableItems(signals: Signals): Item[] {
+  const enabled = new Set(signals.preferences.enabledItemIds)
+  const { travelling, trackingPaused } = signals.userState
+
+  return signals.items.filter((item) => {
+    if (!enabled.has(item.id)) return false
+    if (trackingPaused && item.trigger.kind === 'prayer') return false
+    if (travelling && isRawatib(item)) return false
+    return true
+  })
+}
+
+/**
+ * Whether a mark counts as answering its prayer: made while that prayer's
+ * window was still open, or within the after-prayer grace once it closed. A
+ * mark recorded well after the fact — Fajr marked at 09:32, hours after
+ * sunrise — is a record, not an event, and must not raise the sunnah as
+ * though the prayer had just happened.
+ */
+function markAnswersPrayer(prayer: Prayer, mark: Date, windows: PrayerWindow[]): boolean {
+  const window = windows
+    .filter((candidate) => candidate.name === prayer && candidate.startsAt <= mark)
+    .at(-1)
+  return window !== undefined && mark.getTime() <= window.endsAt.getTime() + AFTER_PRAYER_GRACE_MS
+}
+
+/**
+ * The most recent mark this trigger answers to, ignoring one that landed too
+ * late to count. A trigger that does not apply today (a dhuhr one on Jumu'ah,
+ * a jumuah one on any other day) answers to none.
+ */
+function latestMark(
+  trigger: Extract<Trigger, { kind: 'prayer' }>,
+  signals: Signals,
+  windows: PrayerWindow[],
+): Date | null {
+  const resolved = resolveTriggerPrayer(trigger.prayer, jumuahToday(signals))
+  if (resolved === null) return null
+  const prayers = resolved === 'any' ? PRAYERS : [resolved]
+
+  return (
+    prayers
+      .flatMap((prayer) => {
+        const mark = signals.prayedToday[prayer]
+        return mark && markAnswersPrayer(prayer, mark, windows) ? [mark] : []
+      })
+      .sort((a, b) => b.getTime() - a.getTime())[0] ?? null
+  )
+}
+
+/**
+ * A completion only counts for the occasion it belongs to. The tasbih after
+ * "any" prayer, done after Dhuhr, is owed again after Asr; the morning adhkar
+ * done at sunrise stay done until the window closes.
+ */
+function isDoneForOccasion(
+  item: Item,
+  reason: PlanReason,
+  signals: Signals,
+  window: PrayerWindow | null,
+  windows: PrayerWindow[],
+): boolean {
+  const completed = signals.completedToday[item.id]
+  if (!completed) return false
+
+  const start = ((): Date | null => {
+    switch (reason) {
+      case 'after-prayer':
+        return item.trigger.kind === 'prayer' ? latestMark(item.trigger, signals, windows) : null
+      case 'current-window':
+      case 'before-prayer':
+      case 'active-event':
+        return window?.startsAt ?? null
+      case 'today':
+      case 'upcoming':
+        return null
+      default:
+        return assertNever(reason)
+    }
+  })()
+
+  return start === null || completed >= start
+}
+
+function reasonFor(
+  item: Item,
+  signals: Signals,
+  window: PrayerWindow | null,
+  windows: PrayerWindow[],
+): PlanReason | null {
+  const { trigger } = item
+
+  switch (trigger.kind) {
+    case 'event':
+      return signals.activeEvents.includes(trigger.event) ? 'active-event' : null
+
+    case 'window': {
+      const current = window ? WINDOW_FOR[window.name] : undefined
+      if (!matchesWindowDay(trigger.day, signals.today.weekday)) return null
+      return current === trigger.window ? 'current-window' : null
+    }
+
+    case 'prayer': {
+      const prayed = Object.keys(signals.prayedToday)
+      const prayer = resolveTriggerPrayer(trigger.prayer, jumuahToday(signals))
+      if (prayer === null) return null
+
+      if (trigger.when === 'after') {
+        const latest = latestMark(trigger, signals, windows)
+        if (!latest) return null
+        return signals.now.getTime() - latest.getTime() <= AFTER_PRAYER_GRACE_MS
+          ? 'after-prayer'
+          : null
+      }
+
+      if (!window) return null
+
+      // A prayer's "before" belongs to that prayer's own window, while the
+      // prayer is still unmarked. The rawatib are prayed once the time has
+      // entered, between the adhan and the iqamah — not through the hours
+      // leading up to it. Assigning them to the preceding window instead put
+      // "Two rak'ah before Fajr" under Right now at a quarter to eleven at
+      // night, six hours early, and made a named prayer behave differently
+      // from `any`, which has always used the current window.
+      //
+      // What the coming prayer asks for is still answered, by `next` on the
+      // model: it lists before and after from the triggers rather than from
+      // the moment, so it is stable all day and says how far off the prayer is.
+      const current = prayer === 'any' ? PRAYER_FOR_WINDOW[window.name] : prayer
+      if (!current) return null
+      if (prayer !== 'any' && PRAYER_FOR_WINDOW[window.name] !== prayer) return null
+
+      return prayed.includes(current) ? null : 'before-prayer'
+    }
+
+    case 'day':
+      return matchesDay(trigger.day, signals.today) ? 'today' : null
+
+    default:
+      return assertNever(trigger)
+  }
+}
+
+function byRelevance(items: Item[]): (left: PlannedItem, right: PlannedItem) => number {
+  const rulingOf = (id: string): number => {
+    const item = items.find((candidate) => candidate.id === id)
+    return item ? RULING_RANK[item.ruling] : RULING_RANK.mubah
+  }
+
+  return (left, right) =>
+    REASON_RANK[left.reason] - REASON_RANK[right.reason] ||
+    rulingOf(left.itemId) - rulingOf(right.itemId)
+}
+
+function isSameHijriDay(left: DayContext, right: DayContext): boolean {
+  return (
+    left.hijri.year === right.hijri.year &&
+    left.hijri.month === right.hijri.month &&
+    left.hijri.day === right.hijri.day
+  )
+}
+
+/**
+ * After Maghrib, today already carries tomorrow's Islamic day, so the daytime
+ * of tomorrow is the day in progress rather than one to prepare for. An item
+ * that is already today's is not listed again as tomorrow's: al-Kahf on a
+ * Thursday night is Friday's and today's, not both.
+ */
+function lookAhead(items: Item[], upcoming: DayContext[], signals: Signals): PlannedItem[] {
+  const alreadyToday = (item: Item, day: DayContext): boolean =>
+    item.trigger.kind === 'day' &&
+    isSameHijriDay(day, signals.today) &&
+    matchesDay(item.trigger.day, signals.today)
+
+  return upcoming.flatMap((day, index) =>
+    items
+      .filter((item) => item.trigger.kind === 'day' && matchesDay(item.trigger.day, day))
+      .filter((item) => !alreadyToday(item, day))
+      .map((item) => ({
+        itemId: item.id,
+        reason: 'upcoming' as const,
+        daysAway: index + 1,
+        optional: isOptional(item, signals),
+        caveat: caveatFor(item, day),
+      })),
+  )
+}
+
+function futureWindows(signals: Signals): PrayerWindow[] {
+  return buildWindows(signals.prayerTimes).filter((window) => window.startsAt > signals.now)
+}
+
+/**
+ * A category decides by default; a per-item override wins when present. Known
+ * items leave the rotation, which is what keeps the daily budget flat as the
+ * user enables more content.
+ */
+function isRemindable(item: Item, signals: Signals, category: 'windows' | 'lookAhead'): boolean {
+  const { notifications, knownItemIds } = signals.preferences
+  if (knownItemIds.includes(item.id)) return false
+
+  const override = notifications.perItem[item.id]
+  return override ?? notifications[category]
+}
+
+function scheduleNotifications(signals: Signals, items: Item[]): ScheduledNotification[] {
+  const { notifications } = signals.preferences
+  const perDay = new Map<string, number>()
+  const scheduled: ScheduledNotification[] = []
+
+  /**
+   * Item reminders spend the daily budget. Prayer reminders do not: they are a
+   * separate opt-in of five a day, and letting them consume a budget of three
+   * would silently switch the adhkar off the moment they were turned on.
+   */
+  const admit = (at: Date, budgeted: boolean): boolean => {
+    if (isQuiet(at, signals.timeZone, notifications.quietHours)) return false
+    if (scheduled.length >= MAX_PENDING_NOTIFICATIONS) return false
+    if (!budgeted) return true
+
+    const day = civilDateIn(at, signals.timeZone)
+    const key = `${day.year}-${day.month}-${day.day}`
+    const used = perDay.get(key) ?? 0
+    if (used >= notifications.maxPerDay) return false
+    perDay.set(key, used + 1)
+    return true
+  }
+
+  futureWindows(signals).forEach((window) => {
+    const prayer = PRAYER_FOR_WINDOW[window.name]
+    const jumuah = isJumuahAt(window.startsAt, signals.timeZone, signals.attendsJumuah)
+    if (prayer && notifications.prayers && admit(window.startsAt, false)) {
+      scheduled.push({ kind: 'prayer', prayer, at: window.startsAt, jumuah })
+    }
+
+    const name = WINDOW_FOR[window.name]
+    if (name) {
+      const weekday = weekdayOf(civilDateIn(window.startsAt, signals.timeZone))
+      items
+        .filter(
+          (item) =>
+            item.trigger.kind === 'window' &&
+            item.trigger.window === name &&
+            matchesWindowDay(item.trigger.day, weekday),
+        )
+        .filter((item) => isRemindable(item, signals, 'windows'))
+        .forEach((item) => {
+          if (!admit(window.startsAt, true)) return
+          scheduled.push({
+            kind: 'item',
+            itemId: item.id,
+            at: window.startsAt,
+            reason: 'current-window',
+            window: {
+              closes: WINDOW_CLOSES[name],
+              endsAt: window.endsAt,
+              // The window closes as the next one opens, on the same civil day.
+              jumuah: isJumuahAt(window.endsAt, signals.timeZone, signals.attendsJumuah),
+            },
+          })
+        })
+    }
+
+    // Look-ahead goes out the evening before, while there is still time to prepare.
+    if (window.name !== 'asr') return
+    const at = new Date(window.startsAt.getTime() + LOOK_AHEAD_OFFSET_MS)
+    const eve = civilDateIn(window.startsAt, signals.timeZone)
+    const tomorrow = signals.upcoming.find((day) => isSameCivilDate(day.civil, shiftDays(eve, 1)))
+    if (!tomorrow) return
+
+    items
+      .filter((item) => item.trigger.kind === 'day' && matchesDay(item.trigger.day, tomorrow))
+      .filter((item) => isRemindable(item, signals, 'lookAhead'))
+      .forEach((item) => {
+        if (!admit(at, true)) return
+        scheduled.push({ kind: 'item', itemId: item.id, at, reason: 'upcoming', window: null })
+      })
+  })
+
+  return scheduled
+}
+
+/** Whether an item has a reason to appear at this moment, enabled or not. */
+export function isRelevantNow(item: Item, signals: Signals): boolean {
+  const windows = buildWindows(signals.prayerTimes)
+  const window = windowAt(signals.now, windows)
+  return reasonFor(item, signals, window, windows) !== null
+}
+
+/**
+ * The one decision boundary. Everything the product decides comes out of here,
+ * from a snapshot that contains no clock, no device and no storage.
+ */
+export function plan(signals: Signals): Plan {
+  const items = availableItems(signals)
+  const windows = buildWindows(signals.prayerTimes)
+  const window = windowAt(signals.now, windows)
+
+  const relevant: PlannedItem[] = items.flatMap((item) => {
+    const reason = reasonFor(item, signals, window, windows)
+    if (!reason) return []
+    return [
+      {
+        itemId: item.id,
+        reason,
+        optional: isOptional(item, signals),
+        caveat: caveatFor(item, signals.today),
+      },
+    ]
+  })
+
+  const isDone = (entry: PlannedItem): boolean => {
+    const item = items.find((candidate) => candidate.id === entry.itemId)
+    return item ? isDoneForOccasion(item, entry.reason, signals, window, windows) : false
+  }
+  const ranked = [...relevant].sort(byRelevance(items))
+  const open = ranked.filter((entry) => !isDone(entry))
+  const done = ranked.filter(isDone)
+
+  // A calendar day is never the right-now card: fasting tomorrow is something
+  // to prepare for, not something to do at this moment.
+  const now = open.filter((entry) => entry.reason !== 'today')
+  const [rightNow = null] = now
+
+  const nextWindow = nextPrayerWindow(signals.now, windows)
+  const nextPrayer = nextWindow ? PRAYER_FOR_WINDOW[nextWindow.name] : undefined
+  // Decided for the next prayer's own day rather than today's, so the answer
+  // cannot drift if the next prayer ever falls after midnight.
+  const nextIsJumuah = nextWindow
+    ? isJumuahAt(nextWindow.startsAt, signals.timeZone, signals.attendsJumuah)
+    : false
+  const asks = (when: 'before' | 'after'): string[] =>
+    items
+      .filter((item) => {
+        if (item.trigger.kind !== 'prayer' || item.trigger.when !== when) return false
+        const prayer = resolveTriggerPrayer(item.trigger.prayer, nextIsJumuah)
+        return prayer === nextPrayer || prayer === 'any'
+      })
+      .map((item) => item.id)
+
+  return {
+    today: {
+      hijri: signals.today.hijri,
+      window: window?.name ?? null,
+      jumuah: jumuahToday(signals),
+      now,
+      done,
+      next:
+        nextWindow && nextPrayer
+          ? {
+              prayer: nextPrayer,
+              jumuah: nextIsJumuah,
+              startsAt: nextWindow.startsAt,
+              before: asks('before'),
+              after: asks('after'),
+            }
+          : null,
+      rightNow,
+      context: open.filter(
+        (entry) => entry.reason === 'active-event' && entry.itemId !== rightNow?.itemId,
+      ),
+      comingUp: [
+        ...open.filter((entry) => entry.reason === 'today'),
+        ...lookAhead(items, signals.upcoming, signals),
+      ],
+    },
+    notifications: scheduleNotifications(signals, items),
+  }
+}

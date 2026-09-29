@@ -1,0 +1,445 @@
+/* The interactive demo: a Pixel-style Android phone frame around the app's
+   own shared screens (@ihsaanly/ui through react-native-web, styled by their
+   Tailwind classes), plus the native chrome the app never draws itself —
+   status bar, app bar, tab bar — and the coach mark, driven by
+   demo/phone.tsx. Everything inside a screen is the shared screen's own
+   styling; this file only draws what surrounds it.
+
+   Plain CSS rather than Tailwind utilities: the frame's shape (gradients,
+   pseudo-element buttons, the aspect-ratio screen), the per-language font
+   stacks keyed by :lang(), the coach mark's measured-from-JS position, the
+   keyframe animation and the reduced-motion overrides. */
+
+/* The chrome takes the app's own brand tokens (tooling/tailwind/theme.css and
+   web.css), which already follow the page's theme, so the status bar, app bar
+   and tab bar sit on the same wash as the shared screens between them. */
+.demo-phone {
+  --demo-bg: var(--color-wash-top);
+  --demo-card: var(--color-wash-bottom);
+  --demo-label: var(--color-ink);
+  --demo-secondary: var(--color-ink-soft);
+  --demo-separator: var(--color-rule);
+  --demo-indicator: var(--color-indicator);
+}
+
+.demo-noscript {
+  margin: 0;
+  padding: 1.5rem;
+  color: var(--color-ink-soft);
+  text-align: center;
+}
+
+/* ---- The device frame: Pixel 10 Pro XL, Obsidian, drawn entirely in CSS ---- */
+
+.demo-phone {
+  --demo-screen-radius: 1.6rem;
+  --demo-bezel: 0.6rem;
+  position: relative;
+  padding: var(--demo-bezel);
+  border-radius: calc(var(--demo-screen-radius) + var(--demo-bezel));
+  background: linear-gradient(155deg, #303035, #131316 45%, #1c1c1f);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.09),
+    inset 0 0 0 2px rgba(0, 0, 0, 0.4),
+    0 30px 60px -30px rgba(0, 0, 0, 0.55);
+}
+
+/* Power button (shorter, higher) and volume rocker (longer, below it), both
+   protruding slightly past the frame's own edge. Obsidian in both schemes,
+   like the rest of the frame. A device button's side is a hardware fact, not
+   a text direction, so this is drawn on the physical end edge in both
+   writing directions rather than mirrored per `dir`. */
+.demo-phone::before,
+.demo-phone::after {
+  content: '';
+  position: absolute;
+  inset-inline-end: -0.1rem;
+  width: 0.18rem;
+  border-radius: 0.12rem;
+  background: linear-gradient(90deg, #4a4a50, #161618);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.demo-phone::before {
+  top: 26%;
+  height: 2.6rem;
+}
+
+.demo-phone::after {
+  top: calc(26% + 3.4rem);
+  height: 4rem;
+}
+
+.demo-phone-screen {
+  width: min(22rem, calc(90vh * 1344 / 2992));
+  aspect-ratio: 1344 / 2992;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: var(--demo-screen-radius);
+  background: var(--demo-bg);
+}
+
+.demo-nav,
+.demo-content,
+.demo-tabbar-wrap {
+  font-family: var(--demo-ui-font, Roboto, 'Segoe UI', system-ui, sans-serif);
+  color: var(--demo-label);
+}
+
+/* ---- Per-language UI font stacks ----
+   Android's own system stack per script, with Amiri (the one webfont this
+   site ships) as the last-resort fallback for the two scripts it covers.
+   `--demo-ui-font` is read by .demo-nav/.demo-content/.demo-tabbar-wrap and
+   .demo-statusbar below; set on .demo-phone (via its `lang` attribute, from
+   `useSite().locale.lang`) so :lang() only needs stating once and both
+   rules pick it up through inheritance. */
+
+.demo-phone:lang(ar) {
+  --demo-ui-font: 'Noto Sans Arabic', 'Segoe UI', Tahoma, Arial, Amiri, sans-serif;
+}
+
+.demo-phone:lang(ur) {
+  --demo-ui-font: 'Noto Nastaliq Urdu', 'Jameel Noori Nastaleeq', Amiri, sans-serif;
+}
+
+.demo-phone:lang(ja) {
+  --demo-ui-font: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', Meiryo, sans-serif;
+}
+
+.demo-phone:lang(zh) {
+  --demo-ui-font: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+}
+
+.demo-phone:lang(yue) {
+  --demo-ui-font: 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+}
+
+.demo-phone:lang(hi) {
+  --demo-ui-font: 'Noto Sans Devanagari', 'Nirmala UI', Arial, sans-serif;
+}
+
+/* ---- Status bar ---- */
+
+.demo-statusbar {
+  flex: none;
+  font-family: var(--demo-ui-font, Roboto, 'Segoe UI', system-ui, sans-serif);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 1.1rem 0.3rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.demo-statusbar-time {
+  line-height: 1;
+}
+
+.demo-camera {
+  position: absolute;
+  inset-inline-start: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 999px;
+  background: #000000;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.demo-statusbar-icons {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.32rem;
+}
+
+.demo-statusbar-icon svg {
+  display: block;
+  width: 1.05rem;
+  height: 1.05rem;
+}
+
+/* ---- Nav bar ---- */
+
+.demo-nav {
+  flex: none;
+  padding: 0.9rem 1rem 0.7rem;
+  background: var(--demo-bg);
+}
+
+.demo-nav-row {
+  display: flex;
+  align-items: center;
+  min-height: 1.6rem;
+}
+
+.demo-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+  border: 0;
+  background: none;
+  color: var(--demo-label);
+  margin-inline-end: 0.75rem;
+  padding-block: 0.2rem;
+  padding-inline: 0 0.3rem;
+  cursor: pointer;
+}
+
+.demo-back svg {
+  width: 1.35rem;
+  height: 1.35rem;
+}
+
+/* A chevron is a shape, not text — direction can't be expressed with a
+   logical property, so it is the one place that reads [dir='rtl'] directly. */
+[dir='rtl'] .demo-back svg {
+  transform: scaleX(-1);
+}
+
+.demo-nav-title-android {
+  margin: 0;
+  font-family: inherit;
+  font-weight: 500;
+  font-size: 1.15rem;
+}
+
+/* ---- Content ---- */
+
+.demo-content {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  /* The shared screen scrolls inside its own ScrollView. */
+  overflow: hidden;
+  background: var(--demo-bg);
+}
+
+.demo-search {
+  margin-top: 0.6rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.8rem;
+  border-radius: 1.6rem;
+  background: var(--demo-card);
+}
+
+.demo-search-icon svg {
+  width: 1.05rem;
+  height: 1.05rem;
+  color: var(--demo-secondary);
+}
+
+.demo-search-input {
+  flex: 1;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 0.98rem;
+  color: inherit;
+  min-width: 0;
+}
+
+.demo-search-input:focus {
+  outline: none;
+}
+
+/* ---- Tab bar and gesture handle ---- */
+
+.demo-tabbar-wrap {
+  flex: none;
+  background: var(--demo-card);
+  border-top: 1px solid var(--demo-separator);
+}
+
+.demo-tabbar {
+  flex: none;
+  position: relative;
+}
+
+.demo-tabbar-inner {
+  display: flex;
+  padding: 0.55rem 0.3rem;
+}
+
+.demo-tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  border: 0;
+  background: none;
+  padding: 0.35rem 0.2rem;
+  color: var(--demo-secondary);
+  cursor: pointer;
+}
+
+.demo-tab.is-active {
+  color: var(--demo-label);
+}
+
+.demo-tab-icon {
+  display: inline-flex;
+  border-radius: 999px;
+  padding: 0.15rem 0.7rem;
+}
+
+.demo-tab-icon svg {
+  width: 1.3rem;
+  height: 1.3rem;
+}
+
+.demo-tab.is-active .demo-tab-icon {
+  background: var(--demo-indicator);
+}
+
+.demo-tab-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+}
+
+.demo-gesture-handle {
+  display: flex;
+  justify-content: center;
+  padding: 0.3rem 0 0.55rem;
+}
+
+.demo-gesture-handle::after {
+  content: '';
+  width: 8.5rem;
+  max-width: 34%;
+  height: 0.28rem;
+  border-radius: 999px;
+  background: var(--demo-label);
+  opacity: 0.55;
+}
+
+/* ---- Guided coach mark ----
+   A pulsing ring plus a speech bubble, pointing a first-time visitor at the
+   one control worth tapping next (see demo/coach.tsx). Both are positioned
+   from React state measured off the target's live layout, via `top`/`left`
+   custom properties rather than a `left`/`top` style-object key: the
+   RTL-logical lint rule bans those as JS property names (they read as
+   physical directions), but the measured pixel offsets in the custom
+   properties are already correct regardless of writing direction, and a
+   plain CSS file is exactly where a `left`/`top` declaration belongs. Both
+   are portalled as children of whichever container the target lives in
+   (the screen's scroll view or `.demo-tabbar`, both `position: relative`), so
+   they scroll with the content and never fight the real, tappable control
+   underneath. */
+
+.demo-coach-ring {
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  border: 2px solid var(--color-accent);
+  box-sizing: border-box;
+  top: var(--demo-coach-ring-top);
+  left: var(--demo-coach-ring-left);
+  width: var(--demo-coach-ring-width);
+  height: var(--demo-coach-ring-height);
+  border-radius: var(--demo-coach-ring-radius);
+}
+
+.demo-coach-ring::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 2px solid var(--color-accent);
+  animation: demo-coach-pulse 1.6s ease-out infinite;
+}
+
+@keyframes demo-coach-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1.35);
+    opacity: 0;
+  }
+}
+
+.demo-coach-bubble {
+  position: absolute;
+  z-index: 5;
+  width: max-content;
+  max-width: 12rem;
+  padding: 0.5rem 0.7rem;
+  border-radius: 0.65rem;
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+  font-size: 0.78rem;
+  line-height: 1.35;
+  text-align: start;
+  pointer-events: none;
+  box-shadow: 0 10px 22px -12px rgba(0, 0, 0, 0.5);
+  top: var(--demo-coach-bubble-top);
+  left: var(--demo-coach-bubble-left);
+}
+
+.demo-coach-bubble::after {
+  content: '';
+  position: absolute;
+  left: var(--demo-coach-arrow-left, 50%);
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  top: -6px;
+  border-bottom: 6px solid var(--color-accent);
+}
+
+/* The bubble sits above its target instead of below: the arrow moves to its
+   bottom edge and points down. */
+.demo-coach-bubble-above::after {
+  top: auto;
+  bottom: -6px;
+  border-bottom: none;
+  border-top: 6px solid var(--color-accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .demo-coach-ring::after {
+    animation: none;
+    opacity: 0.7;
+    transform: scale(1);
+  }
+}
+
+/* ---- Narrow screens: the frame fits the viewport ---- */
+
+@media (max-width: 30rem) {
+  .demo-phone {
+    width: 100%;
+  }
+
+  .demo-phone-screen {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .demo-phone,
+  .demo-phone * {
+    transition: none;
+    animation: none;
+  }
+}
+
+/* Tailwind's preflight makes buttons inherit the page's line height; the demo
+   was designed against the browser default. Zero specificity, so every demo
+   rule that sets its own line height still wins. */
+:where(.demo-phone) :where(button) {
+  line-height: normal;
+}

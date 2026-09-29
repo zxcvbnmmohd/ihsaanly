@@ -1,0 +1,54 @@
+@import '@ihsaanly/web/styles.css';
+
+/*
+ * @ihsaanly/ui's <Screen> renders a react-native-web flex tree expecting a
+ * bounded, flexed ancestor chain all the way to the viewport (the same
+ * assumption native screens make) — without this, `flex: 1` inside it has
+ * nothing to grow into and the scroll views collapse to their content size.
+ */
+html,
+body,
+#root {
+  height: 100%;
+}
+
+/*
+ * react-native-web's View sets its own `display: flex`, but a `flex: 1`
+ * style only sizes an element *within* a flex-formatting-context parent —
+ * without #root itself being one, react-native-safe-area-context's root
+ * View (and everything under it, including the app shell) falls back to its
+ * content's height instead of the viewport's, and the whole page scrolls as
+ * one long block rather than the shell staying put with its own regions
+ * scrolling internally.
+ */
+#root {
+  display: flex;
+  flex-direction: column;
+}
+
+body {
+  margin: 0;
+  color: var(--color-ink);
+  font-family: var(--font-serif);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/*
+ * Chrome sizes a popup to its content, up to 800×600; give it a fixed frame
+ * instead. Not in a tab (main.tsx adds .tab), where the page has the window.
+ */
+html:not(.tab),
+html:not(.tab) body {
+  width: 380px;
+  height: 600px;
+}

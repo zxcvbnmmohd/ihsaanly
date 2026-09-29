@@ -1,0 +1,6 @@
+{
+  "name": "@ihsaanly/tsconfig",
+  "version": "0.0.0",
+  "private": true,
+  "description": "The compiler strictness both apps share. Each app adds its own platform settings on top."
+}

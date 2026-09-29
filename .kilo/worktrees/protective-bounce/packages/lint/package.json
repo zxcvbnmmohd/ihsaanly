@@ -1,0 +1,19 @@
+{
+  "name": "@ihsaanly/lint",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Code conventions Biome cannot express itself: GritQL plugins (wired in the root biome.json) and the one-useState-per-file check.",
+  "type": "module",
+  "exports": {
+    "./single-use-state": "./single-use-state.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "bun test"
+  },
+  "devDependencies": {
+    "@ihsaanly/tsconfig": "workspace:*",
+    "@types/bun": "catalog:",
+    "typescript": "catalog:"
+  }
+}

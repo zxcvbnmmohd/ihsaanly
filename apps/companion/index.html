@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Ihsaanly</title>
+    <meta
+      name="description"
+      content="An offline-first, evidence-backed Sunnah companion, on the web." />
+    <meta name="theme-color" content="#f7f0e9" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#1b1411" media="(prefers-color-scheme: dark)" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="icon" href="/icon-512.png" />
+    <!--apple-itunes-app-->
+    <!-- Runs before first paint, so a stored theme choice never flashes; its
+         sha256 hash is allowed by every page's Content-Security-Policy. -->
+    <!--theme-script-->
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

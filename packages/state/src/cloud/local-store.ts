@@ -5,6 +5,7 @@ import {
   markEventsSynced,
   preferenceRowsWithTime,
   resetEventsSynced,
+  type TimedPreferenceRow,
   unsyncedEventRows,
   writePreferenceRow,
   writePreferenceRowAt,
@@ -22,6 +23,41 @@ const Meta = z.object({
 
 const EMPTY_META: SyncMeta = { boundUid: null, cursor: null, lastSyncedAt: null }
 
+/** Two decimals of a degree is about 1 km. */
+const roundCoordinate = (degrees: number): number => Math.round(degrees * 100) / 100
+
+/**
+ * The copy of a preference that leaves the device. The place is coarsened to
+ * about 1 km: prayer windows do not change meaningfully over that distance,
+ * and the privacy policy promises the cloud never holds anything finer. The
+ * local row keeps full precision; only the outgoing value is rounded.
+ */
+function forSync(row: TimedPreferenceRow): TimedPreferenceRow {
+  if (row.key !== 'place') return row
+  try {
+    const place: unknown = JSON.parse(row.value)
+    if (
+      typeof place !== 'object' ||
+      place === null ||
+      !('latitude' in place) ||
+      !('longitude' in place) ||
+      typeof place.latitude !== 'number' ||
+      typeof place.longitude !== 'number'
+    )
+      return row
+    return {
+      ...row,
+      value: JSON.stringify({
+        ...place,
+        latitude: roundCoordinate(place.latitude),
+        longitude: roundCoordinate(place.longitude),
+      }),
+    }
+  } catch {
+    return row
+  }
+}
+
 export function readSyncMeta(): SyncMeta {
   return readPreference(SYNC_META_KEY, Meta) ?? EMPTY_META
 }
@@ -38,7 +74,10 @@ export function createLocalStore(): LocalStore {
     markSynced: markEventsSynced,
     resetSynced: resetEventsSynced,
     insertRemoteEvents: insertSyncedEvents,
-    preferences: () => preferenceRowsWithTime().filter((row) => SYNCED_KEYS.has(row.key)),
+    preferences: () =>
+      preferenceRowsWithTime()
+        .filter((row) => SYNCED_KEYS.has(row.key))
+        .map(forSync),
     applyPreferences: (preferences): void => {
       // A key this build does not sync (a newer build's, say) stays in the cloud.
       preferences

@@ -9,7 +9,18 @@ import { PageHeader } from '~/components/page-header'
 
 export const Route = createFileRoute('/_more/about')({ component: AboutRoute })
 
-const PRIVACY_URL = 'https://zxcvbnmmohd.github.io/ihsaanly/legal/privacy-policy'
+const PRIVACY_URL = 'https://ihsaanly.app/legal/privacy'
+const TERMS_URL = 'https://ihsaanly.app/legal/terms'
+
+const GEONAMES = { destination: 'geonames.org', url: 'https://www.geonames.org/about.html' }
+
+/** Shown as a row's detail: the address without its scheme. Opens in a new tab. */
+function page(url: string): { destination: string; onPress: () => void } {
+  return {
+    destination: url.replace('https://', ''),
+    onPress: () => window.open(url, '_blank', 'noopener'),
+  }
+}
 
 const LICENCES = [
   {
@@ -26,6 +37,7 @@ const LICENCES = [
 
 function AboutRoute(): ReactElement {
   const strings = useStrings()
+  const licences = [...LICENCES, { label: strings.about.geonames, ...GEONAMES }]
 
   return (
     <>
@@ -38,11 +50,9 @@ function AboutRoute(): ReactElement {
         // A donation product needs an in-app purchase or a store-billed page,
         // neither of which exists yet — nothing to offer here either.
         donate={null}
-        privacy={{
-          destination: PRIVACY_URL.replace('https://', ''),
-          onPress: () => window.open(PRIVACY_URL, '_blank', 'noopener'),
-        }}
-        licences={LICENCES.map(({ label, destination, url }) => ({
+        privacy={page(PRIVACY_URL)}
+        terms={page(TERMS_URL)}
+        licences={licences.map(({ label, destination, url }) => ({
           label,
           destination,
           onPress: () => window.open(url, '_blank', 'noopener'),

@@ -7,6 +7,7 @@ import {
   getAuth,
   indexedDBLocalPersistence,
   initializeAuth,
+  linkWithCredential,
   type OAuthCredential,
   reauthenticateWithCredential,
   signInWithCredential,
@@ -29,11 +30,23 @@ function googleOnly(provider: SignInProvider): void {
 export function extensionFlow(deps: ExtensionDeps): SignInFlow {
   const credential = async (): Promise<OAuthCredential> =>
     GoogleAuthProvider.credential(null, await deps.getGoogleAccessToken())
+  // The credential the last sign-in built, kept for linking (see SignInFlow).
+  let last: OAuthCredential | null = null
   return {
     signIn: async (auth, provider) => {
       googleOnly(provider)
-      return signInWithCredential(auth, await credential())
+      last = null
+      last = await credential()
+      return signInWithCredential(auth, last)
     },
+    link: async (user, provider) => {
+      googleOnly(provider)
+      return linkWithCredential(user, await credential())
+    },
+    // Only ever a credential this flow built, typed by the other entry's declarations.
+    linkCredential: (user, pending) => linkWithCredential(user, pending as OAuthCredential),
+    pendingCredential: () => last,
+    available: async (provider) => provider === 'google',
     reauthenticate: async (user, provider) => {
       googleOnly(provider)
       await reauthenticateWithCredential(user, await credential())

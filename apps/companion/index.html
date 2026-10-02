@@ -3,15 +3,37 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <title>Ihsaanly</title>
+    <!-- The __UPPERCASE__ tokens and the robots comment are filled in by
+         vite.config.ts (injectHead): this build's origin (VITE_SITE_URL), and
+         a development build's title prefix and noindex. The title
+         and robots tags per route are kept up to date by
+         src/head/use-document-head.ts. -->
+    <title>__TITLE_PREFIX__Ihsaanly · The sunnah that fits the moment</title>
     <meta
       name="description"
-      content="An offline-first, evidence-backed Sunnah companion, on the web." />
+      content="Ihsaanly shows you the sunnah that fits the moment, with its source. Private, calm and free, from Mohd Inc." />
+    <!--robots-->
+    <link rel="canonical" href="__SITE_URL__/" />
     <meta name="theme-color" content="#f7f0e9" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#1b1411" media="(prefers-color-scheme: dark)" />
+    <meta name="application-name" content="Ihsaanly" />
+    <meta name="apple-mobile-web-app-title" content="Ihsaanly" />
     <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <link rel="icon" href="/icon-512.png" />
+    <meta property="og:site_name" content="Ihsaanly" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Ihsaanly · The sunnah that fits the moment" />
+    <meta
+      property="og:description"
+      content="Ihsaanly shows you the sunnah that fits the moment, with its source. Private, calm and free, from Mohd Inc." />
+    <meta property="og:url" content="__SITE_URL__/" />
+    <meta property="og:image" content="__SITE_URL__/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="en_US" />
+    <meta name="twitter:card" content="summary_large_image" />
     <!--apple-itunes-app-->
     <!-- Runs before first paint, so a stored theme choice never flashes; its
          sha256 hash is allowed by every page's Content-Security-Policy. -->

@@ -30,7 +30,7 @@ WIDGET
 I widget per la schermata Home la tengono a portata di sguardo: ciò che conta adesso, la prossima preghiera, le preghiere di oggi, la data dell'Egira, ciò che viene dopo e il resto della giornata, du'a rapide, una du'a del giorno, ciò che hai da recuperare e i giorni in arrivo.
 
 PRIVATA PER IMPOSTAZIONE
-Nessun account, nessun server, nessuna analisi, nessuna pubblicità. Funziona completamente offline, e completamente senza concedere alcun permesso: rifiuta la posizione e scegli invece la tua città. La tua pratica è registrata sul tuo dispositivo e resta lì. Nulla lascia il tuo telefono se non scegli tu di inviarlo.
+Nessun account necessario, nessuna analisi, nessuna pubblicità. Funziona completamente offline, e completamente senza concedere alcun permesso: rifiuta la posizione e scegli invece la tua città. Senza accedere, nulla lascia il tuo dispositivo se non scegli tu di inviarlo. L’accesso facoltativo sincronizza il tuo registro tra i tuoi dispositivi.
 
 ONESTA SU SE STESSA
 Il contenuto è una bozza in attesa della revisione di un sapiente indicato per nome, e la schermata «Informazioni» dell'app lo dice. L'inglese è l'originale; le altre lingue sono bozze in attesa di revisione da parte di parlanti qualificati.

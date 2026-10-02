@@ -93,7 +93,7 @@ export function TextField({
             : systemColors.secondarySystemBackground,
         minHeight: 52,
         borderWidth: 1.5,
-        borderColor: thing.focused ? ring : systemColors.separator,
+        borderColor: thing.focused ? ring : colors.fieldBorder,
         borderCurve: 'continuous',
       }}>
       {kind === 'search' ? <SearchGlyph color={glyphColor} /> : null}
@@ -115,19 +115,26 @@ export function TextField({
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={strings.textField.clear}
-          hitSlop={8}
           onPress={() => onChangeText('')}
-          className="items-center justify-center rounded-full"
-          style={{ width: 22, height: 22, backgroundColor: systemColors.secondaryLabel }}>
-          <Text
-            style={{
-              color: systemColors.secondarySystemBackground,
-              fontSize: 11,
-              fontWeight: '700',
-              lineHeight: 13,
-            }}>
-            ✕
-          </Text>
+          // A 44pt target around the 22pt disc, so it clears WCAG 2.5.8 without growing.
+          className="items-center justify-center"
+          style={{ width: 44, height: 44, marginEnd: -8 }}>
+          <View
+            className="items-center justify-center rounded-full"
+            style={{ width: 22, height: 22, backgroundColor: systemColors.secondaryLabel }}>
+            <Text
+              aria-hidden
+              accessibilityElementsHidden
+              importantForAccessibility="no"
+              style={{
+                color: systemColors.secondarySystemBackground,
+                fontSize: 11,
+                fontWeight: '700',
+                lineHeight: 13,
+              }}>
+              ✕
+            </Text>
+          </View>
         </Pressable>
       ) : null}
     </View>

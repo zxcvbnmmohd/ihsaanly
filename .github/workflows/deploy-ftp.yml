@@ -59,6 +59,14 @@ jobs:
           VITE_FIREBASE_AUTH_DOMAIN: ${{ vars.VITE_FIREBASE_AUTH_DOMAIN }}
           VITE_FIREBASE_PROJECT_ID: ${{ vars.VITE_FIREBASE_PROJECT_ID }}
           VITE_FIREBASE_APP_ID: ${{ vars.VITE_FIREBASE_APP_ID }}
+          # The web app the marketing site links to; the companion ignores it.
+          VITE_COMPANION_URL: ${{ inputs.environment == 'production' && 'https://companion.ihsaanly.app' || 'https://dev.companion.ihsaanly.app' }}
+          # The companion's own origin, for its canonical and Open Graph URLs;
+          # marketing ignores it.
+          VITE_SITE_URL: ${{ inputs.environment == 'production' && 'https://companion.ihsaanly.app' || 'https://dev.companion.ihsaanly.app' }}
+          # development → the "Development" pill, a "Dev" title, noindex
+          # everywhere and a Disallow-all robots.txt (packages/web/src/app-env.ts).
+          VITE_APP_ENV: ${{ inputs.environment }}
 
       # Pinned to the v4.4.0 commit: this step holds the FTP password, so a
       # moved tag must not be able to change what runs. It uploads only what

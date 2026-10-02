@@ -1,5 +1,10 @@
 import { adoptAccount, syncOnce } from '@ihsaanly/cloud/engine'
-import type { Account, Cloud, SignInProvider } from '@ihsaanly/cloud/ports'
+import {
+  type Account,
+  type Cloud,
+  LinkRequiredError,
+  type SignInProvider,
+} from '@ihsaanly/cloud/ports'
 import { useSyncExternalStore } from 'react'
 import { z } from 'zod'
 
@@ -10,15 +15,48 @@ import { reloadPreferences } from '../storage/preference-store'
 import { ACCOUNT_KEY, SYNCED_KEYS } from './keys'
 import { createLocalStore, readSyncMeta } from './local-store'
 
-export type AccountStatus = 'signed-out' | 'syncing' | 'idle' | 'error' | 'account-mismatch'
+export type AccountStatus =
+  | 'signed-out'
+  | 'syncing'
+  | 'idle'
+  | 'error'
+  | 'account-mismatch'
+  | 'link-required'
+
+/**
+ * What went wrong, as a code the screen turns into its own sentence. The raw
+ * error goes to `noteFailure`, never to the UI: provider and SDK messages are
+ * English, technical, and sometimes carry identifiers.
+ */
+export type AccountErrorCode =
+  | 'network'
+  | 'auth'
+  | 'sync'
+  | 'unknown'
+  | 'remove-blocked'
+  /** The Apple or Google identity being linked already opens a different account. */
+  | 'link-conflict'
+  /** Deleting needs a sign-in this surface cannot offer (Apple, in the extension). */
+  | 'reauth-unavailable'
+
+/**
+ * A sign-in stopped because the email already has an account on the other
+ * provider: signing in with `existing` opens it and links `attempted`.
+ */
+export interface LinkPrompt {
+  existing: SignInProvider
+  attempted: SignInProvider
+}
 
 export interface AccountState {
   status: AccountStatus
   account: Account | null
   lastSyncedAt: number | null
-  error: string | null
+  error: AccountErrorCode | null
   /** With `account-mismatch`: the account this device's data already belongs to. */
   mismatchUid?: string
+  /** With `link-required` (and while its sign-in runs): which provider to use. */
+  link?: LinkPrompt
 }
 
 export interface CloudOptions {
@@ -37,6 +75,8 @@ const SIGNED_OUT: AccountState = {
   account: null,
   lastSyncedAt: null,
   error: null,
+  mismatchUid: undefined,
+  link: undefined,
 }
 
 const AccountFlag = z.object({ signedIn: z.boolean() })
@@ -59,8 +99,51 @@ function setState(next: Partial<AccountState>): void {
   listeners.forEach((listener) => listener())
 }
 
-function describe(error: unknown): string {
+function codeOf(error: unknown): string {
+  if (typeof error === 'object' && error !== null && 'code' in error) {
+    const { code } = error as { code: unknown }
+    if (typeof code === 'string' || typeof code === 'number') return String(code)
+  }
+  return ''
+}
+
+function messageOf(error: unknown): string {
   return error instanceof Error ? error.message : String(error)
+}
+
+/**
+ * The person closed the sheet or the popup. Not a failure: they changed their
+ * mind, and the screen should look exactly as it did before they tapped.
+ */
+const CANCELLED_CODES = new Set([
+  'auth/popup-closed-by-user',
+  'auth/cancelled-popup-request',
+  'auth/user-cancelled',
+  'ERR_REQUEST_CANCELED', // expo-apple-authentication
+  'ERR_CANCELED',
+  'SIGN_IN_CANCELLED', // @react-native-google-signin
+  '12501', // Google Sign-In on Android: SIGN_IN_CANCELLED
+  'cancelled',
+])
+
+export function isCancelled(error: unknown): boolean {
+  if (CANCELLED_CODES.has(codeOf(error))) return true
+  const message = messageOf(error)
+  // chrome.identity.launchWebAuthFlow when the window is closed or access declined.
+  return (
+    message.includes('The user did not approve access') || message.includes('sign-in was cancelled')
+  )
+}
+
+const NETWORK_CODES = new Set(['auth/network-request-failed', 'unavailable', 'deadline-exceeded'])
+
+function classify(error: unknown, fallback: AccountErrorCode): AccountErrorCode {
+  const code = codeOf(error)
+  if (NETWORK_CODES.has(code) || /network|failed to fetch|offline/i.test(messageOf(error)))
+    return 'network'
+  if (code === 'link-conflict' || code === 'reauth-unavailable') return code
+  if (code.startsWith('auth/')) return 'auth'
+  return fallback
 }
 
 /** Straight to the backend: device bookkeeping, never a change worth pushing. */
@@ -136,7 +219,7 @@ async function syncRound(): Promise<void> {
     }
   } catch (error) {
     noteFailure('cloudSync', error)
-    setState({ status: 'error', error: describe(error) })
+    setState({ status: 'error', error: classify(error, 'sync') })
   }
 }
 
@@ -194,7 +277,7 @@ export function startCloud(load: () => Promise<Cloud>, opts: CloudOptions = {}):
     setState({ lastSyncedAt: readSyncMeta().lastSyncedAt })
     ensureCloud().catch((error: unknown) => {
       noteFailure('cloudLoad', error)
-      setState({ status: 'error', error: describe(error) })
+      setState({ status: 'error', error: classify(error, 'unknown') })
     })
   }
 
@@ -213,14 +296,73 @@ export function startCloud(load: () => Promise<Cloud>, opts: CloudOptions = {}):
   }
 }
 
+/** Where a sign-in that did not finish leaves the screen. */
+function settledStatus(): AccountStatus {
+  if (state.account) return 'idle'
+  return state.link ? 'link-required' : 'signed-out'
+}
+
 export async function signIn(provider: SignInProvider): Promise<void> {
   try {
     const { auth } = await ensureCloud()
     setState({ status: 'syncing', error: null })
-    handleAccount(await auth.signIn(provider))
+    const account = await auth.signIn(provider)
+    setState({ link: undefined })
+    handleAccount(account)
   } catch (error) {
+    if (error instanceof LinkRequiredError) {
+      // Not a failure: the next step is signing in with the provider the account has.
+      setState({
+        status: 'link-required',
+        error: null,
+        link: { existing: error.existing, attempted: error.attempted },
+      })
+      return
+    }
+    if (isCancelled(error)) {
+      setState({ status: settledStatus(), error: null })
+      return
+    }
     noteFailure('cloudSignIn', error)
-    setState({ status: state.account ? 'error' : 'signed-out', error: describe(error) })
+    setState({
+      status: state.account ? 'error' : settledStatus(),
+      error: classify(error, 'auth'),
+    })
+  }
+}
+
+/**
+ * Leaves `link-required` without signing in. Signing the auth service out
+ * too makes it forget the sign-in it was holding to link.
+ */
+export async function cancelLink(): Promise<void> {
+  if (state.status !== 'link-required' && !state.link) return
+  setState({ status: state.account ? 'idle' : 'signed-out', link: undefined, error: null })
+  if (state.account || !cloud) return
+  try {
+    const { auth } = await cloud
+    await auth.signOut()
+  } catch (error) {
+    noteFailure('cloudCancelLink', error)
+  }
+}
+
+/** Adds another sign-in method to the signed-in account. */
+export async function linkProvider(provider: SignInProvider): Promise<void> {
+  if (!state.account) return
+  try {
+    const { auth } = await ensureCloud()
+    const account = await auth.link(provider)
+    if (state.account?.uid !== account.uid) return
+    setState({
+      account,
+      error: null,
+      status: state.status === 'error' ? 'idle' : state.status,
+    })
+  } catch (error) {
+    if (isCancelled(error)) return
+    noteFailure('cloudLink', error)
+    setState({ status: 'error', error: classify(error, 'auth') })
   }
 }
 
@@ -244,7 +386,7 @@ export async function signOut(mode: 'keep' | 'remove'): Promise<void> {
 
   await runSync()
   if (mode === 'remove' && state.status !== 'idle') {
-    setState({ status: 'error', error: 'Could not reach your account, so nothing was removed.' })
+    setState({ status: 'error', error: 'remove-blocked' })
     return
   }
 
@@ -253,7 +395,7 @@ export async function signOut(mode: 'keep' | 'remove'): Promise<void> {
     await auth.signOut()
   } catch (error) {
     noteFailure('cloudSignOut', error)
-    setState({ status: 'error', error: describe(error) })
+    setState({ status: 'error', error: classify(error, 'unknown') })
     return
   }
 
@@ -296,8 +438,10 @@ export async function deleteAccount(mode: 'keep' | 'remove'): Promise<void> {
     const { auth, remote } = await ensureCloud()
     await auth.deleteAccount((uid) => remote.erase(uid))
   } catch (error) {
+    // Deleting asks the provider to confirm who you are; closing that is not a failure.
+    if (isCancelled(error)) return
     noteFailure('cloudDeleteAccount', error)
-    setState({ status: 'error', error: describe(error) })
+    setState({ status: 'error', error: classify(error, 'unknown') })
     return
   }
 

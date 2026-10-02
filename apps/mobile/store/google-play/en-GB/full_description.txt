@@ -30,7 +30,7 @@ WIDGETS
 Home screen widgets keep it one glance away: what is relevant right now, the next prayer, today's prayers, the Hijri date, what is up next and what else today holds, quick duas, a dua of the day, what you have to make up, and the days coming up.
 
 PRIVATE BY DEFAULT
-No account, no server, no analytics, no advertising. It works fully offline, and fully without granting a single permission: decline location and choose your city instead. Your practice is recorded on your device and stays there. Nothing leaves your phone unless you choose to send it.
+No account needed, no analytics, no advertising. It works fully offline, and fully without granting a single permission: decline location and choose your city instead. Without signing in, nothing leaves your device unless you choose to send it. Optional sign-in syncs your record across your devices.
 
 HONEST ABOUT ITSELF
 The content is drafted and awaiting review by a named scholar, and the app's About screen says so. English is the original; the other languages are drafts awaiting review by qualified speakers.

@@ -55,18 +55,53 @@ export function formatCoordinates(at: { latitude: number; longitude: number }): 
 
 export type SignInProvider = 'apple' | 'google'
 
-export type AccountStatus = 'signed-out' | 'syncing' | 'idle' | 'error' | 'account-mismatch'
+export type AccountStatus =
+  | 'signed-out'
+  | 'syncing'
+  | 'idle'
+  | 'error'
+  | 'account-mismatch'
+  | 'link-required'
 
 export interface AccountIdentity {
   email: string | null
   displayName: string | null
   provider: SignInProvider
+  /** Every sign-in method linked to the account. */
+  providers: SignInProvider[]
 }
+
+/** A code, not a message: the Account screen owns the sentence, in the reader's language. */
+export type AccountErrorCode =
+  | 'network'
+  | 'auth'
+  | 'sync'
+  | 'unknown'
+  | 'remove-blocked'
+  | 'link-conflict'
+  | 'reauth-unavailable'
+
+/** The email already has an account on `existing`; signing in with it links `attempted`. */
+export interface AccountLinkPrompt {
+  existing: SignInProvider
+  attempted: SignInProvider
+}
+
+/**
+ * Where signing in from onboarding has got to. `restoring` while the sign-in
+ * and its first sync run; then `restored` if the account's synced setup
+ * finished onboarding, or `needs-setup` if it never did (a new account).
+ * `idle` before anything is signed in, and whenever the Account screen's own
+ * states (errors, a mismatch, a link prompt) are the answer instead.
+ */
+export type RestoreOutcome = 'idle' | 'restoring' | 'restored' | 'needs-setup'
 
 /** What the Account screen shows; `@ihsaanly/state`'s `useAccount()` satisfies it. */
 export interface AccountView {
   status: AccountStatus
   account: AccountIdentity | null
   lastSyncedAt: number | null
-  error: string | null
+  error: AccountErrorCode | null
+  /** Set with `link-required`, and kept while that sign-in runs. */
+  link?: AccountLinkPrompt | undefined
 }

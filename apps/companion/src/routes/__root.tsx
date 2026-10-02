@@ -11,6 +11,7 @@ import { palettes } from '@ihsaanly/tailwind/tokens'
 import { EmptyState } from '@ihsaanly/ui/components/empty-state'
 import { Screen } from '@ihsaanly/ui/components/screen'
 import { useUi } from '@ihsaanly/ui/provider'
+import { DevelopmentBadge } from '@ihsaanly/web/development-badge'
 import { BrandMark, IconLibrary, IconMore, IconToday } from '@ihsaanly/web/icons'
 import { WebUiProvider } from '@ihsaanly/web/ui-provider'
 import {
@@ -25,14 +26,23 @@ import type { ComponentType, ReactElement, ReactNode } from 'react'
 import { AppBanner } from '~/components/app-banner'
 import { isPlainLeftClick, RouterLink } from '~/components/router-link'
 import { UpdateBanner } from '~/components/update-banner'
+import { useDocumentHead } from '~/head/use-document-head'
 
 const ONBOARDING = '/onboarding'
+const ACCOUNT = '/account'
+
+/** On /account from onboarding's "Sign in to restore": still part of the flow, so no tabs. */
+function isRestoring(location: { pathname: string; search: Record<string, unknown> }): boolean {
+  return location.pathname === ACCOUNT && location.search.from === 'onboarding'
+}
 
 export const Route = createRootRoute({
   // Until onboarding is done, any app URL (a shared /item/… link included)
   // lands on its first step. The step routes do the reverse check.
   beforeLoad: ({ location }) => {
     if (location.pathname === '/' || location.pathname.startsWith(ONBOARDING)) return
+    // Signing in to restore an existing account is the other way through it.
+    if (location.pathname === ACCOUNT) return
     if (!getOnboarding().completed)
       throw redirect({ to: '/onboarding/$step', params: { step: 'welcome' }, replace: true })
   },
@@ -87,16 +97,18 @@ function useActiveLayoutRouteIds(): Set<string> {
 interface NavAnchorProps {
   href: string
   className: string
+  active?: boolean
   children: ReactNode
 }
 
 /** A real `<a href>`, handed to the client router on a plain click — see src/components/router-link.tsx. */
-function NavAnchor({ href, className, children }: NavAnchorProps): ReactElement {
+function NavAnchor({ href, className, active, children }: NavAnchorProps): ReactElement {
   const router = useRouter()
   return (
     <a
       href={href}
       className={className}
+      aria-current={active ? 'page' : undefined}
       onClick={(event) => {
         if (!isPlainLeftClick(event)) return
         event.preventDefault()
@@ -123,6 +135,7 @@ function SidebarNav(): ReactElement {
           <NavAnchor
             key={href}
             href={href}
+            active={active}
             className={`flex items-center gap-3 rounded-full px-3 py-2 text-sm ${
               active
                 ? 'font-semibold text-accent'
@@ -149,6 +162,7 @@ function BottomTabs(): ReactElement {
           <NavAnchor
             key={href}
             href={href}
+            active={active}
             className={`flex flex-1 flex-col items-center gap-1 py-2 text-xs ${
               active ? 'text-accent' : 'text-system-secondary-label'
             }`}>
@@ -181,11 +195,16 @@ function AppShell(): ReactElement {
 
 function RootShell(): ReactElement {
   const strings = useStrings()
-  const inOnboarding = useActivePathname().startsWith(ONBOARDING)
+  useDocumentHead()
+  const inOnboarding = useRouterState({
+    select: (state) =>
+      state.location.pathname.startsWith(ONBOARDING) || isRestoring(state.location),
+  })
 
   return (
     <WebUiProvider strings={strings} Link={RouterLink}>
       {inOnboarding ? <Outlet /> : <AppShell />}
+      <DevelopmentBadge />
     </WebUiProvider>
   )
 }

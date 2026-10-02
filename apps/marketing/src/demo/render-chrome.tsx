@@ -5,7 +5,7 @@
 
 import type { Strings } from '@ihsaanly/core/strings/en'
 import { IconBack, IconLibrary, IconMore, IconSearch, IconToday } from '@ihsaanly/web/icons'
-import type { ReactNode } from 'react'
+import type { KeyboardEvent, ReactNode } from 'react'
 import { cx } from './class-names'
 import { IconBattery, IconSignal, IconWifi } from './icons'
 import type { DemoTab } from './state'
@@ -110,16 +110,50 @@ export interface TabBarProps {
   handlers: ChromeHandlers
 }
 
+/** The panel the tabs control, so aria-controls and aria-labelledby point at real ids. */
+export const TABPANEL_ID = 'demo-tabpanel'
+export const tabId = (tab: DemoTab): string => `demo-tab-${tab}`
+
+/** Arrow keys move between tabs (Left/Right follow the reading direction), Home/End jump. */
+function onTabKeyDown(
+  event: KeyboardEvent<HTMLDivElement>,
+  tabs: TabDef[],
+  active: DemoTab,
+  onSelectTab: (tab: DemoTab) => void,
+): void {
+  const rtl = getComputedStyle(event.currentTarget).direction === 'rtl'
+  const index = tabs.findIndex((def) => def.tab === active)
+  const step = (delta: number): number => (index + delta + tabs.length) % tabs.length
+  let next: number
+  if (event.key === 'ArrowRight') next = step(rtl ? -1 : 1)
+  else if (event.key === 'ArrowLeft') next = step(rtl ? 1 : -1)
+  else if (event.key === 'Home') next = 0
+  else if (event.key === 'End') next = tabs.length - 1
+  else return
+  event.preventDefault()
+  const target = tabs[next]
+  if (!target) return
+  onSelectTab(target.tab)
+  event.currentTarget.querySelector<HTMLElement>(`[data-demo-tab="${target.tab}"]`)?.focus()
+}
+
 export function TabBar({ active, strings, tabsLabel, handlers }: TabBarProps): ReactNode {
+  const tabs = tabsFor(strings)
   return (
-    <div className="demo-tabbar-inner" role="tablist" aria-label={tabsLabel}>
-      {tabsFor(strings).map((def) => {
+    <div
+      className="demo-tabbar-inner"
+      role="tablist"
+      aria-label={tabsLabel}
+      onKeyDown={(event) => onTabKeyDown(event, tabs, active, handlers.onSelectTab)}>
+      {tabs.map((def) => {
         const selected = def.tab === active
         return (
           <button
             key={def.tab}
             type="button"
             role="tab"
+            id={tabId(def.tab)}
+            aria-controls={TABPANEL_ID}
             aria-selected={selected}
             tabIndex={selected ? 0 : -1}
             data-demo-tab={def.tab}

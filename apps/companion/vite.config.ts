@@ -1,3 +1,4 @@
+import { DEV_TITLE_PREFIX, DEVELOPMENT_ROBOTS, resolveAppEnv } from '@ihsaanly/web/app-env'
 import { smartBannerContent } from '@ihsaanly/web/app-links'
 import { THEME_COLOR, THEME_SCRIPT } from '@ihsaanly/web/theme'
 import { rnWebConfig } from '@ihsaanly/web/vite'
@@ -13,11 +14,30 @@ import { defineConfig, mergeConfig, type Plugin } from 'vite'
  * injected here rather than duplicated by hand.
  */
 function injectHead(): Plugin {
+  // This build's own origin, for the canonical and Open Graph URLs (CI sets it per environment).
+  const siteUrl = (process.env.VITE_SITE_URL?.trim() || 'https://companion.ihsaanly.app').replace(
+    /\/+$/,
+    '',
+  )
+  let development = false
   return {
     name: 'ihsaanly:inject-head',
+    configResolved(config) {
+      development =
+        resolveAppEnv(
+          process.env.VITE_APP_ENV,
+          config.command === 'serve' || config.mode === 'development',
+        ) === 'development'
+    },
     transformIndexHtml(html) {
       const banner = smartBannerContent('/')
       return html
+        .replaceAll('__SITE_URL__', siteUrl)
+        .replaceAll('__TITLE_PREFIX__', development ? DEV_TITLE_PREFIX : '')
+        .replace(
+          '<!--robots-->',
+          development ? `<meta name="robots" content="${DEVELOPMENT_ROBOTS}" />` : '',
+        )
         .replace('<!--theme-script-->', `<script>${THEME_SCRIPT}</script>`)
         .replace(
           '<!--apple-itunes-app-->',

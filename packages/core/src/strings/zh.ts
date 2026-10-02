@@ -18,7 +18,7 @@ export const zh: Strings = {
     empty: '这里还没有内容。',
     needsLocationTitle: '你在哪里？',
     needsLocation:
-      '礼拜时段、伊斯兰历日期以及一天中的各项功课，都依据一个大致的位置来推算。推算在这部手机上完成，位置从不发送到任何地方。',
+      '礼拜时段、伊斯兰历日期以及一天中的各项功课，都依据一个大致的位置来推算。推算在这台设备上完成，除非你登录以同步，否则位置只留在这台设备上。',
     chooseCity: '改为选择城市',
     chooseCityDetail: '无需授权，所有功能照常可用。',
   },
@@ -164,8 +164,26 @@ export const zh: Strings = {
       '可选。除非你登录，否则你的数据只会留在这台设备上。登录后，你的记录、进度和设置（包括你的位置）会在你的所有设备之间同步。',
     continueWithApple: '通过 Apple 继续',
     continueWithGoogle: '通过 Google 继续',
+    signInWithApple: '通过 Apple 登录',
+    signInWithGoogle: '使用 Google 账号登录',
+    agreement: '继续即表示你同意{terms}和{privacy}。',
+    terms: '使用条款',
+    privacy: '隐私政策',
+    notice:
+      '为了同步，你的功课记录、设置和大致位置会连同 Apple 或 Google 提供的姓名和邮箱，一起存储在 Google Firebase（美国）上。你必须年满 13 岁。你可以随时删除账户。',
     signingIn: '正在登录…',
     signInFailed: '登录未完成。这台设备上的内容没有任何变化。',
+    errors: {
+      network: '无法连接。请检查网络后重试。',
+      auth: '登录未被接受。请重试。',
+      sync: '这次未能同步你的数据。稍后会再试。',
+      unknown: '出了点问题。请重试。',
+      'remove-blocked': '无法连接到你的账户，因此没有移除任何内容。',
+      'link-conflict':
+        '该登录方式已属于另一个 Ihsaanly 账户，因此没有关联。若要在此使用，请先从另一个账户导出你想保留的内容，删除该账户，然后重新关联，或联系支持团队。',
+      'reauth-unavailable':
+        '删除需要你再次使用 Apple 登录，但此处无法使用。请在 Ihsaanly App 或 companion.ihsaanly.app 中删除你的账户。',
+    },
     signedInWith: { apple: '已通过 Apple 登录', google: '已通过 Google 登录' },
     lastSynced: (when: string): string => `上次同步：${when}`,
     neverSynced: '尚未同步',
@@ -187,7 +205,7 @@ export const zh: Strings = {
     deleteAccountDetail: '清除你的账户及其中所有已同步的内容。',
     deleteTitle: '删除你的账户？',
     deleteBody: '你的账户及所有已同步的数据将从云端永久删除，无法撤销。',
-    deleteConfirm: '永久删除',
+    deleteConfirm: '删除账户',
     deleteChoiceTitle: '这台设备上的数据怎么办？',
     deleteChoiceBody: '保留它，即可无需账户继续使用应用；移除它，应用将从头开始。',
     mismatchTitle: '这台设备上有另一个账户的数据',
@@ -195,10 +213,32 @@ export const zh: Strings = {
     merge: '合并到此账户',
     fresh: '在这台设备上重新开始',
     cancel: '取消',
+    linkTitle: '你已有账户',
+    linkBody: (existing: string, attempted: string): string =>
+      `此邮箱已有一个使用 ${existing} 的 Ihsaanly 账户。请使用 ${existing} 继续以打开该账户；${attempted} 将被关联，此后两者都可使用。`,
+    linkUnavailable:
+      '此账户使用“通过 Apple 登录”，但此处不提供该方式。请在 Ihsaanly App 或 companion.ihsaanly.app 中登录，在“账户”→“登录方式”中关联 Google，然后再回来。',
+    methodsTitle: '登录方式',
+    methodLinked: (provider: string): string => `${provider}（已关联）`,
+    linkProvider: (provider: string): string => `关联 ${provider}`,
+    methodsHint:
+      '如果你曾通过 Apple 使用“隐藏我的邮件地址”，请在此关联 Google，这样两者会打开同一个账户。',
+    restore: {
+      backToSetup: '返回设置',
+      intro: '使用你已有的账户登录。你的设置、位置和记录会随第一次同步回来。',
+      restoring: '正在恢复你的数据…',
+      restored: '你的数据已恢复。',
+      needsSetupTitle: '暂时没有可恢复的内容',
+      needsSetupBody: '这个账户还没有完成设置。继续设置吧——你会保持登录，你的选择会随时同步。',
+      continueSetup: '继续设置',
+      remindersTitle: '你的提醒已开启',
+      remindersBody: '你的账户开启了提醒。请在这里允许通知，这样提醒也能送达这台设备。',
+    },
   },
   data: {
     title: '你的数据',
-    explanation: '这里的一切都保存在这台设备上。除非你自己从这个页面发送，否则什么都不会离开它。',
+    explanation:
+      '这里的一切都保存在这台设备上。除非你自己从这个页面发送，或在“账户”中登录以同步，否则什么都不会离开它。',
     export: '导出我的数据',
     exportDetail: '可读的文本，你可以保存，也可以带到另一台设备上。',
     importing: '从文件导入',
@@ -212,7 +252,10 @@ export const zh: Strings = {
     delete: '删除我的数据',
     deleteDetail: '这台设备上的一切：设置和你的功课记录。应用将从头开始。',
     deleteConfirmTitle: '删除所有内容？',
-    deleteConfirmBody: '你的设置和功课记录将从这台设备上移除。除非你导出过，否则别处没有任何副本。',
+    deleteConfirmBody:
+      '你的设置和功课记录将从这台设备上移除。除非你导出过，或已同步到账户，否则别处没有任何副本。',
+    deleteConfirmBodySignedIn:
+      '这只会从这台设备上移除你的设置和功课记录。你的账户仍保留已同步的副本。如要一并删除，请前往“账户”→“删除账户”。',
     deleteConfirm: '删除',
     cancel: '取消',
   },
@@ -249,12 +292,14 @@ export const zh: Strings = {
     donateBody:
       '完全自愿，也不解锁任何功能。应用的每一部分都是免费的，并且永远免费。将在浏览器中打开。',
     privacyPolicy: '隐私政策',
-    privacyTitle: '什么都不会离开这部手机',
+    termsOfUse: '使用条款',
+    privacyTitle: '你的数据留在这台设备上',
     privacyBody:
-      'Ihsaanly 没有账户、没有服务器，也没有数据分析。你的位置只在设备上用于计算礼拜时间，也只保存在这里。你的功课记录只保存在这里。除非你自己导出或分享，否则什么都不会被发送出去。“捐助”是应用中唯一的外部链接：它会打开你的浏览器，而那个页面不属于 Ihsaanly。',
+      '没有统计分析，也没有广告。你的位置在这台设备上用于推算礼拜时间，你的功课记录和设置也保存在这里。除非你自己导出或分享，或登录以同步，否则什么都不会离开这台设备。使用 Apple 或 Google 登录是可选的：登录后，你的姓名和邮箱、功课记录、进度、设置以及大致位置（精确到约 1 公里）会存储在美国的 Google Firebase 上，以便在你的设备之间同步。你可以随时在“账户”中删除账户。捐赠会打开你的浏览器，那个页面不属于 Ihsaanly。',
     licences: '构建所用',
     licencesBody:
-      'Expo 与 React Native，用于礼拜时间的 adhan 库，乌姆古拉历法表，来自 city-timezones 的城市数据，以及用于地图的 Natural Earth。每一项都依照各自的开源许可使用，许可列表见源代码仓库。',
+      'Expo 与 React Native，用于礼拜时间的 adhan 库，乌姆古拉历法表，来自 city-timezones 的城市数据（基于 GeoNames），以及用于地图的 Natural Earth。每一项都依照各自的开源许可使用，许可列表见源代码仓库。',
+    geonames: '城市数据 © GeoNames (CC BY 4.0)',
   },
   memorise: {
     title: '背记',
@@ -458,12 +503,12 @@ export const zh: Strings = {
     welcomeBody: 'Ihsaanly 会告诉你傍晚的记念何时开始。从不显示钟点，也从不打分。',
     howTitle: '你标记礼拜，圣行随之出现。',
     howBody:
-      '礼完晌礼后点一下它，随后的记念就已经在等着你。什么都不会离开这部手机。没有账户，没有服务器。',
+      '礼完晌礼后点一下它，随后的记念就已经在等着你。除非你选择登录以同步，否则一切都留在这台设备上。',
     language: '语言',
     appearance: '外观',
     howSample: 'سُبْحَانَ اللهِ وَبِحَمْدِهِ',
     locationStep: '你在哪里？',
-    locationWhy: '在这台设备上用来推算一天中的各个时段。从不发送到任何地方。',
+    locationWhy: '在这台设备上用来推算一天中的各个时段。除非你登录以同步，否则只留在这台设备上。',
     genderStep: '暂停记录',
     genderWhy:
       '有些日子里应当停止礼拜记录，并且不累积任何待补的礼拜。这一项告诉应用是否提供这个选项。',
@@ -473,7 +518,7 @@ export const zh: Strings = {
     sisterDetail: '提供暂停',
     skip: '不想说明',
     skipDetail: '仍然会提供暂停。',
-    genderPrivacy: '只保存在这台设备上。从不发送到任何地方，也不作其他任何用途。',
+    genderPrivacy: '保存在这台设备上，只有登录后才会同步。不作其他任何用途。',
     remindersStep: '提醒',
     remindersWhy: '每天两三条，夜间从不打扰。以后可以随时在“更多”中更改。',
     windowsDetail: '在每个时段开始时',
@@ -501,13 +546,14 @@ export const zh: Strings = {
     allowReminders: '允许提醒',
     notNow: '暂不',
     done: '开始',
+    restore: '已经在用 Ihsaanly？登录以恢复你的数据',
   },
   location: {
     title: '位置',
     notSet: '未设置',
     currentLocation: '当前位置',
     useDevice: '使用我的位置',
-    useDeviceDetail: '什么都不会离开这部手机。',
+    useDeviceDetail: '除非你登录以同步，否则只留在这台设备上。',
     locating: '正在定位……',
     orSearch: '或搜索城市',
     follows: '礼拜时段将依据这个地点。',
@@ -515,7 +561,7 @@ export const zh: Strings = {
     noResults: '没有匹配的城市。',
     unavailable: '此设备的定位服务已关闭。请开启定位，或改为搜索你所在的城市。',
     declined: '位置访问已被拒绝。请改为搜索你所在的城市——所有功能照常可用。',
-    explanation: '在这台设备上用来推算礼拜时段。从不发送到任何地方。',
+    explanation: '在这台设备上用来推算礼拜时段。除非你登录以同步，否则只留在这台设备上。',
     attribution: '城市数据来自 city-timezones（MIT）。',
   },
   textField: {

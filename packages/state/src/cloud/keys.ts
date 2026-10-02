@@ -4,6 +4,9 @@
  * decides it belongs in the cloud, instead of leaking there by default.
  *
  * Left out, deliberately:
+ * - `events`: its `home` region holds the exact coordinates of someone's front
+ *   door (a 150 m geofence). Coordinates that precise never leave the device;
+ *   the synced `place` is rounded to ~1 km on the way out instead.
  * - `failureLog`: this device's diagnostics, meaningless anywhere else.
  * - `qadaProcessedThrough`: this device's rollover cursor. Each device accrues
  *   misses itself; they share an identity, so the log dedupes them.
@@ -12,7 +15,6 @@
 export const SYNCED_KEYS: ReadonlySet<string> = new Set([
   'calculation',
   'enabledItems',
-  'events',
   'fastBacklog',
   'hijriOffset',
   'knownItems',

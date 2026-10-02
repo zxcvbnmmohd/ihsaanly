@@ -1,5 +1,7 @@
 /// <reference types="vite/client" />
 
+import { DEVELOPMENT_ROBOTS } from '@ihsaanly/web/app-env'
+import { DevelopmentBadge, isDevelopmentBuild } from '@ihsaanly/web/development-badge'
 import { THEME_COLOR, THEME_SCRIPT, themeSearch } from '@ihsaanly/web/theme'
 import {
   createRootRoute,
@@ -55,9 +57,13 @@ function RootDocument(): ReactNode {
           LOCALES.filter((other) => other !== locale).map((other) => (
             <meta key={other.code} property="og:locale:alternate" content={other.og} />
           ))}
+        {/* A development build is never indexed (postbuild also sends X-Robots-Tag
+            and a Disallow-all robots.txt). */}
+        {isDevelopmentBuild && <meta name="robots" content={DEVELOPMENT_ROBOTS} />}
         <HeadContent />
       </head>
       <body>
+        <DevelopmentBadge />
         <Outlet />
         <Scripts />
       </body>

@@ -13,6 +13,8 @@
     "./icons": "./src/icons.tsx",
     "./store-badges": "./src/store-badges.tsx",
     "./app-links": "./src/app-links.ts",
+    "./app-env": "./src/app-env.ts",
+    "./development-badge": "./src/development-badge.tsx",
     "./styles.css": "./src/styles.css",
     "./hosting/csp": "./src/hosting/csp.ts",
     "./hosting/htaccess": "./src/hosting/htaccess.ts",

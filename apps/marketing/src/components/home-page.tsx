@@ -45,8 +45,8 @@ export function HomePage({ specimen }: { specimen: SpecimenDua[] }): ReactNode {
           <p className="lede m-0 mb-8 max-w-[30rem] text-ink-soft text-xl leading-[1.55]">
             {t('home.hero.lede')}
           </p>
+          <p className="m-0 mb-4 text-base text-ink-soft">{t('home.hero.tryHint')}</p>
           <StoreBadges />
-          <p className="m-0 text-base text-ink-soft">{t('home.hero.tryHint')}</p>
         </div>
         <Demo />
       </div>
@@ -116,6 +116,23 @@ export function HomePage({ specimen }: { specimen: SpecimenDua[] }): ReactNode {
         </div>
       </section>
 
+      <section
+        id="everywhere"
+        className={`${WRAP} ${SECTION_CLASS}`}
+        aria-labelledby="everywhere-title">
+        <h2 id="everywhere-title" className={SECTION_TITLE_CLASS}>
+          {t('home.everywhere.title')}
+        </h2>
+        <div className={SECTION_BODY_CLASS}>
+          <ul className="mt-0 mb-4 list-none p-0 [&_li:first-child]:pt-0 [&_li]:border-rule [&_li]:border-b [&_li]:py-[0.7rem]">
+            <li>{t('home.everywhere.phone')}</li>
+            <li>{t('home.everywhere.web')}</li>
+            <li>{t('home.everywhere.extension')}</li>
+          </ul>
+          <p>{t('home.everywhere.sync')}</p>
+        </div>
+      </section>
+
       <section className={`${WRAP} ${SECTION_CLASS}`} aria-labelledby="private-title">
         <h2 id="private-title" className={SECTION_TITLE_CLASS}>
           {t('home.private.title')}
@@ -161,6 +178,11 @@ export function HomePage({ specimen }: { specimen: SpecimenDua[] }): ReactNode {
             question={t('home.questions.notificationsQ')}
             answer={t('home.questions.notificationsA')}
           />
+          <FaqItem
+            question={t('home.questions.computerQ')}
+            answer={t('home.questions.computerA')}
+          />
+          <FaqItem question={t('home.questions.devicesQ')} answer={t('home.questions.devicesA')} />
           <FaqItem question={t('home.questions.brokenQ')} answer={t('home.questions.brokenA')} />
         </div>
       </section>

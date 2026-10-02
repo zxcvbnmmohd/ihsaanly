@@ -24,10 +24,12 @@ const backend = (await import(
 mock.module('../storage/backend', () => backend)
 
 const { createLocalStore } = await import('./local-store')
-const { createPreferenceStore } = await import('../storage/preference-store')
+const { createPreferenceStore, reloadPreferences } = await import('../storage/preference-store')
 const { allActions, recordEvent } = await import('../storage/events')
 const { buildExport } = await import('../data/export')
 const session = await import('./session')
+const { restoreOutcomeOf } = await import('./restore')
+const { getOnboarding } = await import('../onboarding/store')
 
 const hijri = createPreferenceStore('hijriOffset', z.number(), 0)
 
@@ -54,6 +56,30 @@ describe('the local store', () => {
     expect(createLocalStore().preferences()).toEqual([
       { key: 'locale', value: '"x"', updatedAt: 7 },
     ])
+  })
+
+  it('rounds the place to about 1 km on the way out, leaving the local row alone', () => {
+    const place = {
+      label: 'Toronto',
+      latitude: 43.653226,
+      longitude: -79.383184,
+      timeZone: 'America/Toronto',
+      source: 'device',
+    }
+    backend.writePreferenceRowAt('place', JSON.stringify(place), 7)
+
+    const [row] = createLocalStore().preferences()
+    expect(JSON.parse(row?.value ?? 'null')).toEqual({
+      ...place,
+      latitude: 43.65,
+      longitude: -79.38,
+    })
+    expect(backend.preferenceRowsWithTime()[0]?.value).toBe(JSON.stringify(place))
+  })
+
+  it('never offers the exact home region to sync', () => {
+    backend.writePreferenceRowAt('events', '{"home":{"latitude":1.23456,"longitude":2.34567}}', 7)
+    expect(createLocalStore().preferences()).toEqual([])
   })
 
   it('applies preferences with their own stamps and refreshes cached readers', () => {
@@ -194,5 +220,220 @@ describe('the cloud session', () => {
     expect(allActions()).toEqual([])
     expect(session.getAccountState().status).toBe('signed-out')
     expect((await cloud.remote.pull('me', null)).events).toHaveLength(1)
+  })
+
+  it('treats a closed sign-in popup as no error at all', async () => {
+    const auth = cloud.auth
+    cloud = {
+      ...cloud,
+      auth: {
+        ...auth,
+        signIn: async () => {
+          throw Object.assign(new Error('Firebase: popup closed'), {
+            code: 'auth/popup-closed-by-user',
+          })
+        },
+      },
+    }
+    start()
+
+    await session.signIn('google')
+    expect(session.getAccountState()).toMatchObject({ status: 'signed-out', error: null })
+  })
+
+  it('reports a failed sign-in as a code, never the raw message', async () => {
+    const auth = cloud.auth
+    cloud = {
+      ...cloud,
+      auth: {
+        ...auth,
+        signIn: async () => {
+          throw Object.assign(new Error('Firebase: Error (auth/network-request-failed).'), {
+            code: 'auth/network-request-failed',
+          })
+        },
+      },
+    }
+    start()
+
+    await session.signIn('google')
+    expect(session.getAccountState()).toMatchObject({ status: 'signed-out', error: 'network' })
+  })
+
+  it('asks to link when the email has an account on the other provider, then links', async () => {
+    cloud = {
+      auth: createMemoryAuth({
+        uid: 'me',
+        seed: [{ uid: 'me', email: 'aisha@example.test', providers: ['apple'] }],
+        emails: { apple: 'aisha@example.test', google: 'aisha@example.test' },
+      }),
+      remote: createMemorySyncRemote(),
+    }
+    start()
+
+    await session.signIn('google')
+    expect(session.getAccountState()).toMatchObject({
+      status: 'link-required',
+      account: null,
+      error: null,
+      link: { existing: 'apple', attempted: 'google' },
+    })
+
+    await session.signIn('apple')
+    await session.syncNow()
+    const state = session.getAccountState()
+    expect(state).toMatchObject({
+      status: 'idle',
+      account: { uid: 'me', providers: ['apple', 'google'] },
+    })
+    expect(state.link).toBeUndefined()
+  })
+
+  it('keeps the link prompt when its sign-in is closed, and cancelling forgets it', async () => {
+    cloud = {
+      auth: createMemoryAuth({
+        seed: [{ uid: 'me', email: 'aisha@example.test', providers: ['apple'] }],
+        emails: { apple: 'aisha@example.test', google: 'aisha@example.test' },
+      }),
+      remote: createMemorySyncRemote(),
+    }
+    start()
+    await session.signIn('google')
+    const auth = cloud.auth
+    const realSignIn = auth.signIn
+    auth.signIn = async () => {
+      throw Object.assign(new Error('closed'), { code: 'auth/popup-closed-by-user' })
+    }
+
+    await session.signIn('apple')
+    expect(session.getAccountState()).toMatchObject({ status: 'link-required', error: null })
+
+    await session.cancelLink()
+    expect(session.getAccountState()).toMatchObject({ status: 'signed-out', link: undefined })
+
+    auth.signIn = realSignIn
+    await session.signIn('apple')
+    expect(session.getAccountState().account?.providers).toEqual(['apple'])
+  })
+
+  it('links a second method from the signed-in account', async () => {
+    start()
+    await session.signIn('apple')
+    await session.syncNow()
+
+    await session.linkProvider('google')
+    expect(session.getAccountState()).toMatchObject({
+      status: 'idle',
+      account: { uid: 'me', providers: ['apple', 'google'] },
+    })
+  })
+
+  it('reports a method that belongs to another account as link-conflict', async () => {
+    cloud = { auth: createMemoryAuth(), remote: createMemorySyncRemote() }
+    await cloud.auth.signIn('google')
+    await cloud.auth.signOut()
+    start()
+    await session.signIn('apple')
+    await session.syncNow()
+
+    await session.linkProvider('google')
+    expect(session.getAccountState()).toMatchObject({
+      status: 'error',
+      error: 'link-conflict',
+      account: { providers: ['apple'] },
+    })
+  })
+
+  it('reports deleting where no linked method can sign in as reauth-unavailable', async () => {
+    cloud = {
+      auth: createMemoryAuth({ uid: 'me', available: ['google'] }),
+      remote: createMemorySyncRemote(),
+    }
+    start()
+    await session.signIn('apple')
+    await session.syncNow()
+
+    await session.deleteAccount('keep')
+    expect(session.getAccountState()).toMatchObject({
+      status: 'error',
+      error: 'reauth-unavailable',
+      account: { uid: 'me' },
+    })
+  })
+
+  it('removes nothing when the final sync cannot reach the account', async () => {
+    start()
+    await session.signIn('apple')
+    await session.syncNow()
+    recordEvent({ kind: 'prayer-performed', subject: 'fajr', at: new Date(1_000), logDay: 'd' })
+    cloud.remote.push = async () => {
+      throw new Error('offline')
+    }
+
+    await session.signOut('remove')
+    expect(session.getAccountState()).toMatchObject({ status: 'error', error: 'remove-blocked' })
+    expect(allActions()).toHaveLength(1)
+  })
+})
+
+describe('restoring from onboarding', () => {
+  let cloud: Cloud
+  let stop: () => void = () => {}
+
+  const outcome = (): string => restoreOutcomeOf(session.getAccountState(), getOnboarding())
+
+  beforeEach(() => {
+    stop()
+    backend.wipe()
+    // The onboarding store caches what it read; another test may have filled it.
+    reloadPreferences()
+    cloud = { auth: createMemoryAuth({ uid: 'me' }), remote: createMemorySyncRemote() }
+    stop = session.startCloud(async () => cloud, { debounceMs: 5 })
+  })
+
+  it('is idle before anyone signs in', () => {
+    expect(outcome()).toBe('idle')
+  })
+
+  it('lands as restored when the account finished onboarding elsewhere', async () => {
+    await cloud.remote.push('me', {
+      events: [],
+      preferences: [
+        {
+          key: 'onboarding',
+          value: JSON.stringify({ completed: true, gender: 'female', completedAt: '2026-01-01' }),
+          updatedAt: 10,
+        },
+        { key: 'hijriOffset', value: '1', updatedAt: 10 },
+      ],
+    })
+    expect(getOnboarding().completed).toBe(false)
+
+    await session.signIn('google')
+    // The first sync is under way as soon as the account is known.
+    expect(outcome()).toBe('restoring')
+
+    await session.syncNow()
+    expect(outcome()).toBe('restored')
+    expect(getOnboarding()).toMatchObject({ completed: true, gender: 'female' })
+  })
+
+  it('asks to continue setup when the account never finished it', async () => {
+    await session.signIn('google')
+    await session.syncNow()
+
+    expect(session.getAccountState()).toMatchObject({ status: 'idle', account: { uid: 'me' } })
+    expect(outcome()).toBe('needs-setup')
+  })
+
+  it('leaves errors to the Account screen', async () => {
+    cloud.remote.pull = async () => {
+      throw new Error('offline')
+    }
+    await session.signIn('google')
+    await session.syncNow()
+
+    expect(session.getAccountState().status).toBe('error')
+    expect(outcome()).toBe('idle')
   })
 })

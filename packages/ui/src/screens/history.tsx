@@ -38,7 +38,11 @@ function Group({
 
   return (
     <View className="gap-2">
-      <Text className="font-semibold text-xs uppercase" style={{ color: colors.secondaryLabel }}>
+      <Text
+        accessibilityRole="header"
+        aria-level={2}
+        className="font-semibold text-xs uppercase"
+        style={{ color: colors.secondaryLabel }}>
         {title}
       </Text>
       {summaries.map((summary) => (

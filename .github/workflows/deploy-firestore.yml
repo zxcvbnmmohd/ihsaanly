@@ -6,7 +6,9 @@
 # Secret (Settings → Environments → "development" / "production"):
 #   FIREBASE_SERVICE_ACCOUNT  JSON key of a service account in that project with
 #                             Firebase Rules Admin + Cloud Datastore Index Admin
-#                             + Service Usage Consumer — nothing broader.
+#                             + Service Usage Consumer + Service Usage Viewer
+#                             (deploy first checks the Firestore API is enabled)
+#                             — nothing broader.
 #
 # ponytail: a JSON key; Workload Identity Federation (keyless) is the upgrade.
 name: deploy-firestore

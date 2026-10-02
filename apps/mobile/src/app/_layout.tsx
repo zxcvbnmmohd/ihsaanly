@@ -8,7 +8,7 @@ import { NativeTabs } from 'expo-router/native-tabs'
 import { DarkTheme, DefaultTheme, ThemeProvider } from 'expo-router/react-navigation'
 import { StatusBar } from 'expo-status-bar'
 import type { ReactElement } from 'react'
-import { useEffect } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { AppState, Platform, Text, View } from 'react-native'
 import { cloudEnabled, startMobileCloud } from '@/cloud'
 import { useNotificationResponse } from '@/notifications/use-response'
@@ -67,7 +67,18 @@ export function ErrorBoundary({ error, retry }: ErrorBoundaryProps): ReactElemen
   )
 }
 
+interface Thing {
+  /**
+   * Signing in from onboarding to restore an account. Holds the gate shut
+   * after the synced setup completes onboarding, until the restore says it
+   * is finished (it may still have the reminders question to ask).
+   */
+  restoring: boolean
+}
+
 export default function RootLayout(): ReactElement {
+  const [thing, setThing] = useState<Thing>({ restoring: false })
+  const endRestore = useCallback((): void => setThing({ restoring: false }), [])
   const strings = useStrings()
   const colorScheme = useEffectiveColorScheme()
   const palette = usePalette()
@@ -88,12 +99,16 @@ export default function RootLayout(): ReactElement {
 
   // Onboarding replaces the tab bar rather than sitting over it: there is
   // nothing to navigate to until it is done.
-  if (!onboarding.completed) {
+  if (!onboarding.completed || thing.restoring) {
     return (
       <MobileUiProvider>
         <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
           <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
-          <OnboardingFlow />
+          <OnboardingFlow
+            restoring={thing.restoring}
+            onRestore={cloudEnabled ? () => setThing({ restoring: true }) : undefined}
+            onRestoreEnd={endRestore}
+          />
         </ThemeProvider>
       </MobileUiProvider>
     )

@@ -1,15 +1,19 @@
 {
+  "id": "/",
   "name": "Ihsaanly",
   "short_name": "Ihsaanly",
-  "description": "An offline-first, evidence-backed Sunnah companion.",
+  "description": "The sunnah that fits the moment, with its source. Private, calm and free.",
+  "lang": "en",
+  "dir": "auto",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "background_color": "#f7f0e9",
   "theme_color": "#f7f0e9",
+  "categories": ["lifestyle", "education"],
   "icons": [
-    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
     {
       "src": "/icon-512-maskable.png",
       "sizes": "512x512",

@@ -34,7 +34,7 @@ export function LanguageMenu(): ReactNode {
 
   return (
     <details ref={detailsRef} className="group relative">
-      <summary className="flex min-h-10 min-w-10 list-none items-center gap-[0.4rem] rounded-full border border-rule px-[0.6rem] py-[0.35rem] text-ink-soft hover:border-current hover:text-ink group-open:border-current group-open:text-ink [&::-webkit-details-marker]:hidden">
+      <summary className="flex min-h-10 min-w-10 list-none items-center gap-[0.4rem] rounded-full border border-rule-strong px-[0.6rem] py-[0.35rem] text-ink-soft hover:border-current hover:text-ink group-open:border-current group-open:text-ink [&::-webkit-details-marker]:hidden">
         <svg
           viewBox="0 0 24 24"
           aria-hidden="true"

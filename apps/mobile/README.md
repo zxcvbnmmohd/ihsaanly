@@ -4,8 +4,10 @@ An offline-first Sunnah companion. It tells you which sunnah, dua or adhkar the
 moment calls for, with the source on every item, and it keeps everything on the
 device.
 
-There is no account, no server and no analytics. It works with no permissions
-granted at all: decline location and pick a city instead.
+No account is needed and there are no analytics. Without signing in, nothing
+leaves the device; optional sign-in (Apple or Google) syncs the record across
+devices through Firebase. It works with no permissions granted at all: decline
+location and pick a city instead.
 
 ## Getting started
 

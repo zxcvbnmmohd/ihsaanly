@@ -7,6 +7,7 @@
 //   dist/headers.json         the same policies, for scripts/serve.ts and the tests
 import { existsSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs'
 import { join, relative, sep } from 'node:path'
+import { DEVELOPMENT_ROBOTS, resolveAppEnv, robotsTxt } from '@ihsaanly/web/app-env'
 import { type HeaderMap, inlineBlocks, pageCsp } from '@ihsaanly/web/hosting/csp'
 import { buildHeadersFile, buildHtaccess } from '@ihsaanly/web/hosting/htaccess'
 import { absolute, LOCALES, PAGES, pageUrl } from '../src/i18n/locales.ts'
@@ -15,6 +16,12 @@ const ROOT = join(import.meta.dir, '..')
 const CLIENT = join(ROOT, 'dist', 'client')
 const MESSAGES = join(ROOT, 'src', 'i18n', 'messages')
 const ENGLISH = LOCALES[0]
+
+// A development build (dev.ihsaanly.app) is kept out of every index: the
+// pages carry a robots meta (src/routes/__root.tsx), every response an
+// X-Robots-Tag, and robots.txt disallows everything. The sitemap is still
+// written; robots.txt no longer points at it. Production output is untouched.
+const APP_ENV = resolveAppEnv(process.env.VITE_APP_ENV)
 
 const problems: string[] = []
 
@@ -44,7 +51,9 @@ function policies(): HeaderMap {
   }
   const fallback = pages['/404.html']
   if (!fallback) throw new Error('dist/client/404.html is missing')
-  return { pages, fallback }
+  return APP_ENV === 'development'
+    ? { pages, fallback, headers: { 'X-Robots-Tag': DEVELOPMENT_ROBOTS } }
+    : { pages, fallback }
 }
 
 function sitemap(): string {
@@ -127,9 +136,11 @@ writeFileSync(
 )
 writeFileSync(join(CLIENT, '_headers'), buildHeadersFile(map))
 writeFileSync(join(CLIENT, 'sitemap.xml'), sitemap())
+// Production keeps public/robots.txt as it is (it names the sitemap).
+if (APP_ENV === 'development') writeFileSync(join(CLIENT, 'robots.txt'), robotsTxt(APP_ENV))
 writeFileSync(join(ROOT, 'dist', 'headers.json'), `${JSON.stringify(map, null, 2)}\n`)
 
-console.log(`postbuild: ${Object.keys(map.pages).length} pages, each with its own CSP`)
+console.log(`postbuild: ${Object.keys(map.pages).length} pages, each with its own CSP (${APP_ENV})`)
 console.log('translations:')
 for (const line of report()) console.log(line)
 if (problems.length) {

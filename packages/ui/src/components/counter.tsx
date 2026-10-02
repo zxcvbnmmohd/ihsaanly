@@ -42,15 +42,14 @@ export function Counter({
         style={{
           borderColor: palette.accent,
           backgroundColor: complete ? palette.accent : undefined,
-          width: 168,
-          height: 168,
+          minWidth: 168,
+          minHeight: 168,
           borderWidth: 2,
         }}>
         <Text
           className="text-5xl"
-          // The circle is a fixed 168pt, so the glyph is capped rather than
-          // letting the largest Dynamic Type sizes clip it.
-          maxFontSizeMultiplier={1.4}
+          // The circle is 168pt at least and grows with the text; 2x still fits inside it.
+          maxFontSizeMultiplier={2}
           style={{
             fontFamily: serif,
             fontWeight: '600',

@@ -1,3 +1,4 @@
+import { APP_LINKS } from '@ihsaanly/web/app-links'
 import { Link } from '@tanstack/react-router'
 import type { ReactNode } from 'react'
 import { useSite } from '~/i18n/use-site'
@@ -32,6 +33,23 @@ export function Footer(): ReactNode {
           className="text-ink-soft no-underline hover:text-ink aria-[current=page]:text-ink">
           {t('common.footer.terms')}
         </Link>
+        <Link
+          to="/{-$lang}/legal/delete-account/"
+          params={params}
+          aria-current={page?.id === 'deleteAccount' ? 'page' : undefined}
+          className="text-ink-soft no-underline hover:text-ink aria-[current=page]:text-ink">
+          {t('common.footer.deleteAccount')}
+        </Link>
+        <a href={links.companion} className="text-ink-soft no-underline hover:text-ink">
+          {t('common.footer.webApp')}
+        </a>
+        {APP_LINKS.chromeWebStoreUrl ? (
+          <a
+            href={APP_LINKS.chromeWebStoreUrl}
+            className="text-ink-soft no-underline hover:text-ink">
+            {t('common.footer.extension')}
+          </a>
+        ) : null}
         <a href={links.donate} className="text-ink-soft no-underline hover:text-ink">
           {t('common.footer.donate')}
         </a>

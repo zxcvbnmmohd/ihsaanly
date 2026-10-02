@@ -29,7 +29,7 @@ import {
   shareTextFor,
 } from './engine'
 import { demoLocaleFor } from './locale'
-import { type ChromeHandlers, Nav, StatusBar, TabBar } from './render-chrome'
+import { type ChromeHandlers, Nav, StatusBar, TABPANEL_ID, TabBar, tabId } from './render-chrome'
 import type { DemoAction, DemoTab } from './state'
 import { demoReducer, initialDemoState } from './state'
 
@@ -212,7 +212,12 @@ export function Phone({ pack }: { pack: LanguagePack }): ReactElement {
               : undefined
           }
         />
-        <div className="demo-content" ref={contentRef}>
+        <div
+          className="demo-content"
+          ref={contentRef}
+          role="tabpanel"
+          id={TABPANEL_ID}
+          aria-labelledby={tabId(activeTab)}>
           <WebUiProvider strings={strings} Link={linkRef.current}>
             {screen}
           </WebUiProvider>

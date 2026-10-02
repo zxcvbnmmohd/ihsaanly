@@ -6,7 +6,7 @@ Optional sign-in and sync for mobile, companion and the extension. The apps stay
 
 | Layer | Where | Knows about Firebase? |
 | --- | --- | --- |
-| Ports (`AuthService`, `SyncRemote`, `RemoteConfigService`, `LocalStore`) | `src/ports.ts` | no |
+| Ports (`AuthService`, `SyncRemote`, `LocalStore`) | `src/ports.ts` | no |
 | Sync engine (pull → merge → push) | `src/engine.ts` | no |
 | In-memory adapters (tests, and proof the ports are provider-agnostic) | `src/memory/` | no |
 | Firebase adapters | `src/firebase/` | yes |
@@ -19,9 +19,16 @@ Optional sign-in and sync for mobile, companion and the extension. The apps stay
 - **Preferences:** each key keeps whichever side changed it most recently. Preferences are stored as JSON strings.
 - **What syncs:** only the keys in `@ihsaanly/state/cloud/keys` (`SYNCED_KEYS`).
 
+**Linking Apple and Google**
+
+- One person is one uid. With Firebase's default one-account-per-email, signing in with the other provider for a known email rejects with `LinkRequiredError { existing, attempted, email }`; the adapter keeps the attempted credential in memory, and the next successful `signIn(existing)` links it. `signOut` forgets it.
+- `link(provider)` adds a method to the signed-in account. An identity that already opens another uid rejects with `LinkConflictError`; two accounts are never merged automatically.
+- `deleteAccount` re-authenticates with a linked provider this platform offers (`SignInFlow.available`), or rejects with `ReauthUnavailableError`.
+- Each flow supplies the Firebase functions (`link`, `linkCredential`, `pendingCredential`), so `firebase/auth.ts` keeps no runtime import of `firebase/auth` (the extension must not load it).
+
 ## Switching provider (Supabase, Amplify, own Postgres API…)
 
-1. Add `src/<provider>/` implementing `AuthService` and `SyncRemote`, plus `RemoteConfigService` if you need it. `src/memory/` is the smallest reference.
+1. Add `src/<provider>/` implementing `AuthService` and `SyncRemote`. `src/memory/` is the smallest reference.
 2. Give it `flows/<platform>.ts` functions that return `Cloud`, matching the Firebase ones.
 3. Point each app's loader, the one dynamic `import()` in its cloud setup, at the new flow.
 
@@ -70,4 +77,4 @@ Setting `emulatorHost` in an app's Firebase env (for example `VITE_FIREBASE_EMUL
 
 - **App Check:** the RN JS SDK has no native attestation. Rules plus auth are the gate for now.
 - **Apple sign-in in the extension:** it needs an offscreen or hosted-page bridge. Google covers the extension for now.
-- **Remote Config on mobile:** the JS SDK needs IndexedDB, so mobile runs on `DEFAULT_FLAGS`.
+- **Remote Config / remote flags:** removed on purpose. It is unused, and it pulls in Firebase Installations, which mints a per-install ID. Add it back only with a privacy-policy change.

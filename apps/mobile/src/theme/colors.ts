@@ -53,7 +53,7 @@ export const colors = {
     return Platform.select({
       ios: Color.ios.systemBlue,
       android: Color.android.dynamic.primary,
-      default: '#007aff',
+      default: '#0062cc',
     })
   },
   get onTint(): ColorValue {

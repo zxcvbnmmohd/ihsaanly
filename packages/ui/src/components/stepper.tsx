@@ -35,14 +35,14 @@ export function Stepper({ label, value, min = 0, onChange, palette }: StepperPro
       className="items-center justify-center rounded-full"
       style={{
         borderColor: palette.accent,
-        width: 44,
-        height: 44,
+        minWidth: 44,
+        minHeight: 44,
         borderWidth: 1.5,
         opacity: disabled ? 0.35 : 1,
       }}>
       <Text
         className="text-xl"
-        maxFontSizeMultiplier={1.4}
+        maxFontSizeMultiplier={2}
         style={{ color: palette.accent, lineHeight: 24 }}>
         {glyph}
       </Text>

@@ -21,6 +21,16 @@ const IN_POPUP = new Set([
   '/account',
 ])
 
+/**
+ * The popup has no About screen, so the pages the stores and the sign-in
+ * notice point to are linked here, with the GeoNames credit its licence asks for.
+ */
+const LINKS = [
+  { key: 'privacy', url: 'https://ihsaanly.app/legal/privacy' },
+  { key: 'terms', url: 'https://ihsaanly.app/legal/terms' },
+  { key: 'geonames', url: 'https://www.geonames.org/about.html' },
+] as const
+
 function SettingsRoute(): ReactElement {
   const strings = useStrings()
   const groups = useMoreGroups(useThemePreference(), cloudEnabled)
@@ -31,6 +41,22 @@ function SettingsRoute(): ReactElement {
     <>
       <PageHeader title={strings.more.title} />
       <MoreScreen groups={groups} />
+      <nav className="flex flex-none flex-wrap gap-x-4 gap-y-1 px-4 pb-4 text-sm">
+        {LINKS.map(({ key, url }) => (
+          <a
+            key={key}
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-system-tint underline">
+            {key === 'privacy'
+              ? strings.about.privacyPolicy
+              : key === 'terms'
+                ? strings.about.termsOfUse
+                : strings.about.geonames}
+          </a>
+        ))}
+      </nav>
     </>
   )
 }

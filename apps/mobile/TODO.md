@@ -42,11 +42,18 @@ one thing from you.
 
 ## 2. Store paperwork — after the accounts exist
 
-- [ ] **App Store privacy labels.** "Data Not Collected" for everything automatic,
-      plus disclosure that a _user-initiated_ diagnostic report contains
-      approximate location and religious-practice data. The exact label choice
-      wants your eye, not mine.
-- [ ] **Google Play Data Safety form.** Same disclosure. Background location is
+- [ ] **App Store privacy labels.** No longer "Data Not Collected": the optional
+      account collects data. Declare, each **Linked to You**, **not used for
+      Tracking**, purpose **App Functionality**: Contact Info → Email Address and
+      Name; Identifiers → User ID; Location → Coarse Location (~1 km); User Content →
+      Other User Content (the practice record and settings). Sensitive Info (religious
+      practice) if Apple's current form asks. Nothing collected for analytics or
+      advertising; no Precise Location (the home geofence stays on the device). A
+      _user-initiated_ diagnostic report or export goes where the user sends it. The
+      exact label choice still wants your eye.
+- [ ] **Google Play Data Safety form.** Same disclosure; the answers are drafted in
+      `store/google-play/README.md` (account deletion URL:
+      https://ihsaanly.app/legal/delete-account/). Background location is
       kept, so also complete the sensitive-permission declaration **and record the
       demo video** Play requires.
 - [ ] **Play Console: Financial features declaration.** Donations and tipping

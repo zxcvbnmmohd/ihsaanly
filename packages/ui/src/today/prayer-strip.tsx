@@ -37,17 +37,22 @@ export function PrayerStrip({ prayers, names, onMark }: PrayerStripProps): React
                 style={{
                   ...(entry.done
                     ? { borderColor: palette.accent, backgroundColor: palette.accent }
-                    : { borderColor: colors.separator }),
+                    : { borderColor: colors.fieldBorder }),
                   width: 26,
                   height: 26,
                   borderWidth: 2,
                   // Passed and unmarked is quieter than still to come, so the
                   // strip reads as a day rather than five identical buttons.
                   borderStyle: entry.passed && !entry.done ? 'dashed' : 'solid',
-                  opacity: entry.passed && !entry.done ? 0.6 : 1,
                 }}>
                 {entry.done ? (
-                  <Text style={{ color: palette.onAccent, fontSize: 13, lineHeight: 16 }}>✓</Text>
+                  <Text
+                    aria-hidden
+                    accessibilityElementsHidden
+                    importantForAccessibility="no"
+                    style={{ color: palette.onAccent, fontSize: 13, lineHeight: 16 }}>
+                    ✓
+                  </Text>
                 ) : null}
               </View>
               <Text

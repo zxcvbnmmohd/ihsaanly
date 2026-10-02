@@ -2,6 +2,8 @@
 // (see apps/mobile's per-group `_layout.tsx`, `<Stack.Screen options={{title}}/>`);
 // a client-only SPA has no such chrome, so the routes that used to rely on it
 // (everything but the three tabs) render this instead.
+import { useStrings } from '@ihsaanly/state/strings'
+import { DevelopmentBadge, isDevelopmentBuild } from '@ihsaanly/web/development-badge'
 import { IconBack } from '@ihsaanly/web/icons'
 import { useRouter } from '@tanstack/react-router'
 import type { ReactElement, ReactNode } from 'react'
@@ -16,18 +18,21 @@ export interface PageHeaderProps {
 
 export function PageHeader({ title, back = true, children }: PageHeaderProps): ReactElement {
   const router = useRouter()
+  const strings = useStrings()
   return (
     <header className="flex flex-none items-center gap-3 border-system-separator border-b px-4 py-3">
       {back ? (
         <button
           type="button"
           onClick={() => router.history.back()}
-          aria-label="Back"
-          className="text-system-label">
+          aria-label={strings.onboarding.back}
+          className="-my-2 -ms-2 inline-flex min-h-11 min-w-11 items-center justify-center text-system-label">
           <IconBack />
         </button>
       ) : null}
       <h1 className="flex-1 truncate font-semibold text-lg text-system-label">{title}</h1>
+      {/* Only in a beta (development) build; see packages/web/src/app-env.ts. */}
+      {isDevelopmentBuild && <DevelopmentBadge label="Beta" placement="inline" />}
       {children}
     </header>
   )

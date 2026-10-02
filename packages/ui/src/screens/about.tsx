@@ -18,6 +18,8 @@ export interface AboutScreenProps {
   licences: { label: string; destination: string; onPress: () => void }[]
   /** The published policy, which both stores require to be reachable. */
   privacy: { destination: string; onPress: () => void }
+  /** The terms of use that signing in agrees to. */
+  terms?: { destination: string; onPress: () => void }
 }
 
 interface BlockProps {
@@ -46,6 +48,7 @@ export function AboutScreen({
   donate,
   licences,
   privacy,
+  terms,
 }: AboutScreenProps): ReactElement {
   const colors = useColors()
   const { strings, scheme } = useUi()
@@ -83,6 +86,13 @@ export function AboutScreen({
           detail={privacy.destination}
           onPress={privacy.onPress}
         />
+        {terms ? (
+          <Row
+            title={strings.about.termsOfUse}
+            detail={terms.destination}
+            onPress={terms.onPress}
+          />
+        ) : null}
       </Block>
 
       <Block title={strings.about.licences}>

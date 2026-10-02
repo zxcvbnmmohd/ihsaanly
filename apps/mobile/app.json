@@ -65,9 +65,9 @@
       [
         "expo-location",
         {
-          "locationWhenInUsePermission": "Ihsaanly uses your location on this device to work out prayer windows. It is never sent anywhere.",
+          "locationWhenInUsePermission": "Ihsaanly uses your location to work out prayer windows. It stays on this device unless you sign in to sync, which keeps only an approximate location (about 1 km).",
           "isAndroidBackgroundLocationEnabled": true,
-          "locationAlwaysAndWhenInUsePermission": "Ihsaanly can notice when you leave home so it can offer the dua for it. This is optional, off by default, and your location is never sent anywhere."
+          "locationAlwaysAndWhenInUsePermission": "Ihsaanly can notice when you leave home so it can offer the dua for it. This is optional and off by default. Your home location is never sent anywhere."
         }
       ],
       [

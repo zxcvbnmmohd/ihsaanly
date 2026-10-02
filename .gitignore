@@ -181,3 +181,9 @@ dist
 .DS_Store
 # Brainstorming mockups (superpowers visual companion)
 .superpowers/
+
+# store upload packages (apps/extension: bun run package)
+*.zip
+
+# Kilo agent workspace
+.kilo/

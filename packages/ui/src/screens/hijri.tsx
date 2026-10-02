@@ -38,7 +38,11 @@ export function HijriScreen({
       ) : null}
 
       <View className="gap-3">
-        <Text className="font-semibold text-xs uppercase" style={{ color: colors.secondaryLabel }}>
+        <Text
+          accessibilityRole="header"
+          aria-level={2}
+          className="font-semibold text-xs uppercase"
+          style={{ color: colors.secondaryLabel }}>
           {strings.hijri.offset}
         </Text>
         {offsetOptions().map((option) => (
@@ -53,7 +57,11 @@ export function HijriScreen({
       </View>
 
       <View className="gap-4">
-        <Text className="font-semibold text-xs uppercase" style={{ color: colors.secondaryLabel }}>
+        <Text
+          accessibilityRole="header"
+          aria-level={2}
+          className="font-semibold text-xs uppercase"
+          style={{ color: colors.secondaryLabel }}>
           {strings.moonSighting.title}
         </Text>
         <Text className="text-sm" style={{ color: colors.secondaryLabel }}>

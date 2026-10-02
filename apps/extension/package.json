@@ -7,12 +7,14 @@
   "scripts": {
     "dev": "vite build --watch --mode development",
     "build": "vite build",
+    "package": "rm -rf dist ihsaanly-extension.zip && VITE_APP_ENV=production vite build && cd dist && zip -qrX ../ihsaanly-extension.zip . -x '.*' '*.map'",
+    "package:beta": "rm -rf dist ihsaanly-extension-beta.zip && NODE_ENV=production VITE_APP_ENV=development vite build --mode development && cd dist && zip -qrX ../ihsaanly-extension-beta.zip . -x '.*' '*.map'",
     "lint": "biome check .",
     "format": "biome check --write .",
     "typecheck": "tsc --noEmit",
     "test": "bun test ./test",
     "check": "bun run lint && bun run typecheck && bun run test && bun run build",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist *.zip"
   },
   "dependencies": {
     "@tanstack/react-router": "^1.170.40",

@@ -2,7 +2,7 @@
   "name": "@ihsaanly/cloud",
   "version": "0.0.0",
   "private": true,
-  "description": "Ihsaanly's optional account and sync: provider-agnostic ports (auth, sync remote, remote config, local store), the sync engine, and the Firebase adapters behind them. Nothing here runs until someone signs in; local-only use never loads it.",
+  "description": "Ihsaanly's optional account and sync: provider-agnostic ports (auth, sync remote, local store), the sync engine, and the Firebase adapters behind them. Nothing here runs until someone signs in; local-only use never loads it.",
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
@@ -11,7 +11,8 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "test": "bun test src",
-    "test:rules": "bunx firebase-tools@15 emulators:exec --only firestore --project demo-ihsaanly 'bun test ./test'"
+    "test:rules": "bunx firebase-tools@15 emulators:exec --only firestore --project demo-ihsaanly 'bun test ./test'",
+    "emulators": "bunx firebase-tools@15 emulators:start --only auth,firestore --project demo-ihsaanly"
   },
   "dependencies": {
     "zod": "catalog:",

@@ -61,6 +61,10 @@ export function PlaceMap({
             source={worldMap}
             tintColor={accent}
             contentFit="fill"
+            accessible={false}
+            accessibilityElementsHidden
+            importantForAccessibility="no-hide-descendants"
+            aria-hidden
             style={{
               position: 'absolute',
               top,

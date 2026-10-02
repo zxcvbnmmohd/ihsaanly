@@ -15,6 +15,18 @@ export const DONATE_URL = 'https://donate.ihsaanly.app'
 export const EMAIL = 'support@ihsaanly.app'
 export const LOCALE_KEY = 'ihsaanly.locale'
 
+/**
+ * The publisher, as the legal pages name it. Province and postal address are
+ * shown only once they are filled in: never print a placeholder.
+ */
+export const BUSINESS: {
+  name: string
+  country: string
+  province: string | null
+  address: string | null
+  email: string
+} = { name: 'Mohd Inc.', country: 'Canada', province: null, address: null, email: EMAIL }
+
 export interface Locale {
   /** The app's own language code, used in URLs and the message file name. */
   code: LocaleCode
@@ -63,7 +75,7 @@ export function localeFor(code: string | undefined): Locale {
   return found
 }
 
-export type PageId = 'home' | 'privacy' | 'terms'
+export type PageId = 'home' | 'privacy' | 'terms' | 'deleteAccount'
 
 export interface Page {
   id: PageId
@@ -82,14 +94,21 @@ export const PAGES: Record<PageId, Page> = {
     path: 'legal/privacy/',
     titleKey: 'privacy.pageTitle',
     descriptionKey: 'privacy.description',
-    updated: new Date(Date.UTC(2026, 8, 25)),
+    updated: new Date(Date.UTC(2026, 8, 29)),
   },
   terms: {
     id: 'terms',
     path: 'legal/terms/',
     titleKey: 'terms.pageTitle',
     descriptionKey: 'terms.description',
-    updated: new Date(Date.UTC(2026, 8, 25)),
+    updated: new Date(Date.UTC(2026, 8, 29)),
+  },
+  deleteAccount: {
+    id: 'deleteAccount',
+    path: 'legal/delete-account/',
+    titleKey: 'deleteAccount.pageTitle',
+    descriptionKey: 'deleteAccount.description',
+    updated: new Date(Date.UTC(2026, 8, 29)),
   },
 }
 
@@ -105,7 +124,7 @@ export function absolute(path: string): string {
   return `${BASE_URL}${path}`
 }
 
-/** Every prerendered page path: 10 languages × 3 pages. */
+/** Every prerendered page path: 10 languages × 4 pages. */
 export function allPagePaths(): string[] {
   return Object.values(PAGES).flatMap((page) => LOCALES.map((locale) => pageUrl(locale, page.path)))
 }

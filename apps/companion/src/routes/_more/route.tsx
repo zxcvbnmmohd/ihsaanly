@@ -62,6 +62,9 @@ function MoreRoute(): ReactElement {
   const theme = useThemePreference()
   const groups = useMoreGroups(theme, cloudEnabled)
   const pathname = useRouterState({ select: (state) => state.location.pathname })
+  const restoring = useRouterState({
+    select: (state) => state.location.search.from === 'onboarding',
+  })
   const hasChild = isMorePath(pathname)
 
   // Remembered once here, not by each of the settings children —
@@ -83,6 +86,8 @@ function MoreRoute(): ReactElement {
   )
 
   if (layout === 'compact') return hasChild ? <Outlet /> : list
+  // Account opened from onboarding stands alone: nothing in this list is open yet.
+  if (restoring) return <Outlet />
 
   const title = hasChild && isMorePath(pathname) ? titleFor(pathname, strings) : ''
 

@@ -13,9 +13,12 @@ const browserEn: Strings = {
   today: {
     ...en.today,
     needsLocation:
-      'Prayer windows, the Hijri date and everything the day asks of you follow from a rough location. It is worked out in this browser and never sent anywhere.',
+      'Prayer windows, the Hijri date and everything the day asks of you follow from a rough location. It is worked out in this browser and stays there unless you sign in to sync.',
   },
-  location: { ...en.location, useDeviceDetail: 'Nothing leaves this browser.' },
+  location: {
+    ...en.location,
+    useDeviceDetail: 'Stays in this browser unless you sign in to sync.',
+  },
 }
 
 export function useExtensionStrings(): Strings {

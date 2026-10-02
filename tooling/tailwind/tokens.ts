@@ -16,13 +16,13 @@ export const brand = {
   'wash-bottom': { light: '#e8cdbd', dark: '#3a241d' },
   accent: { light: '#a94a32', dark: '#e28c6f' },
   /** Link text on the wash: the accent, deepened just enough for 4.5:1 there. */
-  'accent-ink': { light: '#93402b', dark: '#e28c6f' },
+  'accent-ink': { light: '#93402b', dark: '#eba088' },
   'on-accent': { light: '#fff6f0', dark: '#1d120d' },
   /** Cards and widgets: a warm paper, not a grey surface. */
   paper: { light: '#fffaf6', dark: '#2a1c17' },
   ink: { light: '#2b1f1a', dark: '#f7ece6' },
   /** Secondary text in the app. */
-  'ink-secondary': { light: '#7a665c', dark: '#bba89e' },
+  'ink-secondary': { light: '#66564d', dark: '#bba89e' },
   /** Secondary text on the web, darkened to pass WCAG AA on the wash's deepest point. */
   'ink-soft': { light: '#66564d', dark: '#bba89e' },
   /** A switch knob reads as 'on' by being light in either theme, as it is on iOS. */
@@ -32,6 +32,10 @@ export const brand = {
   /** The tab indicator and press ripple: a tint of the accent, not the accent itself. */
   indicator: { light: 'rgba(169, 74, 50, 0.16)', dark: 'rgba(226, 140, 111, 0.22)' },
   rule: { light: 'rgba(43, 31, 26, 0.14)', dark: 'rgba(247, 236, 230, 0.16)' },
+  /** The outline of an interactive control on the wash: 3:1 (WCAG 1.4.11), which `rule` is not. */
+  'rule-strong': { light: '#7d6d63', dark: '#8c766c' },
+  /** A text field's resting border, and an unmarked checkbox ring: 3:1 on the app's surfaces. */
+  'field-border': { light: '#7c7c82', dark: '#6b6b70' },
   tint: { light: 'rgba(169, 74, 50, 0.1)', dark: 'rgba(226, 140, 111, 0.14)' },
 } satisfies Record<string, PerScheme>
 
@@ -53,7 +57,8 @@ export const system = {
     ios: 'secondarySystemBackground',
     web: { light: '#f2f2f7', dark: '#1c1c1e' },
   },
-  'system-tint': { ios: 'systemBlue', web: { light: '#007aff', dark: '#0a84ff' } },
+  // Web fills a button with it under white text, so it is darker than iOS's systemBlue (4.5:1).
+  'system-tint': { ios: 'systemBlue', web: { light: '#0062cc', dark: '#0a84ff' } },
   'system-on-tint': { ios: 'systemBackground', web: { light: '#ffffff', dark: '#000000' } },
 } satisfies Record<string, { ios: string; web: PerScheme }>
 

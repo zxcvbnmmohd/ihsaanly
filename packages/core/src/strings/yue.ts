@@ -17,7 +17,7 @@ export const yue: Strings = {
     empty: '暫時未有嘢。',
     needsLocationTitle: '你喺邊度？',
     needsLocation:
-      '禮拜時段、伊斯蘭曆日期同今日要做嘅一切，都係由一個大概位置計出嚟。計算喺呢部手機上面進行，永遠唔會傳送去任何地方。',
+      '禮拜時段、伊斯蘭曆日期同今日要做嘅一切，都係由一個大概位置計出嚟。計算喺呢部裝置上面進行，除非你登入同步，否則位置只會留喺呢部裝置。',
     chooseCity: '改為揀一個城市',
     chooseCityDetail: '唔使授權，所有功能照樣用得。',
   },
@@ -163,8 +163,26 @@ export const yue: Strings = {
       '可選。除非你登入，否則你嘅資料只會留喺呢部裝置。登入之後，你嘅紀錄、進度同設定（包括你嘅位置）會喺你所有裝置之間同步。',
     continueWithApple: '用 Apple 繼續',
     continueWithGoogle: '用 Google 繼續',
+    signInWithApple: '透過 Apple 登入',
+    signInWithGoogle: '使用 Google 帳戶登入',
+    agreement: '繼續即表示你同意{terms}同{privacy}。',
+    terms: '使用條款',
+    privacy: '私隱政策',
+    notice:
+      '為咗同步，你嘅功課紀錄、設定同大概位置，會連同 Apple 或 Google 提供嘅名同電郵，一齊儲存喺 Google Firebase（美國）。你一定要年滿 13 歲。你隨時可以刪除帳戶。',
     signingIn: '登入緊…',
     signInFailed: '登入未完成。呢部裝置上嘅嘢一啲都冇變。',
+    errors: {
+      network: '連接唔到。請檢查網絡再試。',
+      auth: '登入冇被接受。請再試。',
+      sync: '今次同步唔到你嘅資料。稍後會再試。',
+      unknown: '出咗啲問題。請再試。',
+      'remove-blocked': '連接唔到你嘅帳戶，所以乜都冇移除。',
+      'link-conflict':
+        '呢個登入方式已經屬於另一個 Ihsaanly 帳戶，所以冇連結到。想喺呢度用，請先由另一個帳戶匯出你想保留嘅內容，刪除嗰個帳戶，再重新連結，或者聯絡支援。',
+      'reauth-unavailable':
+        '刪除需要你再用 Apple 登入，但呢度用唔到。請喺 Ihsaanly App 或者 companion.ihsaanly.app 刪除你嘅帳戶。',
+    },
     signedInWith: { apple: '已用 Apple 登入', google: '已用 Google 登入' },
     lastSynced: (when: string): string => `上次同步：${when}`,
     neverSynced: '仲未同步',
@@ -186,7 +204,7 @@ export const yue: Strings = {
     deleteAccountDetail: '會清除你嘅帳戶同所有已同步嘅內容。',
     deleteTitle: '刪除你嘅帳戶？',
     deleteBody: '你嘅帳戶同所有已同步嘅資料會由雲端永久刪除，無法還原。',
-    deleteConfirm: '永久刪除',
+    deleteConfirm: '刪除帳戶',
     deleteChoiceTitle: '咁呢部裝置上嘅資料呢？',
     deleteChoiceBody: '保留嘅話，可以繼續喺冇帳戶嘅情況下用個 App；移除嘅話，個 App 會重新開始。',
     mismatchTitle: '呢部裝置有另一個帳戶嘅資料',
@@ -194,10 +212,32 @@ export const yue: Strings = {
     merge: '合併到呢個帳戶',
     fresh: '喺呢部裝置重新開始',
     cancel: '取消',
+    linkTitle: '你已經有帳戶',
+    linkBody: (existing: string, attempted: string): string =>
+      `呢個電郵已經有一個用 ${existing} 嘅 Ihsaanly 帳戶。用 ${existing} 繼續就可以打開；${attempted} 會連結埋落去，之後兩個都用得。`,
+    linkUnavailable:
+      '呢個帳戶用緊「透過 Apple 登入」，但呢度唔提供。請喺 Ihsaanly App 或者 companion.ihsaanly.app 登入，喺「帳戶」→「登入方式」連結 Google，再返嚟。',
+    methodsTitle: '登入方式',
+    methodLinked: (provider: string): string => `${provider}（已連結）`,
+    linkProvider: (provider: string): string => `連結 ${provider}`,
+    methodsHint:
+      '如果你用過 Apple 嘅「隱藏我的電子郵件地址」，請喺度連結 Google，咁兩個都會打開同一個帳戶。',
+    restore: {
+      backToSetup: '返去設定',
+      intro: '用你一直用緊嘅帳戶登入。你嘅設定、位置同紀錄會喺第一次同步時返嚟。',
+      restoring: '還原緊你嘅資料…',
+      restored: '你嘅資料返嚟喇。',
+      needsSetupTitle: '暫時冇嘢要還原',
+      needsSetupBody: '呢個帳戶仲未設定好。繼續設定啦——你會保持登入，你揀嘅嘢會一路同步。',
+      continueSetup: '繼續設定',
+      remindersTitle: '你嘅提醒已經開咗',
+      remindersBody: '你嘅帳戶開咗提醒。喺度允許通知，咁提醒都會傳到呢部裝置。',
+    },
   },
   data: {
     title: '你嘅資料',
-    explanation: '呢度所有嘢都儲存喺呢部裝置。除非你自己喺呢個畫面傳送出去，否則乜都唔會離開。',
+    explanation:
+      '呢度所有嘢都儲存喺呢部裝置。除非你自己喺呢個畫面傳送出去，或者喺「帳戶」登入同步，否則乜都唔會離開。',
     export: '匯出我嘅資料',
     exportDetail: '可以保存嘅可讀文字，或者帶去另一部裝置。',
     importing: '由檔案匯入',
@@ -211,7 +251,10 @@ export const yue: Strings = {
     delete: '刪除我嘅資料',
     deleteDetail: '呢部裝置上嘅一切：設定同你嘅功課紀錄。App 會重新開始。',
     deleteConfirmTitle: '刪除所有嘢？',
-    deleteConfirmBody: '你嘅設定同功課紀錄會由呢部裝置移除。除非你匯出過，否則其他地方都冇副本。',
+    deleteConfirmBody:
+      '你嘅設定同功課紀錄會由呢部裝置移除。除非你匯出過，或者同步咗去帳戶，否則其他地方都冇副本。',
+    deleteConfirmBodySignedIn:
+      '咁樣只會由呢部裝置移除你嘅設定同功課紀錄。你嘅帳戶仍然保留已同步嘅副本。如果想一齊刪除，請去「帳戶」→「刪除帳戶」。',
     deleteConfirm: '刪除',
     cancel: '取消',
   },
@@ -248,12 +291,14 @@ export const yue: Strings = {
     donateBody:
       '自願性質，唔會解鎖任何功能。App 每一部分都係免費，而且會一直免費。會喺你嘅瀏覽器打開。',
     privacyPolicy: '私隱政策',
-    privacyTitle: '乜都唔會離開呢部手機',
+    termsOfUse: '使用條款',
+    privacyTitle: '你嘅資料留喺呢部裝置',
     privacyBody:
-      'Ihsaanly 冇帳戶、冇伺服器，亦冇數據分析。你嘅位置只喺裝置上用嚟計算禮拜時間，亦只儲存喺呢度。你嘅功課紀錄亦只儲存喺呢度。除非你自己匯出或者分享，否則乜都唔會傳送去任何地方。「捐助」係 app 唯一嘅對外連結：佢會打開你嘅瀏覽器，而嗰個網頁唔屬於 Ihsaanly。',
+      '冇數據分析，亦冇廣告。你嘅位置喺呢部裝置上用嚟計禮拜時間，你嘅功課紀錄同設定都儲存喺度。除非你自己匯出或者分享，或者登入同步，否則乜都唔會離開呢部裝置。用 Apple 或 Google 登入係可選嘅：登入之後，你嘅名同電郵、功課紀錄、進度、設定同大概位置（準確到大約 1 公里）會儲存喺美國嘅 Google Firebase，等佢哋喺你嘅裝置之間同步。你隨時可以喺「帳戶」刪除帳戶。捐款會打開你嘅瀏覽器，嗰個網頁唔屬於 Ihsaanly。',
     licences: '採用技術',
     licencesBody:
-      'Expo 同 React Native、計算禮拜時間嘅 adhan 程式庫、烏姆庫拉曆法表、來自 city-timezones 嘅城市資料，以及地圖用嘅 Natural Earth。每一樣都按照佢自己嘅開源授權使用，詳列於原始碼庫。',
+      'Expo 同 React Native、計算禮拜時間嘅 adhan 程式庫、烏姆庫拉曆法表、來自 city-timezones 嘅城市資料（以 GeoNames 為基礎），以及地圖用嘅 Natural Earth。每一樣都按照佢自己嘅開源授權使用，詳列於原始碼庫。',
+    geonames: '城市資料 © GeoNames (CC BY 4.0)',
   },
   memorise: {
     title: '學識佢',
@@ -455,12 +500,13 @@ export const yue: Strings = {
     welcomeTitle: '重要嘅係時刻，唔係鐘點。',
     welcomeBody: 'Ihsaanly 會話你知黃昏記念幾時開始。永遠唔會係一個鐘點，亦永遠唔會有分數。',
     howTitle: '你標記禮拜，聖行就會出現。',
-    howBody: '禮完晌禮就撳一下晌禮，跟住嘅記主就喺度等你。乜都唔會離開呢部手機。冇帳戶，冇伺服器。',
+    howBody:
+      '禮完晌禮就撳一下晌禮，跟住嘅記主就喺度等你。除非你揀登入同步，否則所有嘢都留喺呢部裝置。',
     language: '語言',
     appearance: '外觀',
     howSample: 'سُبْحَانَ اللهِ وَبِحَمْدِهِ',
     locationStep: '你喺邊度？',
-    locationWhy: '喺呢部裝置上用嚟計出一日嘅各個部分。永遠唔會傳送去任何地方。',
+    locationWhy: '喺呢部裝置上用嚟計出一日嘅各個部分。除非你登入同步，否則只會留喺呢部裝置。',
     genderStep: '暫停記錄',
     genderWhy:
       '有啲日子禮拜記錄應該暫停，亦唔會累積任何要補嘅。呢個選擇決定 app 會唔會提供呢個功能。',
@@ -470,7 +516,7 @@ export const yue: Strings = {
     sisterDetail: '提供暫停',
     skip: '唔想講',
     skipDetail: '照樣會提供暫停。',
-    genderPrivacy: '只儲存喺呢部裝置。永遠唔會傳送出去，亦唔會用嚟做其他嘢。',
+    genderPrivacy: '儲存喺呢部裝置，只有登入先會同步。唔會用嚟做其他嘢。',
     remindersStep: '提醒',
     remindersWhy: '一日兩三個，夜晚永遠唔會有。之後可以喺「更多」度更改任何設定。',
     windowsDetail: '每個時段開始嗰陣',
@@ -498,13 +544,14 @@ export const yue: Strings = {
     allowReminders: '允許提醒',
     notNow: '遲啲先',
     done: '開始',
+    restore: '已經用緊 Ihsaanly？登入嚟還原你嘅資料',
   },
   location: {
     title: '位置',
     notSet: '未設定',
     currentLocation: '目前位置',
     useDevice: '用我嘅位置',
-    useDeviceDetail: '乜都唔會離開呢部手機。',
+    useDeviceDetail: '除非你登入同步，否則只會留喺呢部裝置。',
     locating: '搵緊你嘅位置…',
     orSearch: '或者搜尋城市',
     follows: '禮拜時段會跟隨呢個地方。',
@@ -512,7 +559,7 @@ export const yue: Strings = {
     noResults: '冇相符嘅城市。',
     unavailable: '呢部裝置嘅定位服務已經關閉。請開啟佢，或者改為搜尋你嘅城市。',
     declined: '你拒絕咗位置存取。請改為搜尋你嘅城市——所有功能照樣用得。',
-    explanation: '喺呢部裝置上用嚟計出禮拜時段，永遠唔會傳送去任何地方。',
+    explanation: '喺呢部裝置上用嚟計出禮拜時段。除非你登入同步，否則只會留喺呢部裝置。',
     attribution: '城市資料來自 city-timezones（MIT）。',
   },
   textField: {

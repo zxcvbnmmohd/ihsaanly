@@ -10,6 +10,7 @@ import { ONBOARDING_STEPS, useOnboardingFlow } from '@ihsaanly/state/onboarding/
 import { OnboardingScreen, type OnboardingStep } from '@ihsaanly/ui/screens/onboarding'
 import { useNavigate } from '@tanstack/react-router'
 import type { ReactElement } from 'react'
+import { cloudEnabled } from '~/cloud'
 import { requestDeviceLocation } from '~/platform/location'
 import { setThemePreference, useThemePreference } from '~/theme/store'
 
@@ -35,5 +36,8 @@ export function OnboardingFlow({ step }: OnboardingFlowProps): ReactElement {
     onComplete: () => void navigate({ to: '/today', replace: true }),
   })
 
-  return <OnboardingScreen {...props} />
+  // Someone with an account signs in instead; their synced setup replaces this flow.
+  const restore = (): void => void navigate({ to: '/account', search: { from: 'onboarding' } })
+
+  return <OnboardingScreen {...props} onRestore={cloudEnabled ? restore : undefined} />
 }

@@ -40,7 +40,8 @@ export function Button({
         onPress={press}
         className="items-center py-3"
         style={{ opacity: disabled ? 0.45 : 1 }}>
-        <Text className="font-semibold text-base" style={{ color: tint }}>
+        {/* Centred, so a title long enough to wrap stays balanced under the primary. */}
+        <Text className="text-center font-semibold text-base" style={{ color: tint }}>
           {title}
         </Text>
       </Pressable>

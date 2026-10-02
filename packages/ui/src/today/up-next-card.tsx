@@ -20,7 +20,11 @@ export function UpNextCard({ next, names }: UpNextCardProps): ReactElement {
   const list = (title: string, entries: TodayEntry[]): ReactElement | null =>
     entries.length > 0 ? (
       <View className="gap-1.5">
-        <Text className="font-semibold text-xs uppercase" style={{ color: colors.secondaryLabel }}>
+        <Text
+          accessibilityRole="header"
+          aria-level={2}
+          className="font-semibold text-xs uppercase"
+          style={{ color: colors.secondaryLabel }}>
           {title}
         </Text>
         {entries.map((entry) => (

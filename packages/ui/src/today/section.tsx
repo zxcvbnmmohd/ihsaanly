@@ -13,6 +13,8 @@ export function Section({ title, children }: SectionProps): ReactElement {
   return (
     <View className="gap-3">
       <Text
+        accessibilityRole="header"
+        aria-level={2}
         className="font-semibold text-xs uppercase tracking-wide"
         style={{ color: colors.accent }}>
         {title}

@@ -44,8 +44,8 @@ export function AppBanner(): ReactElement | null {
           storeValue(DISMISSED_KEY, '1')
           setThing({ dismissed: true })
         }}
-        className="text-system-secondary-label">
-        ✕
+        className="-my-2 -me-2 inline-flex min-h-11 min-w-11 items-center justify-center text-system-secondary-label">
+        <span aria-hidden="true">✕</span>
       </button>
     </div>
   )

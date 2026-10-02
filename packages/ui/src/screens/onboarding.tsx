@@ -74,6 +74,11 @@ export interface OnboardingScreenProps {
   onBack: () => void
   onSkipIntro: () => void
   onNotNow: () => void
+  /**
+   * Opens sign-in for someone who already has an account, whose synced setup
+   * then replaces this flow. Omitted in a local-only build, which hides it.
+   */
+  onRestore?: () => void
 }
 
 interface HeadingProps {
@@ -107,6 +112,8 @@ function Field({ label, children }: FieldProps): ReactElement {
   return (
     <View className="gap-2">
       <Text
+        accessibilityRole="header"
+        aria-level={2}
         className="font-semibold text-xs uppercase tracking-wide"
         style={{ color: colors.secondaryLabel }}>
         {label}
@@ -589,6 +596,8 @@ function StepBody(props: StepBodyProps): ReactElement {
           />
           <View className="gap-2 pt-2">
             <Text
+              accessibilityRole="header"
+              aria-level={2}
               className="font-semibold text-xs uppercase tracking-wide"
               style={{ color: colors.secondaryLabel }}>
               {strings.onboarding.included}
@@ -717,6 +726,14 @@ export function OnboardingScreen(props: OnboardingScreenProps): ReactElement {
             onColor={palette.onAccent}
             disabled={needsPlace}
           />
+          {step === 'welcome' && props.onRestore ? (
+            <Button
+              variant="secondary"
+              title={strings.onboarding.restore}
+              onPress={props.onRestore}
+              color={palette.accent}
+            />
+          ) : null}
         </View>
       </View>
     </View>

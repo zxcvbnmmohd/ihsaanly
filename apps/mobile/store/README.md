@@ -46,12 +46,12 @@ Counted in characters (UTF-16 units) by a script, all within limits:
 | App Store name              |         30 | 26 (fr)     |
 | App Store subtitle          |         30 | 26 (it)     |
 | App Store keywords (joined) |        100 | 98 (it)     |
-| App Store promotional text  |        170 | 169 (fr)    |
-| App Store description       |       4000 | 3426 (fr)   |
+| App Store promotional text  |        170 | 163 (it)    |
+| App Store description       |       4000 | 3444 (fr)   |
 | What's New / Play changelog | 4000 / 500 | 241 (fr)    |
 | Play title                  |         30 | 26 (fr, hi) |
-| Play short description      |         80 | 77 (en)     |
-| Play full description       |       4000 | 3404 (fr)   |
+| Play short description      |         80 | 78 (en, hi) |
+| Play full description       |       4000 | 3422 (fr)   |
 
 Keywords are comma-separated with no spaces, never repeat a word from the name or
 subtitle (Apple indexes those already), and name no other app.
@@ -70,8 +70,14 @@ unless replaced.
   override, which calculates to **4+**. Religious content is not a rating category.
   Unrestricted web access is `false`: the app opens only specific links in the system
   browser. `healthOrWellnessTopics` is `false`.
-- **Privacy wording** follows `docs/legal/privacy-policy.md`: "Nothing leaves your phone
-  unless you choose to send it."
+- **Privacy wording** follows the policy at https://ihsaanly.app/legal/privacy/: "No
+  account needed. Without signing in, nothing leaves your device. Optional sign-in syncs
+  your record across your devices." Never "nothing leaves your phone" on its own: the
+  optional account keeps a cloud copy.
+- **URLs:** marketing `https://ihsaanly.app/`, support `https://ihsaanly.app/#questions`,
+  privacy `https://ihsaanly.app/legal/privacy/`, each under the listing's language
+  prefix (`/fr/`, `/ar/`, `/yue/` for zh-Hant…). Account deletion (Play asks for it):
+  `https://ihsaanly.app/legal/delete-account/`.
 - **Honesty lines in every description:** the content awaits a named scholar's review
   (matching the About screen), and every language but English is a draft. Nothing
   claims review, recitations, or donations. The iOS text does not mention donating.
@@ -106,7 +112,7 @@ in `google-play/README.md`), or paste by hand in Play Console.
     "email": "TODO",
     "phone": "+TODO",
     "demoRequired": false,
-    "notes": "No account or sign-in. Everything works with no permissions granted: decline location and pick a city. Background location is used only by the optional, off-by-default leaving-home reminder (More > Where you are), which monitors one region with the system geofence. Nothing is sent to any server; the only outbound data is a diagnostic report or export the user sends through the share sheet."
+    "notes": "No sign-in is needed: every feature works without an account. Sign-in (Sign in with Apple or Google, More > Account) is optional and only syncs the user's record across devices; it can be deleted in the app (More > Account > Delete account). Everything works with no permissions granted: decline location and pick a city. Background location is used only by the optional, off-by-default leaving-home reminder (More > Where you are), which monitors one region with the system geofence; the home location never leaves the device. Without sign-in nothing is sent to any server; the only outbound data is a diagnostic report or export the user sends through the share sheet."
   }
   ```
 
@@ -115,8 +121,9 @@ in `google-play/README.md`), or paste by hand in Play Console.
 - [ ] **Screenshots:** 6.9"/6.7" and 6.5" iPhone, 13" iPad, Android phone. Per locale if
       you want localised shots; otherwise the English ones are used everywhere.
 - [ ] **Play feature graphic,** 1024×500, and a 512×512 Play icon.
-- [ ] **Landing page** at https://zxcvbnmmohd.github.io/ihsaanly/ (the marketing URL).
-      It does not exist yet; the support and privacy URLs do once Pages publishes `docs/`.
+- [x] **Landing page:** https://ihsaanly.app/ (the marketing URL), with the privacy
+      policy, terms and account-deletion page under `/legal/`. The old github.io policy
+      now only points there.
 - [ ] **Native-speaker check of every non-English listing** (ar, fr, it, ja, hi, ur,
       zh-Hans, zh-Hant), ideally by the same reviewers as the app's strings. Pay
       attention to the keyword lists, which are guesses at what people search, and to

@@ -38,6 +38,11 @@ collection does not carry its own. Once a reviewer has approved the content they
 are credited in the app, on the About screen; until then that screen says the
 content is awaiting review, and says so plainly.
 
+**How do I delete my account?**
+If you signed in, **More → Account → Delete account**. Or email
+support@ihsaanly.app from your account's address with the subject "Delete my
+account". Details: [ihsaanly.app/legal/delete-account](https://ihsaanly.app/legal/delete-account/).
+
 ## Contact
 
 Mohd Inc. · support@ihsaanly.app

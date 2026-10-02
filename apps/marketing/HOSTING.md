@@ -16,6 +16,21 @@ every push to `production` or `development`. The full domain layout is in
   needs no server. Upload them with everything else.
 - Many FTP clients hide dotfiles: make sure `.htaccess` is uploaded.
 
+## Build settings
+
+- `VITE_COMPANION_URL`: the web app the site links to (hero, "On your phone,
+  in your browser, in Chrome", questions, footer, JSON-LD). Unset, it is
+  `https://companion.ihsaanly.app`; the deploy workflow sets
+  `https://dev.companion.ihsaanly.app` for `development`. It is read at build
+  time in `src/links.ts`, so changing it means rebuilding.
+- Store listings come from `APP_LINKS` in `packages/web/src/app-links.ts`.
+  While `appStoreUrl`, `playUrl` or `chromeWebStoreUrl` is null, that badge
+  stays a "coming soon" button. Google's rules allow its official Chrome Web
+  Store badge (`public/assets/chrome-web-store-badge.png`, from
+  developer.chrome.com/docs/webstore/branding) only as a link to a published
+  listing, so it appears, and the footer gains a "Chrome extension" link, only
+  once `chromeWebStoreUrl` is set.
+
 ## Why each page has its own Content-Security-Policy
 
 TanStack Start writes a small inline script into every page that hands the
@@ -52,6 +67,16 @@ browser, so the prerendered page carries just its static fallback.
 | `Cache-Control`              | hashed assets: `public, max-age=31536000, immutable` | Vite puts a content hash in their names.                                                   |
 |                              | images, `.txt`, manifest: `public, max-age=2592000`  | Stable names (`og-<code>.png` are referenced by social sites), so 30 days.                         |
 |                              | HTML, XML, JSON: `no-cache`                          | Always revalidated, so a new build is live at once.                                        |
+
+## Development builds
+
+`VITE_APP_ENV=development` (set by `deploy-ftp.yml` for `dev.ihsaanly.app`;
+see `packages/web/src/app-env.ts`) marks the build: a "Development" pill in
+the top-start corner, `<meta name="robots" content="noindex, nofollow">` on
+every page, `X-Robots-Tag: noindex, nofollow` in `.htaccess` and `_headers`,
+and a `robots.txt` that disallows everything (the sitemap is still written,
+but nothing points at it). The label is internal and stays English. A
+production build is unchanged: no pill, `public/robots.txt` as it is.
 
 ## Share images
 

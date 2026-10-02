@@ -5,6 +5,7 @@ import amiriWoff2 from '@ihsaanly/tailwind/fonts/Amiri-Regular.woff2?url'
 import { absolute, BASE_URL, EMAIL, LOCALES, type Locale, type Page, pageUrl } from '~/i18n/locales'
 import type { Strings } from '~/i18n/messages.server'
 import { plain } from '~/i18n/rich-text'
+import { COMPANION_URL } from '~/links'
 
 type Meta = Record<string, string>
 interface Head {
@@ -38,6 +39,22 @@ function jsonLd(locale: Locale, strings: Strings): string {
         url: absolute(pageUrl(locale, '')),
         description: plain(get(strings, 'home.description')),
         operatingSystem: 'iOS, Android',
+        applicationCategory: 'LifestyleApplication',
+        inLanguage: LOCALES.map((each) => each.lang),
+        isAccessibleForFree: true,
+        offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+        publisher: { '@id': `${BASE_URL}/#organization` },
+      },
+      // The same app in the browser. The Chrome extension joins once it has a
+      // Chrome Web Store listing.
+      {
+        '@type': 'WebApplication',
+        '@id': `${BASE_URL}/#webapp`,
+        name: 'Ihsaanly',
+        url: `${COMPANION_URL}/`,
+        description: plain(get(strings, 'home.description')),
+        operatingSystem: 'Web',
+        browserRequirements: 'Requires a modern browser with JavaScript.',
         applicationCategory: 'LifestyleApplication',
         inLanguage: LOCALES.map((each) => each.lang),
         isAccessibleForFree: true,

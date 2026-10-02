@@ -24,7 +24,7 @@ export const so: Strings = {
     empty: 'Weli halkan waxba ma yaallaan.',
     needsLocationTitle: 'Xaggee joogtaa?',
     needsLocation:
-      'Waqtiyada salaadda, taariikhda Hijriga iyo wax kasta oo maalintu kaa rabto waxay ku xiran yihiin goob qiyaas ah. Taleefankan ayaa lagu xisaabiyaa, meelna looma diro.',
+      'Waqtiyada salaadda, taariikhda Hijriga iyo wax kasta oo maalintu kaa rabto waxay ku xiran yihiin goob qiyaas ah. Qalabkan ayaa lagu xisaabiyaa, halkaasna way ku jirtaa ilaa aad u gasho si loo iswaafajiyo.',
     chooseCity: 'Beddelkeeda magaalo dooro',
     chooseCityDetail: 'Ogolaansho looma baahna. Wax walba sidooda ayey u shaqeynayaan.',
   },
@@ -176,8 +176,26 @@ export const so: Strings = {
       'Ikhtiyaari. Xogtaadu waxay ku jirtaa qalabkan ilaa aad gasho. Gelitaanku wuxuu ka dhigayaa taariikhdaada, horumarkaaga iyo dejintaada, oo goobtaada ku jirto, mid ku wada iswaafaqsan dhammaan qalabkaaga.',
     continueWithApple: 'Ku sii wad Apple',
     continueWithGoogle: 'Ku sii wad Google',
+    signInWithApple: 'Ku gal Apple',
+    signInWithGoogle: 'Ku gal Google',
+    agreement: 'Markaad sii wadato, waxaad aqbashay {terms} iyo {privacy}.',
+    terms: 'Shuruudaha',
+    privacy: 'Siyaasadda asturnaanta',
+    notice:
+      'Diiwaanka camalkaaga, dejintaada iyo goobtaada qiyaasta ah waxaa lagu kaydiyaa Google Firebase (Maraykanka) si ay u iswaafaqaan, iyadoo ay la socdaan magacaaga iyo iimaylkaaga ee Apple ama Google. Waa inaad jirtaa 13 sano ama ka badan. Akoonkaaga waqti kasta tirtir.',
     signingIn: 'Waa la gelayaa…',
     signInFailed: 'Gelitaanku ma dhammaan. Waxba kuma beddelmin qalabkan.',
+    errors: {
+      network: 'Lama xiriiri karo. Hubi xiriirkaaga oo isku day mar kale.',
+      auth: 'Gelitaanka lama aqbalin. Isku day mar kale.',
+      sync: 'Xogtaada lama iswaafajin karin markan. Mar kale ayuu isku dayi doonaa.',
+      unknown: 'Wax baa khaldamay. Isku day mar kale.',
+      'remove-blocked': 'Akoonkaaga lama gaari karin, sidaas darteed waxba lama saarin.',
+      'link-conflict':
+        'Gelitaankan horeyba wuxuu u dhigmaa akoon Ihsaanly ah oo kale, sidaas darteed lama xiriirin. Si aad halkan u isticmaasho, ka soo dhoofi wixii aad rabto inaad haysato akoonka kale, tirtir akoonkaas, dabadeed mar kale xiriir, ama la xiriir taageerada.',
+      'reauth-unavailable':
+        'Tirtiriddu waxay kaa doonaysaa inaad mar kale ku gasho Apple, taas oo aan halkan laga heli karin. Akoonkaaga ka tirtir app-ka Ihsaanly ama companion.ihsaanly.app.',
+    },
     signedInWith: { apple: 'Waxaad ku gashay Apple', google: 'Waxaad ku gashay Google' },
     lastSynced: (when: string): string => `Isku-waafajintii ugu dambeysay: ${when}`,
     neverSynced: 'Weli lama isku waafajin',
@@ -201,7 +219,7 @@ export const so: Strings = {
     deleteTitle: 'Akoonkaaga ma tirtiraa?',
     deleteBody:
       'Akoonkaaga iyo dhammaan xogta lagu isku waafajiyey waa laga tirtirayaa daruur, weligoodna. Lama celin karo.',
-    deleteConfirm: 'Weligeed tirtir',
+    deleteConfirm: 'Tirtir akoonka',
     deleteChoiceTitle: 'Xogta qalabkan ku jirtana?',
     deleteChoiceBody:
       'Ku hay si aad abka ugu sii isticmaasho akoon la’aan, ama ka saar si abku mar kale u bilaabmo.',
@@ -210,11 +228,35 @@ export const so: Strings = {
     merge: 'Ku dar akoonkan',
     fresh: 'Qalabkan ka bilow cusub',
     cancel: 'Jooji',
+    linkTitle: 'Horeyba akoon ayaad leedahay',
+    linkBody: (existing: string, attempted: string): string =>
+      `Iimaylkan horeyba wuxuu leeyahay akoon Ihsaanly ah oo isticmaala ${existing}. Ku sii wad ${existing} si aad u furto; ${attempted} waa lagu xiri doonaa, markaa labadaba way shaqayn doonaan hadda ka dib.`,
+    linkUnavailable:
+      'Akoonkan wuxuu isticmaalaa Ku gal Apple, taas oo halkan lagu bixin. Ku gal app-ka Ihsaanly ama companion.ihsaanly.app, ku xiriir Google Akoon → Hababka gelitaanka, kadibna dib u soo noqo.',
+    methodsTitle: 'Hababka gelitaanka',
+    methodLinked: (provider: string): string => `${provider}, la xiriiriyey`,
+    linkProvider: (provider: string): string => `Xiriir ${provider}`,
+    methodsHint:
+      'Haddii aad Apple la isticmaashay “Hide My Email”, halkan ku xiriir Google si labaduba u furaan isla akoonka.',
+    restore: {
+      backToSetup: 'Ku noqo dejinta',
+      intro:
+        'Ku gal akoonka aad horey u isticmaashay. Dejintaada, goobtaada iyo taariikhdaadu waxay la soo noqonayaan iswaafajinta ugu horreysa.',
+      restoring: 'Xogtaada ayaa la soo celinayaa…',
+      restored: 'Xogtaadii way soo noqotay.',
+      needsSetupTitle: 'Weli wax la soo celiyo ma jiraan',
+      needsSetupBody:
+        'Akoonkan weli lama dejin. Sii wad dejinta — waad sii jiraysaa adigoo galay, doorashooyinkaaguna way iswaafajinayaan markaad socotid.',
+      continueSetup: 'Sii wad dejinta',
+      remindersTitle: 'Xusuusiyeyaashaadu way shidan yihiin',
+      remindersBody:
+        'Akoonkaagu xusuusiyeyaal ayuu shidan yahay. Halkan ku oggolow ogeysiisyada si ay qalabkan sidoo kale ugu yimaadaan.',
+    },
   },
   data: {
     title: 'Xogtaada',
     explanation:
-      'Wax walba oo halkan ah waxay ku jiraan qalabkan. Waxba kama baxaan ilaa adigu aad dirto, shaashaddan ayaadna ka dirtaa.',
+      'Wax walba oo halkan ah waxay ku jiraan qalabkan. Waxba kama baxaan ilaa adigu aad ka dirto shaashaddan, ama aad Akoon ka gasho si loo iswaafajiyo.',
     export: 'Dhoofi xogtayda',
     exportDetail: 'Qoraal la akhriyi karo oo aad hayn karto, ama u qaadan karto qalab kale.',
     importing: 'Ka soo gali fayl',
@@ -231,7 +273,9 @@ export const so: Strings = {
       'Wax walba oo qalabkan ku jira: dejinta iyo diiwaanka camalkaaga. Abku mar kale ayuu bilaabanayaa.',
     deleteConfirmTitle: 'Wax walba ma la tirtiraa?',
     deleteConfirmBody:
-      'Dejintaada iyo diiwaanka camalkaaga waa laga saarayaa qalabkan. Meel kale nuqul kuma jiro haddii aadan mid dhoofin.',
+      'Dejintaada iyo diiwaanka camalkaaga waa laga saarayaa qalabkan. Haddii aadan dhoofin ama aadan akoon la iswaafajin, meel kale nuqul kuma jiro.',
+    deleteConfirmBodySignedIn:
+      'Tani waxay dejintaada iyo diiwaanka camalkaaga ka saaraysaa qalabkan oo keliya. Akoonkaagu wuxuu hayaa nuqulkiisa la iswaafajiyay. Si aad kaas u tirtirto, tag Akoon → Tirtir akoonka.',
     deleteConfirm: 'Tirtir',
     cancel: 'Jooji',
   },
@@ -268,12 +312,14 @@ export const so: Strings = {
     donateBody:
       'Waa ikhtiyaari, waxna kuuma furayso. Qayb kasta oo abka ah waa bilaash, bilaashna way ahaan doontaa. Waxay ka furmaysaa biraawsarkaaga.',
     privacyPolicy: 'Siyaasadda asturnaanta',
-    privacyTitle: 'Waxba kama baxaan taleefankan',
+    termsOfUse: 'Shuruudaha isticmaalka',
+    privacyTitle: 'Xogtaadu waxay ku jirtaa qalabkan',
     privacyBody:
-      'Ihsaanly ma laha akoon, server iyo falanqeyn midna. Goobtaada waxaa qalabka lagu isticmaalaa si loo xisaabiyo waqtiyada salaadda, halkan oo keliya ayaana lagu kaydiyaa. Diiwaanka camalkaaga halkan oo keliya ayaa lagu kaydiyaa. Meelna waxba looma diro ilaa adigu aad dhoofiso ama wadaagto. Deeqdu waa xiriirka keliya ee abka ka baxa: waxay furtaa biraawsarkaaga, boggaasna qayb kama aha Ihsaanly.',
+      'Ma jiro falanqayn iyo xayeysiis toona. Goobtaada waxaa qalabkan loogu isticmaalaa xisaabinta waqtiyada salaadda, diiwaanka camalkaaga iyo dejintaaduna halkan ayay ku jiraan. Waxba kama baxaan qalabkan ilaa adigu aad dhoofiso ama wadaagto, ama aad gasho si loo iswaafajiyo. Gelitaanka Apple ama Google waa ikhtiyaari: markaas magacaaga iyo iimaylkaaga, diiwaanka camalkaaga, horumarkaaga, dejintaada iyo goobtaada qiyaasta ah (ilaa 1 km) waxaa lagu kaydiyaa Google Firebase ee Maraykanka, si ay ugu iswaafaqaan qalabkaaga. Akoonkaaga waqti kasta ka tirtir Akoon. Deeqdu waxay furaysaa browser-kaaga, boggaasuna qayb kama aha Ihsaanly.',
     licences: 'Waxaa lagu dhisay',
     licencesBody:
-      'Expo iyo React Native, maktabadda adhan ee waqtiyada salaadda, jaantusyada kalandarka Umm al-Qura, xogta magaalooyinka ee city-timezones, iyo Natural Earth ee khariidadda. Mid kasta waxaa loo isticmaalaa sida ruqsaddiisa furan, oo ku qoran kaydka koodka.',
+      'Expo iyo React Native, maktabadda adhan ee waqtiyada salaadda, jaantusyada kalandarka Umm al-Qura, xogta magaalooyinka ee city-timezones (oo ku dhisan GeoNames), iyo Natural Earth ee khariidadda. Mid kasta waxaa loo isticmaalaa sida ruqsaddiisa furan, oo ku qoran kaydka koodka.',
+    geonames: 'Xogta magaalooyinka © GeoNames (CC BY 4.0)',
   },
   memorise: {
     title: 'Baro',
@@ -486,12 +532,13 @@ export const so: Strings = {
       'Ihsaanly wuxuu kuu sheegaa marka adkaarta galabtu furan yihiin. Marna saacad maaha. Marna dhibco maaha.',
     howTitle: 'Adigu salaadda calaamadi. Sunnadu way soo baxaysaa.',
     howBody:
-      'Taabo Duhur marka aad tukato, dikriga ka dambeeyaana wuu ku sugayaa. Waxba kama baxaan taleefankan. Akoon ma jiro, server ma jiro.',
+      'Taabo Duhur marka aad tukato, dikriga ka dambeeyaana wuu ku sugayaa. Wax walba waxay ku jiraan qalabkan ilaa aad doorato inaad gasho si loo iswaafajiyo.',
     language: 'Luqadda',
     appearance: 'Muuqaalka',
     howSample: 'سُبْحَانَ اللهِ وَبِحَمْدِهِ',
     locationStep: 'Xaggee joogtaa?',
-    locationWhy: 'Qalabkan ayaa loogu isticmaalaa ogaanshaha qaybaha maalinta. Meelna looma diro.',
+    locationWhy:
+      'Qalabkan ayaa loogu isticmaalaa ogaanshaha qaybaha maalinta. Halkaas ayay ku jirtaa ilaa aad gasho si loo iswaafajiyo.',
     genderStep: 'Hakadka diiwaangelinta',
     genderWhy:
       'Maalmaha qaarkood diiwaangelinta salaadda waa inay joogsato, iyadoo aan qadaa soo kordhin. Tani waxay abka u sheegaysaa inuu taas soo bandhigo iyo in kale.',
@@ -501,7 +548,8 @@ export const so: Strings = {
     sisterDetail: 'Hakad waa la soo bandhigayaa',
     skip: 'Door inaanan sheegin',
     skipDetail: 'Hakadka si kastaba waa la soo bandhigayaa.',
-    genderPrivacy: 'Qalabkan ayaa lagu kaydiyaa. Meelna looma diro, waxna kale looma isticmaalo.',
+    genderPrivacy:
+      'Qalabkan ayaa lagu kaydiyaa, waxaana la iswaafajiyaa oo keliya haddii aad gasho. Wax kale looma isticmaalo.',
     remindersStep: 'Xusuusiyeyaal',
     remindersWhy:
       'Laba ama saddex maalintii, marna habeenkii. Waxaas oo dhan goor dambe ka beddel Dheeraad.',
@@ -531,13 +579,14 @@ export const so: Strings = {
     allowReminders: 'Oggolow xusuusiyeyaasha',
     notNow: 'Hadda maya',
     done: 'Bilow',
+    restore: 'Horey ma u isticmaashaa Ihsaanly? Gal si aad xogtaada u soo celiso',
   },
   location: {
     title: 'Goobta',
     notSet: 'Lama dejin',
     currentLocation: 'Goobta hadda',
     useDevice: 'Isticmaal goobtayda',
-    useDeviceDetail: 'Waxba kama baxaan taleefankan.',
+    useDeviceDetail: 'Qalabkan ayay ku jirtaa ilaa aad gasho si loo iswaafajiyo.',
     locating: 'Waa lagu raadinayaa…',
     orSearch: 'ama raadi magaalo',
     follows: 'Waqtiyada salaadda waxay raaci doonaan meeshan.',
@@ -548,7 +597,7 @@ export const so: Strings = {
     declined:
       'Helitaanka goobta waa la diiday. Beddelkeeda raadi magaaladaada — wax walba way shaqeynayaan.',
     explanation:
-      'Qalabkan ayaa loogu isticmaalaa ogaanshaha waqtiyada salaadda. Marna meelna looma diro.',
+      'Qalabkan ayaa loogu isticmaalaa ogaanshaha waqtiyada salaadda. Halkaas ayay ku jirtaa ilaa aad gasho si loo iswaafajiyo.',
     attribution: 'Xogta magaalooyinka waxaa laga qaatay city-timezones (MIT).',
   },
   textField: {

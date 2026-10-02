@@ -1,5 +1,7 @@
 import {
+  cancelLink,
   deleteAccount,
+  linkProvider,
   resolveMismatch,
   signIn,
   signOut,
@@ -17,6 +19,15 @@ export const Route = createFileRoute('/account')({ component: AccountRoute })
 /** The extension has no Apple flow, so Google is the only button. */
 const PROVIDERS = ['google'] as const
 
+/** Signing in agrees to these; the notice under the buttons links both. */
+const LEGAL = {
+  termsUrl: 'https://ihsaanly.app/legal/terms',
+  privacyUrl: 'https://ihsaanly.app/legal/privacy',
+  onOpen: (url: string): void => {
+    window.open(url, '_blank', 'noopener')
+  },
+}
+
 function AccountRoute(): ReactElement {
   const strings = useExtensionStrings()
   const account = useAccount()
@@ -33,6 +44,9 @@ function AccountRoute(): ReactElement {
         onSignOut={(mode) => void signOut(mode)}
         onResolveMismatch={(mode) => void resolveMismatch(mode)}
         onDeleteAccount={(mode) => void deleteAccount(mode)}
+        onLink={(provider) => void linkProvider(provider)}
+        onCancelLink={() => void cancelLink()}
+        legal={LEGAL}
       />
     </>
   )

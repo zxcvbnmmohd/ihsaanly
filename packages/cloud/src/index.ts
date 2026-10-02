@@ -3,5 +3,4 @@
 // `firebase/flows/<platform>` — apps import `@ihsaanly/cloud/firebase/flows/web`,
 // `…/extension` or `…/native` and nothing else from `firebase/`.
 export * from './engine'
-export * from './flags'
 export * from './ports'

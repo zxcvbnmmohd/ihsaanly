@@ -80,6 +80,65 @@ function withSignIn(plugins: ExpoConfig['plugins']): ExpoConfig['plugins'] {
   ]
 }
 
+type PrivacyManifests = NonNullable<NonNullable<ExpoConfig['ios']>['privacyManifests']>
+
+const APP_FUNCTIONALITY = ['NSPrivacyCollectedDataTypeAppFunctionality']
+
+/**
+ * What the sign-in and sync code can send off the device, as App Store
+ * privacy labels: account details and the synced preferences and events.
+ * Declared in every build, not only cloud ones: the manifest describes what
+ * the app is able to collect, a local-only build merely never does, and one
+ * fixed manifest cannot drift from the store listing. Nothing here tracks.
+ */
+const COLLECTED_DATA_TYPES = [
+  'NSPrivacyCollectedDataTypeEmailAddress',
+  'NSPrivacyCollectedDataTypeName',
+  'NSPrivacyCollectedDataTypeUserID',
+  'NSPrivacyCollectedDataTypeCoarseLocation',
+  'NSPrivacyCollectedDataTypeOtherUserContent',
+  // The synced practice record reveals religious practice (App Store label: Sensitive Info).
+  'NSPrivacyCollectedDataTypeSensitiveInfo',
+].map((type) => ({
+  NSPrivacyCollectedDataType: type,
+  NSPrivacyCollectedDataTypeLinked: true,
+  NSPrivacyCollectedDataTypeTracking: false,
+  NSPrivacyCollectedDataTypePurposes: APP_FUNCTIONALITY,
+}))
+
+/**
+ * Required-reason APIs. Expo's template PrivacyInfo.xcprivacy already lists
+ * these four categories; Expo merges by category and de-duplicates reasons, so
+ * restating them is harmless and keeps the declaration correct if the template
+ * changes. 1C8F.1 is ours: the widget and app share defaults through the App
+ * Group.
+ */
+const ACCESSED_API_TYPES = [
+  {
+    NSPrivacyAccessedAPIType: 'NSPrivacyAccessedAPICategoryUserDefaults',
+    NSPrivacyAccessedAPITypeReasons: ['CA92.1', '1C8F.1'],
+  },
+  {
+    NSPrivacyAccessedAPIType: 'NSPrivacyAccessedAPICategoryFileTimestamp',
+    NSPrivacyAccessedAPITypeReasons: ['C617.1'],
+  },
+  {
+    NSPrivacyAccessedAPIType: 'NSPrivacyAccessedAPICategorySystemBootTime',
+    NSPrivacyAccessedAPITypeReasons: ['35F9.1'],
+  },
+  {
+    NSPrivacyAccessedAPIType: 'NSPrivacyAccessedAPICategoryDiskSpace',
+    NSPrivacyAccessedAPITypeReasons: ['E174.1'],
+  },
+]
+
+const PRIVACY_MANIFESTS: PrivacyManifests = {
+  NSPrivacyTracking: false,
+  NSPrivacyTrackingDomains: [],
+  NSPrivacyCollectedDataTypes: COLLECTED_DATA_TYPES,
+  NSPrivacyAccessedAPITypes: ACCESSED_API_TYPES,
+}
+
 export default ({ config }: ConfigContext): ExpoConfig => {
   const { suffix, name } = VARIANTS[variant()]
   const id = `${BASE_ID}${suffix}`
@@ -92,6 +151,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     ios: {
       ...config.ios,
       bundleIdentifier: id,
+      privacyManifests: PRIVACY_MANIFESTS,
       ...(hasCloud() ? { usesAppleSignIn: true } : {}),
       entitlements: {
         ...config.ios?.entitlements,

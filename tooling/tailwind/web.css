@@ -15,7 +15,7 @@
   --color-wash-top: #1b1411;
   --color-wash-bottom: #3a241d;
   --color-accent: #e28c6f;
-  --color-accent-ink: #e28c6f;
+  --color-accent-ink: #eba088;
   --color-on-accent: #1d120d;
   --color-paper: #2a1c17;
   --color-ink: #f7ece6;
@@ -25,6 +25,8 @@
   --color-surface: rgba(255, 246, 240, 0.08);
   --color-indicator: rgba(226, 140, 111, 0.22);
   --color-rule: rgba(247, 236, 230, 0.16);
+  --color-rule-strong: #8c766c;
+  --color-field-border: #6b6b70;
   --color-tint: rgba(226, 140, 111, 0.14);
   --color-system-label: #ffffff;
   --color-system-secondary-label: rgba(235, 235, 245, 0.6);
@@ -45,19 +47,21 @@
     --color-on-accent: #fff6f0;
     --color-paper: #fffaf6;
     --color-ink: #2b1f1a;
-    --color-ink-secondary: #7a665c;
+    --color-ink-secondary: #66564d;
     --color-ink-soft: #66564d;
     --color-knob: #fffaf6;
     --color-surface: rgba(255, 250, 246, 0.78);
     --color-indicator: rgba(169, 74, 50, 0.16);
     --color-rule: rgba(43, 31, 26, 0.14);
+    --color-rule-strong: #7d6d63;
+    --color-field-border: #7c7c82;
     --color-tint: rgba(169, 74, 50, 0.1);
     --color-system-label: #000000;
     --color-system-secondary-label: #3c3c43;
     --color-system-separator: #c6c6c8;
     --color-system-background: #ffffff;
     --color-system-secondary-background: #f2f2f7;
-    --color-system-tint: #007aff;
+    --color-system-tint: #0062cc;
     --color-system-on-tint: #ffffff;
     color-scheme: light;
   }

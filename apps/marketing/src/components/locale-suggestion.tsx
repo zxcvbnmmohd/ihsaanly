@@ -89,7 +89,7 @@ export function LocaleSuggestion(): ReactNode {
       <button
         type="button"
         onClick={dismiss}
-        className="min-h-8 rounded-full border border-rule px-[0.85rem] py-[0.25rem] text-[0.95rem] text-ink-soft [font:inherit]">
+        className="min-h-8 rounded-full border border-rule-strong px-[0.85rem] py-[0.25rem] text-[0.95rem] text-ink-soft [font:inherit]">
         {offer.dismiss}
       </button>
     </div>

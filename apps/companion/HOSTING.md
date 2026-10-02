@@ -30,6 +30,32 @@ for the account-level setup this mirrors), one-time steps:
    or `packages/**`; it builds with `bunx turbo build --filter=@ihsaanly/companion`
    (which runs the output, CSP and headless-Chrome checks) before uploading.
 
+## Search engines, sharing and development builds
+
+Marketing (`ihsaanly.app`) is the SEO surface and owns the sitemap. The
+companion only needs to be described well and indexed at its door:
+
+- `index.html` carries the title, description, canonical, theme colours,
+  icons and Open Graph / Twitter tags (image: `public/og.png`, a copy of
+  marketing's `og-en.png`). The canonical and `og:url` use `VITE_SITE_URL`,
+  the build's own origin (CI sets it per environment; default
+  `https://companion.ihsaanly.app`).
+- Every path is the same `index.html`, so the per-route tags are set
+  client-side by `src/head/use-document-head.ts` (Google renders the
+  script): `<title>` becomes "<screen> · Ihsaanly" from the localized screen
+  titles, and every route except `/` and `/onboarding/welcome` (where `/`
+  sends a new visitor) gets `<meta name="robots" content="noindex">`.
+- `robots.txt` (written by `scripts/postbuild.ts`) allows everything and names
+  no sitemap: a `Disallow` would stop crawlers from ever seeing the noindex.
+
+A development build (`VITE_APP_ENV=development`, set by `deploy-ftp.yml` from
+the deploy's environment; see `packages/web/src/app-env.ts`) is kept out of
+every index and is obvious on screen: a "Development" pill in the top-start
+corner, titles prefixed "Dev · ", `noindex, nofollow` in `index.html` and as
+`X-Robots-Tag` on every response, `robots.txt` disallowing everything, and
+"Ihsaanly Dev" as the installed app's name. The labels are internal and stay
+English. A production build has none of it.
+
 ## Filling in the dormant app-detection pieces
 
 Everything in `@ihsaanly/web/app-links` (`APP_LINKS`) stays `null` — and the

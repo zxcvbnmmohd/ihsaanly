@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as R404RouteImport } from './routes/404'
 import { Route as Char123LangChar125RouteRouteImport } from './routes/{-$lang}/route'
 import { Route as Char123LangChar125IndexRouteImport } from './routes/{-$lang}/index'
+import { Route as Char123LangChar125LegalDeleteAccountRouteImport } from './routes/{-$lang}/legal/delete-account'
 import { Route as Char123LangChar125LegalPrivacyRouteImport } from './routes/{-$lang}/legal/privacy'
 import { Route as Char123LangChar125LegalTermsRouteImport } from './routes/{-$lang}/legal/terms'
 
@@ -30,6 +31,12 @@ const Char123LangChar125IndexRoute = Char123LangChar125IndexRouteImport.update({
   path: '/',
   getParentRoute: () => Char123LangChar125RouteRoute,
 } as any)
+const Char123LangChar125LegalDeleteAccountRoute =
+  Char123LangChar125LegalDeleteAccountRouteImport.update({
+    id: '/legal/delete-account',
+    path: '/legal/delete-account',
+    getParentRoute: () => Char123LangChar125RouteRoute,
+  } as any)
 const Char123LangChar125LegalPrivacyRoute =
   Char123LangChar125LegalPrivacyRouteImport.update({
     id: '/legal/privacy',
@@ -47,12 +54,14 @@ export interface FileRoutesByFullPath {
   '/{-$lang}': typeof Char123LangChar125RouteRouteWithChildren
   '/404': typeof R404Route
   '/{-$lang}/': typeof Char123LangChar125IndexRoute
+  '/{-$lang}/legal/delete-account': typeof Char123LangChar125LegalDeleteAccountRoute
   '/{-$lang}/legal/privacy': typeof Char123LangChar125LegalPrivacyRoute
   '/{-$lang}/legal/terms': typeof Char123LangChar125LegalTermsRoute
 }
 export interface FileRoutesByTo {
   '/404': typeof R404Route
   '/{-$lang}': typeof Char123LangChar125IndexRoute
+  '/{-$lang}/legal/delete-account': typeof Char123LangChar125LegalDeleteAccountRoute
   '/{-$lang}/legal/privacy': typeof Char123LangChar125LegalPrivacyRoute
   '/{-$lang}/legal/terms': typeof Char123LangChar125LegalTermsRoute
 }
@@ -61,6 +70,7 @@ export interface FileRoutesById {
   '/{-$lang}': typeof Char123LangChar125RouteRouteWithChildren
   '/404': typeof R404Route
   '/{-$lang}/': typeof Char123LangChar125IndexRoute
+  '/{-$lang}/legal/delete-account': typeof Char123LangChar125LegalDeleteAccountRoute
   '/{-$lang}/legal/privacy': typeof Char123LangChar125LegalPrivacyRoute
   '/{-$lang}/legal/terms': typeof Char123LangChar125LegalTermsRoute
 }
@@ -70,15 +80,22 @@ export interface FileRouteTypes {
     | '/{-$lang}'
     | '/404'
     | '/{-$lang}/'
+    | '/{-$lang}/legal/delete-account'
     | '/{-$lang}/legal/privacy'
     | '/{-$lang}/legal/terms'
   fileRoutesByTo: FileRoutesByTo
-  to: '/404' | '/{-$lang}' | '/{-$lang}/legal/privacy' | '/{-$lang}/legal/terms'
+  to:
+    | '/404'
+    | '/{-$lang}'
+    | '/{-$lang}/legal/delete-account'
+    | '/{-$lang}/legal/privacy'
+    | '/{-$lang}/legal/terms'
   id:
     | '__root__'
     | '/{-$lang}'
     | '/404'
     | '/{-$lang}/'
+    | '/{-$lang}/legal/delete-account'
     | '/{-$lang}/legal/privacy'
     | '/{-$lang}/legal/terms'
   fileRoutesById: FileRoutesById
@@ -111,6 +128,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char123LangChar125IndexRouteImport
       parentRoute: typeof Char123LangChar125RouteRoute
     }
+    '/{-$lang}/legal/delete-account': {
+      id: '/{-$lang}/legal/delete-account'
+      path: '/legal/delete-account'
+      fullPath: '/{-$lang}/legal/delete-account'
+      preLoaderRoute: typeof Char123LangChar125LegalDeleteAccountRouteImport
+      parentRoute: typeof Char123LangChar125RouteRoute
+    }
     '/{-$lang}/legal/privacy': {
       id: '/{-$lang}/legal/privacy'
       path: '/legal/privacy'
@@ -130,6 +154,7 @@ declare module '@tanstack/react-router' {
 
 interface Char123LangChar125RouteRouteChildren {
   Char123LangChar125IndexRoute: typeof Char123LangChar125IndexRoute
+  Char123LangChar125LegalDeleteAccountRoute: typeof Char123LangChar125LegalDeleteAccountRoute
   Char123LangChar125LegalPrivacyRoute: typeof Char123LangChar125LegalPrivacyRoute
   Char123LangChar125LegalTermsRoute: typeof Char123LangChar125LegalTermsRoute
 }
@@ -137,6 +162,8 @@ interface Char123LangChar125RouteRouteChildren {
 const Char123LangChar125RouteRouteChildren: Char123LangChar125RouteRouteChildren =
   {
     Char123LangChar125IndexRoute: Char123LangChar125IndexRoute,
+    Char123LangChar125LegalDeleteAccountRoute:
+      Char123LangChar125LegalDeleteAccountRoute,
     Char123LangChar125LegalPrivacyRoute: Char123LangChar125LegalPrivacyRoute,
     Char123LangChar125LegalTermsRoute: Char123LangChar125LegalTermsRoute,
   }

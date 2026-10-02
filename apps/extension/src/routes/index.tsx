@@ -133,7 +133,10 @@ function TodayRoute(): ReactElement {
           window ? windowName(strings, window, planned?.today.jumuah ?? false) : strings.today.title
         }
         back={false}>
-        <Link to="/settings" aria-label={strings.more.title} className="text-system-label">
+        <Link
+          to="/settings"
+          aria-label={strings.more.title}
+          className="-my-2 -me-2 inline-flex min-h-11 min-w-11 items-center justify-center text-system-label">
           <IconMore />
         </Link>
       </PageHeader>

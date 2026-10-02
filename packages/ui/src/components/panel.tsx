@@ -55,7 +55,13 @@ export function Panel({ title, onClose, children }: PanelProps): ReactElement {
           onPress={onClose}
           className="items-center justify-center rounded-full"
           style={{ width: 28, height: 28 }}>
-          <Text style={{ color: colors.secondaryLabel, fontSize: 15 }}>✕</Text>
+          <Text
+            aria-hidden
+            accessibilityElementsHidden
+            importantForAccessibility="no"
+            style={{ color: colors.secondaryLabel, fontSize: 15 }}>
+            ✕
+          </Text>
         </Pressable>
       </View>
       {body}

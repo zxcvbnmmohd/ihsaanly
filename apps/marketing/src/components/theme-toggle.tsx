@@ -88,7 +88,7 @@ export function ThemeToggle(): ReactNode {
       aria-label={label}
       title={modeName}
       data-mode={thing.mode}
-      className="inline-flex min-h-10 min-w-10 items-center justify-center rounded-full border border-rule p-[0.35rem] text-ink-soft hover:border-current hover:text-ink">
+      className="inline-flex min-h-10 min-w-10 items-center justify-center rounded-full border border-rule-strong p-[0.35rem] text-ink-soft hover:border-current hover:text-ink">
       <ThemeIcon mode={thing.mode} />
     </button>
   )

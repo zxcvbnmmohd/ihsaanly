@@ -26,8 +26,9 @@ trailing newline on purpose, so what you paste is exactly what was counted.
   exists when you get there): Religion / spirituality, Prayer, Reference, Lifestyle,
   Calendar. Do not pick tags for features the app lacks (audio, Quran recitation).
 - **Contact email:** support@ihsaanly.app
-- **Website:** https://zxcvbnmmohd.github.io/ihsaanly/
-- **Privacy policy:** https://zxcvbnmmohd.github.io/ihsaanly/legal/privacy-policy
+- **Website:** https://ihsaanly.app/
+- **Privacy policy:** https://ihsaanly.app/legal/privacy/
+- **Account deletion URL** (App content → Data safety): https://ihsaanly.app/legal/delete-account/
 - **Price:** Free. **Contains ads:** No. **In-app purchases:** No.
 
 ## Content rating (IARC questionnaire)
@@ -38,11 +39,13 @@ trailing newline on purpose, so what you paste is exactly what was counted.
 - Language (profanity, crude humour): **No**
 - Controlled substances (drugs, alcohol, tobacco): **No**
 - Gambling, simulated gambling: **No**
-- Miscellaneous — users can interact or exchange content: **No**. There is no account,
-  no chat, no user-generated content. Sharing an item uses the system share sheet and
-  is not interaction inside the app.
+- Miscellaneous — users can interact or exchange content: **No**. The optional account
+  only syncs a person's own record between their own devices; there is no chat, no
+  sharing between users and no user-generated content. Sharing an item uses the system
+  share sheet and is not interaction inside the app.
 - Shares the user's current physical location with other users: **No**. Location is
-  used on the device only.
+  used on the device; with the optional account, a location rounded to about 1 km is
+  synced to that person's own devices only.
 - Allows purchase of digital goods: **No**. The optional donation opens
   `donate.ihsaanly.app` in the browser and unlocks nothing.
 - Unrestricted internet access / web browser: **No**. The app opens only specific links
@@ -60,6 +63,11 @@ trailing newline on purpose, so what you paste is exactly what was counted.
 - **Ads declaration:** No ads.
 - **Data safety, background location and financial features** are separate forms,
   tracked in `TODO.md` §2.
+
+## Data safety (answers)
+
+The final answers for every store's privacy form are in
+[`docs/store-privacy-forms.md`](../../../../docs/store-privacy-forms.md).
 
 ## Pushing
 

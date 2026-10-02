@@ -58,9 +58,10 @@ this explicitly, says _expected_ rather than asserting, and never quietly picks 
 **It is trying to become unnecessary.** Learn a dua and the app stops reminding you about
 it. No streaks, no scores, no debt.
 
-**Genuinely private, not "privacy-focused".** No account, no server, no analytics, no
+**Genuinely private, not "privacy-focused".** No account needed, no analytics, no
 advertising. Full function with zero permissions granted — decline location and pick a
-city instead. The only data that ever leaves is a bundle you deliberately choose to send.
+city instead. Without signing in, the only data that ever leaves is a bundle you
+deliberately choose to send; optional sign-in syncs your record, and you can delete it.
 
 ## What we will not do
 
@@ -103,12 +104,14 @@ It is designed to be calm. Two or three notifications a day, not fifteen. No str
 scores, nothing that turns worship into a game. Dismiss anything without explaining
 yourself.
 
-It works entirely offline, with no account, and it works fully without granting a single
-permission. Your practice is recorded on your device and stays there.
+It works entirely offline, with no account needed, and it works fully without granting a
+single permission. Your practice is recorded on your device and stays there unless you
+choose to sign in and sync it.
 
-**Privacy line** — must be worded exactly this way, because the diagnostic bundle exists:
+**Privacy line** — must be worded exactly this way, because the diagnostic bundle and
+optional sync exist:
 
-> Your worship data never leaves your phone unless you choose to send it.
+> Your worship data stays on your device unless you choose to send it or sign in to sync.
 
 ## Positioning by contrast
 

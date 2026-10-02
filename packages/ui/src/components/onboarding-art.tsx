@@ -27,6 +27,11 @@ function Star({ size, color, hollow = false, opacity = 1 }: StarProps): ReactEle
       source={hollow ? OUTLINE : SOLID}
       tintColor={color}
       contentFit="contain"
+      // Decorative: hidden from every screen reader.
+      accessible={false}
+      accessibilityElementsHidden
+      importantForAccessibility="no-hide-descendants"
+      aria-hidden
       style={{ width: size, height: size, opacity }}
     />
   )
@@ -50,7 +55,13 @@ export function OnboardingArt({ variant, color, onColor }: OnboardingArtProps): 
         <View
           className="items-center justify-center rounded-full"
           style={{ width: 52, height: 52, backgroundColor: color }}>
-          <Text style={{ color: onColor, fontSize: 26 }}>✓</Text>
+          <Text
+            aria-hidden
+            accessibilityElementsHidden
+            importantForAccessibility="no"
+            style={{ color: onColor, fontSize: 26 }}>
+            ✓
+          </Text>
         </View>
       </View>
     )

@@ -24,6 +24,8 @@ export interface Colors {
   surface: string
   indicator: string
   rule: string
+  ruleStrong: string
+  fieldBorder: string
   tint: string
   /** The OS's own colours: PlatformColor on iOS, Material 3 on Android, hex on the web. */
   label: ColorValue
@@ -53,6 +55,8 @@ export function useColors(): Colors {
     surface: palette.surface,
     indicator: palette.indicator,
     rule: brand.rule[scheme],
+    ruleStrong: brand['rule-strong'][scheme],
+    fieldBorder: brand['field-border'][scheme],
     tint: brand.tint[scheme],
     label: systemColors.label,
     secondaryLabel: systemColors.secondaryLabel,

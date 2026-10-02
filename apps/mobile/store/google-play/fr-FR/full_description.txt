@@ -30,7 +30,7 @@ WIDGETS
 Des widgets pour l'écran d'accueil le gardent à portée de regard : ce qui compte en ce moment, la prochaine prière, les prières du jour, la date de l'hégire, ce qui vient ensuite et le reste de la journée, des dou'as rapides, une dou'a du jour, ce qu'il vous reste à rattraper, et les jours à venir.
 
 PRIVÉE PAR DÉFAUT
-Pas de compte, pas de serveur, pas d'analytique, pas de publicité. Elle fonctionne entièrement hors ligne, et entièrement sans accorder la moindre autorisation : refusez la localisation et choisissez votre ville. Votre pratique est enregistrée sur votre appareil et y reste. Rien ne quitte votre téléphone sauf si vous choisissez de l'envoyer.
+Aucun compte requis, pas d'analytique, pas de publicité. Elle fonctionne entièrement hors ligne, et entièrement sans accorder la moindre autorisation : refusez la localisation et choisissez votre ville. Sans connexion, rien ne quitte votre appareil sauf si vous choisissez de l'envoyer. La connexion facultative synchronise votre historique entre vos appareils.
 
 HONNÊTE SUR ELLE-MÊME
 Le contenu est rédigé et attend la relecture d'un savant nommé, et l'écran « À propos » de l'application le dit. L'anglais est l'original ; les autres langues sont des brouillons en attente de relecture par des locuteurs qualifiés.

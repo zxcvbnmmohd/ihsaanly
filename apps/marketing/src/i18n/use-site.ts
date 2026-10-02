@@ -2,7 +2,9 @@
 // strings, the page's link values, and t/a helpers.
 import { useMatches, useParams } from '@tanstack/react-router'
 import type { ReactNode } from 'react'
+import { COMPANION_URL } from '~/links'
 import {
+  BUSINESS,
   DONATE_URL,
   EMAIL,
   formatDate,
@@ -36,6 +38,8 @@ function pageFor(routeId: string): Page | null {
   if (routeId.endsWith('/legal/privacy/') || routeId.endsWith('/legal/privacy'))
     return PAGES.privacy
   if (routeId.endsWith('/legal/terms/') || routeId.endsWith('/legal/terms')) return PAGES.terms
+  if (routeId.endsWith('/legal/delete-account/') || routeId.endsWith('/legal/delete-account'))
+    return PAGES.deleteAccount
   if (routeId === '/{-$lang}/') return PAGES.home
   return null
 }
@@ -53,8 +57,12 @@ export function useSite(): Site {
     home: pageUrl(locale, ''),
     privacy: pageUrl(locale, PAGES.privacy.path),
     terms: pageUrl(locale, PAGES.terms.path),
+    deleteAccount: pageUrl(locale, PAGES.deleteAccount.path),
+    province: BUSINESS.province ?? '',
     support: `${pageUrl(locale, '')}#questions`,
     donate: DONATE_URL,
+    companion: COMPANION_URL,
+    companionHost: new URL(COMPANION_URL).host,
     email: `mailto:${EMAIL}`,
     english: pageUrl(english, page?.path ?? ''),
     year: String(new Date().getUTCFullYear()),

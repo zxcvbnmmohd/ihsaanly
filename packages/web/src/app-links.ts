@@ -9,6 +9,8 @@ export interface AppLinks {
   androidPackage: string
   appStoreUrl: string | null
   playUrl: string | null
+  /** The Chrome extension's Chrome Web Store listing, null until it is published. */
+  chromeWebStoreUrl: string | null
   /** The companion web app's own origin, used as the Android intent fallback while there is no Play listing. */
   webOrigin: string
 }
@@ -19,6 +21,7 @@ export const APP_LINKS: AppLinks = {
   androidPackage: 'app.ihsaanly.companion',
   appStoreUrl: null,
   playUrl: null,
+  chromeWebStoreUrl: null,
   webOrigin: 'https://companion.ihsaanly.app',
 }
 

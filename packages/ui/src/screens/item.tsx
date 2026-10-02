@@ -122,7 +122,11 @@ function Labelled({ label, children }: LabelledProps): ReactElement {
   const colors = useColors()
   return (
     <View className="gap-1">
-      <Text className="font-semibold text-xs uppercase" style={{ color: colors.secondaryLabel }}>
+      <Text
+        accessibilityRole="header"
+        aria-level={2}
+        className="font-semibold text-xs uppercase"
+        style={{ color: colors.secondaryLabel }}>
         {label}
       </Text>
       {children}

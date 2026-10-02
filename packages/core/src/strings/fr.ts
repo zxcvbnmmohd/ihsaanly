@@ -23,7 +23,7 @@ export const fr: Strings = {
     empty: 'Rien ici pour l’instant.',
     needsLocationTitle: 'Où êtes-vous ?',
     needsLocation:
-      'Les plages de prière, la date hégirienne et tout ce que la journée vous demande découlent d’une position approximative. Elle est calculée sur ce téléphone et n’est jamais envoyée nulle part.',
+      'Les plages de prière, la date hégirienne et tout ce que la journée vous demande découlent d’une position approximative. Elle est calculée sur cet appareil et y reste, sauf si vous vous connectez pour synchroniser.',
     chooseCity: 'Choisir plutôt une ville',
     chooseCityDetail: 'Aucune autorisation nécessaire. Tout fonctionne quand même.',
   },
@@ -174,8 +174,26 @@ export const fr: Strings = {
       'Facultatif. Vos données restent sur cet appareil tant que vous ne vous connectez pas. Se connecter garde votre historique, votre progression et vos réglages, y compris votre position, synchronisés entre vos appareils.',
     continueWithApple: 'Continuer avec Apple',
     continueWithGoogle: 'Continuer avec Google',
+    signInWithApple: 'Se connecter avec Apple',
+    signInWithGoogle: 'Se connecter avec Google',
+    agreement: 'En continuant, vous acceptez les {terms} et la {privacy}.',
+    terms: 'Conditions d’utilisation',
+    privacy: 'Politique de confidentialité',
+    notice:
+      'L’historique de votre pratique, vos réglages et votre position approximative sont stockés chez Google Firebase (États-Unis) pour être synchronisés, avec votre nom et votre adresse e-mail fournis par Apple ou Google. Vous devez avoir au moins 13 ans. Vous pouvez supprimer votre compte à tout moment.',
     signingIn: 'Connexion…',
     signInFailed: 'La connexion n’a pas abouti. Rien n’a changé sur cet appareil.',
+    errors: {
+      network: 'Connexion impossible. Vérifiez votre connexion et réessayez.',
+      auth: 'La connexion n’a pas été acceptée. Réessayez.',
+      sync: 'Vos données n’ont pas pu être synchronisées cette fois. Une nouvelle tentative aura lieu.',
+      unknown: 'Un problème est survenu. Réessayez.',
+      'remove-blocked': 'Votre compte est injoignable, donc rien n’a été supprimé.',
+      'link-conflict':
+        'Cette connexion appartient déjà à un autre compte Ihsaanly, elle n’a donc pas été associée. Pour l’utiliser ici, exportez ce que vous souhaitez conserver de l’autre compte, supprimez ce compte, puis associez-la de nouveau, ou contactez l’assistance.',
+      'reauth-unavailable':
+        'La suppression exige de vous reconnecter avec Apple, ce qui n’est pas disponible ici. Supprimez votre compte depuis l’app Ihsaanly ou companion.ihsaanly.app.',
+    },
     signedInWith: { apple: 'Connecté avec Apple', google: 'Connecté avec Google' },
     lastSynced: (when: string): string => `Dernière synchronisation : ${when}`,
     neverSynced: 'Pas encore synchronisé',
@@ -199,7 +217,7 @@ export const fr: Strings = {
     deleteTitle: 'Supprimer votre compte ?',
     deleteBody:
       'Votre compte et toutes les données qui y sont synchronisées sont définitivement supprimés du cloud. Cette action est irréversible.',
-    deleteConfirm: 'Supprimer définitivement',
+    deleteConfirm: 'Supprimer le compte',
     deleteChoiceTitle: 'Et les données sur cet appareil ?',
     deleteChoiceBody:
       'Gardez-les pour continuer à utiliser l’application sans compte, ou supprimez-les pour repartir de zéro.',
@@ -209,11 +227,35 @@ export const fr: Strings = {
     merge: 'Fusionner dans ce compte',
     fresh: 'Repartir de zéro sur cet appareil',
     cancel: 'Annuler',
+    linkTitle: 'Vous avez déjà un compte',
+    linkBody: (existing: string, attempted: string): string =>
+      `Cet e-mail est déjà associé à un compte Ihsaanly qui utilise ${existing}. Continuez avec ${existing} pour l’ouvrir : ${attempted} y sera associé, et les deux fonctionneront désormais.`,
+    linkUnavailable:
+      'Ce compte utilise Se connecter avec Apple, qui n’est pas proposé ici. Connectez-vous dans l’app Ihsaanly ou sur companion.ihsaanly.app, associez Google dans Compte → Méthodes de connexion, puis revenez.',
+    methodsTitle: 'Méthodes de connexion',
+    methodLinked: (provider: string): string => `${provider}, associé`,
+    linkProvider: (provider: string): string => `Associer ${provider}`,
+    methodsHint:
+      'Si vous avez utilisé « Masquer mon adresse e-mail » avec Apple, associez Google ici pour que les deux ouvrent le même compte.',
+    restore: {
+      backToSetup: 'Retour à la configuration',
+      intro:
+        'Connectez-vous avec le compte que vous utilisez déjà. Vos réglages, votre position et votre historique reviennent avec la première synchronisation.',
+      restoring: 'Restauration de vos données…',
+      restored: 'Vos données sont de retour.',
+      needsSetupTitle: 'Rien à restaurer pour l’instant',
+      needsSetupBody:
+        'Ce compte n’a pas encore été configuré. Poursuivez la configuration : vous restez connecté, et vos choix se synchronisent au fur et à mesure.',
+      continueSetup: 'Poursuivre la configuration',
+      remindersTitle: 'Vos rappels sont activés',
+      remindersBody:
+        'Votre compte a des rappels activés. Autorisez les notifications ici pour qu’ils arrivent aussi sur cet appareil.',
+    },
   },
   data: {
     title: 'Vos données',
     explanation:
-      'Tout ce qui se trouve ici reste sur cet appareil. Rien n’en sort, sauf si vous l’envoyez vous-même, depuis cet écran.',
+      'Tout ce qui se trouve ici reste sur cet appareil. Rien n’en sort, sauf si vous l’envoyez vous-même depuis cet écran, ou si vous vous connectez pour synchroniser depuis Compte.',
     export: 'Exporter mes données',
     exportDetail: 'Un texte lisible que vous pouvez garder, ou transférer sur un autre appareil.',
     importing: 'Importer depuis un fichier',
@@ -231,7 +273,9 @@ export const fr: Strings = {
       'Tout ce qui se trouve sur cet appareil : les réglages et l’historique de votre pratique. L’application repart de zéro.',
     deleteConfirmTitle: 'Tout supprimer ?',
     deleteConfirmBody:
-      'Vos réglages et l’historique de votre pratique sont supprimés de cet appareil. Il n’en existe aucune copie ailleurs, sauf si vous en avez exporté une.',
+      'Vos réglages et l’historique de votre pratique sont supprimés de cet appareil. Sauf si vous les avez exportés ou synchronisés avec un compte, il n’en existe aucune copie ailleurs.',
+    deleteConfirmBodySignedIn:
+      'Cela supprime vos réglages et l’historique de votre pratique de cet appareil uniquement. Votre compte garde sa copie synchronisée. Pour la supprimer aussi, allez dans Compte → Supprimer le compte.',
     deleteConfirm: 'Supprimer',
     cancel: 'Annuler',
   },
@@ -270,12 +314,14 @@ export const fr: Strings = {
     donateBody:
       'Facultatif, et cela ne débloque rien. Toute l’application est gratuite et le restera. S’ouvre dans votre navigateur.',
     privacyPolicy: 'Politique de confidentialité',
-    privacyTitle: 'Rien ne quitte ce téléphone',
+    termsOfUse: 'Conditions d’utilisation',
+    privacyTitle: 'Vos données restent sur cet appareil',
     privacyBody:
-      'Ihsaanly n’a ni compte, ni serveur, ni statistiques d’usage. Votre position est utilisée sur l’appareil pour calculer les heures de prière et n’est enregistrée qu’ici. L’historique de votre pratique n’est enregistré qu’ici. Rien n’est envoyé nulle part, sauf si vous l’exportez ou le partagez vous-même. Le don est le seul lien qui sort de l’application : il ouvre votre navigateur, et cette page ne fait pas partie d’Ihsaanly.',
+      'Aucune mesure d’audience, aucune publicité. Votre position est utilisée sur cet appareil pour calculer les heures de prière, et l’historique de votre pratique ainsi que vos réglages sont conservés ici. Rien ne quitte cet appareil, sauf si vous l’exportez ou le partagez vous-même, ou si vous vous connectez pour synchroniser. La connexion avec Apple ou Google est facultative : votre nom et votre adresse e-mail, l’historique de votre pratique, votre progression, vos réglages et votre position approximative (à environ 1 km près) sont alors stockés chez Google Firebase, aux États-Unis, pour être synchronisés entre vos appareils. Supprimez votre compte à tout moment depuis Compte. Faire un don ouvre votre navigateur, et cette page ne fait pas partie d’Ihsaanly.',
     licences: 'Réalisé avec',
     licencesBody:
-      'Expo et React Native, la bibliothèque adhan pour les heures de prière, les tables du calendrier Umm al-Qura, les données de villes de city-timezones, et Natural Earth pour la carte. Chacun est utilisé sous sa propre licence libre, indiquée dans le dépôt du code source.',
+      'Expo et React Native, la bibliothèque adhan pour les heures de prière, les tables du calendrier Umm al-Qura, les données de villes de city-timezones (fondées sur GeoNames), et Natural Earth pour la carte. Chacun est utilisé sous sa propre licence libre, indiquée dans le dépôt du code source.',
+    geonames: 'Données de villes © GeoNames (CC BY 4.0)',
   },
   memorise: {
     title: 'L’apprendre',
@@ -489,13 +535,13 @@ export const fr: Strings = {
       'Ihsaanly vous dit quand les adhkar du soir sont ouverts. Jamais une heure. Jamais un score.',
     howTitle: 'Vous marquez la prière. La sunna apparaît.',
     howBody:
-      'Touchez Dhuhr une fois que vous l’avez priée, et le dhikr qui la suit vous attend. Rien ne quitte ce téléphone. Aucun compte, aucun serveur.',
+      'Touchez Dhuhr une fois que vous l’avez priée, et le dhikr qui la suit vous attend. Tout reste sur cet appareil, sauf si vous choisissez de vous connecter pour synchroniser.',
     language: 'Langue',
     appearance: 'Apparence',
     howSample: 'سُبْحَانَ اللهِ وَبِحَمْدِهِ',
     locationStep: 'Où êtes-vous ?',
     locationWhy:
-      'Utilisée sur cet appareil pour déterminer les parties de la journée. Jamais envoyée nulle part.',
+      'Utilisée sur cet appareil pour déterminer les parties de la journée. Elle y reste, sauf si vous vous connectez pour synchroniser.',
     genderStep: 'La pause du suivi',
     genderWhy:
       'Certains jours, le suivi des prières doit s’arrêter, sans que rien ne s’accumule à rattraper. Ceci indique à l’application s’il faut le proposer.',
@@ -506,7 +552,7 @@ export const fr: Strings = {
     skip: 'Je préfère ne pas répondre',
     skipDetail: 'La pause est proposée quand même.',
     genderPrivacy:
-      'Enregistré sur cet appareil. Jamais envoyé nulle part, et utilisé pour rien d’autre.',
+      'Enregistré sur cet appareil, et synchronisé seulement si vous vous connectez. Utilisé pour rien d’autre.',
     remindersStep: 'Rappels',
     remindersWhy:
       'Deux ou trois par jour, jamais la nuit. Vous pourrez tout modifier plus tard dans Plus.',
@@ -536,13 +582,14 @@ export const fr: Strings = {
     allowReminders: 'Autoriser les rappels',
     notNow: 'Pas maintenant',
     done: 'Commencer',
+    restore: 'Vous utilisez déjà Ihsaanly ? Connectez-vous pour restaurer vos données',
   },
   location: {
     title: 'Position',
     notSet: 'Non définie',
     currentLocation: 'Position actuelle',
     useDevice: 'Utiliser ma position',
-    useDeviceDetail: 'Rien ne quitte ce téléphone.',
+    useDeviceDetail: 'Reste sur cet appareil, sauf si vous vous connectez pour synchroniser.',
     locating: 'Localisation en cours…',
     orSearch: 'ou recherchez une ville',
     follows: 'Les plages de prière suivront ce lieu.',
@@ -553,7 +600,7 @@ export const fr: Strings = {
     declined:
       'L’accès à la position a été refusé. Recherchez plutôt votre ville : tout fonctionne quand même.',
     explanation:
-      'Utilisée sur cet appareil pour déterminer les plages de prière. Elle n’est jamais envoyée nulle part.',
+      'Utilisée sur cet appareil pour déterminer les plages de prière. Elle y reste, sauf si vous vous connectez pour synchroniser.',
     attribution: 'Données de villes issues de city-timezones (MIT).',
   },
   textField: {

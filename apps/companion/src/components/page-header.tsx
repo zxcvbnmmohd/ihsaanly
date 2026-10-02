@@ -7,6 +7,8 @@
 // their screen or sidebar, panel titles come from Panel, and settings pages
 // get an <h1> from the More layout — so every route can keep calling this
 // unconditionally and it simply renders nothing outside `compact`.
+
+import { useStrings } from '@ihsaanly/state/strings'
 import { useLayout } from '@ihsaanly/ui/layout'
 import { IconBack } from '@ihsaanly/web/icons'
 import { useRouter } from '@tanstack/react-router'
@@ -20,6 +22,7 @@ export interface PageHeaderProps {
 
 export function PageHeader({ title, back = true }: PageHeaderProps): ReactElement | null {
   const router = useRouter()
+  const strings = useStrings()
   const layout = useLayout()
   if (layout !== 'compact') return null
   return (
@@ -28,8 +31,8 @@ export function PageHeader({ title, back = true }: PageHeaderProps): ReactElemen
         <button
           type="button"
           onClick={() => router.history.back()}
-          aria-label="Back"
-          className="text-system-label">
+          aria-label={strings.onboarding.back}
+          className="-my-2 -ms-2 inline-flex min-h-11 min-w-11 items-center justify-center text-system-label">
           <IconBack />
         </button>
       ) : null}

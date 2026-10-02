@@ -1,0 +1,6 @@
+# Tool versions for this repo (https://mise.jdx.dev). Bun is pinned by
+# package.json's packageManager field; this only adds what bun can't provide.
+[tools]
+# The Firebase emulators (`bun run dev:cloud`, `packages/cloud` test:rules)
+# need Java 21+. Android builds of apps/mobile run on it as well.
+java = "temurin-21"

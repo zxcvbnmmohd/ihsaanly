@@ -1,4 +1,5 @@
 import { eventsToAdd, parseExport } from '@ihsaanly/core/data/bundle'
+import { useAccount } from '@ihsaanly/state/cloud/session'
 import { wipe } from '@ihsaanly/state/storage/backend'
 import { insertExportedEvents } from '@ihsaanly/state/storage/events'
 import { useStrings } from '@ihsaanly/state/strings'
@@ -19,6 +20,7 @@ const MAX_IMPORT_BYTES = 8 * 1024 * 1024
 
 export default function DataRoute(): ReactElement {
   const strings = useStrings()
+  const signedIn = useAccount().account !== null
   const [thing, setThing] = useState<Thing>({ message: null })
 
   const say = (message: string | null): void => setThing({ message })
@@ -53,7 +55,9 @@ export default function DataRoute(): ReactElement {
   }
 
   const confirmDelete = (): void => {
-    Alert.alert(strings.data.deleteConfirmTitle, strings.data.deleteConfirmBody, [
+    // Signed in, the account keeps its own copy: say so, and where that one is deleted.
+    const body = signedIn ? strings.data.deleteConfirmBodySignedIn : strings.data.deleteConfirmBody
+    Alert.alert(strings.data.deleteConfirmTitle, body, [
       { text: strings.data.cancel, style: 'cancel' },
       {
         text: strings.data.deleteConfirm,

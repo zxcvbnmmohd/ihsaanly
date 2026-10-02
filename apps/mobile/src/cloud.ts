@@ -16,6 +16,16 @@ const config = firebaseConfigFrom({
   emulatorHost: process.env.EXPO_PUBLIC_FIREBASE_EMULATOR_HOST,
 })
 
+/**
+ * The published legal pages. Signing in agrees to the terms, so the Account
+ * screen links both; About links them too, for everyone.
+ */
+export const LEGAL_URLS = {
+  privacy: 'https://ihsaanly.app/legal/privacy',
+  terms: 'https://ihsaanly.app/legal/terms',
+  deleteAccount: 'https://ihsaanly.app/legal/delete-account',
+} as const
+
 /** False in a build without a Firebase config: no Account row, no sign-in, no SDK. */
 export const cloudEnabled = config !== null
 
@@ -33,6 +43,11 @@ async function appleIdToken(): Promise<{ idToken: string; rawNonce: string }> {
   return { idToken: credential.identityToken, rawNonce }
 }
 
+/** Recognised by the session as "they changed their mind", which is not an error. */
+function cancelled(): Error {
+  return Object.assign(new Error('Sign-in was cancelled'), { code: 'cancelled' })
+}
+
 let googleConfigured = false
 
 async function googleIdToken(): Promise<string> {
@@ -45,7 +60,7 @@ async function googleIdToken(): Promise<string> {
   }
   await GoogleSignin.hasPlayServices()
   const response = await GoogleSignin.signIn()
-  if (response.type !== 'success') throw new Error('Google sign-in was cancelled')
+  if (response.type !== 'success') throw cancelled()
   if (!response.data.idToken) throw new Error('Google returned no ID token')
   return response.data.idToken
 }
@@ -54,7 +69,12 @@ async function loadCloud(): Promise<Cloud> {
   if (!config) throw new Error('Firebase is not configured')
   // Dynamic, so Firebase stays off the startup path.
   const { createNativeCloud } = await import('@ihsaanly/cloud/firebase/flows/native')
-  return createNativeCloud(config, { storage: Storage, appleIdToken, googleIdToken })
+  return createNativeCloud(config, {
+    storage: Storage,
+    appleIdToken,
+    googleIdToken,
+    appleAvailable: () => AppleAuthentication.isAvailableAsync(),
+  })
 }
 
 /** Starts sync once; returns the stop function. Call only when `cloudEnabled`. */

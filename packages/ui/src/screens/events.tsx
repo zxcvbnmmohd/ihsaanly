@@ -73,7 +73,11 @@ export function EventsScreen({
       </View>
 
       <View className="gap-3">
-        <Text className="font-semibold text-xs uppercase" style={{ color: colors.secondaryLabel }}>
+        <Text
+          accessibilityRole="header"
+          aria-level={2}
+          className="font-semibold text-xs uppercase"
+          style={{ color: colors.secondaryLabel }}>
           {strings.events.manual}
         </Text>
         <Text className="text-sm" style={{ color: colors.secondaryLabel }}>

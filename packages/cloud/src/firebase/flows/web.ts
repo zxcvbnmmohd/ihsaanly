@@ -1,8 +1,11 @@
 import {
+  type AuthError,
   type AuthProvider,
   connectAuthEmulator,
   GoogleAuthProvider,
   getAuth,
+  linkWithCredential,
+  linkWithPopup,
   OAuthProvider,
   reauthenticateWithPopup,
   signInWithPopup,
@@ -18,6 +21,14 @@ function providerFor(provider: SignInProvider): AuthProvider {
 
 export const webFlow: SignInFlow = {
   signIn: (auth, provider) => signInWithPopup(auth, providerFor(provider)),
+  link: (user, provider) => linkWithPopup(user, providerFor(provider)),
+  linkCredential: linkWithCredential,
+  // The popup's credential comes back on the error, not from anything we built.
+  pendingCredential: (error, provider) =>
+    provider === 'apple'
+      ? OAuthProvider.credentialFromError(error as AuthError)
+      : GoogleAuthProvider.credentialFromError(error as AuthError),
+  available: async () => true,
   reauthenticate: async (user, provider) => {
     await reauthenticateWithPopup(user, providerFor(provider))
   },

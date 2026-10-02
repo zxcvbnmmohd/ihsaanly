@@ -8,11 +8,25 @@ import { useOnboardingFlow } from '@ihsaanly/state/onboarding/use-onboarding-flo
 import { getStrings } from '@ihsaanly/state/strings'
 import { OnboardingScreen } from '@ihsaanly/ui/screens/onboarding'
 import type { ReactElement } from 'react'
+import { RestoreAccount } from '@/account/restore'
 import { requestDeviceLocation } from '@/location/device'
 import { ensurePermission } from '@/notifications/schedule'
 import { setThemePreference, useThemePreference } from '@/theme/store'
 
-export function OnboardingFlow(): ReactElement {
+interface OnboardingFlowProps {
+  /** Showing sign-in for an existing account in place of the steps. */
+  restoring: boolean
+  /** Opens that sign-in; omitted in a build without the cloud, which hides it. */
+  onRestore: (() => void) | undefined
+  /** Leaves it: back to the steps, or (`restored`) on into the app. */
+  onRestoreEnd: () => void
+}
+
+export function OnboardingFlow({
+  restoring,
+  onRestore,
+  onRestoreEnd,
+}: OnboardingFlowProps): ReactElement {
   const theme = useThemePreference()
   const props = useOnboardingFlow({
     theme,
@@ -21,5 +35,19 @@ export function OnboardingFlow(): ReactElement {
     ensureReminderPermission: () => ensurePermission(getStrings()).then(() => undefined),
   })
 
-  return <OnboardingScreen {...props} />
+  // The flow stays mounted under the sign-in, so its step is where it was.
+  if (restoring) {
+    return (
+      <RestoreAccount
+        onBackToSetup={onRestoreEnd}
+        onContinueSetup={() => {
+          onRestoreEnd()
+          props.onNext()
+        }}
+        onRestored={onRestoreEnd}
+      />
+    )
+  }
+
+  return <OnboardingScreen {...props} onRestore={onRestore} />
 }

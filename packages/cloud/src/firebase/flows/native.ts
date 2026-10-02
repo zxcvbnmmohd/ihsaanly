@@ -5,6 +5,7 @@ import {
   GoogleAuthProvider,
   getAuth,
   initializeAuth,
+  linkWithCredential,
   type OAuthCredential,
   OAuthProvider,
   type Persistence,
@@ -26,6 +27,8 @@ export interface NativeDeps {
   storage: ReactNativeAsyncStorage
   appleIdToken: () => Promise<{ idToken: string; rawNonce: string }>
   googleIdToken: () => Promise<string>
+  /** Sign in with Apple exists only on iOS 13+; without this, Apple counts as available. */
+  appleAvailable?: () => Promise<boolean>
 }
 
 /**
@@ -46,8 +49,20 @@ export function nativeFlow(deps: NativeDeps): SignInFlow {
     }
     return GoogleAuthProvider.credential(await deps.googleIdToken())
   }
+  // The credential the last sign-in built: when it fails because the email
+  // already has an account on the other provider, this is what gets linked.
+  let last: OAuthCredential | null = null
   return {
-    signIn: async (auth, provider) => signInWithCredential(auth, await credential(provider)),
+    signIn: async (auth, provider) => {
+      last = null
+      last = await credential(provider)
+      return signInWithCredential(auth, last)
+    },
+    link: async (user, provider) => linkWithCredential(user, await credential(provider)),
+    linkCredential: linkWithCredential,
+    pendingCredential: () => last,
+    available: async (provider) =>
+      provider === 'google' || ((await deps.appleAvailable?.()) ?? true),
     reauthenticate: async (user, provider) => {
       await reauthenticateWithCredential(user, await credential(provider))
     },

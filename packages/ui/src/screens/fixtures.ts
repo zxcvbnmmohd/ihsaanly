@@ -433,7 +433,8 @@ export const aboutFixture: AboutScreenProps = {
   itemCount: 32,
   reviewedBy: null,
   donate: { destination: 'donate.ihsaanly.app', onPress: noop },
-  privacy: { destination: 'zxcvbnmmohd.github.io/ihsaanly/legal/privacy-policy', onPress: noop },
+  privacy: { destination: 'ihsaanly.app/legal/privacy', onPress: noop },
+  terms: { destination: 'ihsaanly.app/legal/terms', onPress: noop },
   licences: [
     {
       label: 'Amiri font (SIL Open Font Licence)',
@@ -471,16 +472,47 @@ export const accountSignedOutFixture: AccountScreenProps = {
   onSignOut: noop,
   onResolveMismatch: noop,
   onDeleteAccount: noop,
+  onLink: noop,
+  onCancelLink: noop,
 }
 
 export const accountSignedInFixture: AccountScreenProps = {
   ...accountSignedOutFixture,
   account: {
     status: 'idle',
-    account: { email: 'aisha@example.com', displayName: 'Aisha', provider: 'google' },
+    account: {
+      email: 'aisha@example.com',
+      displayName: 'Aisha',
+      provider: 'google',
+      providers: ['google'],
+    },
     lastSyncedAt: Date.UTC(2026, 8, 29, 11, 55),
     error: null,
   },
+}
+
+export const accountLinkRequiredFixture: AccountScreenProps = {
+  ...accountSignedOutFixture,
+  account: {
+    status: 'link-required',
+    account: null,
+    lastSyncedAt: null,
+    error: null,
+    link: { existing: 'apple', attempted: 'google' },
+  },
+}
+
+/** Signed in from onboarding, the first sync still running. */
+export const accountRestoringFixture: AccountScreenProps = {
+  ...accountSignedInFixture,
+  account: { ...accountSignedInFixture.account, status: 'syncing', lastSyncedAt: null },
+  restore: { outcome: 'restoring', onBackToSetup: noop, onContinueSetup: noop },
+}
+
+/** Signed in from onboarding to an account that never finished setup. */
+export const accountNeedsSetupFixture: AccountScreenProps = {
+  ...accountSignedInFixture,
+  restore: { outcome: 'needs-setup', onBackToSetup: noop, onContinueSetup: noop },
 }
 
 export const dataFixture: DataScreenProps = {

@@ -13,7 +13,7 @@ export const en = {
     empty: 'Nothing here yet.',
     needsLocationTitle: 'Where are you?',
     needsLocation:
-      'Prayer windows, the Hijri date and everything the day asks of you follow from a rough location. It is worked out on this phone and never sent anywhere.',
+      'Prayer windows, the Hijri date and everything the day asks of you follow from a rough location. It is worked out on this device and stays there unless you sign in to sync.',
     chooseCity: 'Choose a city instead',
     chooseCityDetail: 'No permission needed. Everything still works.',
   },
@@ -160,8 +160,26 @@ export const en = {
       'Optional. Your data stays on this device unless you sign in. Signing in keeps your history, progress and settings — including your location — in sync across your devices.',
     continueWithApple: 'Continue with Apple',
     continueWithGoogle: 'Continue with Google',
+    signInWithApple: 'Sign in with Apple',
+    signInWithGoogle: 'Sign in with Google',
+    agreement: 'By continuing, you agree to the {terms} and the {privacy}.',
+    terms: 'Terms',
+    privacy: 'Privacy Policy',
+    notice:
+      'Your practice record, settings and approximate location are stored with Google Firebase (US) so they sync, together with your name and email from Apple or Google. You must be 13 or older. Delete your account at any time.',
     signingIn: 'Signing in…',
     signInFailed: 'Sign-in did not finish. Nothing on this device has changed.',
+    errors: {
+      network: 'Could not connect. Check your connection and try again.',
+      auth: 'The sign-in was not accepted. Try again.',
+      sync: 'Your data could not be synced this time. It will try again.',
+      unknown: 'Something went wrong. Try again.',
+      'remove-blocked': 'Could not reach your account, so nothing was removed.',
+      'link-conflict':
+        'That sign-in already belongs to a different Ihsaanly account, so it was not linked. To use it here, export anything you want to keep from the other account, delete that account, then link again — or contact support.',
+      'reauth-unavailable':
+        'Deleting needs you to sign in again with Apple, which is not available here. Delete your account from the Ihsaanly app or companion.ihsaanly.app.',
+    },
     signedInWith: { apple: 'Signed in with Apple', google: 'Signed in with Google' },
     lastSynced: (when: string): string => `Last synced ${when}`,
     neverSynced: 'Not synced yet',
@@ -185,7 +203,7 @@ export const en = {
     deleteTitle: 'Delete your account?',
     deleteBody:
       'Your account and all the data synced to it are permanently deleted from the cloud. This cannot be undone.',
-    deleteConfirm: 'Delete permanently',
+    deleteConfirm: 'Delete account',
     deleteChoiceTitle: 'And the data on this device?',
     deleteChoiceBody:
       'Keep it to go on using the app without an account, or remove it so the app starts over.',
@@ -195,11 +213,35 @@ export const en = {
     merge: 'Merge into this account',
     fresh: 'Start fresh on this device',
     cancel: 'Cancel',
+    linkTitle: 'You already have an account',
+    linkBody: (existing: string, attempted: string): string =>
+      `This email already has an Ihsaanly account that uses ${existing}. Continue with ${existing} to open it — ${attempted} will be linked, so either works from now on.`,
+    linkUnavailable:
+      'This account uses Sign in with Apple, which is not offered here. Sign in on the Ihsaanly app or companion.ihsaanly.app, link Google under Account → Sign-in methods, then come back.',
+    methodsTitle: 'Sign-in methods',
+    methodLinked: (provider: string): string => `${provider}, linked`,
+    linkProvider: (provider: string): string => `Link ${provider}`,
+    methodsHint:
+      'If you used Hide My Email with Apple, link Google here so both open the same account.',
+    restore: {
+      backToSetup: 'Back to setup',
+      intro:
+        'Sign in with the account you already use. Your settings, location and history come back with the first sync.',
+      restoring: 'Restoring your data…',
+      restored: 'Your data is back.',
+      needsSetupTitle: 'Nothing to restore yet',
+      needsSetupBody:
+        'This account has not been set up. Carry on with setup — you stay signed in, and your choices sync as you go.',
+      continueSetup: 'Continue setup',
+      remindersTitle: 'Your reminders are on',
+      remindersBody:
+        'Your account has reminders turned on. Allow notifications here so they can arrive on this device too.',
+    },
   },
   data: {
     title: 'Your data',
     explanation:
-      'Everything here lives on this device. Nothing leaves it unless you send it yourself, from this screen.',
+      'Everything here lives on this device. Nothing leaves it unless you send it yourself from this screen, or sign in to sync from Account.',
     export: 'Export my data',
     exportDetail: 'Readable text you can keep, or carry to another device.',
     importing: 'Import from a file',
@@ -215,7 +257,9 @@ export const en = {
       'Everything on this device: settings and your practice record. The app starts over.',
     deleteConfirmTitle: 'Delete everything?',
     deleteConfirmBody:
-      'Your settings and your practice record are removed from this device. There is no copy anywhere else unless you exported one.',
+      'Your settings and your practice record are removed from this device. Unless you exported them or synced them to an account, there is no copy anywhere else.',
+    deleteConfirmBodySignedIn:
+      'This removes your settings and practice record from this device only. Your account keeps its synced copy. To delete that too, go to Account → Delete account.',
     deleteConfirm: 'Delete',
     cancel: 'Cancel',
   },
@@ -253,12 +297,14 @@ export const en = {
     donateBody:
       'Optional, and it unlocks nothing. Every part of the app is free and stays free. Opens in your browser.',
     privacyPolicy: 'Privacy policy',
-    privacyTitle: 'Nothing leaves this phone',
+    termsOfUse: 'Terms of use',
+    privacyTitle: 'Your data stays on this device',
     privacyBody:
-      'Ihsaanly has no account, no server and no analytics. Your location is used on the device to compute prayer times and is stored only here. Your practice record is stored only here. Nothing is sent anywhere unless you export it or share it yourself. Donate is the one link out of the app: it opens your browser, and that page is not part of Ihsaanly.',
+      'No analytics and no ads. Your location is used on this device to work out prayer times, and your practice record and settings are kept here. Nothing leaves this device unless you export or share it yourself, or sign in to sync. Signing in with Apple or Google is optional: your name and email, practice record, progress, settings and approximate location (to about 1 km) are then stored with Google Firebase in the US, so they sync across your devices. Delete your account at any time from Account. Donate opens your browser, and that page is not part of Ihsaanly.',
     licences: 'Built with',
     licencesBody:
-      'Expo and React Native, the adhan library for prayer times, Umm al-Qura calendar tables, city data from city-timezones, and Natural Earth for the map. Each is used under its own open licence, listed in the source repository.',
+      'Expo and React Native, the adhan library for prayer times, Umm al-Qura calendar tables, city data from city-timezones (built on GeoNames), and Natural Earth for the map. Each is used under its own open licence, listed in the source repository.',
+    geonames: 'City data © GeoNames (CC BY 4.0)',
   },
   memorise: {
     title: 'Learn it',
@@ -469,12 +515,13 @@ export const en = {
       'Ihsaanly tells you when the evening adhkar are open. Never a time. Never a score.',
     howTitle: 'You mark the prayer. The sunnah appears.',
     howBody:
-      'Tap Dhuhr when you have prayed it and the dhikr that follows is waiting. Nothing leaves this phone. No account, no server.',
+      'Tap Dhuhr when you have prayed it and the dhikr that follows is waiting. Everything stays on this device unless you choose to sign in and sync.',
     language: 'Language',
     appearance: 'Appearance',
     howSample: 'سُبْحَانَ اللهِ وَبِحَمْدِهِ',
     locationStep: 'Where are you?',
-    locationWhy: 'Used on this device to work out the parts of the day. Never sent anywhere.',
+    locationWhy:
+      'Used on this device to work out the parts of the day. It stays there unless you sign in to sync.',
     genderStep: 'The tracking pause',
     genderWhy:
       'On some days prayer tracking should stop, with nothing accruing to make up. This tells the app whether to offer that.',
@@ -484,7 +531,7 @@ export const en = {
     sisterDetail: 'Pause offered',
     skip: 'Prefer not to say',
     skipDetail: 'The pause is offered anyway.',
-    genderPrivacy: 'Stored on this device. Never sent anywhere, and used for nothing else.',
+    genderPrivacy: 'Stored on this device, and synced only if you sign in. Used for nothing else.',
     remindersStep: 'Reminders',
     remindersWhy: 'Two or three a day, never in the night. Change any of this later in More.',
     windowsDetail: 'When each window opens',
@@ -513,13 +560,14 @@ export const en = {
     allowReminders: 'Allow reminders',
     notNow: 'Not now',
     done: 'Start',
+    restore: 'Already use Ihsaanly? Sign in to restore your data',
   },
   location: {
     title: 'Location',
     notSet: 'Not set',
     currentLocation: 'Current location',
     useDevice: 'Use my location',
-    useDeviceDetail: 'Nothing leaves this phone.',
+    useDeviceDetail: 'Stays on this device unless you sign in to sync.',
     locating: 'Finding you\u2026',
     orSearch: 'or search for a city',
     follows: 'Prayer windows will follow this place.',
@@ -529,7 +577,8 @@ export const en = {
       'Location services are switched off on this device. Turn them on, or search for your city instead.',
     declined:
       'Location access was declined. Search for your city instead \u2014 everything still works.',
-    explanation: 'Used on this device to work out prayer windows. It is never sent anywhere.',
+    explanation:
+      'Used on this device to work out prayer windows. It stays there unless you sign in to sync.',
     attribution: 'City data from city-timezones (MIT).',
   },
   textField: {

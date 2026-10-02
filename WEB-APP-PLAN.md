@@ -2,7 +2,6 @@
 
 Status: in progress. Replaces the older Expo-web-export plan (written 2026-09-27 for the single-repo app); revised 2026-09-28 for this monorepo.
 
-
 ## Context
 
 `WEB-APP-PLAN.md` (root, identical copy in `apps/mobile/docs/`) was written for the old single-repo app: it plans an **Expo web export** of `apps/mobile` (Metro, `expo-sqlite` wasm + COOP/COEP, `_layout.web.tsx`, `colors.web.ts`…). This monorepo already made most of that unnecessary:
@@ -18,7 +17,7 @@ Owner decisions carried over from the old plan: reminders on web say "need the p
 ## What changes vs. the old plan
 
 | Old plan | Revised |
-|---|---|
+| --- | --- |
 | `expo export -p web` of apps/mobile | New `apps/companion`: Vite + `@tanstack/react-router` (file routes via `@tanstack/router-plugin`), `index.html` SPA |
 | expo-sqlite wasm, COOP/COEP, boot gate, spike | Storage seam with a **localStorage web backend** (sync, no wasm, no isolation headers). `ponytail:` ceiling ~5 MB (≈ decades of events); upgrade path IndexedDB behind the same seam |
 | `colors.web.ts`, `scheme.web.ts`, `_layout.web.tsx`, `header-search.web.tsx` | Not needed: web host passes `systemColors` from tokens, scheme from `<html data-theme>`/`matchMedia`, its own shell and search row |
@@ -29,7 +28,9 @@ Owner decisions carried over from the old plan: reminders on web say "need the p
 ## New / changed packages
 
 ### 1. `packages/web` → `@ihsaanly/web` (everything marketing and companion would repeat)
+
 Subpath exports, moved out of marketing (marketing then imports them):
+
 - `./vite` — `reactNativeWeb()` plugin, `WEB_EXTENSIONS`, and `rnWebConfig()` returning the `define` / `resolve.extensions` / `optimizeDeps` / `rolldownOptions.shimMissingExports` block (today `apps/marketing/vite.config.ts:9-101`). Marketing's config shrinks to `mergeConfig(rnWebConfig(), {...start plugin})`.
 - `./hosting/csp` — `cspHash`, `inlineBlocks`, `RUNTIME_STYLES`, `pageCsp`, `COMMON_HEADERS` (from `apps/marketing/scripts/csp.ts`; `pageCsp` takes overrides e.g. `geolocation=(self)`).
 - `./hosting/htaccess` — the `.htaccess` + `_headers` writer from `apps/marketing/scripts/postbuild.ts:78-150`, parameterised: per-page CSP map **or** single policy + SPA fallback (`RewriteCond !-f/!-d → /index.html`), cache tiers, extra `AddType`s.
@@ -41,7 +42,9 @@ Subpath exports, moved out of marketing (marketing then imports them):
 - `./styles.css` — the shared first lines of `apps/marketing/src/styles.css` (tailwind import, `theme.css`, `web.css`, `@source` ui) + the `:lang()` font rules.
 
 ### 2. `packages/state` → `@ihsaanly/state` (stores shared by mobile and companion)
+
 Move from `apps/mobile/src` (mobile imports switch from `@/x` to `@ihsaanly/state/x`):
+
 - `storage/{preference-store,preferences,events,failure-entry,log}.ts`, `migrations.ts`, and the thin stores: `location/store`, `hijri/store`, `memorise/store`, `onboarding/store`, `plan/{enabled-store,suggestion-store,user-state-store,completions,use-plan}`, `prayer/{store,backlog-store,marks}`, `fasting/store`, `events/store`, `notifications/store`, `more/rows`, `hijri/use-hijri-date`, `prayer/use-current-window`, `time/use-now`, `strings/index`, `data/summary`.
 - **The one seam**: `storage/backend.ts` (native: current `database.ts` + the ~10 SQL statements in `events.ts`/`preferences.ts`, 1:1) and `backend.web.ts` (localStorage: `preferences` map + `events` array, same functions as filters). `events.ts` keeps only the pure folds (`readToggles`, `readQadaCounts`, `readLedger`) and the version-cached hooks. Web calls `navigator.storage?.persist?.()` once.
 - Other `.web.ts` twins (header comment, pattern `src/widgets/publish.ts`): `i18n/direction(.web).ts` (native `I18nManager`+reload; web sets `lang`/`dir` on `<html>`, no reload), `theme/scheme(.web).ts`.
@@ -49,6 +52,7 @@ Move from `apps/mobile/src` (mobile imports switch from `@/x` to `@ihsaanly/stat
 - Stays in mobile: notifications scheduling, geofence, widgets, view-shot, file-system export, `theme/colors.ts`, `modules/theme-override`.
 
 ### 3. Small moves into existing packages
+
 - `@ihsaanly/ui/props/*`: the pure "plan → screen props" builders now duplicated between `apps/mobile/src/app/(home)/index.tsx:36-135`, `(library)/item/[id].tsx:33-60`, `(library)/index.tsx:24` and `apps/marketing/src/demo/engine.ts`. Mobile routes, companion routes and the demo engine call them.
 - `@ihsaanly/core/i18n`: locale metadata `{ code, dir, nativeName }` (drop the copy in `apps/marketing/src/i18n/locales.ts:24-50`, which adds `hreflang`/`og` on top) and the per-language `loadLanguagePack()` from `demo/language-pack.ts`.
 
@@ -77,6 +81,7 @@ Routes stay thin: stores from `@ihsaanly/state`, props from `@ihsaanly/ui/props`
 ## App detection (open or download)
 
 All config in `@ihsaanly/web/app-links`: `{ scheme: 'ihsaanly', iosAppId: null, androidPackage: 'app.ihsaanly.companion', appStoreUrl: null, playUrl: null }` — everything store-dependent stays hidden while `null` (stores not live yet).
+
 - **iOS Safari**: `<meta name="apple-itunes-app" content="app-id=…, app-argument=https://companion.ihsaanly.app/<path>">` — Safari itself shows *Open* if installed, *Get* if not. Zero JS.
 - **Android Chrome**: `<AppBanner>` (dismissible, remembered via `local-storage`) with one link `intent://<path>#Intent;scheme=ihsaanly;package=app.ihsaanly.companion;S.browser_fallback_url=<play url>;end` — opens the app if installed, else Play Store. No detection code.
 - **Desktop / installed PWA**: no banner; store badges (shared component) on the More → About screen.
@@ -110,6 +115,7 @@ All config in `@ihsaanly/web/app-links`: `{ scheme: 'ihsaanly', iosAppId: null, 
 - Push a change under `apps/companion/**` → only `deploy-companion` runs; under `packages/ui/**` → both deploys run.
 
 ## Assumptions (say if wrong)
+
 - localStorage over SQLite-wasm on web (simpler, no isolation headers; same export format).
 - Mobile stores move into `@ihsaanly/state` (touches many mobile imports, behaviour-identical) — this is what makes the web app DRY rather than a second copy of the stores.
 - Store URLs / Apple Team ID don't exist yet → app-detection pieces ship dormant behind `null` config.

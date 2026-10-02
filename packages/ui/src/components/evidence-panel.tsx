@@ -27,7 +27,11 @@ export function EvidencePanel({ evidence }: EvidencePanelProps): ReactElement {
 
   return (
     <View className="gap-4">
-      <Text className="font-semibold text-xs uppercase" style={{ color: colors.secondaryLabel }}>
+      <Text
+        accessibilityRole="header"
+        aria-level={2}
+        className="font-semibold text-xs uppercase"
+        style={{ color: colors.secondaryLabel }}>
         {strings.item.evidence}
       </Text>
 

@@ -23,7 +23,8 @@
         "$TURBO_ROOT$/packages/web/**",
         "$TURBO_ROOT$/tooling/tailwind/**"
       ],
-      "outputs": ["dist/**"]
+      "outputs": ["dist/**"],
+      "env": ["VITE_COMPANION_URL", "VITE_APP_ENV"]
     },
     "@ihsaanly/companion#build": {
       "dependsOn": ["^build"],
@@ -35,7 +36,7 @@
         ".env"
       ],
       "outputs": ["dist/**"],
-      "env": ["VITE_FIREBASE_*", "VITE_GOOGLE_OAUTH_CLIENT_ID"]
+      "env": ["VITE_FIREBASE_*", "VITE_GOOGLE_OAUTH_CLIENT_ID", "VITE_APP_ENV", "VITE_SITE_URL"]
     },
     "@ihsaanly/extension#build": {
       "dependsOn": ["^build"],
@@ -47,7 +48,7 @@
         ".env"
       ],
       "outputs": ["dist/**"],
-      "env": ["VITE_FIREBASE_*", "VITE_GOOGLE_OAUTH_CLIENT_ID"]
+      "env": ["VITE_FIREBASE_*", "VITE_GOOGLE_OAUTH_CLIENT_ID", "VITE_APP_ENV"]
     },
     "typecheck": {
       "dependsOn": ["^typecheck"]

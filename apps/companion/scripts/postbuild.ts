@@ -8,9 +8,15 @@
 //   dist/headers.json                 the same policy, for scripts/serve.ts and the tests
 //   dist/sw.js                        offline precache + update banner
 //   dist/.well-known/apple-app-site-association, assetlinks.json
+//   dist/robots.txt                   allow all (production) or disallow all (development)
+//
+// A development build (VITE_APP_ENV=development, dev.companion.ihsaanly.app)
+// is also renamed "Ihsaanly Dev" in its manifest, and every response carries
+// X-Robots-Tag: noindex, nofollow (index.html has the matching robots meta).
 import { createHash } from 'node:crypto'
 import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { DEVELOPMENT_ROBOTS, resolveAppEnv, robotsTxt } from '@ihsaanly/web/app-env'
 import {
   cspHash,
   type HeaderMap,
@@ -22,6 +28,8 @@ import { buildHeadersFile, buildHtaccess } from '@ihsaanly/web/hosting/htaccess'
 
 const ROOT = join(import.meta.dir, '..')
 const DIST = join(ROOT, 'dist')
+const APP_ENV = resolveAppEnv(process.env.VITE_APP_ENV)
+const DEVELOPMENT = APP_ENV === 'development'
 
 // ---- one CSP for the whole app ----
 
@@ -32,7 +40,8 @@ if (/<[a-z][^>]*\sstyle="/i.test(html)) {
 }
 
 // Cloud sync (optional): only widened when the build has a Firebase auth domain.
-// - connect-src: Auth, Firestore, installations and remote-config REST/gRPC-web calls.
+// - connect-src: the hosts the Auth and Firestore SDKs call, listed one by one (no
+//   *.googleapis.com wildcard, no Installations or Remote Config).
 // - frame-src: signInWithPopup loads the hidden helper iframe at
 //   https://<authDomain>/__/auth/iframe.
 // - script-src: the popup resolver loads Google's gapi loader from apis.google.com.
@@ -43,12 +52,9 @@ const inline = inlineBlocks(html)
 if (authDomain) {
   cloudDirectives['connect-src'] = [
     "'self'",
-    'https://*.googleapis.com',
     'https://securetoken.googleapis.com',
     'https://identitytoolkit.googleapis.com',
     'https://firestore.googleapis.com',
-    'https://firebaseinstallations.googleapis.com',
-    'https://firebaseremoteconfig.googleapis.com',
   ].join(' ')
   cloudDirectives['frame-src'] = `https://${authDomain}`
   cloudDirectives['script-src'] = [
@@ -74,7 +80,10 @@ const headerMap: HeaderMap = {
   pages: { '/': policy },
   fallback: policy,
   // COMMON_HEADERS denies geolocation; the Location screen needs it from `self`.
-  headers: { 'Permissions-Policy': permissionsPolicy({ geolocation: '(self)' }) },
+  headers: {
+    'Permissions-Policy': permissionsPolicy({ geolocation: '(self)' }),
+    ...(DEVELOPMENT ? { 'X-Robots-Tag': DEVELOPMENT_ROBOTS } : {}),
+  },
 }
 
 writeFileSync(join(DIST, 'headers.json'), `${JSON.stringify(headerMap, null, 2)}\n`)
@@ -109,6 +118,21 @@ htaccess = htaccess.replace(
 writeFileSync(join(DIST, '.htaccess'), htaccess)
 writeFileSync(join(DIST, '_headers'), headers)
 
+// ---- indexing and the install name ----
+
+// Marketing (ihsaanly.app) is the SEO surface and has the sitemap; here only
+// the door is indexable, which src/head/use-document-head.ts enforces per
+// route with a robots meta, since every path is the same index.html.
+writeFileSync(join(DIST, 'robots.txt'), robotsTxt(APP_ENV))
+
+if (DEVELOPMENT) {
+  const file = join(DIST, 'manifest.webmanifest')
+  const manifest = JSON.parse(readFileSync(file, 'utf8'))
+  manifest.name = 'Ihsaanly Dev'
+  manifest.short_name = 'Ihsaanly Dev'
+  writeFileSync(file, `${JSON.stringify(manifest, null, 2)}\n`)
+}
+
 // ---- offline service worker ----
 
 function distFiles(dir = DIST, prefix = ''): string[] {
@@ -116,7 +140,7 @@ function distFiles(dir = DIST, prefix = ''): string[] {
     const path = join(dir, name)
     const relPath = prefix ? `${prefix}/${name}` : name
     if (statSync(path).isDirectory()) return distFiles(path, relPath)
-    const SKIP = new Set(['.htaccess', '_headers', 'headers.json', 'sw.js'])
+    const SKIP = new Set(['.htaccess', '_headers', 'headers.json', 'sw.js', 'robots.txt'])
     if (SKIP.has(relPath) || relPath.startsWith('.well-known/')) return []
     return [relPath]
   })
@@ -219,4 +243,4 @@ const ASSETLINKS = [
 ]
 writeFileSync(join(WELL_KNOWN, 'assetlinks.json'), `${JSON.stringify(ASSETLINKS, null, 2)}\n`)
 
-console.log(`postbuild: one CSP, ${precached.length} files precached (sw ${version})`)
+console.log(`postbuild: one CSP, ${precached.length} files precached (sw ${version}, ${APP_ENV})`)

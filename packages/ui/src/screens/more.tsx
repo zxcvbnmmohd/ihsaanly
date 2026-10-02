@@ -45,6 +45,8 @@ export function MoreScreen({ groups, searchable, selectedHref }: MoreScreenProps
       {groups.map((group) => (
         <View key={group.title} className="gap-3">
           <Text
+            accessibilityRole="header"
+            aria-level={2}
             className="font-semibold text-xs uppercase tracking-wide"
             style={{ color: colors.accent }}>
             {group.title}

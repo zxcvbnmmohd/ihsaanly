@@ -9,6 +9,12 @@ import viteReact from '@vitejs/plugin-react'
 import { defineConfig, mergeConfig, type Plugin } from 'vite'
 
 /**
+ * Route tests sit next to their routes in src/routes; without this the
+ * router plugin reads each as a route file and warns that it exports no Route.
+ */
+const ROUTE_TESTS = '\\.test\\.'
+
+/**
  * Manifest V3's CSP allows no inline script, so the companion's inlined
  * pre-paint theme script ships here as its own file, which popup.html loads.
  */
@@ -75,7 +81,7 @@ export default defineConfig(
       themeScript(),
       betaManifest(),
       tailwindcss(),
-      tanstackRouter({ target: 'react' }),
+      tanstackRouter({ target: 'react', routeFileIgnorePattern: ROUTE_TESTS }),
       viteReact(),
     ],
   }),

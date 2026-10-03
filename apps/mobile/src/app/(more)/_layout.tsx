@@ -33,6 +33,9 @@ export default function MoreLayout(): ReactElement {
 
   const parts = morePath(segments, pathname)
   const isIndex = !parts || parts.length === 0
+  // Only the More tab's own index redirects: with another tab focused `parts`
+  // is null too, and replacing then would pull the user back into More.
+  const atMoreIndex = parts !== null && parts.length === 0
   const firstHref = groups[0]?.rows[0]?.href ?? null
 
   // The group index has nothing of its own to show beside the list at
@@ -41,9 +44,9 @@ export default function MoreLayout(): ReactElement {
   // mounts in that case (see the `<Slot/>` note below), so the redirect has
   // to live here, in the always-mounted layout, rather than in the route file.
   useEffect(() => {
-    if (layout === 'compact' || !isIndex || !firstHref) return
+    if (layout === 'compact' || !atMoreIndex || !firstHref) return
     router.replace(firstHref as Href)
-  }, [layout, isIndex, firstHref])
+  }, [layout, atMoreIndex, firstHref])
 
   if (layout === 'compact') {
     return (
@@ -63,6 +66,9 @@ export default function MoreLayout(): ReactElement {
         <Stack.Screen name="appearance" options={{ title: strings.appearance.title }} />
         {cloudEnabled ? (
           <Stack.Screen name="account" options={{ title: strings.account.title }} />
+        ) : null}
+        {cloudEnabled ? (
+          <Stack.Screen name="feedback" options={{ title: strings.feedback.title }} />
         ) : null}
         <Stack.Screen name="about" options={{ title: strings.about.title }} />
       </Stack>

@@ -3,6 +3,7 @@ import { palettes } from '@ihsaanly/tailwind/tokens'
 import type { ReactElement } from 'react'
 import { Pressable, Text, View } from 'react-native'
 import { useColors } from '../colors'
+import { onSpace } from '../components/space-press'
 import { Surface } from '../components/surface'
 import { useUi } from '../provider'
 import type { PrayerEntry } from '../screens/today'
@@ -28,6 +29,8 @@ export function PrayerStrip({ prayers, names, onMark }: PrayerStripProps): React
           aria-checked={entry.done}
           accessibilityLabel={names[entry.prayer]}
           onPress={() => onMark(entry.prayer)}
+          // A checkbox toggles on Space; react-native-web only answers Enter here.
+          onKeyDown={onSpace(() => onMark(entry.prayer))}
           testID={`prayer-${entry.prayer}`}
           className="flex-1">
           <Surface interactive style={{ borderRadius: 16, paddingVertical: 14 }}>

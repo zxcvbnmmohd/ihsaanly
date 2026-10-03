@@ -22,6 +22,7 @@ import { Route as MoreCalculationRouteImport } from './routes/_more/calculation'
 import { Route as MoreDataRouteImport } from './routes/_more/data'
 import { Route as MoreDiagnosticsRouteImport } from './routes/_more/diagnostics'
 import { Route as MoreEventsRouteImport } from './routes/_more/events'
+import { Route as MoreFeedbackRouteImport } from './routes/_more/feedback'
 import { Route as MoreHijriRouteImport } from './routes/_more/hijri'
 import { Route as MoreHistoryRouteImport } from './routes/_more/history'
 import { Route as MoreLanguageRouteImport } from './routes/_more/language'
@@ -98,6 +99,11 @@ const MoreEventsRoute = MoreEventsRouteImport.update({
   path: '/events',
   getParentRoute: () => MoreRouteRoute,
 } as any)
+const MoreFeedbackRoute = MoreFeedbackRouteImport.update({
+  id: '/feedback',
+  path: '/feedback',
+  getParentRoute: () => MoreRouteRoute,
+} as any)
 const MoreHijriRoute = MoreHijriRouteImport.update({
   id: '/hijri',
   path: '/hijri',
@@ -171,6 +177,7 @@ export interface FileRoutesByFullPath {
   '/data': typeof MoreDataRoute
   '/diagnostics': typeof MoreDiagnosticsRoute
   '/events': typeof MoreEventsRoute
+  '/feedback': typeof MoreFeedbackRoute
   '/hijri': typeof MoreHijriRoute
   '/history': typeof MoreHistoryRoute
   '/language': typeof MoreLanguageRoute
@@ -196,6 +203,7 @@ export interface FileRoutesByTo {
   '/data': typeof MoreDataRoute
   '/diagnostics': typeof MoreDiagnosticsRoute
   '/events': typeof MoreEventsRoute
+  '/feedback': typeof MoreFeedbackRoute
   '/hijri': typeof MoreHijriRoute
   '/history': typeof MoreHistoryRoute
   '/language': typeof MoreLanguageRoute
@@ -224,6 +232,7 @@ export interface FileRoutesById {
   '/_more/data': typeof MoreDataRoute
   '/_more/diagnostics': typeof MoreDiagnosticsRoute
   '/_more/events': typeof MoreEventsRoute
+  '/_more/feedback': typeof MoreFeedbackRoute
   '/_more/hijri': typeof MoreHijriRoute
   '/_more/history': typeof MoreHistoryRoute
   '/_more/language': typeof MoreLanguageRoute
@@ -251,6 +260,7 @@ export interface FileRouteTypes {
     | '/data'
     | '/diagnostics'
     | '/events'
+    | '/feedback'
     | '/hijri'
     | '/history'
     | '/language'
@@ -276,6 +286,7 @@ export interface FileRouteTypes {
     | '/data'
     | '/diagnostics'
     | '/events'
+    | '/feedback'
     | '/hijri'
     | '/history'
     | '/language'
@@ -303,6 +314,7 @@ export interface FileRouteTypes {
     | '/_more/data'
     | '/_more/diagnostics'
     | '/_more/events'
+    | '/_more/feedback'
     | '/_more/hijri'
     | '/_more/history'
     | '/_more/language'
@@ -419,6 +431,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MoreEventsRouteImport
       parentRoute: typeof MoreRouteRoute
     }
+    '/_more/feedback': {
+      id: '/_more/feedback'
+      path: '/feedback'
+      fullPath: '/feedback'
+      preLoaderRoute: typeof MoreFeedbackRouteImport
+      parentRoute: typeof MoreRouteRoute
+    }
     '/_more/hijri': {
       id: '/_more/hijri'
       path: '/hijri'
@@ -532,6 +551,7 @@ interface MoreRouteRouteChildren {
   MoreDataRoute: typeof MoreDataRoute
   MoreDiagnosticsRoute: typeof MoreDiagnosticsRoute
   MoreEventsRoute: typeof MoreEventsRoute
+  MoreFeedbackRoute: typeof MoreFeedbackRoute
   MoreHijriRoute: typeof MoreHijriRoute
   MoreHistoryRoute: typeof MoreHistoryRoute
   MoreLanguageRoute: typeof MoreLanguageRoute
@@ -550,6 +570,7 @@ const MoreRouteRouteChildren: MoreRouteRouteChildren = {
   MoreDataRoute: MoreDataRoute,
   MoreDiagnosticsRoute: MoreDiagnosticsRoute,
   MoreEventsRoute: MoreEventsRoute,
+  MoreFeedbackRoute: MoreFeedbackRoute,
   MoreHijriRoute: MoreHijriRoute,
   MoreHistoryRoute: MoreHistoryRoute,
   MoreLanguageRoute: MoreLanguageRoute,

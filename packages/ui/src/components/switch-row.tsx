@@ -1,9 +1,11 @@
 import type { ReactElement } from 'react'
-import { type ColorValue, Pressable, Switch, Text, View } from 'react-native'
+import { type ColorValue, Pressable, Text, View } from 'react-native'
 
 import { useColors } from '../colors'
 import { useUi } from '../provider'
+import { onSpace } from './space-press'
 import { Surface } from './surface'
+import { SwitchPicture } from './switch-picture'
 
 interface SwitchRowProps {
   title: string
@@ -41,7 +43,10 @@ export function SwitchRow({
       // react-native-web reads only the aria-* form.
       aria-checked={value}
       accessibilityLabel={title}
-      onPress={() => onValueChange(!value)}>
+      onPress={() => onValueChange(!value)}
+      // react-native-web's press handling only answers Space for role=button,
+      // so a switch toggles on Space here as a native one does.
+      onKeyDown={onSpace(() => onValueChange(!value))}>
       <Surface interactive style={{ borderRadius: 18, padding: 16 }}>
         <View className="flex-row items-center gap-4">
           <View className="flex-1 gap-1">
@@ -60,11 +65,12 @@ export function SwitchRow({
             whose dynamic colours are derived from the wallpaper and gave a
             lavender knob on a lavender track — the one grey left on a warm screen.
           */}
-          <Switch
+          <SwitchPicture
             value={value}
             onValueChange={onValueChange}
-            trackColor={{ true: trackOn, false: trackOff }}
-            thumbColor={knobColor}
+            trackOn={trackOn}
+            trackOff={trackOff}
+            knob={knobColor}
           />
         </View>
       </Surface>

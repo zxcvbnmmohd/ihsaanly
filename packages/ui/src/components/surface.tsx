@@ -8,7 +8,9 @@ import { useColors } from '../colors'
 
 const noop = (): void => {}
 
-const canUseGlass =
+// Both availability checks read constants of the native module, so asking on
+// each render costs nothing and keeps the platform check next to its use.
+const canUseGlass = (): boolean =>
   process.env.EXPO_OS === 'ios' && isLiquidGlassAvailable() && isGlassEffectAPIAvailable()
 
 /**
@@ -58,7 +60,7 @@ export function Surface({ children, style, interactive = false }: SurfaceProps):
     return <View style={[{ backgroundColor: colors.surface }, base]}>{children}</View>
   }
 
-  if (canUseGlass) {
+  if (canUseGlass()) {
     return (
       <GlassView isInteractive={interactive} style={base}>
         {children}

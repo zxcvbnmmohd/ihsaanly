@@ -77,6 +77,7 @@ function PrivacyBody(): ReactNode {
         ]}
       />
       <p>{t('privacy.storedWhere')}</p>
+      <p>{t('privacy.contentUpdates')}</p>
 
       <Section
         title="privacy.locationTitle"
@@ -107,7 +108,14 @@ function PrivacyBody(): ReactNode {
 
       <h2 className={H2_CLASS}>{t('privacy.basesTitle')}</h2>
       <p>{t('privacy.basesIntro')}</p>
-      <List keys={['privacy.basesContract', 'privacy.basesConsent', 'privacy.basesInterests']} />
+      <List
+        keys={[
+          'privacy.basesContract',
+          'privacy.basesConsent',
+          'privacy.basesInterests',
+          'privacy.basesFeedback',
+        ]}
+      />
       <p>{t('privacy.basesDevice')}</p>
 
       <Section title="privacy.sensitiveTitle" keys={['privacy.sensitiveText']} />
@@ -118,9 +126,25 @@ function PrivacyBody(): ReactNode {
           'privacy.leaveTwo',
           'privacy.leaveExport',
           'privacy.leaveReport',
+          'privacy.leaveFeedback',
           'privacy.leaveReceive',
         ]}
       />
+
+      <h2 className={H2_CLASS}>{t('privacy.feedbackTitle')}</h2>
+      <p>{t('privacy.feedbackIntro')}</p>
+      <List
+        keys={[
+          'privacy.feedbackMessage',
+          'privacy.feedbackContact',
+          'privacy.feedbackApp',
+          'privacy.feedbackAccount',
+          'privacy.feedbackDiagnostics',
+        ]}
+      />
+      <p>{t('privacy.feedbackPurpose')}</p>
+      <p>{t('privacy.feedbackAccess')}</p>
+      <p>{t('privacy.feedbackRetention')}</p>
 
       <h2 className={H2_CLASS}>{t('privacy.notTitle')}</h2>
       <List
@@ -135,7 +159,12 @@ function PrivacyBody(): ReactNode {
 
       <Section
         title="privacy.retentionTitle"
-        keys={['privacy.retentionText', 'privacy.retentionDelete', 'privacy.retentionSignOut']}
+        keys={[
+          'privacy.retentionText',
+          'privacy.retentionDelete',
+          'privacy.retentionFeedback',
+          'privacy.retentionSignOut',
+        ]}
       />
 
       <h2 className={H2_CLASS}>{t('privacy.rightsTitle')}</h2>
@@ -145,6 +174,7 @@ function PrivacyBody(): ReactNode {
           'privacy.rightsAccess',
           'privacy.rightsRectify',
           'privacy.rightsErase',
+          'privacy.rightsFeedback',
           'privacy.rightsRestrict',
           'privacy.rightsWithdraw',
           'privacy.rightsComplain',
@@ -251,7 +281,13 @@ function DeleteAccountBody(): ReactNode {
       <p>{t('deleteAccount.deletedBackups')}</p>
 
       <h2 className={H2_CLASS}>{t('deleteAccount.keptTitle')}</h2>
-      <List keys={['deleteAccount.keptDevices', 'deleteAccount.keptDonations']} />
+      <List
+        keys={[
+          'deleteAccount.keptDevices',
+          'deleteAccount.keptFeedback',
+          'deleteAccount.keptDonations',
+        ]}
+      />
       <p>{t('deleteAccount.privacyLink')}</p>
 
       <h2 className={H2_CLASS}>{t('deleteAccount.contactTitle')}</h2>
@@ -261,7 +297,7 @@ function DeleteAccountBody(): ReactNode {
 }
 
 const SUMMARY: Record<LegalPageId, readonly string[]> = {
-  privacy: ['privacy.summaryDevice', 'privacy.summarySync'],
+  privacy: ['privacy.summaryDevice', 'privacy.summarySync', 'privacy.summaryFeedback'],
   terms: ['terms.summaryFree', 'terms.summaryMistakes'],
   deleteAccount: ['deleteAccount.summaryApp', 'deleteAccount.summaryEmail'],
 }

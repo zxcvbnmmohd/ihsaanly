@@ -64,6 +64,11 @@ jobs:
           # The companion's own origin, for its canonical and Open Graph URLs;
           # marketing ignores it.
           VITE_SITE_URL: ${{ inputs.environment == 'production' && 'https://companion.ihsaanly.app' || 'https://dev.companion.ihsaanly.app' }}
+          # Where the apps fetch remote content updates (manifest.json and its
+          # version folder), which the marketing build publishes on its own
+          # site. The companion allows its origin in connect-src; marketing
+          # ignores it (it publishes to whichever host it is deployed to).
+          VITE_CONTENT_URL: ${{ inputs.environment == 'production' && 'https://ihsaanly.app/content' || 'https://dev.ihsaanly.app/content' }}
           # development → the "Development" pill, a "Dev" title, noindex
           # everywhere and a Disallow-all robots.txt (packages/web/src/app-env.ts).
           VITE_APP_ENV: ${{ inputs.environment }}

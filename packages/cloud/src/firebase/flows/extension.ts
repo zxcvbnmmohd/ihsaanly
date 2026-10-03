@@ -15,6 +15,7 @@ import {
 import type { Cloud, SignInProvider } from '../../ports'
 import { AUTH_EMULATOR_PORT, type FirebaseConfig, firebaseApp, firestore } from '../app'
 import { createFirebaseAuth, type SignInFlow } from '../auth'
+import { createFirestoreFeedback } from '../feedback'
 import { createFirestoreSyncRemote } from '../sync-remote'
 
 export interface ExtensionDeps {
@@ -70,10 +71,7 @@ function extensionAuth(config: FirebaseConfig): Auth {
 
 /** The provider swap point for the browser extension. */
 export function createExtensionCloud(config: FirebaseConfig, deps: ExtensionDeps): Cloud {
-  return {
-    auth: createFirebaseAuth(extensionAuth(config), extensionFlow(deps)),
-    remote: createFirestoreSyncRemote(
-      firestore(firebaseApp(config), { native: false, emulatorHost: config.emulatorHost }),
-    ),
-  }
+  const auth = createFirebaseAuth(extensionAuth(config), extensionFlow(deps))
+  const db = firestore(firebaseApp(config), { native: false, emulatorHost: config.emulatorHost })
+  return { auth, remote: createFirestoreSyncRemote(db), feedback: createFirestoreFeedback(db) }
 }

@@ -23,8 +23,8 @@ const Meta = z.object({
 
 const EMPTY_META: SyncMeta = { boundUid: null, cursor: null, lastSyncedAt: null }
 
-/** Two decimals of a degree is about 1 km. */
-const roundCoordinate = (degrees: number): number => Math.round(degrees * 100) / 100
+/** Two decimals of a degree is about 1 km: the most precision any coordinate leaves the device with. */
+export const roundCoordinate = (degrees: number): number => Math.round(degrees * 100) / 100
 
 /**
  * The copy of a preference that leaves the device. The place is coarsened to

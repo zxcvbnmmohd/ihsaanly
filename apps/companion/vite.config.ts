@@ -8,12 +8,18 @@ import viteReact from '@vitejs/plugin-react'
 import { defineConfig, mergeConfig, type Plugin } from 'vite'
 
 /**
+ * Route tests sit next to their routes in src/routes; without this the
+ * router plugin reads each as a route file and warns that it exports no Route.
+ */
+const ROUTE_TESTS = '\\.test\\.'
+
+/**
  * `index.html` stays a plain static file; the pieces that depend on shared
  * config (the pre-paint script, whose hash the CSP must match exactly, and
  * the iOS Smart App Banner meta, dormant while there is no App Store id) are
  * injected here rather than duplicated by hand.
  */
-function injectHead(): Plugin {
+export function injectHead(): Plugin {
   // This build's own origin, for the canonical and Open Graph URLs (CI sets it per environment).
   const siteUrl = (process.env.VITE_SITE_URL?.trim() || 'https://companion.ihsaanly.app').replace(
     /\/+$/,
@@ -62,7 +68,11 @@ export default defineConfig(
       tailwindcss(),
       // Generates src/routeTree.gen.ts from the file tree in src/routes. Must
       // come before React's plugin, which then compiles the generated file.
-      tanstackRouter({ target: 'react', autoCodeSplitting: true }),
+      tanstackRouter({
+        target: 'react',
+        autoCodeSplitting: true,
+        routeFileIgnorePattern: ROUTE_TESTS,
+      }),
       viteReact(),
     ],
   }),

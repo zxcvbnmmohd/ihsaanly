@@ -4,6 +4,8 @@ import { Text, type TextProps } from 'react-native'
 import { useColors } from '../colors'
 import { arabic } from '../fonts'
 
+const WEB_LANG: object = { lang: 'ar' }
+
 export interface ArabicTextProps extends TextProps {
   /**
    * 'hero' is the large, centred treatment for a dua's own card, where the
@@ -34,6 +36,10 @@ export function ArabicText({
       // Whatever the interface language, this text is Arabic; without it
       // VoiceOver reads it with the interface voice.
       accessibilityLanguage="ar"
+      // react-native-web ignores accessibilityLanguage; its `lang` becomes
+      // the DOM attribute (and sets dir=rtl). React Native's types do not
+      // list it, and native ignores it.
+      {...WEB_LANG}
       className={variant === 'hero' ? 'text-4xl leading-loose' : 'text-2xl leading-loose'}
       style={{
         color: colors.label,

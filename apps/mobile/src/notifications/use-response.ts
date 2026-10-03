@@ -37,6 +37,10 @@ export function useNotificationResponse(enabled: boolean): void {
         await api.clearLastNotificationResponseAsync()
       }
 
+      // Unmounted while the launch response was being read: cleanup has already
+      // run, so a listener added now would never be removed.
+      if (cancelled) return
+
       const subscription = api.addNotificationResponseReceivedListener((response) => {
         void handleResponse(response)
       })

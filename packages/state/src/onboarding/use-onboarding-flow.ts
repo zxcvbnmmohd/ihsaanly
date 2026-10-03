@@ -105,7 +105,8 @@ export function useOnboardingFlow(actions: OnboardingFlowActions): OnboardingScr
     // the Today tab some time later. Where there is nothing to ask (the web),
     // this just advances.
     if (step === 'reminders' && anyReminder && actions.ensureReminderPermission) {
-      void actions.ensureReminderPermission().finally(advance)
+      // Advance whatever the prompt does; a rejection is handled here, not left unhandled.
+      void actions.ensureReminderPermission().then(advance, advance)
       return
     }
     advance()

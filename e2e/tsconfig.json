@@ -1,0 +1,15 @@
+{
+  // e2e/ and playwright.config.ts. Not at the repo root: NativeWind rewrites a
+  // root tsconfig.json whenever a tool (knip) loads apps/mobile's Metro config.
+  "extends": "../tooling/tsconfig/base.json",
+  "compilerOptions": {
+    "target": "ESNext",
+    "lib": ["ESNext", "DOM"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "types": ["bun"]
+  },
+  "include": [".", "../playwright.config.ts"]
+}

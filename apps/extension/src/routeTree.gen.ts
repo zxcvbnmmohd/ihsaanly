@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AccountRouteImport } from './routes/account'
 import { Route as AppearanceRouteImport } from './routes/appearance'
 import { Route as CalculationRouteImport } from './routes/calculation'
+import { Route as FeedbackRouteImport } from './routes/feedback'
 import { Route as GlossaryRouteImport } from './routes/glossary'
 import { Route as HijriRouteImport } from './routes/hijri'
 import { Route as LanguageRouteImport } from './routes/language'
@@ -40,6 +41,11 @@ const AppearanceRoute = AppearanceRouteImport.update({
 const CalculationRoute = CalculationRouteImport.update({
   id: '/calculation',
   path: '/calculation',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FeedbackRoute = FeedbackRouteImport.update({
+  id: '/feedback',
+  path: '/feedback',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GlossaryRoute = GlossaryRouteImport.update({
@@ -88,6 +94,7 @@ export interface FileRoutesByFullPath {
   '/account': typeof AccountRoute
   '/appearance': typeof AppearanceRoute
   '/calculation': typeof CalculationRoute
+  '/feedback': typeof FeedbackRoute
   '/glossary': typeof GlossaryRoute
   '/hijri': typeof HijriRoute
   '/language': typeof LanguageRoute
@@ -102,6 +109,7 @@ export interface FileRoutesByTo {
   '/account': typeof AccountRoute
   '/appearance': typeof AppearanceRoute
   '/calculation': typeof CalculationRoute
+  '/feedback': typeof FeedbackRoute
   '/glossary': typeof GlossaryRoute
   '/hijri': typeof HijriRoute
   '/language': typeof LanguageRoute
@@ -117,6 +125,7 @@ export interface FileRoutesById {
   '/account': typeof AccountRoute
   '/appearance': typeof AppearanceRoute
   '/calculation': typeof CalculationRoute
+  '/feedback': typeof FeedbackRoute
   '/glossary': typeof GlossaryRoute
   '/hijri': typeof HijriRoute
   '/language': typeof LanguageRoute
@@ -133,6 +142,7 @@ export interface FileRouteTypes {
     | '/account'
     | '/appearance'
     | '/calculation'
+    | '/feedback'
     | '/glossary'
     | '/hijri'
     | '/language'
@@ -147,6 +157,7 @@ export interface FileRouteTypes {
     | '/account'
     | '/appearance'
     | '/calculation'
+    | '/feedback'
     | '/glossary'
     | '/hijri'
     | '/language'
@@ -161,6 +172,7 @@ export interface FileRouteTypes {
     | '/account'
     | '/appearance'
     | '/calculation'
+    | '/feedback'
     | '/glossary'
     | '/hijri'
     | '/language'
@@ -176,6 +188,7 @@ export interface RootRouteChildren {
   AccountRoute: typeof AccountRoute
   AppearanceRoute: typeof AppearanceRoute
   CalculationRoute: typeof CalculationRoute
+  FeedbackRoute: typeof FeedbackRoute
   GlossaryRoute: typeof GlossaryRoute
   HijriRoute: typeof HijriRoute
   LanguageRoute: typeof LanguageRoute
@@ -214,6 +227,13 @@ declare module '@tanstack/react-router' {
       path: '/calculation'
       fullPath: '/calculation'
       preLoaderRoute: typeof CalculationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/feedback': {
+      id: '/feedback'
+      path: '/feedback'
+      fullPath: '/feedback'
+      preLoaderRoute: typeof FeedbackRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/glossary': {
@@ -280,6 +300,7 @@ const rootRouteChildren: RootRouteChildren = {
   AccountRoute: AccountRoute,
   AppearanceRoute: AppearanceRoute,
   CalculationRoute: CalculationRoute,
+  FeedbackRoute: FeedbackRoute,
   GlossaryRoute: GlossaryRoute,
   HijriRoute: HijriRoute,
   LanguageRoute: LanguageRoute,

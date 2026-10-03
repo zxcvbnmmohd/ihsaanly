@@ -8,6 +8,7 @@ import {
   type RulesTestEnvironment,
 } from '@firebase/rules-unit-testing'
 import {
+  collection,
   deleteDoc,
   doc,
   type FieldValue,
@@ -16,6 +17,8 @@ import {
   serverTimestamp,
   setDoc,
   Timestamp,
+  updateDoc,
+  writeBatch,
 } from 'firebase/firestore'
 
 let env: RulesTestEnvironment
@@ -148,5 +151,168 @@ describe('denied', () => {
     await assertFails(setDoc(doc(db, 'users/alice/notes/1'), { x: 1 }))
     await assertFails(setDoc(doc(db, 'elsewhere/alice'), { x: 1 }))
     await assertFails(getDoc(doc(db, 'elsewhere/alice')))
+  })
+})
+
+// --- feedback -------------------------------------------------------------
+
+const feedback = (
+  uid = 'alice',
+  overrides: Record<string, unknown> = {},
+): Record<string, unknown> => ({
+  uid,
+  kind: 'bug',
+  message: 'The Asr window is an hour out',
+  contactEmail: null,
+  app: { surface: 'web', version: '1.0.0', locale: 'en', os: 'macOS 15' },
+  diagnostics: null,
+  createdAt: serverTimestamp(),
+  status: 'new',
+  ...overrides,
+})
+
+/** What the adapter sends: the feedback doc and the limit stamp, in one batch. */
+function send(
+  db: Firestore,
+  data: Record<string, unknown> = feedback(),
+  limitUid = 'alice',
+  limit: Record<string, unknown> | null = { lastAt: serverTimestamp() },
+): Promise<void> {
+  const batch = writeBatch(db)
+  batch.set(doc(collection(db, 'feedback')), data)
+  if (limit) batch.set(doc(db, 'feedbackLimits', limitUid), limit)
+  return batch.commit()
+}
+
+const seed = (path: string, data: Record<string, unknown>): Promise<void> =>
+  env.withSecurityRulesDisabled((ctx) =>
+    setDoc(doc(ctx.firestore() as unknown as Firestore, path), data),
+  )
+
+describe('feedback', () => {
+  test('an owner sends, with a contact email and diagnostics', async () => {
+    await assertSucceeds(
+      send(
+        as('alice'),
+        feedback('alice', {
+          kind: 'idea',
+          contactEmail: 'alice@example.test',
+          diagnostics: { locale: 'en', failures: [], data: { days: 3 } },
+        }),
+      ),
+    )
+  })
+
+  test('sends again once a minute has passed', async () => {
+    await seed('feedbackLimits/alice', {
+      lastAt: Timestamp.fromMillis(Date.now() - 61_000),
+    })
+    await assertSucceeds(send(as('alice')))
+  })
+
+  test('a second send within a minute is refused', async () => {
+    const db = as('alice')
+    await assertSucceeds(send(db))
+    await assertFails(send(db))
+  })
+
+  test('a recent limit stamp refuses the send', async () => {
+    await seed('feedbackLimits/alice', { lastAt: Timestamp.fromMillis(Date.now() - 30_000) })
+    await assertFails(send(as('alice')))
+  })
+
+  test('without the limit doc in the batch', async () => {
+    await assertFails(send(as('alice'), feedback(), 'alice', null))
+    await seed('feedbackLimits/alice', { lastAt: Timestamp.fromMillis(Date.now() - 61_000) })
+    await assertFails(send(as('alice'), feedback(), 'alice', null))
+  })
+
+  test("as another uid, or stamping someone else's limit", async () => {
+    await assertFails(send(as('mallory'), feedback('alice'), 'mallory'))
+    await assertFails(send(as('mallory'), feedback('alice'), 'alice'))
+    await assertFails(send(as('mallory'), feedback('mallory'), 'alice'))
+  })
+
+  test('unauthenticated', async () => {
+    await assertFails(send(anon()))
+  })
+
+  test('an extra or missing field', async () => {
+    await assertFails(send(as('alice'), feedback('alice', { extra: 1 })))
+    const { contactEmail: _, ...withoutEmail } = feedback()
+    await assertFails(send(as('alice'), withoutEmail))
+    await assertFails(
+      send(
+        as('alice'),
+        feedback('alice', { app: { surface: 'web', version: '1', locale: 'en', os: 'x', y: 1 } }),
+      ),
+    )
+  })
+
+  test('an empty or oversize message, and a bad kind, email, surface or diagnostics', async () => {
+    const db = as('alice')
+    await assertFails(send(db, feedback('alice', { message: '' })))
+    await assertFails(send(db, feedback('alice', { message: 'x'.repeat(5001) })))
+    await assertFails(send(db, feedback('alice', { kind: 'rant' })))
+    await assertFails(send(db, feedback('alice', { contactEmail: 'x'.repeat(255) })))
+    await assertFails(
+      send(db, feedback('alice', { app: { surface: 'tv', version: '1', locale: 'en', os: 'x' } })),
+    )
+    await assertFails(send(db, feedback('alice', { diagnostics: 'all of it' })))
+    await assertFails(
+      send(
+        db,
+        feedback('alice', {
+          diagnostics: Object.fromEntries(Array.from({ length: 17 }, (_, i) => [`k${i}`, i])),
+        }),
+      ),
+    )
+    // The longest message is fine.
+    await assertSucceeds(send(db, feedback('alice', { message: 'x'.repeat(5000) })))
+  })
+
+  test('a status other than new, or a client clock', async () => {
+    await assertFails(send(as('alice'), feedback('alice', { status: 'done' })))
+    await assertFails(send(as('alice'), feedback('alice', { createdAt: Timestamp.now() })))
+    await assertFails(send(as('alice'), feedback(), 'alice', { lastAt: Timestamp.now() }))
+  })
+
+  test('no client reads, updates or deletes feedback, not even its author', async () => {
+    await seed('feedback/f1', { ...feedback(), createdAt: Timestamp.now() })
+    const db = as('alice')
+    await assertFails(getDoc(doc(db, 'feedback/f1')))
+    await assertFails(updateDoc(doc(db, 'feedback/f1'), { status: 'seen' }))
+    await assertFails(deleteDoc(doc(db, 'feedback/f1')))
+  })
+})
+
+describe('feedbackLimits', () => {
+  test('the owner stamps it with the server time, but never reads or deletes it', async () => {
+    const db = as('alice')
+    const ref = doc(db, 'feedbackLimits/alice')
+    await assertSucceeds(setDoc(ref, { lastAt: serverTimestamp() }))
+    await assertSucceeds(setDoc(ref, { lastAt: serverTimestamp() }))
+    await assertFails(getDoc(ref))
+    await assertFails(deleteDoc(ref))
+  })
+
+  test('deleting the limit before a send does not dodge the 60 s window', async () => {
+    const db = as('alice')
+    await assertSucceeds(send(db))
+    await assertFails(deleteDoc(doc(db, 'feedbackLimits/alice')))
+    await assertFails(send(db))
+  })
+
+  test('nobody else, no client clock and no extra fields', async () => {
+    await assertFails(
+      setDoc(doc(as('mallory'), 'feedbackLimits/alice'), { lastAt: serverTimestamp() }),
+    )
+    await assertFails(setDoc(doc(anon(), 'feedbackLimits/alice'), { lastAt: serverTimestamp() }))
+    await assertFails(setDoc(doc(as('alice'), 'feedbackLimits/alice'), { lastAt: Timestamp.now() }))
+    await assertFails(
+      setDoc(doc(as('alice'), 'feedbackLimits/alice'), { lastAt: serverTimestamp(), x: 1 }),
+    )
+    await seed('feedbackLimits/alice', { lastAt: Timestamp.now() })
+    await assertFails(deleteDoc(doc(as('mallory'), 'feedbackLimits/alice')))
   })
 })

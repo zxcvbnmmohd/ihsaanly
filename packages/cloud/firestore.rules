@@ -1,6 +1,7 @@
 rules_version = '2';
 
-// Every user owns exactly their own subtree; everything else is closed.
+// Every user owns exactly their own subtree, and may create feedback;
+// everything else is closed.
 // Shapes mirror src/firebase/sync-remote.ts. `updatedAt == request.time`
 // forces serverTimestamp(), which the pull cursor depends on.
 service cloud.firestore {
@@ -47,6 +48,61 @@ service cloud.firestore {
           && request.resource.data.prefs.size() <= 64
           && stamped();
       }
+    }
+
+    // Feedback is top-level so erasing an account leaves it (kept up to 2
+    // years). Create-only: nobody reads, edits or deletes it from a client;
+    // the admin uses the console, where IAM bypasses these rules. Shapes
+    // mirror src/firebase/feedback.ts.
+    match /feedback/{id} {
+      function validApp(app) {
+        return app is map
+          && app.keys().hasOnly(['surface', 'version', 'locale', 'os'])
+          && app.keys().hasAll(['surface', 'version', 'locale', 'os'])
+          && app.surface in ['ios', 'android', 'web', 'extension']
+          && app.version is string && app.version.size() <= 64
+          && app.locale is string && app.locale.size() <= 35
+          && app.os is string && app.os.size() <= 64;
+      }
+
+      function validFeedback(data) {
+        return data.keys().hasOnly(['uid', 'kind', 'message', 'contactEmail', 'app', 'diagnostics', 'createdAt', 'status'])
+          && data.keys().hasAll(['uid', 'kind', 'message', 'contactEmail', 'app', 'diagnostics', 'createdAt', 'status'])
+          && data.uid == request.auth.uid
+          && data.kind in ['bug', 'idea', 'other']
+          && data.message is string && data.message.size() >= 1 && data.message.size() <= 5000
+          && (data.contactEmail == null
+            || (data.contactEmail is string && data.contactEmail.size() <= 254))
+          && validApp(data.app)
+          // ponytail: a top-level key cap; FeedbackDiagnostics has 12. The
+          // 1 MiB document limit bounds the rest.
+          && (data.diagnostics == null
+            || (data.diagnostics is map && data.diagnostics.size() <= 16))
+          && data.createdAt == request.time
+          && data.status == 'new';
+      }
+
+      // The rate limit: this batch must stamp feedbackLimits/{uid} with the
+      // same request.time, and the stamp it replaces (if any) must be at
+      // least a minute old. One account cannot flood the daily write quota.
+      function withinLimit() {
+        let limit = /databases/$(database)/documents/feedbackLimits/$(request.auth.uid);
+        return getAfter(limit).data.lastAt == request.time
+          && (!exists(limit) || get(limit).data.lastAt <= request.time - duration.value(60, 's'));
+      }
+
+      allow create: if request.auth != null
+        && validFeedback(request.resource.data)
+        && withinLimit();
+    }
+
+    // The last send's time, per account. Never read or deleted by a client: a
+    // delete before each send would sidestep the 60 s limit. Kept after the
+    // account is erased, like the feedback it limits.
+    match /feedbackLimits/{uid} {
+      allow create, update: if isOwner(uid)
+        && request.resource.data.keys().hasOnly(['lastAt'])
+        && request.resource.data.lastAt == request.time;
     }
   }
 }

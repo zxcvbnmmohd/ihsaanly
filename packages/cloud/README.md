@@ -6,7 +6,7 @@ Optional sign-in and sync for mobile, companion and the extension. The apps stay
 
 | Layer | Where | Knows about Firebase? |
 | --- | --- | --- |
-| Ports (`AuthService`, `SyncRemote`, `LocalStore`) | `src/ports.ts` | no |
+| Ports (`AuthService`, `SyncRemote`, `LocalStore`, `FeedbackService`) | `src/ports.ts` | no |
 | Sync engine (pull → merge → push) | `src/engine.ts` | no |
 | In-memory adapters (tests, and proof the ports are provider-agnostic) | `src/memory/` | no |
 | Firebase adapters | `src/firebase/` | yes |
@@ -40,6 +40,8 @@ Nothing in the engine, `@ihsaanly/state` or `@ihsaanly/ui` changes. The engine t
 users/{uid}                          { createdAt, schema: 1 }
 users/{uid}/eventMonths/{YYYY-MM}    { events: { "<at>|<kind>|<subject>": { l, d } }, updatedAt }
 users/{uid}/state/preferences        { prefs: { <key>: { v, t } }, updatedAt }
+feedback/{autoId}                    { uid, kind, message, contactEmail, app, diagnostics, createdAt, status: 'new' }
+feedbackLimits/{uid}                 { lastAt }
 ```
 
 **Why one document per month:** a whole history uploads in a few dozen writes, and a sync with no changes costs about 2 reads.
@@ -53,6 +55,17 @@ users/{uid}/state/preferences        { prefs: { <key>: { v, t } }, updatedAt }
 - Document shapes and sizes are checked.
 - `updatedAt` must be the server time.
 - A month's event map can only grow, so the log is append-only on the server too.
+- `feedback` is create-only: signed in, `uid == request.auth.uid`, an exact field allowlist, size caps (message 1–5000 characters, contact email ≤254, diagnostics ≤16 top-level keys), `status == 'new'` and `createdAt == request.time`. No client reads, updates or deletes it.
+- **Rate limit without Cloud Functions:** each send's batch also writes `feedbackLimits/{uid} { lastAt: request.time }`. The feedback rule checks that stamp with `getAfter`, and requires the stamp it replaces, if any, to be at least 60 s old. The owner may create and update their limit doc, but never read or delete it: a client that could delete it before each send would dodge the limit.
+
+## Feedback
+
+- `FeedbackService.send(uid, draft)` (`src/firebase/feedback.ts`) writes the feedback doc (auto id) and the limit doc in one batch. Neither collection is readable, so a `permission-denied` on that batch becomes `FeedbackRateLimitedError`; any other denial would be a shape bug, which the rules tests catch.
+- `src/memory/feedback.ts` is the test fake and enforces the same one-minute limit.
+- Feedback sits outside `users/{uid}`, so `erase()` keeps it (up to 2 years, per the privacy policy). `erase()` also keeps `feedbackLimits/{uid}` (just a `lastAt` timestamp): no client may delete it, or a hostile client could delete it before every send and bypass the 60 s rate limit, so it stays with the feedback.
+- The device side (outbox, flush triggers, `useFeedback`, trimmed diagnostics) is `@ihsaanly/state/feedback/*`.
+
+**Admin view (no code):** Firebase console → the project (`ihsaanly-production` or `ihsaanly-development`) → Firestore → `feedback`, sorted by `createdAt`. Set `status` to `seen` or `done` there; the console uses IAM, so it bypasses the rules that stop clients updating.
 
 ## Local development
 

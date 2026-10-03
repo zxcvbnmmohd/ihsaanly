@@ -8,6 +8,8 @@ import {
   buildDiagnostics as buildDiagnosticsBase,
   buildExport,
   type Diagnostics,
+  type DiagnosticsApp,
+  type DiagnosticsReminders,
 } from '@ihsaanly/state/data/export'
 import Constants from 'expo-constants'
 import * as Device from 'expo-device'
@@ -19,16 +21,23 @@ import { pendingReminders, permissionStatus } from '@/notifications/schedule'
 export type { Diagnostics }
 export { buildExport }
 
+/** This app and device, as every diagnostic report (shared or attached to feedback) names them. */
+export function diagnosticsApp(): DiagnosticsApp {
+  return {
+    version: Constants.expoConfig?.version ?? 'unknown',
+    platform: Platform.OS,
+    osVersion: String(Platform.Version),
+    device: `${Device.manufacturer ?? '?'} ${Device.modelName ?? '?'}`,
+  }
+}
+
+/** The reminder permission and queue, which only the OS can answer (asynchronously). */
+export async function diagnosticsReminders(): Promise<DiagnosticsReminders> {
+  return { permission: await permissionStatus(), pending: await pendingReminders() }
+}
+
 export async function buildDiagnostics(): Promise<Diagnostics> {
-  return buildDiagnosticsBase(
-    {
-      version: Constants.expoConfig?.version ?? 'unknown',
-      platform: Platform.OS,
-      osVersion: String(Platform.Version),
-      device: `${Device.manufacturer ?? '?'} ${Device.modelName ?? '?'}`,
-    },
-    { permission: await permissionStatus(), pending: await pendingReminders() },
-  )
+  return buildDiagnosticsBase(diagnosticsApp(), await diagnosticsReminders())
 }
 
 /**

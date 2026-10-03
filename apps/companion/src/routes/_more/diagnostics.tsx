@@ -1,7 +1,8 @@
 import { useStrings } from '@ihsaanly/state/strings'
 import { DiagnosticsScreen } from '@ihsaanly/ui/screens/diagnostics'
-import { createFileRoute, useRouter } from '@tanstack/react-router'
+import { createFileRoute, useNavigate, useRouter } from '@tanstack/react-router'
 import { type ReactElement, useState } from 'react'
+import { cloudEnabled } from '~/cloud'
 import { PageHeader } from '~/components/page-header'
 import { buildDiagnostics, type Diagnostics, downloadDiagnostics } from '~/data/export'
 
@@ -25,6 +26,7 @@ function initial(): Thing {
 function DiagnosticsRoute(): ReactElement {
   const strings = useStrings()
   const router = useRouter()
+  const navigate = useNavigate()
   const [thing, setThing] = useState<Thing>(initial)
 
   const send = (): void => {
@@ -59,6 +61,11 @@ function DiagnosticsRoute(): ReactElement {
         onToggleRaw={() => setThing((current) => ({ ...current, showingRaw: !current.showingRaw }))}
         onSend={send}
         onCancel={() => router.history.back()}
+        onReportProblem={
+          cloudEnabled
+            ? () => void navigate({ to: '/feedback', search: { diagnostics: 1 } })
+            : undefined
+        }
       />
     </>
   )

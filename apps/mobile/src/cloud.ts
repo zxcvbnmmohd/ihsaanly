@@ -1,4 +1,5 @@
 import { firebaseConfigFrom } from '@ihsaanly/cloud/config'
+import type { FirebaseConfig } from '@ihsaanly/cloud/firebase/app'
 import type { Cloud } from '@ihsaanly/cloud/ports'
 import { startCloud } from '@ihsaanly/state/cloud/session'
 import { GoogleSignin } from '@react-native-google-signin/google-signin'
@@ -65,11 +66,12 @@ async function googleIdToken(): Promise<string> {
   return response.data.idToken
 }
 
-async function loadCloud(): Promise<Cloud> {
-  if (!config) throw new Error('Firebase is not configured')
+/** Takes the config as an argument so it can be exercised with and without one. */
+export async function loadCloud(cloudConfig: FirebaseConfig | null): Promise<Cloud> {
+  if (!cloudConfig) throw new Error('Firebase is not configured')
   // Dynamic, so Firebase stays off the startup path.
   const { createNativeCloud } = await import('@ihsaanly/cloud/firebase/flows/native')
-  return createNativeCloud(config, {
+  return createNativeCloud(cloudConfig, {
     storage: Storage,
     appleIdToken,
     googleIdToken,
@@ -79,5 +81,5 @@ async function loadCloud(): Promise<Cloud> {
 
 /** Starts sync once; returns the stop function. Call only when `cloudEnabled`. */
 export function startMobileCloud(): () => void {
-  return startCloud(loadCloud, { onWiped: () => void reloadAppAsync() })
+  return startCloud(() => loadCloud(config), { onWiped: () => void reloadAppAsync() })
 }

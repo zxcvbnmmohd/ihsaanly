@@ -14,6 +14,8 @@ every push to `production` or `development`. The full domain layout is in
 - `__tsr/staticServerFnCache/*.json` holds the result of every server function,
   computed at build time. Client-side navigation reads these files, so the site
   needs no server. Upload them with everything else.
+- `content/` is the app content for remote updates (below). Upload it with
+  everything else.
 - Many FTP clients hide dotfiles: make sure `.htaccess` is uploaded.
 
 ## Build settings
@@ -30,6 +32,45 @@ every push to `production` or `development`. The full domain layout is in
   developer.chrome.com/docs/webstore/branding) only as a link to a published
   listing, so it appears, and the footer gains a "Chrome extension" link, only
   once `chromeWebStoreUrl` is set.
+
+## Content updates (`/content/`)
+
+`scripts/postbuild.ts` (`publishContent`) writes `packages/core/content` as a
+versioned bundle, using `buildContentBundle()` from
+`@ihsaanly/core/content/bundle-build` (the contract is
+`packages/core/src/content/bundle.ts`; the flow is in
+`docs/ARCHITECTURE.md`, "Content updates"):
+
+```text
+dist/client/content/manifest.json                      → ContentManifest
+dist/client/content/v<version>/items.json
+dist/client/content/v<version>/glossary.json
+dist/client/content/v<version>/translations/<lang>.json
+```
+
+Every file is validated with the content schemas first, and an invalid one
+fails the build. `<version>` is a hash of the content, so it only changes when
+the content does. Only the current version is written; the FTP deploy deletes
+the previous folder. During an upload a client can briefly see a manifest that
+does not match the files; clients validate and keep their content, so that is
+safe.
+
+Production serves it at `https://ihsaanly.app/content/`, development at
+`https://dev.ihsaanly.app/content/`. The headers (`CONTENT_HEADERS`, written
+to `.htaccess`, `_headers` and `headers.json` through `HeaderMap.paths`):
+
+| Path                          | Headers                                                                                                 |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------- |
+| `/content/manifest.json`      | `Access-Control-Allow-Origin: *`, `Content-Type: application/json; charset=utf-8`, `Cache-Control: no-cache` |
+| `/content/:version/*`         | `Access-Control-Allow-Origin: *`, `Content-Type: application/json; charset=utf-8`, `Cache-Control: public, max-age=31536000, immutable` |
+
+The content is public and read cross-origin by the companion, the extension
+and the mobile app, hence `*`. In `.htaccess` these are `<If>` blocks after
+the cache tiers, so they replace the JSON `no-cache` rule; the CORS header is
+`always` (errors carry it too, so a client can read a 404), the rest are only
+sent with a successful response, so a missing file is never cached for a
+year. `test/output.test.ts` checks the published files and serves them with
+these headers.
 
 ## Why each page has its own Content-Security-Policy
 

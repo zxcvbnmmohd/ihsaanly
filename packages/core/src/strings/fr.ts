@@ -301,6 +301,54 @@ export const fr: Strings = {
     hideRaw: 'Masquer le rapport complet',
     send: 'L’envoyer',
     cancel: 'Pas maintenant',
+    reportProblem: 'Signaler ce problème',
+  },
+  feedback: {
+    title: 'Envoyer un retour',
+    explanation:
+      'Dites-nous ce qui n’a pas fonctionné, ou ce qui améliorerait Ihsaanly. Rien n’est envoyé tant que vous n’appuyez pas sur Envoyer.',
+    signedOut:
+      'Votre retour est envoyé avec votre compte, afin que nous puissions vous répondre et écarter les messages indésirables. Se connecter reste facultatif pour le reste de l’application.',
+    signIn: 'Se connecter pour envoyer un retour',
+    emailFallback: 'Vous préférez l’e-mail ? Écrivez à {email}.',
+    kindLabel: 'De quoi s’agit-il ?',
+    kinds: {
+      bug: 'Signaler un problème',
+      idea: 'Proposer une idée',
+      other: 'Autre chose',
+    },
+    messageLabel: 'Votre message',
+    messagePlaceholder: 'Que s’est-il passé, ou qu’est-ce qui aiderait ?',
+    counter: (used: number, max: number): string => `${used} / ${max}`,
+    contactLabel: 'E-mail de contact',
+    contactHint: 'Facultatif. Seulement si vous souhaitez une réponse.',
+    contactPlaceholder: 'name@example.com',
+    fillAccountEmail: (email: string): string => `Utiliser ${email}`,
+    includeDiagnostics: 'Joindre les informations de diagnostic',
+    includeDiagnosticsDetail:
+      'Facultatif. Version de l’application, appareil, position approximative et nombre de problèmes. Désactivé tant que vous ne l’activez pas.',
+    showIncluded: 'Voir ce qui est inclus',
+    hideIncluded: 'Masquer ce qui est inclus',
+    privacy:
+      'Envoyé à Mohd Inc. avec votre compte afin que nous puissions vous répondre. Conservé jusqu’à 2 ans. {privacy}',
+    privacyLink: 'Lire la politique de confidentialité',
+    send: 'Envoyer',
+    sending: 'Envoi…',
+    queuedTitle: 'Enregistré pour plus tard',
+    queued:
+      'Vous êtes hors ligne. Votre retour est enregistré sur cet appareil et sera envoyé dès que vous serez de nouveau connecté.',
+    sentTitle: 'Merci',
+    sent: 'Votre retour a été envoyé.',
+    done: 'Terminé',
+    sendAnother: 'En envoyer un autre',
+    errors: {
+      'rate-limited': 'Vous venez d’envoyer un retour. Patientez une minute, puis réessayez.',
+      network:
+        'Connexion impossible. Votre message est toujours là. Vérifiez votre connexion et réessayez.',
+      'signed-out': 'Enregistré sur cet appareil. Il sera envoyé une fois que vous serez connecté.',
+      invalid: 'Vérifiez votre message et votre adresse e-mail de contact, puis renvoyez.',
+      unknown: 'Une erreur s’est produite. Votre message est toujours là. Réessayez.',
+    },
   },
   about: {
     title: 'À propos',

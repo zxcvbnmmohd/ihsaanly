@@ -21,6 +21,7 @@ import type { RemoteChanges, SyncEvent, SyncPreference, SyncRemote } from '../po
  * users/{uid}                      { createdAt, schema }
  * users/{uid}/eventMonths/{YYYY-MM} { events: { '<at>|<kind>|<subject>': { l, d } }, updatedAt }
  * users/{uid}/state/preferences    { prefs: { <key>: { v, t } }, updatedAt }
+ * feedbackLimits/{uid}             { lastAt } — kept by erase(), like feedback (feedback.ts)
  *
  * A month per document keeps a sync to one read per changed month instead of
  * one per event. ponytail: the Spark free tier (~20k writes / 50k reads a day)
@@ -191,6 +192,8 @@ export function createFirestoreSyncRemote(db: Firestore): SyncRemote {
         ...snap.docs.map((month) => (b: WriteBatch) => b.delete(month.ref)),
         (b) => b.delete(prefsDoc(uid)),
         (b) => b.delete(userDoc(uid)),
+        // feedback and feedbackLimits/{uid} stay (see feedback.ts): a client
+        // that could delete its limit doc could dodge the rate limit.
       ])
       known.delete(uid)
     },

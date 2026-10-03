@@ -1,6 +1,14 @@
 import { describe, expect, it } from 'bun:test'
 
-import { civilDateIn, hijriDay, isSameCivilDate, logDay, shiftDays } from './boundaries'
+import {
+  civilDateIn,
+  civilDateKey,
+  hijriDay,
+  isSameCivilDate,
+  logDay,
+  shiftDays,
+  weekdayOf,
+} from './boundaries'
 
 const TORONTO = 'America/Toronto'
 
@@ -52,5 +60,34 @@ describe('the two day boundaries', () => {
       month: 9,
       day: 18,
     })
+  })
+})
+
+describe('a formatter that omits a part', () => {
+  it('throws naming the missing part rather than yielding NaN', () => {
+    const original = Intl.DateTimeFormat
+    class Empty {
+      formatToParts(): Intl.DateTimeFormatPart[] {
+        return [{ type: 'year', value: '2026' }]
+      }
+    }
+    Intl.DateTimeFormat = Empty as unknown as typeof Intl.DateTimeFormat
+    try {
+      expect(() => civilDateIn(new Date(), 'UTC')).toThrow('missing its month')
+    } finally {
+      Intl.DateTimeFormat = original
+    }
+  })
+})
+
+describe('weekdayOf and civilDateKey', () => {
+  it('counts the weekday from Sunday = 0, reading the date as a calendar day', () => {
+    expect(weekdayOf({ year: 2026, month: 9, day: 18 })).toBe(5) // Friday
+    expect(weekdayOf({ year: 2026, month: 9, day: 20 })).toBe(0) // Sunday
+  })
+
+  it('files a day under a zero-padded, sortable key', () => {
+    expect(civilDateKey({ year: 2026, month: 3, day: 7 })).toBe('2026-03-07')
+    expect(civilDateKey({ year: 2026, month: 12, day: 25 })).toBe('2026-12-25')
   })
 })

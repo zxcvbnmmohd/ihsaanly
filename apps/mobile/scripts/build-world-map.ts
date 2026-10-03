@@ -93,93 +93,98 @@ function chunk(type: string, data: Uint8Array): Uint8Array {
   return out
 }
 
-const response = await fetch(SOURCE)
-if (!response.ok) throw new Error(`Natural Earth fetch failed: ${response.status}`)
-const collection = (await response.json()) as { features: { geometry: Geometry }[] }
+/** Fetches the land, rasterises it, checks the projection, writes the PNG. */
+export async function main(): Promise<void> {
+  const response = await fetch(SOURCE)
+  if (!response.ok) throw new Error(`Natural Earth fetch failed: ${response.status}`)
+  const collection = (await response.json()) as { features: { geometry: Geometry }[] }
 
-const renderWidth = WIDTH * SUPERSAMPLE
-const renderHeight = HEIGHT * SUPERSAMPLE
-const mask = new Uint8Array(renderWidth * renderHeight)
-for (const feature of collection.features) {
-  for (const rings of polygonsOf(feature.geometry)) {
-    fill(mask, renderWidth, renderHeight, rings)
-  }
-}
-
-const alpha = new Uint8Array(WIDTH * HEIGHT)
-for (let y = 0; y < HEIGHT; y += 1) {
-  for (let x = 0; x < WIDTH; x += 1) {
-    let total = 0
-    for (let dy = 0; dy < SUPERSAMPLE; dy += 1) {
-      const base = (y * SUPERSAMPLE + dy) * renderWidth + x * SUPERSAMPLE
-      for (let dx = 0; dx < SUPERSAMPLE; dx += 1) total += mask[base + dx] ?? 0
+  const renderWidth = WIDTH * SUPERSAMPLE
+  const renderHeight = HEIGHT * SUPERSAMPLE
+  const mask = new Uint8Array(renderWidth * renderHeight)
+  for (const feature of collection.features) {
+    for (const rings of polygonsOf(feature.geometry)) {
+      fill(mask, renderWidth, renderHeight, rings)
     }
-    alpha[y * WIDTH + x] = Math.round(total / (SUPERSAMPLE * SUPERSAMPLE))
   }
-}
 
-/** The map is only useful if the projection lands where it claims. */
-const at = (lat: number, lon: number): number => {
-  const x = Math.min(WIDTH - 1, Math.floor(((lon + 180) / 360) * WIDTH))
-  const y = Math.min(HEIGHT - 1, Math.floor(((90 - lat) / 180) * HEIGHT))
-  return alpha[y * WIDTH + x] ?? 0
-}
+  const alpha = new Uint8Array(WIDTH * HEIGHT)
+  for (let y = 0; y < HEIGHT; y += 1) {
+    for (let x = 0; x < WIDTH; x += 1) {
+      let total = 0
+      for (let dy = 0; dy < SUPERSAMPLE; dy += 1) {
+        const base = (y * SUPERSAMPLE + dy) * renderWidth + x * SUPERSAMPLE
+        for (let dx = 0; dx < SUPERSAMPLE; dx += 1) total += mask[base + dx] ?? 0
+      }
+      alpha[y * WIDTH + x] = Math.round(total / (SUPERSAMPLE * SUPERSAMPLE))
+    }
+  }
 
-const LAND: [string, number, number][] = [
-  ['London', 51.51, -0.13],
-  ['Toronto', 43.7, -79.42],
-  ['Jakarta', -6.21, 106.85],
-  ['Cape Town', -33.92, 18.42],
-  ['Sydney', -33.87, 151.21],
-  ['Riyadh', 24.71, 46.68],
-  ['Tokyo', 35.68, 139.69],
-  ['Lima', -12.05, -77.04],
-  ['Cairo', 30.04, 31.24],
-  ['Moscow', 55.76, 37.62],
-]
-const SEA: [string, number, number][] = [
-  ['mid Pacific', 0, -160],
-  ['mid Atlantic', 30, -40],
-  ['southern Indian', -40, 80],
-  ['south Atlantic', -20, -20],
-]
+  /** The map is only useful if the projection lands where it claims. */
+  const at = (lat: number, lon: number): number => {
+    const x = Math.min(WIDTH - 1, Math.floor(((lon + 180) / 360) * WIDTH))
+    const y = Math.min(HEIGHT - 1, Math.floor(((90 - lat) / 180) * HEIGHT))
+    return alpha[y * WIDTH + x] ?? 0
+  }
 
-const failures = [
-  ...LAND.filter(([, lat, lon]) => at(lat, lon) <= 100).map(([name]) => `${name} is not on land`),
-  ...SEA.filter(([, lat, lon]) => at(lat, lon) >= 100).map(([name]) => `${name} is not at sea`),
-]
-if (failures.length > 0) {
-  console.error('✖ projection check failed:')
-  for (const failure of failures) console.error(`  ${failure}`)
-  process.exit(1)
-}
+  const LAND: [string, number, number][] = [
+    ['London', 51.51, -0.13],
+    ['Toronto', 43.7, -79.42],
+    ['Jakarta', -6.21, 106.85],
+    ['Cape Town', -33.92, 18.42],
+    ['Sydney', -33.87, 151.21],
+    ['Riyadh', 24.71, 46.68],
+    ['Tokyo', 35.68, 139.69],
+    ['Lima', -12.05, -77.04],
+    ['Cairo', 30.04, 31.24],
+    ['Moscow', 55.76, 37.62],
+  ]
+  const SEA: [string, number, number][] = [
+    ['mid Pacific', 0, -160],
+    ['mid Atlantic', 30, -40],
+    ['southern Indian', -40, 80],
+    ['south Atlantic', -20, -20],
+  ]
 
-const raw = new Uint8Array(HEIGHT * (1 + WIDTH * 2))
-let cursor = 0
-for (let y = 0; y < HEIGHT; y += 1) {
-  raw[cursor] = 0
-  cursor += 1
-  for (let x = 0; x < WIDTH; x += 1) {
+  const failures = [
+    ...LAND.filter(([, lat, lon]) => at(lat, lon) <= 100).map(([name]) => `${name} is not on land`),
+    ...SEA.filter(([, lat, lon]) => at(lat, lon) >= 100).map(([name]) => `${name} is not at sea`),
+  ]
+  if (failures.length > 0) {
+    console.error('✖ projection check failed:')
+    for (const failure of failures) console.error(`  ${failure}`)
+    process.exit(1)
+  }
+
+  const raw = new Uint8Array(HEIGHT * (1 + WIDTH * 2))
+  let cursor = 0
+  for (let y = 0; y < HEIGHT; y += 1) {
     raw[cursor] = 0
-    raw[cursor + 1] = alpha[y * WIDTH + x] ?? 0
-    cursor += 2
+    cursor += 1
+    for (let x = 0; x < WIDTH; x += 1) {
+      raw[cursor] = 0
+      raw[cursor + 1] = alpha[y * WIDTH + x] ?? 0
+      cursor += 2
+    }
   }
+
+  const header = new Uint8Array(13)
+  const headerView = new DataView(header.buffer)
+  headerView.setUint32(0, WIDTH)
+  headerView.setUint32(4, HEIGHT)
+  header.set([8, 4, 0, 0, 0], 8)
+
+  const png = new Uint8Array([
+    ...[0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a],
+    ...chunk('IHDR', header),
+    ...chunk('IDAT', new Uint8Array(deflateSync(raw, { level: 9 }))),
+    ...chunk('IEND', new Uint8Array()),
+  ])
+
+  await Bun.write(OUT, png)
+  console.log(
+    `✔ ${OUT} — ${WIDTH}×${HEIGHT}, ${png.length} bytes, ${LAND.length + SEA.length} checks passed`,
+  )
 }
 
-const header = new Uint8Array(13)
-const headerView = new DataView(header.buffer)
-headerView.setUint32(0, WIDTH)
-headerView.setUint32(4, HEIGHT)
-header.set([8, 4, 0, 0, 0], 8)
-
-const png = new Uint8Array([
-  ...[0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a],
-  ...chunk('IHDR', header),
-  ...chunk('IDAT', new Uint8Array(deflateSync(raw, { level: 9 }))),
-  ...chunk('IEND', new Uint8Array()),
-])
-
-await Bun.write(OUT, png)
-console.log(
-  `✔ ${OUT} — ${WIDTH}×${HEIGHT}, ${png.length} bytes, ${LAND.length + SEA.length} checks passed`,
-)
+if (import.meta.main) await main()

@@ -18,6 +18,7 @@ import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router'
 import { type ReactElement, useEffect } from 'react'
 import { z } from 'zod'
 import { PageHeader } from '~/components/page-header'
+import { openUrl } from '~/platform/open-url'
 
 /** `?from=onboarding`: signing in to restore an account, instead of setting up. */
 const accountSearch = z.object({ from: z.literal('onboarding').optional().catch(undefined) })
@@ -39,9 +40,7 @@ const PROVIDERS: SignInProvider[] = ['apple', 'google']
 const LEGAL = {
   termsUrl: 'https://ihsaanly.app/legal/terms',
   privacyUrl: 'https://ihsaanly.app/legal/privacy',
-  onOpen: (url: string): void => {
-    window.open(url, '_blank', 'noopener')
-  },
+  onOpen: openUrl,
 }
 
 function AccountRoute(): ReactElement {

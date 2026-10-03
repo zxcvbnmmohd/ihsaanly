@@ -40,11 +40,11 @@ function readStrings(code: string): Strings | null {
 
 const ENGLISH = readStrings('en') ?? {}
 
-export function catalogue(code: LocaleCode): Catalogue {
-  const own = code === 'en' ? ENGLISH : readStrings(code)
+/** One language's strings laid over English, with what it lacks and what English does not know. */
+export function merge(english: Strings, own: Strings | null, code: string): Catalogue {
   const strings: Strings = {}
   const missing: string[] = []
-  for (const [key, value] of Object.entries(ENGLISH)) {
+  for (const [key, value] of Object.entries(english)) {
     const translated = own?.[key]
     if (translated === undefined || translated.trim() === '') {
       if (code !== 'en') missing.push(key)
@@ -53,6 +53,10 @@ export function catalogue(code: LocaleCode): Catalogue {
       strings[key] = translated
     }
   }
-  const unknown = own ? Object.keys(own).filter((key) => !(key in ENGLISH)) : []
+  const unknown = own ? Object.keys(own).filter((key) => !(key in english)) : []
   return { strings, missing, unknown, present: own !== null }
+}
+
+export function catalogue(code: LocaleCode): Catalogue {
+  return merge(ENGLISH, code === 'en' ? ENGLISH : readStrings(code), code)
 }

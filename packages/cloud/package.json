@@ -11,6 +11,7 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "test": "bun test src",
+    "test:coverage": "bun test --coverage src",
     "test:rules": "bunx firebase-tools@15 emulators:exec --only firestore --project demo-ihsaanly 'bun test ./test'",
     "emulators": "bunx firebase-tools@15 emulators:start --only auth,firestore --project demo-ihsaanly"
   },

@@ -65,5 +65,7 @@ describe('filterGroups', () => {
       moreGroups(input).flatMap((group) => group.rows.map((row) => row.href))
     expect(hrefs(baseInput)).not.toContain('/account')
     expect(hrefs({ ...baseInput, accountDetail: 'Not signed in' })).toContain('/account')
+    expect(hrefs(baseInput)).not.toContain('/feedback')
+    expect(hrefs({ ...baseInput, accountDetail: 'Not signed in' })).toContain('/feedback')
   })
 })

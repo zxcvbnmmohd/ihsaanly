@@ -1,0 +1,10 @@
+# A fresh install opens on the onboarding welcome.
+#   maestro test e2e/mobile/flows/onboarding-welcome.yaml
+# appId is the development variant (APP_VARIANT=development, `bun run ios`);
+# pass `-e APP_ID=app.ihsaanly.companion` for a production build.
+appId: ${APP_ID || 'app.ihsaanly.companion.development'}
+---
+- launchApp:
+    clearState: true
+- assertVisible: "The moment, not the clock."
+- assertVisible: "Continue"

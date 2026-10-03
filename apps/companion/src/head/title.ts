@@ -27,6 +27,7 @@ const SCREEN: Record<string, (strings: Strings) => string> = {
   '/_more/data': (s) => s.data.title,
   '/_more/diagnostics': (s) => s.diagnostics.title,
   '/_more/events': (s) => s.events.title,
+  '/_more/feedback': (s) => s.feedback.title,
   '/_more/hijri': (s) => s.hijri.title,
   '/_more/history': (s) => s.history.title,
   '/_more/language': (s) => s.language.title,

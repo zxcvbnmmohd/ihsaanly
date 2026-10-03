@@ -51,14 +51,15 @@ function LibraryRoute(): ReactElement {
   const selectedId =
     ((itemMatch ?? memoriseMatch)?.params as { id?: string } | undefined)?.id ?? null
 
+  const itemTitle = (id: string): string => {
+    const item = itemById(id)
+    return item ? (resolveText(item.title) ?? item.id) : strings.notFound.title
+  }
+
   const panelTitle = (): string => {
     if (glossaryMatch) return strings.glossary.title
     if (memoriseMatch) return strings.memorise.title
-    if (selectedId) {
-      const item = itemById(selectedId)
-      return item ? (resolveText(item.title) ?? item.id) : strings.notFound.title
-    }
-    return ''
+    return selectedId ? itemTitle(selectedId) : ''
   }
 
   // Escape closes the panel back to the plain grid — only meaningful at

@@ -16,6 +16,7 @@
 import { createHash } from 'node:crypto'
 import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { DEFAULT_CONTENT_URL } from '@ihsaanly/core/content/bundle'
 import { DEVELOPMENT_ROBOTS, resolveAppEnv, robotsTxt } from '@ihsaanly/web/app-env'
 import {
   cspHash,
@@ -27,71 +28,6 @@ import {
 import { buildHeadersFile, buildHtaccess } from '@ihsaanly/web/hosting/htaccess'
 
 const ROOT = join(import.meta.dir, '..')
-const DIST = join(ROOT, 'dist')
-const APP_ENV = resolveAppEnv(process.env.VITE_APP_ENV)
-const DEVELOPMENT = APP_ENV === 'development'
-
-// ---- one CSP for the whole app ----
-
-const html = readFileSync(join(DIST, 'index.html'), 'utf8')
-if (/<[a-z][^>]*\sstyle="/i.test(html)) {
-  console.error('index.html: a style attribute the CSP blocks')
-  process.exit(1)
-}
-
-// Cloud sync (optional): only widened when the build has a Firebase auth domain.
-// - connect-src: the hosts the Auth and Firestore SDKs call, listed one by one (no
-//   *.googleapis.com wildcard, no Installations or Remote Config).
-// - frame-src: signInWithPopup loads the hidden helper iframe at
-//   https://<authDomain>/__/auth/iframe.
-// - script-src: the popup resolver loads Google's gapi loader from apis.google.com.
-// The popup window itself is not a frame and needs no directive.
-const authDomain = process.env.VITE_FIREBASE_AUTH_DOMAIN?.trim()
-const cloudDirectives: Record<string, string> = {}
-const inline = inlineBlocks(html)
-if (authDomain) {
-  cloudDirectives['connect-src'] = [
-    "'self'",
-    'https://securetoken.googleapis.com',
-    'https://identitytoolkit.googleapis.com',
-    'https://firestore.googleapis.com',
-  ].join(' ')
-  cloudDirectives['frame-src'] = `https://${authDomain}`
-  cloudDirectives['script-src'] = [
-    "'self'",
-    ...new Set(inline.scripts.map(cspHash)),
-    'https://apis.google.com',
-  ].join(' ')
-}
-
-const policy = pageCsp(inline, {
-  directives: {
-    'img-src': "'self' data: blob:",
-    'worker-src': "'self'",
-    'manifest-src': "'self'",
-    ...cloudDirectives,
-  },
-})
-
-// Every client route is the same index.html; the fallback carries the one
-// policy too, so a path Apache never rewrote (a direct request behind a
-// proxy, say) still gets it.
-const headerMap: HeaderMap = {
-  pages: { '/': policy },
-  fallback: policy,
-  // COMMON_HEADERS denies geolocation; the Location screen needs it from `self`.
-  headers: {
-    'Permissions-Policy': permissionsPolicy({ geolocation: '(self)' }),
-    ...(DEVELOPMENT ? { 'X-Robots-Tag': DEVELOPMENT_ROBOTS } : {}),
-  },
-}
-
-writeFileSync(join(DIST, 'headers.json'), `${JSON.stringify(headerMap, null, 2)}\n`)
-
-// ---- .htaccess / _headers ----
-
-let htaccess = buildHtaccess({ headerMap, spaFallback: '/index.html' })
-const headers = buildHeadersFile(headerMap)
 
 // buildHtaccess's own cache tiers cover hashed assets (1y, immutable) and
 // `.html`/`.xml`/`.json` (no-cache), but sw.js, the manifest and the
@@ -110,60 +46,15 @@ const NEVER_CACHE = `
     Header set Cache-Control "no-cache"
   </Files>
 `
-htaccess = htaccess.replace(
-  '</IfModule>\n\n<IfModule mod_deflate.c>',
-  `${NEVER_CACHE}</IfModule>\n\n<IfModule mod_deflate.c>`,
-)
-
-writeFileSync(join(DIST, '.htaccess'), htaccess)
-writeFileSync(join(DIST, '_headers'), headers)
-
-// ---- indexing and the install name ----
-
-// Marketing (ihsaanly.app) is the SEO surface and has the sitemap; here only
-// the door is indexable, which src/head/use-document-head.ts enforces per
-// route with a robots meta, since every path is the same index.html.
-writeFileSync(join(DIST, 'robots.txt'), robotsTxt(APP_ENV))
-
-if (DEVELOPMENT) {
-  const file = join(DIST, 'manifest.webmanifest')
-  const manifest = JSON.parse(readFileSync(file, 'utf8'))
-  manifest.name = 'Ihsaanly Dev'
-  manifest.short_name = 'Ihsaanly Dev'
-  writeFileSync(file, `${JSON.stringify(manifest, null, 2)}\n`)
-}
-
-// ---- offline service worker ----
-
-function distFiles(dir = DIST, prefix = ''): string[] {
-  return readdirSync(dir).flatMap((name) => {
-    const path = join(dir, name)
-    const relPath = prefix ? `${prefix}/${name}` : name
-    if (statSync(path).isDirectory()) return distFiles(path, relPath)
-    const SKIP = new Set(['.htaccess', '_headers', 'headers.json', 'sw.js', 'robots.txt'])
-    if (SKIP.has(relPath) || relPath.startsWith('.well-known/')) return []
-    return [relPath]
-  })
-}
-
-const files = distFiles()
-const precached = files.map((path) => `/${path}`)
-// The navigation fallback below always looks up /index.html by name, so the
-// root URL itself needs no separate cache entry.
-const version = createHash('sha256')
-  .update(
-    files
-      .map((path) => `${path}\u0000${readFileSync(join(DIST, path)).toString('base64')}`)
-      .join('\n'),
-  )
-  .digest('hex')
-  .slice(0, 16)
 
 // ponytail: hand-rolled, no workbox. Navigations go network-first so a
 // deploy is live the moment it lands; hashed assets are immutable so
 // cache-first is always correct; everything else in the precache list is a
 // safety net for the one visit that happens to be offline.
-const SW = `// ponytail: hand-rolled service worker, generated by scripts/postbuild.ts.
+const serviceWorker = (
+  version: string,
+  precached: string[],
+): string => `// ponytail: hand-rolled service worker, generated by scripts/postbuild.ts.
 const VERSION = ${JSON.stringify(version)}
 const CACHE = \`ihsaanly-\${VERSION}\`
 const PRECACHE = ${JSON.stringify(precached)}
@@ -210,13 +101,6 @@ self.addEventListener('fetch', (event) => {
 })
 `
 
-writeFileSync(join(DIST, 'sw.js'), SW)
-
-// ---- app detection: universal / app links ----
-
-const WELL_KNOWN = join(DIST, '.well-known')
-if (!existsSync(WELL_KNOWN)) mkdirSync(WELL_KNOWN)
-
 // TODO: replace TEAMID once the Apple Developer Program membership exists.
 const AASA = {
   applinks: {
@@ -228,8 +112,6 @@ const AASA = {
     ],
   },
 }
-writeFileSync(join(WELL_KNOWN, 'apple-app-site-association'), `${JSON.stringify(AASA, null, 2)}\n`)
-
 // TODO: replace the sha256 fingerprint once the signing key exists.
 const ASSETLINKS = [
   {
@@ -241,6 +123,158 @@ const ASSETLINKS = [
     },
   },
 ]
-writeFileSync(join(WELL_KNOWN, 'assetlinks.json'), `${JSON.stringify(ASSETLINKS, null, 2)}\n`)
+const SKIP = new Set(['.htaccess', '_headers', 'headers.json', 'sw.js', 'robots.txt'])
 
-console.log(`postbuild: one CSP, ${precached.length} files precached (sw ${version}, ${APP_ENV})`)
+/** Every file under `dir` the service worker should precache, as paths relative to `base`. */
+function distFiles(base: string, dir = base, prefix = ''): string[] {
+  return readdirSync(dir).flatMap((name) => {
+    const path = join(dir, name)
+    const relPath = prefix ? `${prefix}/${name}` : name
+    if (statSync(path).isDirectory()) return distFiles(base, path, relPath)
+    if (SKIP.has(relPath) || relPath.startsWith('.well-known/')) return []
+    return [relPath]
+  })
+}
+
+export interface PostbuildOptions {
+  /** The built site. */
+  dist?: string
+  /** The build's environment: VITE_APP_ENV, VITE_CONTENT_URL and VITE_FIREBASE_AUTH_DOMAIN. */
+  env?: Record<string, string | undefined>
+}
+
+/** Writes everything a static host needs next to the built `index.html`; see the header. */
+export function postbuild({
+  dist: DIST = join(ROOT, 'dist'),
+  env = process.env,
+}: PostbuildOptions = {}): void {
+  const APP_ENV = resolveAppEnv(env.VITE_APP_ENV)
+  const DEVELOPMENT = APP_ENV === 'development'
+
+  // ---- one CSP for the whole app ----
+
+  const html = readFileSync(join(DIST, 'index.html'), 'utf8')
+  if (/<[a-z][^>]*\sstyle="/i.test(html))
+    throw new Error('index.html: a style attribute the CSP blocks')
+
+  // Remote content updates, in every build: the app fetches manifest.json and
+  // its files from the marketing site's /content/ (VITE_CONTENT_URL; a bad URL
+  // fails the build here). Only that origin is allowed, not the whole web.
+  const contentOrigin = new URL(env.VITE_CONTENT_URL?.trim() || DEFAULT_CONTENT_URL).origin
+
+  // Cloud sync (optional): only widened when the build has a Firebase auth domain.
+  // - connect-src: the hosts the Auth and Firestore SDKs call, listed one by one (no
+  //   *.googleapis.com wildcard, no Installations or Remote Config).
+  // - frame-src: signInWithPopup loads the hidden helper iframe at
+  //   https://<authDomain>/__/auth/iframe.
+  // - script-src: the popup resolver loads Google's gapi loader from apis.google.com.
+  // The popup window itself is not a frame and needs no directive.
+  const authDomain = env.VITE_FIREBASE_AUTH_DOMAIN?.trim()
+  const cloudDirectives: Record<string, string> = {}
+  const inline = inlineBlocks(html)
+  if (authDomain) {
+    cloudDirectives['connect-src'] = [
+      "'self'",
+      contentOrigin,
+      'https://securetoken.googleapis.com',
+      'https://identitytoolkit.googleapis.com',
+      'https://firestore.googleapis.com',
+      // The gapi loader pings apis.google.com/js/gen_204 after loading.
+      'https://apis.google.com',
+    ].join(' ')
+    cloudDirectives['frame-src'] = `https://${authDomain}`
+    // Firestore's connectivity check loads www.google.com/images/cleardot.gif.
+    cloudDirectives['img-src'] = "'self' data: blob: https://www.google.com"
+    cloudDirectives['script-src'] = [
+      "'self'",
+      ...new Set(inline.scripts.map(cspHash)),
+      'https://apis.google.com',
+    ].join(' ')
+  }
+
+  const policy = pageCsp(inline, {
+    directives: {
+      'img-src': "'self' data: blob:",
+      'connect-src': `'self' ${contentOrigin}`,
+      'worker-src': "'self'",
+      'manifest-src': "'self'",
+      ...cloudDirectives,
+    },
+  })
+
+  // Every client route is the same index.html; the fallback carries the one
+  // policy too, so a path Apache never rewrote (a direct request behind a
+  // proxy, say) still gets it.
+  const headerMap: HeaderMap = {
+    pages: { '/': policy },
+    fallback: policy,
+    // COMMON_HEADERS denies geolocation; the Location screen needs it from `self`.
+    headers: {
+      'Permissions-Policy': permissionsPolicy({ geolocation: '(self)' }),
+      // signInWithPopup needs the popup to talk back to this page; COMMON_HEADERS'
+      // `same-origin` severs that and sign-in never completes (Firebase's own
+      // guidance is `same-origin-allow-popups`). Only relaxed when sign-in exists.
+      ...(authDomain ? { 'Cross-Origin-Opener-Policy': 'same-origin-allow-popups' } : {}),
+      ...(DEVELOPMENT ? { 'X-Robots-Tag': DEVELOPMENT_ROBOTS } : {}),
+    },
+  }
+
+  writeFileSync(join(DIST, 'headers.json'), `${JSON.stringify(headerMap, null, 2)}\n`)
+
+  // ---- .htaccess / _headers ----
+
+  const htaccess = buildHtaccess({ headerMap, spaFallback: '/index.html' }).replace(
+    '</IfModule>\n\n<IfModule mod_deflate.c>',
+    `${NEVER_CACHE}</IfModule>\n\n<IfModule mod_deflate.c>`,
+  )
+
+  writeFileSync(join(DIST, '.htaccess'), htaccess)
+  writeFileSync(join(DIST, '_headers'), buildHeadersFile(headerMap))
+
+  // ---- indexing and the install name ----
+
+  // Marketing (ihsaanly.app) is the SEO surface and has the sitemap; here only
+  // the door is indexable, which src/head/use-document-head.ts enforces per
+  // route with a robots meta, since every path is the same index.html.
+  writeFileSync(join(DIST, 'robots.txt'), robotsTxt(APP_ENV))
+
+  if (DEVELOPMENT) {
+    const file = join(DIST, 'manifest.webmanifest')
+    const manifest = JSON.parse(readFileSync(file, 'utf8'))
+    manifest.name = 'Ihsaanly Dev'
+    manifest.short_name = 'Ihsaanly Dev'
+    writeFileSync(file, `${JSON.stringify(manifest, null, 2)}\n`)
+  }
+
+  // ---- offline service worker ----
+
+  // Sorted: directory listing order differs between file systems, and the version must not.
+  const files = distFiles(DIST).sort()
+  const precached = files.map((path) => `/${path}`)
+  // The navigation fallback below always looks up /index.html by name, so the
+  // root URL itself needs no separate cache entry.
+  const version = createHash('sha256')
+    .update(
+      files
+        .map((path) => `${path}\u0000${readFileSync(join(DIST, path)).toString('base64')}`)
+        .join('\n'),
+    )
+    .digest('hex')
+    .slice(0, 16)
+
+  writeFileSync(join(DIST, 'sw.js'), serviceWorker(version, precached))
+
+  // ---- app detection: universal / app links ----
+
+  const WELL_KNOWN = join(DIST, '.well-known')
+  if (!existsSync(WELL_KNOWN)) mkdirSync(WELL_KNOWN)
+  writeFileSync(
+    join(WELL_KNOWN, 'apple-app-site-association'),
+    `${JSON.stringify(AASA, null, 2)}\n`,
+  )
+  writeFileSync(join(WELL_KNOWN, 'assetlinks.json'), `${JSON.stringify(ASSETLINKS, null, 2)}\n`)
+
+  console.log(`postbuild: one CSP, ${precached.length} files precached (sw ${version}, ${APP_ENV})`)
+}
+
+if (import.meta.main) postbuild()

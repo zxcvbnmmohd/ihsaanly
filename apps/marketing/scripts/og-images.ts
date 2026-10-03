@@ -16,7 +16,7 @@ const WORK = join(tmpdir(), 'ihsaanly-og')
 
 type Strings = Record<string, string>
 
-function flatten(value: unknown, prefix = '', into: Strings = {}): Strings {
+export function flatten(value: unknown, prefix = '', into: Strings = {}): Strings {
   for (const [key, child] of Object.entries(value as Record<string, unknown>)) {
     if (key === '_comment' || key.endsWith('_comment')) continue
     const path = prefix ? `${prefix}.${key}` : key
@@ -26,21 +26,21 @@ function flatten(value: unknown, prefix = '', into: Strings = {}): Strings {
   return into
 }
 
-function strings(code: string): Strings {
+export function strings(code: string): Strings {
   const read = (each: string): Strings =>
     flatten(JSON.parse(readFileSync(join(ROOT, 'src', 'i18n', 'messages', `${each}.json`), 'utf8')))
   return { ...read('en'), ...read(code) }
 }
 
 /** Message text without its inline markup, escaped for HTML. */
-function text(value: string | undefined): string {
+export function text(value: string | undefined): string {
   return (value ?? '')
     .replace(/<[^>]+>/g, '')
     .replaceAll('&', '&amp;')
     .replaceAll('<', '&lt;')
 }
 
-function stack(locale: Locale): string {
+export function stack(locale: Locale): string {
   switch (locale.code) {
     case 'ar':
       return fonts.arabic.web
@@ -62,7 +62,7 @@ function stack(locale: Locale): string {
 const STAR =
   'M50 7.6 62.4 20H80v17.6L92.4 50 80 62.4V80H62.4L50 92.4 37.6 80H20V62.4L7.6 50 20 37.6V20h17.6Z'
 
-function page(locale: Locale): string {
+export function page(locale: Locale): string {
   const s = strings(locale.code)
   const c = (name: keyof typeof brand): string => brand[name].light
   const rtl = locale.dir === 'rtl'
@@ -114,22 +114,45 @@ document.fonts.ready.then(() => {
 `
 }
 
-mkdirSync(WORK, { recursive: true })
-for (const locale of LOCALES) {
-  const html = join(WORK, `og-${locale.code}.html`)
-  const png = join(OUT, `og-${locale.code}.png`)
-  writeFileSync(html, page(locale))
-  const run = spawnSync(CHROME, [
-    '--headless=new',
-    '--disable-gpu',
-    '--hide-scrollbars',
-    '--force-device-scale-factor=1',
-    '--window-size=1200,630',
-    '--virtual-time-budget=3000',
-    '--allow-file-access-from-files',
-    `--screenshot=${png}`,
-    `file://${html}`,
-  ])
-  if (run.status !== 0) throw new Error(`Chrome failed for ${locale.code}: ${run.stderr}`)
-  console.log(`wrote ${png}`)
+export interface RenderOptions {
+  chrome?: string
+  out?: string
+  work?: string
+  locales?: readonly Locale[]
+  /** Runs Chrome; the tests give it a stand-in. */
+  run?: (command: string, args: string[]) => { status: number | null; stderr?: Buffer | string }
 }
+
+/** Screenshots one image per locale into `out`, returning the files it wrote. */
+export function renderImages({
+  chrome = CHROME,
+  out = OUT,
+  work = WORK,
+  locales = LOCALES,
+  run = spawnSync,
+}: RenderOptions = {}): string[] {
+  mkdirSync(work, { recursive: true })
+  const written: string[] = []
+  for (const locale of locales) {
+    const html = join(work, `og-${locale.code}.html`)
+    const png = join(out, `og-${locale.code}.png`)
+    writeFileSync(html, page(locale))
+    const result = run(chrome, [
+      '--headless=new',
+      '--disable-gpu',
+      '--hide-scrollbars',
+      '--force-device-scale-factor=1',
+      '--window-size=1200,630',
+      '--virtual-time-budget=3000',
+      '--allow-file-access-from-files',
+      `--screenshot=${png}`,
+      `file://${html}`,
+    ])
+    if (result.status !== 0) throw new Error(`Chrome failed for ${locale.code}: ${result.stderr}`)
+    console.log(`wrote ${png}`)
+    written.push(png)
+  }
+  return written
+}
+
+if (import.meta.main) renderImages()

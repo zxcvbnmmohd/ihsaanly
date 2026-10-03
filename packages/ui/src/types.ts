@@ -105,3 +105,19 @@ export interface AccountView {
   /** Set with `link-required`, and kept while that sign-in runs. */
   link?: AccountLinkPrompt | undefined
 }
+
+/** What the feedback is about. */
+export type FeedbackKind = 'bug' | 'idea' | 'other'
+
+/** `queued` is saved on this device and will go when the device is online. */
+export type FeedbackStatus = 'idle' | 'sending' | 'queued' | 'sent' | 'error'
+
+/**
+ * A code, not a message: the Feedback screen owns the sentence, in the reader's language.
+ * With `queued`: `network` or `signed-out` (it goes later). With `error`: `invalid` (nothing
+ * was queued), or `rate-limited` / `unknown` (still queued; "Try again" sends it).
+ */
+export type FeedbackErrorCode = 'rate-limited' | 'network' | 'signed-out' | 'invalid' | 'unknown'
+
+/** The longest message the cloud accepts. */
+export const FEEDBACK_MESSAGE_MAX = 5000

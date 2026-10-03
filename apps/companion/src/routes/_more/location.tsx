@@ -9,6 +9,7 @@ import type { ReactElement } from 'react'
 import { useState } from 'react'
 import { PageHeader } from '~/components/page-header'
 import { requestDeviceLocation } from '~/platform/location'
+import { openSystemSettings } from '~/platform/open-settings'
 
 export const Route = createFileRoute('/_more/location')({ component: LocationRoute })
 
@@ -58,10 +59,8 @@ function LocationRoute(): ReactElement {
         problem={thing.problem}
         onQueryChange={(query) => setThing((current) => ({ ...current, query }))}
         onUseDevice={useDeviceLocation}
-        // No OS settings page a browser tab can open (capabilities.systemSettings
-        // is off on web); declined access is recovered by searching instead, which
-        // the screen already offers.
-        onOpenSettings={() => {}}
+        // Declined access is recovered by searching instead, which the screen already offers.
+        onOpenSettings={openSystemSettings}
         onSelect={choose}
       />
     </>

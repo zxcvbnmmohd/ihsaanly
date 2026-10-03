@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from 'bun:test'
+import { afterEach, beforeEach, describe, expect, it } from 'bun:test'
 
 /**
  * The web backend reads `globalThis.localStorage` once, at import time, so
@@ -208,5 +208,173 @@ describe('the web storage backend', () => {
 
     expect(backend.allPreferenceRows()).toEqual([])
     expect(backend.actionRows()).toEqual([])
+  })
+})
+
+describe('loading a stored blob', () => {
+  it('numbers the next event after the highest one stored', () => {
+    expect(backend.nextIdAfter([])).toBe(1)
+    expect(backend.nextIdAfter([{ id: 3 }, { id: 9 }, { id: 4 }])).toBe(10)
+  })
+
+  const real = globalThis.localStorage
+  const withBlob = (blob: string | null): void => {
+    ;(globalThis as unknown as { localStorage: Pick<Storage, 'getItem'> }).localStorage = {
+      getItem: () => blob,
+    }
+  }
+
+  afterEach(() => {
+    ;(globalThis as unknown as { localStorage: Storage }).localStorage = real
+  })
+
+  it('starts empty with nothing stored', () => {
+    withBlob(null)
+    expect(backend.load()).toEqual({ preferences: {}, events: [] })
+  })
+
+  it('starts empty when the stored value is not a store', () => {
+    withBlob('{"something":"else"}')
+    expect(backend.load()).toEqual({ preferences: {}, events: [] })
+  })
+
+  it('starts empty and remembers why when the blob is unreadable', () => {
+    withBlob('{"oops')
+
+    expect(backend.load()).toEqual({ preferences: {}, events: [] })
+    expect(backend.lastDatabaseError()).toStartWith('open: ')
+  })
+
+  it('reads a blob written before sync: no flags, no stamps, a batch sharing one instant', () => {
+    const legacy = {
+      preferences: { locale: '"en"' },
+      events: [1, 2, 3].map((id) => ({
+        id,
+        kind: 'prayer-made-up',
+        subject: 'fajr',
+        at: 1_000,
+        logDay: '2026-09-22',
+        windowStart: null,
+        windowEnd: null,
+        deltaSeconds: null,
+      })),
+    }
+    withBlob(JSON.stringify(legacy))
+
+    const loaded = backend.load()
+    expect(loaded.preferenceTimes).toBeUndefined()
+    expect(loaded.events.every((event) => event.synced === undefined)).toBe(true)
+    expect(backend.withUniqueIdentities(loaded.events).map((event) => event.at)).toEqual([
+      1_000, 1_001, 1_002,
+    ])
+  })
+
+  it('drops a repeat that still collides after being nudged', () => {
+    const event = {
+      kind: 'k',
+      subject: 's',
+      logDay: 'd',
+      windowStart: null,
+      windowEnd: null,
+      deltaSeconds: null,
+    }
+    const events = [
+      { ...event, id: 1, at: 1_000 },
+      { ...event, id: 2, at: 1_000 },
+      { ...event, id: 3, at: 1_001 },
+    ]
+
+    expect(backend.withUniqueIdentities(events).map((entry) => entry.id)).toEqual([1, 2])
+  })
+})
+
+describe('a browser that will not store', () => {
+  const real = globalThis.localStorage
+
+  afterEach(() => {
+    ;(globalThis as unknown as { localStorage: Storage }).localStorage = real
+  })
+
+  it('keeps working in memory and records why the write failed', () => {
+    ;(
+      globalThis as unknown as { localStorage: Pick<Storage, 'getItem' | 'setItem'> }
+    ).localStorage = {
+      getItem: () => null,
+      setItem: () => {
+        throw new Error('quota exceeded')
+      },
+    }
+
+    backend.writePreferenceRow('locale', '"en"')
+
+    expect(backend.readPreferenceRow('locale')).toEqual({ value: '"en"' })
+    expect(backend.lastDatabaseError()).toBe('write: quota exceeded')
+  })
+
+  it('records a write failure that is not an Error by its text', () => {
+    ;(
+      globalThis as unknown as { localStorage: Pick<Storage, 'getItem' | 'setItem'> }
+    ).localStorage = {
+      getItem: () => null,
+      setItem: () => {
+        throw 'full'
+      },
+    }
+
+    backend.wipe()
+
+    expect(backend.lastDatabaseError()).toBe('write: full')
+  })
+
+  describe('the content cache rows', () => {
+    const set = (storage: unknown): void => {
+      ;(globalThis as unknown as { localStorage: unknown }).localStorage = storage
+    }
+
+    it('keep each row under its own key, outside the data blob, and out of a wipe', () => {
+      set(fakeLocalStorage())
+      expect(backend.readContentRow('bundle')).toBeNull()
+      expect(backend.writeContentRow('bundle', '{"version":"a"}')).toBe(true)
+      expect(globalThis.localStorage.getItem('ihsaanly.content.v1.bundle')).toBe('{"version":"a"}')
+      expect(backend.readContentRow('bundle')).toBe('{"version":"a"}')
+
+      backend.wipe()
+      expect(backend.allPreferenceRows()).toEqual([])
+      expect(globalThis.localStorage.getItem('ihsaanly.db.v1')).not.toContain('version')
+      expect(backend.readContentRow('bundle')).toBe('{"version":"a"}')
+
+      backend.removeContentRow('bundle')
+      expect(backend.readContentRow('bundle')).toBeNull()
+    })
+
+    it('report a failed write and leave the old row whole', () => {
+      set({
+        getItem: () => 'old',
+        setItem: () => {
+          throw new Error('quota exceeded')
+        },
+        removeItem: () => {
+          throw new Error('denied')
+        },
+      })
+      expect(backend.writeContentRow('bundle', 'new')).toBe(false)
+      expect(backend.readContentRow('bundle')).toBe('old')
+      expect(() => backend.removeContentRow('bundle')).not.toThrow()
+    })
+
+    it('answer nothing where storage is unreachable', () => {
+      set(undefined)
+      expect(backend.readContentRow('bundle')).toBeNull()
+      expect(backend.writeContentRow('bundle', 'x')).toBe(false)
+      backend.removeContentRow('bundle')
+
+      set({
+        getItem: () => {
+          throw new Error('denied')
+        },
+      })
+      expect(backend.readContentRow('bundle')).toBeNull()
+      set(fakeLocalStorage())
+    })
   })
 })

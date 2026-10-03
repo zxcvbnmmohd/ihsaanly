@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { demoReducer, initialDemoState } from './state'
+import { type DemoAction, demoReducer, initialDemoState } from './state'
 
 const ZONE = 'Asia/Riyadh'
 
@@ -158,5 +158,40 @@ describe('item actions', () => {
     const state = demoReducer(initialDemoState(ZONE), { type: 'library-filter', filter: 'onToday' })
     expect(state.libraryFilter).toBe('onToday')
     expect(state.libraryQuery).toBe('')
+  })
+})
+
+describe('back, reset-counter, remind and unknown actions', () => {
+  test('back returns to the tab the item was opened from', () => {
+    const onLibrary = demoReducer(initialDemoState(ZONE), { type: 'select-tab', tab: 'library' })
+    const onItem = demoReducer(onLibrary, { type: 'open-item', id: 'x' })
+    const back = demoReducer(onItem, { type: 'back' })
+    expect(back.view).toBe('library')
+    expect(back.selectedItemId).toBeNull()
+  })
+
+  test('reset-counter zeroes the count', () => {
+    const counted = demoReducer(initialDemoState(ZONE), {
+      type: 'tap-counter',
+      id: 'x',
+      target: 5,
+      at: new Date(),
+    })
+    expect(counted.count).toBe(1)
+    expect(demoReducer(counted, { type: 'reset-counter' }).count).toBe(0)
+  })
+
+  test('reminders are kept per item', () => {
+    let state = demoReducer(initialDemoState(ZONE), { type: 'toggle-remind', id: 'x', value: true })
+    state = demoReducer(state, { type: 'toggle-remind', id: 'y', value: false })
+    expect(state.remind).toEqual({ x: true, y: false })
+    expect(demoReducer(state, { type: 'toggle-remind', id: 'x', value: false }).remind.x).toBe(
+      false,
+    )
+  })
+
+  test('an unknown action leaves the state as it was', () => {
+    const state = initialDemoState(ZONE)
+    expect(demoReducer(state, { type: 'nope' } as unknown as DemoAction)).toBe(state)
   })
 })

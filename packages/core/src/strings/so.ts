@@ -300,6 +300,54 @@ export const so: Strings = {
     hideRaw: 'Qari warbixinta oo dhan',
     send: 'Dir',
     cancel: 'Hadda maya',
+    reportProblem: 'Sheeg dhibaatadan',
+  },
+  feedback: {
+    title: 'Dir fikrad',
+    explanation:
+      'Noo sheeg waxa khaldamay, ama waxa Ihsaanly ka dhigi kara mid ka wanaagsan. Waxba lama dirayo ilaa aad riixdo Dir.',
+    signedOut:
+      'Fikradda waxaa lagu diraa akoonkaaga, si aan kuugu jawaabno oo aan u celino fariimaha aan loo baahnayn. Gelitaanku waa ikhtiyaari wixii kale ee abka ku jira.',
+    signIn: 'Gal si aad fikrad u dirto',
+    emailFallback: 'Ma door bidaysaa iimaylka? Ku qor {email}.',
+    kindLabel: 'Maxay ku saabsan tahay?',
+    kinds: {
+      bug: 'Sheeg dhibaato',
+      idea: 'Soo jeedi fikrad',
+      other: 'Wax kale',
+    },
+    messageLabel: 'Fariintaada',
+    messagePlaceholder: 'Maxaa dhacay, ama maxaa caawin lahaa?',
+    counter: (used: number, max: number): string => `${used} / ${max}`,
+    contactLabel: 'Iimaylka xiriirka',
+    contactHint: 'Ikhtiyaari. Kaliya haddii aad jawaab rabto.',
+    contactPlaceholder: 'name@example.com',
+    fillAccountEmail: (email: string): string => `Isticmaal ${email}`,
+    includeDiagnostics: 'Ku dar macluumaadka cilad-baarista',
+    includeDiagnosticsDetail:
+      'Ikhtiyaari. Nooca abka, qalabka, goob qiyaas ah iyo tirada dhibaatooyinka. Waa dansan yahay ilaa aad shid.',
+    showIncluded: 'Arag waxa ku jira',
+    hideIncluded: 'Qari waxa ku jira',
+    privacy:
+      'Waxaa loo diraa Mohd Inc. oo lala socdo akoonkaaga si aan kuugu soo laabanno. Waxaa la haynayaa ilaa 2 sano. {privacy}',
+    privacyLink: 'Akhri Siyaasadda Asturnaanta',
+    send: 'Dir',
+    sending: 'Waa la dirayaa…',
+    queuedTitle: 'Loo keydiyay mar dambe',
+    queued:
+      'Khadka ma joogtid. Fikraddaada waxaa lagu keydiyay qalabkan, waxaana la direyaa marka aad dib ugu soo noqoto khadka.',
+    sentTitle: 'Mahadsanid',
+    sent: 'Fikraddaada waa la diray.',
+    done: 'Waa dhammaatay',
+    sendAnother: 'Dir mid kale',
+    errors: {
+      'rate-limited': 'Hadda yar ayaad fikrad dirtay. Hal daqiiqo sug, kadibna isku day mar kale.',
+      network:
+        'Lama xiriiri karin. Fariintaadu halkan way taal. Hubi xiriirkaaga oo isku day mar kale.',
+      'signed-out': 'Waxaa lagu keydiyay qalabkan. Waa la diri doonaa marka aad gasho.',
+      invalid: 'Hubi fariintaada iyo iimaylka xiriirka, kadibna mar kale dir.',
+      unknown: 'Wax baa khaldamay. Fariintaadu halkan way taal. Isku day mar kale.',
+    },
   },
   about: {
     title: 'Ku saabsan',

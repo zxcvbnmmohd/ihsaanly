@@ -12,21 +12,13 @@ import { AccountScreen } from '@ihsaanly/ui/screens/account'
 import { createFileRoute } from '@tanstack/react-router'
 import type { ReactElement } from 'react'
 import { PageHeader } from '~/components/page-header'
+import { LEGAL } from '~/legal'
 import { useExtensionStrings } from '~/strings'
 
 export const Route = createFileRoute('/account')({ component: AccountRoute })
 
 /** The extension has no Apple flow, so Google is the only button. */
 const PROVIDERS = ['google'] as const
-
-/** Signing in agrees to these; the notice under the buttons links both. */
-const LEGAL = {
-  termsUrl: 'https://ihsaanly.app/legal/terms',
-  privacyUrl: 'https://ihsaanly.app/legal/privacy',
-  onOpen: (url: string): void => {
-    window.open(url, '_blank', 'noopener')
-  },
-}
 
 function AccountRoute(): ReactElement {
   const strings = useExtensionStrings()

@@ -6,6 +6,7 @@ import { StoreBadges } from '@ihsaanly/web/store-badges'
 import { createFileRoute } from '@tanstack/react-router'
 import type { ReactElement } from 'react'
 import { PageHeader } from '~/components/page-header'
+import { openUrl } from '~/platform/open-url'
 
 export const Route = createFileRoute('/_more/about')({ component: AboutRoute })
 
@@ -18,7 +19,7 @@ const GEONAMES = { destination: 'geonames.org', url: 'https://www.geonames.org/a
 function page(url: string): { destination: string; onPress: () => void } {
   return {
     destination: url.replace('https://', ''),
-    onPress: () => window.open(url, '_blank', 'noopener'),
+    onPress: () => openUrl(url),
   }
 }
 
@@ -55,7 +56,7 @@ function AboutRoute(): ReactElement {
         licences={licences.map(({ label, destination, url }) => ({
           label,
           destination,
-          onPress: () => window.open(url, '_blank', 'noopener'),
+          onPress: () => openUrl(url),
         }))}
       />
       <div className="flex-none p-4">

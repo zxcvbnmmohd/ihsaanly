@@ -5,6 +5,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import type { ReactElement } from 'react'
 import { cloudEnabled } from '~/cloud'
 import { PageHeader } from '~/components/page-header'
+import { GEONAMES_URL, PRIVACY_URL, TERMS_URL } from '~/legal'
 import { useThemePreference } from '~/theme/store'
 
 export const Route = createFileRoute('/settings')({ component: SettingsRoute })
@@ -19,6 +20,7 @@ const IN_POPUP = new Set([
   '/appearance',
   '/qada',
   '/account',
+  '/feedback',
 ])
 
 /**
@@ -26,9 +28,9 @@ const IN_POPUP = new Set([
  * notice point to are linked here, with the GeoNames credit its licence asks for.
  */
 const LINKS = [
-  { key: 'privacy', url: 'https://ihsaanly.app/legal/privacy' },
-  { key: 'terms', url: 'https://ihsaanly.app/legal/terms' },
-  { key: 'geonames', url: 'https://www.geonames.org/about.html' },
+  { key: 'privacy', url: PRIVACY_URL },
+  { key: 'terms', url: TERMS_URL },
+  { key: 'geonames', url: GEONAMES_URL },
 ] as const
 
 function SettingsRoute(): ReactElement {
@@ -48,7 +50,7 @@ function SettingsRoute(): ReactElement {
             href={url}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-system-tint underline">
+            className="text-accent-ink underline">
             {key === 'privacy'
               ? strings.about.privacyPolicy
               : key === 'terms'

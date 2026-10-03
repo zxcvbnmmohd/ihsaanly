@@ -6,7 +6,10 @@
  * late; both are named here instead. The Android widget task handler is
  * registered here for the same reason: the launcher starts the app headless
  * to draw a widget.
+ *
+ * Downloaded content is installed first of all, before any of them reads it.
  */
+import '@/content/install'
 import '@/events/geofence'
 import '@/notifications/background-task'
 import '@/widgets/android/register'

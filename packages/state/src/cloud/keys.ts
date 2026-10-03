@@ -11,6 +11,8 @@
  * - `qadaProcessedThrough`: this device's rollover cursor. Each device accrues
  *   misses itself; they share an identity, so the log dedupes them.
  * - `sync`, `account`: the sync machinery's own bookkeeping, below.
+ * - `feedbackOutbox`: feedback waiting to be sent. It goes to the `feedback`
+ *   collection when it is sent, never through sync.
  */
 export const SYNCED_KEYS: ReadonlySet<string> = new Set([
   'calculation',
@@ -37,5 +39,12 @@ export const SYNC_META_KEY = 'sync'
  */
 export const ACCOUNT_KEY = 'account'
 
+/** Feedback written but not yet accepted by the server, oldest first. */
+export const FEEDBACK_OUTBOX_KEY = 'feedbackOutbox'
+
 /** Device bookkeeping that never belongs in an export either. */
-export const DEVICE_ONLY_KEYS: ReadonlySet<string> = new Set([SYNC_META_KEY, ACCOUNT_KEY])
+export const DEVICE_ONLY_KEYS: ReadonlySet<string> = new Set([
+  SYNC_META_KEY,
+  ACCOUNT_KEY,
+  FEEDBACK_OUTBOX_KEY,
+])

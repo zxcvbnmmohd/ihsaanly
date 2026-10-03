@@ -41,11 +41,14 @@ function isExpoGo(): boolean {
   return Constants.executionEnvironment === ExecutionEnvironment.StoreClient
 }
 
-export async function notifications(): Promise<NotificationsApi | null> {
+/** `load` is the import, replaceable so a test can make it fail. */
+export async function notifications(
+  load: () => Promise<Partial<NotificationsApi>> = () => import('expo-notifications'),
+): Promise<NotificationsApi | null> {
   if (isExpoGo()) return null
 
   try {
-    const api = (await import('expo-notifications')) as Partial<NotificationsApi>
+    const api = await load()
     return isUsable(api) ? api : null
   } catch {
     return null

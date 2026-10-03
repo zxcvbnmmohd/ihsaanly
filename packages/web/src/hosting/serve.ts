@@ -4,7 +4,7 @@
 // browser.
 import { existsSync, statSync } from 'node:fs'
 import { join, normalize } from 'node:path'
-import { COMMON_HEADERS, type HeaderMap } from './csp.ts'
+import { COMMON_HEADERS, type HeaderMap, pathPattern, sentAlways } from './csp.ts'
 
 export interface ServeOptions {
   /** The built site's root directory (e.g. dist/client). */
@@ -45,6 +45,11 @@ export function serve({
       const file = resolve(pathname)
       const headers = new Headers({ ...COMMON_HEADERS, ...headerMap.headers })
       headers.set('Content-Security-Policy', headerMap.pages[pathname] ?? headerMap.fallback)
+      for (const [pattern, set] of Object.entries(headerMap.paths ?? {})) {
+        if (!pathPattern(pattern).test(pathname)) continue
+        for (const [name, value] of Object.entries(set))
+          if (file || sentAlways(name)) headers.set(name, value)
+      }
       if (!file) {
         headers.set('Content-Type', 'text/html; charset=utf-8')
         if (spa) return new Response(Bun.file(join(root, 'index.html')), { headers })

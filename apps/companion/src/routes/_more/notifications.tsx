@@ -12,6 +12,7 @@ import { NotificationsScreen, type RemindableItem } from '@ihsaanly/ui/screens/n
 import { createFileRoute } from '@tanstack/react-router'
 import type { ReactElement } from 'react'
 import { PageHeader } from '~/components/page-header'
+import { openSystemSettings } from '~/platform/open-settings'
 
 export const Route = createFileRoute('/_more/notifications')({ component: NotificationsRoute })
 
@@ -64,7 +65,7 @@ function NotificationsRoute(): ReactElement {
             perItem: { ...preferences.perItem, [id]: on },
           })
         }
-        onOpenSettings={() => {}}
+        onOpenSettings={openSystemSettings}
         onSendTest={() => window.alert(strings.web.remindersUnavailable)}
       />
     </>

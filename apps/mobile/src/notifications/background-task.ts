@@ -41,14 +41,27 @@ function asResponse(value: unknown): Response | null {
   return null
 }
 
-// Registered at module scope because TaskManager requires it, and guarded
-// because this file sits in the root layout's import chain.
-try {
-  TaskManager.defineTask(NOTIFICATION_TASK, async ({ data, error }) => {
-    if (error) return
-    const response = asResponse(data)
-    if (response) await handleResponse(response, false)
-  })
-} catch {
-  // Background responses are unavailable; taps are answered on the next open.
+/** The task body: answers an action tapped while the app was not running. */
+export async function onNotificationTask({
+  data,
+  error,
+}: {
+  data?: unknown
+  error?: unknown
+}): Promise<void> {
+  if (error) return
+  const response = asResponse(data)
+  if (response) await handleResponse(response, false)
 }
+
+// Called at module scope because TaskManager requires registration there, and
+// guarded because this file sits in the root layout's import chain.
+export function registerNotificationTask(): void {
+  try {
+    TaskManager.defineTask(NOTIFICATION_TASK, onNotificationTask)
+  } catch {
+    // Background responses are unavailable; taps are answered on the next open.
+  }
+}
+
+registerNotificationTask()

@@ -17,9 +17,22 @@ The ground truth behind every answer:
     fasting, items known);
   - synced settings, including location rounded to about 1 km with city and
     time zone, and the Brother/Sister/prefer-not-to-say setup choice.
+- **Feedback** (signed-in users only, via Send feedback) is stored in the
+  Firestore `feedback` collection (Google Cloud, US): the message, its kind
+  (problem, idea or other), an optional contact email (prefilled from the
+  account, removable), app and device info (surface, app version, OS,
+  language) and the account identifier. Only if the person turns it on, it adds
+  a diagnostic summary: app and device details, time zone, approximate
+  location (rounded to about 1 km), recent error messages, notification
+  settings and permission, and counts of recorded items. Never the full
+  practice record. Used to fix problems and improve the app (legitimate
+  interests; consent for the optional diagnostics). Kept up to 2 years, not
+  erased by Delete account (removal on request via support@ihsaanly.app), and
+  read-only for the person after sending.
 - **Never collected:**
   - the exact or home location;
-  - analytics, crash logs or diagnostics;
+  - analytics or crash logs, or any diagnostics except the optional summary
+    attached to feedback;
   - device, advertising or installation IDs;
   - push tokens, contacts or payment data.
 - **Diagnostic reports** are sent by the user through the share sheet to a
@@ -41,7 +54,8 @@ The ground truth behind every answer:
 | Identifiers → **User ID** | Yes | Yes | No | App Functionality |
 | Location → **Coarse Location** | Yes | Yes | No | App Functionality |
 | Sensitive Info (religious or philosophical beliefs) | Yes | Yes | No | App Functionality |
-| User Content → **Other User Content** | Yes | Yes | No | App Functionality |
+| User Content → **Other User Content** (practice record, settings, feedback messages) | Yes | Yes | No | App Functionality |
+| Diagnostics → **Other Diagnostic Data** (optional diagnostic summary attached to feedback) | Yes | Yes | No | App Functionality |
 
 Answer **not collected** for everything else, in particular:
 - Precise Location
@@ -50,7 +64,7 @@ Answer **not collected** for everything else, in particular:
 - Contacts
 - Browsing and Search History
 - Usage Data
-- Diagnostics
+- Crash Data and Performance Data (the only Diagnostics type collected is Other Diagnostic Data)
 - Device ID
 - Purchases
 - Advertising Data
@@ -64,7 +78,7 @@ review notes.
 **Also check:**
 - The privacy manifest's `NSPrivacyCollectedDataTypes` (in
   `apps/mobile/app.config.ts`) lists EmailAddress, Name, UserID,
-  CoarseLocation, OtherUserContent and SensitiveInfo, matching the label above.
+  CoarseLocation, OtherUserContent, OtherDiagnosticData and SensitiveInfo, matching the label above.
 - Privacy Policy URL: `https://ihsaanly.app/legal/privacy/`.
 - User Privacy Choices URL (optional field):
   `https://ihsaanly.app/legal/delete-account/`.
@@ -94,12 +108,13 @@ review notes.
 | Category → type | Purposes |
 | --- | --- |
 | Personal info → **Name** | App functionality, Account management |
-| Personal info → **Email address** | App functionality, Account management |
+| Personal info → **Email address** (also the optional feedback contact) | App functionality, Account management |
 | Personal info → **User IDs** | App functionality, Account management |
 | Personal info → **Political or religious beliefs** | App functionality |
 | Personal info → **Other info** (Brother/Sister setup choice) | App functionality |
 | Location → **Approximate location** | App functionality |
-| App activity → **Other user-generated content** (practice record and settings) | App functionality |
+| App activity → **Other user-generated content** (practice record, settings and feedback messages) | App functionality |
+| App info and performance → **Diagnostics** (optional diagnostic summary attached to feedback; not crash logs) | App functionality |
 
 **Not collected:**
 - Precise location
@@ -112,7 +127,7 @@ review notes.
 - Calendar
 - Contacts
 - Web browsing
-- App info and performance (crash logs, diagnostics)
+- App info and performance: crash logs and performance diagnostics
 - Device or other IDs
 - App interactions, In-app search history, Installed apps
 
@@ -157,11 +172,15 @@ package; Firebase is bundled.
 
 | Type | Tick | Why |
 | --- | --- | --- |
-| Personally identifiable information | ✅ | Name and email from Google, only when signed in |
+| Personally identifiable information | ✅ | Name and email from Google, only when signed in; the optional feedback contact email |
 | Authentication information | ✅ | The Google sign-in token, kept for the session |
 | Location | ✅ | Approximate (about 1 km), only when signed in |
 | User activity | ⬜ | No clicks, keystrokes or network monitoring |
 | Health, Financial and payment, Personal communications, Web history, Website content | ⬜ | None |
+
+Feedback adds no new Chrome category: its message and optional contact email fall under
+PII, and the optional diagnostic summary has no matching category (it isn't
+user activity, web history or website content), so nothing else is ticked.
 
 **Certifications.** Tick all three:
 - I do not sell or transfer user data to third parties, outside of the

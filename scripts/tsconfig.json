@@ -1,0 +1,14 @@
+{
+  // scripts/ and the root coverage.config.ts (see e2e/tsconfig.json for why not at the root).
+  "extends": "../tooling/tsconfig/base.json",
+  "compilerOptions": {
+    "target": "ESNext",
+    "lib": ["ESNext"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "types": ["bun"]
+  },
+  "include": [".", "../coverage.config.ts"]
+}

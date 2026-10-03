@@ -61,7 +61,11 @@ export function Row({ title, detail, href, onPress, selected }: RowProps): React
   if (href) {
     return (
       <Link href={href} asChild>
-        <Pressable accessibilityRole="link" accessibilityState={{ selected }}>
+        <Pressable
+          accessibilityRole="link"
+          accessibilityState={{ selected }}
+          // react-native-web reads only aria-*; the current item in a list.
+          aria-current={selected ? 'true' : undefined}>
           {(state: WebPressableState) => body(state)}
         </Pressable>
       </Link>
@@ -71,7 +75,11 @@ export function Row({ title, detail, href, onPress, selected }: RowProps): React
   if (!onPress) return body()
 
   return (
-    <Pressable accessibilityRole="button" accessibilityState={{ selected }} onPress={onPress}>
+    <Pressable
+      accessibilityRole="button"
+      accessibilityState={{ selected }}
+      aria-current={selected ? 'true' : undefined}
+      onPress={onPress}>
       {(state: WebPressableState) => body(state)}
     </Pressable>
   )

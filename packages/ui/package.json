@@ -12,11 +12,13 @@
     "./screens/*": "./src/screens/*.tsx",
     "./today/*": "./src/today/*.tsx",
     "./props/*": "./src/props/*.ts",
-    "./components/*": "./src/components/*.tsx"
+    "./components/*": "./src/components/*.tsx",
+    "./test/render": "./test/render.tsx"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "test": "bun test"
+    "test": "bun test",
+    "test:coverage": "bun test --coverage"
   },
   "dependencies": {
     "@ihsaanly/core": "workspace:*",
@@ -39,6 +41,15 @@
     "@ihsaanly/tsconfig": "workspace:*",
     "@types/bun": "catalog:",
     "@types/react": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "@happy-dom/global-registrator": "catalog:",
+    "@testing-library/react": "catalog:",
+    "@testing-library/dom": "catalog:",
+    "@testing-library/user-event": "catalog:",
+    "@testing-library/jest-dom": "catalog:",
+    "react-dom": "catalog:",
+    "@types/react-dom": "catalog:",
+    "react-native-web": "catalog:",
+    "react-native-css": "catalog:"
   }
 }

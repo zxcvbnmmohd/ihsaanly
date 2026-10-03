@@ -1,6 +1,7 @@
 // Order matters: zod must be jitless before any schema parses (the CSP
-// forbids `new Function`), and the language/direction must be applied before
-// the first paint, same as apps/mobile/src/app/_layout.tsx does natively.
+// forbids `new Function`), downloaded content is installed before anything
+// reads it, and the language/direction must be applied before the first
+// paint, same as apps/mobile/src/app/_layout.tsx does natively.
 import '@ihsaanly/web/zod-jitless'
 import { setContentLanguage } from '@ihsaanly/core/content'
 import { languageOf } from '@ihsaanly/core/i18n/locale'
@@ -11,10 +12,13 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { startCompanionCloud } from './cloud'
+import { installCachedContent, startCompanionContent } from './content'
 import { registerServiceWorker } from './register-sw'
 import { router } from './router'
 import './styles.css'
 
+// Before anything reads the content: the last good download, else what shipped.
+installCachedContent()
 setContentLanguage(languageOf(getLocale()))
 applyDirection(getLocale())
 startCompanionCloud()
@@ -31,5 +35,7 @@ createRoot(root).render(
     </SafeAreaProvider>
   </StrictMode>,
 )
+
+startCompanionContent()
 
 if (import.meta.env.PROD) registerServiceWorker()

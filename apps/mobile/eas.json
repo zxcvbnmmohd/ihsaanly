@@ -11,7 +11,8 @@
         "buildType": "apk"
       },
       "env": {
-        "APP_VARIANT": "development"
+        "APP_VARIANT": "development",
+        "EXPO_PUBLIC_CONTENT_URL": "https://dev.ihsaanly.app/content"
       }
     },
     "development-simulator": {
@@ -29,7 +30,8 @@
         "image": "macos-tahoe-26.5-xcode-26.6"
       },
       "env": {
-        "APP_VARIANT": "staging"
+        "APP_VARIANT": "staging",
+        "EXPO_PUBLIC_CONTENT_URL": "https://dev.ihsaanly.app/content"
       }
     },
     "production": {
@@ -41,7 +43,8 @@
         "image": "macos-tahoe-26.5-xcode-26.6"
       },
       "env": {
-        "APP_VARIANT": "production"
+        "APP_VARIANT": "production",
+        "EXPO_PUBLIC_CONTENT_URL": "https://ihsaanly.app/content"
       }
     }
   }

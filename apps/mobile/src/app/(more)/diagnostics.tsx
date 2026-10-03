@@ -3,6 +3,7 @@ import { useStrings } from '@ihsaanly/state/strings'
 import { DiagnosticsScreen } from '@ihsaanly/ui/screens/diagnostics'
 import { router } from 'expo-router'
 import { type ReactElement, useEffect, useState } from 'react'
+import { cloudEnabled } from '@/cloud'
 import { buildDiagnostics, type Diagnostics, shareDiagnostics } from '@/data/export'
 
 interface Thing {
@@ -57,6 +58,7 @@ export default function DiagnosticsRoute(): ReactElement {
       onToggleRaw={() => setThing((current) => ({ ...current, showingRaw: !current.showingRaw }))}
       onSend={send}
       onCancel={() => router.back()}
+      onReportProblem={cloudEnabled ? () => router.push('/feedback?diagnostics=1') : undefined}
     />
   )
 }

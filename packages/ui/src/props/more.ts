@@ -20,7 +20,7 @@ export interface MoreGroupsInput {
   qadaOwed: number
   /**
    * The Account row's current value. Left out when the build has no cloud
-   * config, and then there is no row: a local-only build never mentions accounts.
+   * config, and then there is no Account or Send feedback row: a local-only build never mentions accounts.
    */
   accountDetail?: string
 }
@@ -86,6 +86,9 @@ export function moreGroups(input: MoreGroupsInput): MoreGroup[] {
           detail: strings.language.names[language],
         },
         { href: '/appearance', title: strings.appearance.title, detail: strings.appearance[theme] },
+        ...(accountDetail === undefined
+          ? []
+          : [{ href: '/feedback', title: strings.feedback.title, detail: null }]),
         { href: '/about', title: strings.about.title, detail: null },
       ],
     },

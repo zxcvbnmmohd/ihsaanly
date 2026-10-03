@@ -1,27 +1,14 @@
-import { beforeEach, describe, expect, it, mock } from 'bun:test'
+import { afterAll, beforeEach, describe, expect, it } from 'bun:test'
 import { createMemoryAuth } from '@ihsaanly/cloud/memory/auth'
+import { createMemoryFeedback } from '@ihsaanly/cloud/memory/feedback'
 import { createMemorySyncRemote } from '@ihsaanly/cloud/memory/sync-remote'
 import type { Cloud } from '@ihsaanly/cloud/ports'
 import { z } from 'zod'
 
-/**
- * Everything here runs over the web backend: the native one needs expo-sqlite,
- * and the two expose the same functions. localStorage has to exist before the
- * backend is imported, and the backend has to be swapped in before anything
- * that imports it is.
- */
-const data = new Map<string, string>()
-;(globalThis as unknown as { localStorage: Pick<Storage, 'getItem' | 'setItem'> }).localStorage = {
-  getItem: (key: string) => data.get(key) ?? null,
-  setItem: (key: string, value: string) => {
-    data.set(key, value)
-  },
-}
+import '../../test/native'
 
-const backend = (await import(
-  '../storage/backend.web?cloud' as string
-)) as typeof import('../storage/backend.web')
-mock.module('../storage/backend', () => backend)
+/** Everything here runs the native backend, over SQLite, with the native modules faked. */
+const backend = await import('../storage/backend')
 
 const { createLocalStore } = await import('./local-store')
 const { createPreferenceStore, reloadPreferences } = await import('../storage/preference-store')
@@ -75,6 +62,26 @@ describe('the local store', () => {
       longitude: -79.38,
     })
     expect(backend.preferenceRowsWithTime()[0]?.value).toBe(JSON.stringify(place))
+  })
+
+  it('sends a place it cannot read as it is, rather than failing the sync', () => {
+    backend.writePreferenceRowAt('place', '{"oops', 7)
+
+    expect(createLocalStore().preferences()).toContainEqual({
+      key: 'place',
+      value: '{"oops',
+      updatedAt: 7,
+    })
+  })
+
+  it('sends a place without coordinates as it is', () => {
+    backend.writePreferenceRowAt('place', 'null', 7)
+
+    expect(
+      createLocalStore()
+        .preferences()
+        .find((row) => row.key === 'place')?.value,
+    ).toBe('null')
   })
 
   it('never offers the exact home region to sync', () => {
@@ -136,11 +143,17 @@ describe('the cloud session', () => {
     )
   }
 
+  afterAll(() => stop())
+
   beforeEach(() => {
     stop()
     backend.wipe()
     loads = 0
-    cloud = { auth: createMemoryAuth({ uid: 'me' }), remote: createMemorySyncRemote() }
+    cloud = {
+      auth: createMemoryAuth({ uid: 'me' }),
+      remote: createMemorySyncRemote(),
+      feedback: createMemoryFeedback(),
+    }
   })
 
   it('never loads the cloud for someone who has not signed in', async () => {
@@ -268,6 +281,7 @@ describe('the cloud session', () => {
         emails: { apple: 'aisha@example.test', google: 'aisha@example.test' },
       }),
       remote: createMemorySyncRemote(),
+      feedback: createMemoryFeedback(),
     }
     start()
 
@@ -296,6 +310,7 @@ describe('the cloud session', () => {
         emails: { apple: 'aisha@example.test', google: 'aisha@example.test' },
       }),
       remote: createMemorySyncRemote(),
+      feedback: createMemoryFeedback(),
     }
     start()
     await session.signIn('google')
@@ -329,7 +344,11 @@ describe('the cloud session', () => {
   })
 
   it('reports a method that belongs to another account as link-conflict', async () => {
-    cloud = { auth: createMemoryAuth(), remote: createMemorySyncRemote() }
+    cloud = {
+      auth: createMemoryAuth(),
+      remote: createMemorySyncRemote(),
+      feedback: createMemoryFeedback(),
+    }
     await cloud.auth.signIn('google')
     await cloud.auth.signOut()
     start()
@@ -348,6 +367,7 @@ describe('the cloud session', () => {
     cloud = {
       auth: createMemoryAuth({ uid: 'me', available: ['google'] }),
       remote: createMemorySyncRemote(),
+      feedback: createMemoryFeedback(),
     }
     start()
     await session.signIn('apple')
@@ -382,12 +402,18 @@ describe('restoring from onboarding', () => {
 
   const outcome = (): string => restoreOutcomeOf(session.getAccountState(), getOnboarding())
 
+  afterAll(() => stop())
+
   beforeEach(() => {
     stop()
     backend.wipe()
     // The onboarding store caches what it read; another test may have filled it.
     reloadPreferences()
-    cloud = { auth: createMemoryAuth({ uid: 'me' }), remote: createMemorySyncRemote() }
+    cloud = {
+      auth: createMemoryAuth({ uid: 'me' }),
+      remote: createMemorySyncRemote(),
+      feedback: createMemoryFeedback(),
+    }
     stop = session.startCloud(async () => cloud, { debounceMs: 5 })
   })
 

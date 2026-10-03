@@ -670,3 +670,38 @@ describe('the schedule over a week', () => {
     aheads.forEach((at) => expect(evenings).toContain(at - 20 * 60_000))
   })
 })
+
+describe('a completed calendar-day item', () => {
+  it('is listed as done for the day, since a day item has no occasion to recur', () => {
+    const now = startOf('asr')
+    const result = plan(
+      makeSignals([whiteDays], {
+        now,
+        today: dayContext(0, { month: 4, day: 14 }),
+        completedToday: { 'white-days': new Date(now.getTime() - 3_600_000) },
+      }),
+    )
+    expect(result.today.done.map((entry) => entry.itemId)).toEqual(['white-days'])
+    expect(result.today.now).toEqual([])
+  })
+})
+
+describe('the after-prayer grace', () => {
+  it('stops offering the after-prayer item once the grace has passed', () => {
+    const now = new Date(windowOf('asr').startsAt.getTime() + 2 * 3_600_000)
+    const offered = plan(
+      makeSignals([dhikr], { now: justMarkedAsr, prayedToday: { asr: justMarkedAsr } }),
+    )
+    expect(offered.today.now.map((entry) => entry.itemId)).toEqual(['after-any'])
+
+    const result = plan(makeSignals([dhikr], { now, prayedToday: { asr: justMarkedAsr } }))
+    expect(result.today.now.map((entry) => entry.itemId)).not.toContain('after-any')
+  })
+})
+
+describe('an item with an unknown trigger', () => {
+  it('fails loudly rather than being silently dropped', () => {
+    const broken = makeItem('broken', { kind: 'moon' } as unknown as Trigger)
+    expect(() => plan(makeSignals([broken]))).toThrow('Unhandled case')
+  })
+})

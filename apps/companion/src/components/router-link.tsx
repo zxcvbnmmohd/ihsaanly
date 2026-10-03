@@ -5,6 +5,14 @@
 // this wraps it in a real `<a href>` (for accessibility and "open in new
 // tab") sized to its child with `display: contents`, which leaves the
 // Pressable's own layout untouched, and hands a plain click to the router.
+//
+// The click is taken in the capture phase: react-native-web's Pressable
+// stops a click's propagation in its own onClick, so a bubbling handler here
+// never runs for a real pointer click on the row (only for one aimed at the
+// anchor itself), and the browser would follow the href natively. The href
+// comes from the router's history, so it is right for the history type too
+// (`#/location` under a hash history, as in the extension) and even a
+// native follow, such as open in a new tab, lands on the route.
 import type { UiLinkProps } from '@ihsaanly/ui/provider'
 import { useRouter } from '@tanstack/react-router'
 import type { MouseEvent, ReactElement } from 'react'
@@ -17,9 +25,9 @@ export function RouterLink({ href, children }: UiLinkProps): ReactElement {
   const router = useRouter()
   return (
     <a
-      href={href}
+      href={router.history.createHref(href)}
       style={{ display: 'contents' }}
-      onClick={(event) => {
+      onClickCapture={(event) => {
         if (!isPlainLeftClick(event)) return
         event.preventDefault()
         void router.navigate({ href })

@@ -187,3 +187,12 @@ dist
 
 # Kilo agent workspace
 .kilo/
+
+# Playwright (playwright.config.ts)
+e2e/.results/
+e2e/.report/
+
+# Firebase emulator logs (bun run dev:cloud, test:rules)
+firestore-debug.log
+firebase-debug.log
+ui-debug.log

@@ -304,6 +304,55 @@ export const it: Strings = {
     hideRaw: 'Nascondi il rapporto completo',
     send: 'Invialo',
     cancel: 'Non ora',
+    reportProblem: 'Segnala questo problema',
+  },
+  feedback: {
+    title: 'Invia un feedback',
+    explanation:
+      'Raccontaci cosa non ha funzionato o cosa renderebbe Ihsaanly migliore. Non viene inviato nulla finché non premi Invia.',
+    signedOut:
+      'Il feedback viene inviato insieme al tuo account, così possiamo risponderti e tenere lontano lo spam. Accedere resta facoltativo per tutto il resto dell’app.',
+    signIn: 'Accedi per inviare un feedback',
+    emailFallback: 'Preferisci l’e-mail? Scrivi a {email}.',
+    kindLabel: 'Di cosa si tratta?',
+    kinds: {
+      bug: 'Segnala un problema',
+      idea: 'Proponi un’idea',
+      other: 'Altro',
+    },
+    messageLabel: 'Il tuo messaggio',
+    messagePlaceholder: 'Cos’è successo, o cosa sarebbe utile?',
+    counter: (used: number, max: number): string => `${used} / ${max}`,
+    contactLabel: 'E-mail di contatto',
+    contactHint: 'Facoltativo. Solo se desideri una risposta.',
+    contactPlaceholder: 'name@example.com',
+    fillAccountEmail: (email: string): string => `Usa ${email}`,
+    includeDiagnostics: 'Includi le informazioni diagnostiche',
+    includeDiagnosticsDetail:
+      'Facoltativo. Versione dell’app, dispositivo, posizione approssimativa e numero di problemi. Disattivato finché non lo attivi.',
+    showIncluded: 'Vedi cosa è incluso',
+    hideIncluded: 'Nascondi cosa è incluso',
+    privacy:
+      'Inviato a Mohd Inc. insieme al tuo account per poterti rispondere. Conservato per un massimo di 2 anni. {privacy}',
+    privacyLink: 'Leggi l’informativa sulla privacy',
+    send: 'Invia',
+    sending: 'Invio in corso…',
+    queuedTitle: 'Salvato per dopo',
+    queued:
+      'Sei offline. Il tuo feedback è salvato su questo dispositivo e verrà inviato appena tornerai online.',
+    sentTitle: 'Grazie',
+    sent: 'Il tuo feedback è stato inviato.',
+    done: 'Fine',
+    sendAnother: 'Invia un altro',
+    errors: {
+      'rate-limited': 'Hai inviato un feedback poco fa. Aspetta un minuto, poi riprova.',
+      network:
+        'Impossibile connettersi. Il tuo messaggio è ancora qui. Controlla la connessione e riprova.',
+      'signed-out':
+        'Salvato su questo dispositivo. Verrà inviato dopo che avrai effettuato l’accesso.',
+      invalid: 'Controlla il messaggio e l’email di contatto, poi invia di nuovo.',
+      unknown: 'Qualcosa è andato storto. Il tuo messaggio è ancora qui. Riprova.',
+    },
   },
   about: {
     title: 'Informazioni',

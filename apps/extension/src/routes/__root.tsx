@@ -39,7 +39,7 @@ function NotFoundRoute(): ReactNode {
   return (
     <Screen palette={palettes[scheme]} className="grow items-center justify-center gap-4 p-6">
       <EmptyState message={strings.notFound.body} />
-      <Link to="/" className="font-semibold text-system-tint">
+      <Link to="/" className="font-semibold text-accent-ink">
         {strings.tabs.today}
       </Link>
     </Screen>

@@ -284,6 +284,54 @@ export const en = {
     hideRaw: 'Hide the whole report',
     send: 'Send it',
     cancel: 'Not now',
+    reportProblem: 'Report this problem',
+  },
+  feedback: {
+    title: 'Send feedback',
+    explanation:
+      'Tell us what went wrong, or what would make Ihsaanly better. Nothing is sent until you press Send.',
+    signedOut:
+      'Feedback is sent with your account, so we can follow up and keep spam out. Signing in is optional for everything else in the app.',
+    signIn: 'Sign in to send feedback',
+    emailFallback: 'Prefer email? Write to {email}.',
+    kindLabel: 'What is it about?',
+    kinds: {
+      bug: 'Report a problem',
+      idea: 'Suggest an idea',
+      other: 'Something else',
+    },
+    messageLabel: 'Your message',
+    messagePlaceholder: 'What happened, or what would help?',
+    counter: (used: number, max: number): string => `${used} / ${max}`,
+    contactLabel: 'Contact email',
+    contactHint: 'Optional. Only if you would like a reply.',
+    contactPlaceholder: 'name@example.com',
+    fillAccountEmail: (email: string): string => `Use ${email}`,
+    includeDiagnostics: 'Include diagnostic info',
+    includeDiagnosticsDetail:
+      'Optional. App version, device, approximate location and problem counts. Off unless you turn it on.',
+    showIncluded: 'See what’s included',
+    hideIncluded: 'Hide what’s included',
+    privacy:
+      'Sent to Mohd Inc. with your account so we can follow up. Kept for up to 2 years. {privacy}',
+    privacyLink: 'Read the Privacy Policy',
+    send: 'Send',
+    sending: 'Sending…',
+    queuedTitle: 'Saved for later',
+    queued:
+      'You are offline. Your feedback is saved on this device and will be sent when you are back online.',
+    sentTitle: 'Thank you',
+    sent: 'Your feedback was sent.',
+    done: 'Done',
+    sendAnother: 'Send another',
+    errors: {
+      'rate-limited': 'You sent feedback a moment ago. Wait a minute, then try again.',
+      network:
+        'Could not connect. Your message is still here. Check your connection and try again.',
+      'signed-out': 'Saved on this device. It will be sent after you sign in.',
+      invalid: 'Check your message and contact email, then send again.',
+      unknown: 'Something went wrong. Your message is still here. Try again.',
+    },
   },
   about: {
     title: 'About',

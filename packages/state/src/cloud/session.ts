@@ -7,11 +7,13 @@ import {
 } from '@ihsaanly/cloud/ports'
 import { useSyncExternalStore } from 'react'
 import { z } from 'zod'
-
+import { flushOutbox, resetFeedbackState } from '../feedback/outbox'
 import { readPreferenceRow, wipe, writePreferenceRow } from '../storage/backend'
 import { noteFailure, reloadEvents } from '../storage/events'
 import { onLocalWrite } from '../storage/local-writes'
+import { forgetFailures } from '../storage/log'
 import { reloadPreferences } from '../storage/preference-store'
+import { codeOf, isNetworkError, messageOf } from './errors'
 import { ACCOUNT_KEY, SYNCED_KEYS } from './keys'
 import { createLocalStore, readSyncMeta } from './local-store'
 
@@ -99,18 +101,6 @@ function setState(next: Partial<AccountState>): void {
   listeners.forEach((listener) => listener())
 }
 
-function codeOf(error: unknown): string {
-  if (typeof error === 'object' && error !== null && 'code' in error) {
-    const { code } = error as { code: unknown }
-    if (typeof code === 'string' || typeof code === 'number') return String(code)
-  }
-  return ''
-}
-
-function messageOf(error: unknown): string {
-  return error instanceof Error ? error.message : String(error)
-}
-
 /**
  * The person closed the sheet or the popup. Not a failure: they changed their
  * mind, and the screen should look exactly as it did before they tapped.
@@ -135,12 +125,9 @@ export function isCancelled(error: unknown): boolean {
   )
 }
 
-const NETWORK_CODES = new Set(['auth/network-request-failed', 'unavailable', 'deadline-exceeded'])
-
 function classify(error: unknown, fallback: AccountErrorCode): AccountErrorCode {
   const code = codeOf(error)
-  if (NETWORK_CODES.has(code) || /network|failed to fetch|offline/i.test(messageOf(error)))
-    return 'network'
+  if (isNetworkError(error)) return 'network'
   if (code === 'link-conflict' || code === 'reauth-unavailable') return code
   if (code.startsWith('auth/')) return 'auth'
   return fallback
@@ -195,7 +182,12 @@ function handleAccount(account: Account | null): void {
   const changed = state.account?.uid !== account.uid
   rememberSignedIn(true)
   setState({ account, lastSyncedAt: readSyncMeta().lastSyncedAt })
-  if (changed) void runSync()
+  if (changed) {
+    void runSync()
+    // Signing in and a restored session both land here: feedback queued
+    // while signed out or offline goes now.
+    void flushFeedback()
+  }
 }
 
 async function syncRound(): Promise<void> {
@@ -260,7 +252,9 @@ function scheduleSync(preferenceKey: string | null): void {
 function wipeLocal(): void {
   wipe()
   reloadPreferences()
+  forgetFailures()
   reloadEvents()
+  resetFeedbackState()
 }
 
 /**
@@ -372,7 +366,19 @@ export function syncNow(): Promise<void> {
 
 /** For apps to call when they come to the foreground or a popup opens. */
 export function notifyForeground(): void {
-  if (state.account) void runSync()
+  if (!state.account) return
+  void runSync()
+  void flushFeedback()
+}
+
+/**
+ * Sends whatever feedback is queued for the signed-in account. Signed out, it
+ * stays queued. Called on sign-in, restore and foreground, and by the screen.
+ */
+export function flushFeedback(): Promise<void> {
+  const account = state.account
+  if (!account) return Promise.resolve()
+  return flushOutbox(async () => (await ensureCloud()).feedback, account.uid)
 }
 
 /**

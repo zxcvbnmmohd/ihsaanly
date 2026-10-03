@@ -16,6 +16,7 @@ import {
 import type { Cloud, SignInProvider } from '../../ports'
 import { AUTH_EMULATOR_PORT, type FirebaseConfig, firebaseApp, firestore } from '../app'
 import { createFirebaseAuth, type SignInFlow } from '../auth'
+import { createFirestoreFeedback } from '../feedback'
 import { createFirestoreSyncRemote } from '../sync-remote'
 
 /**
@@ -85,10 +86,7 @@ function nativeAuth(config: FirebaseConfig, storage: ReactNativeAsyncStorage): A
 
 /** The provider swap point for the mobile app. */
 export function createNativeCloud(config: FirebaseConfig, deps: NativeDeps): Cloud {
-  return {
-    auth: createFirebaseAuth(nativeAuth(config, deps.storage), nativeFlow(deps)),
-    remote: createFirestoreSyncRemote(
-      firestore(firebaseApp(config), { native: true, emulatorHost: config.emulatorHost }),
-    ),
-  }
+  const auth = createFirebaseAuth(nativeAuth(config, deps.storage), nativeFlow(deps))
+  const db = firestore(firebaseApp(config), { native: true, emulatorHost: config.emulatorHost })
+  return { auth, remote: createFirestoreSyncRemote(db), feedback: createFirestoreFeedback(db) }
 }

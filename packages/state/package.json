@@ -22,7 +22,8 @@
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "test": "bun test"
+    "test": "bun test",
+    "test:coverage": "bun test --coverage"
   },
   "dependencies": {
     "@ihsaanly/cloud": "workspace:*",
@@ -39,8 +40,10 @@
     "react-native": "*"
   },
   "devDependencies": {
+    "@happy-dom/global-registrator": "catalog:",
     "@ihsaanly/lint": "workspace:*",
     "@ihsaanly/tsconfig": "workspace:*",
+    "@testing-library/react": "catalog:",
     "@types/bun": "catalog:",
     "@types/react": "catalog:",
     "react-native-css": "catalog:",

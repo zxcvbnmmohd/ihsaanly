@@ -96,3 +96,11 @@ describe('export and import', () => {
     expect(parsed?.preferences.fastBacklog).toBe(3)
   })
 })
+
+describe('an unknown event', () => {
+  it('throws instead of silently ignoring a record it cannot read', () => {
+    expect(() => readLedger([{ kind: 'fast-vowed', logDay: '2026-03-01' } as never])).toThrow(
+      'Unhandled case',
+    )
+  })
+})

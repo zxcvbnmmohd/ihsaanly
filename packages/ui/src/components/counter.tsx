@@ -1,5 +1,5 @@
 import type { Palette } from '@ihsaanly/tailwind/tokens'
-import type { ReactElement } from 'react'
+import { type ReactElement, useId } from 'react'
 import { Pressable, Text, View } from 'react-native'
 
 import { useColors } from '../colors'
@@ -29,6 +29,7 @@ export function Counter({
 }: CounterProps): ReactElement {
   const colors = useColors()
   const complete = count >= target
+  const progressId = useId()
 
   return (
     <View className="items-center gap-3">
@@ -36,6 +37,10 @@ export function Counter({
         accessibilityRole="button"
         accessibilityLabel={label}
         accessibilityValue={{ now: count, max: target, min: 0 }}
+        // react-native-web reads only aria-*. This is a button that counts,
+        // not an adjustable spinbutton, and aria-value* is not valid on a
+        // button, so the progress is its description: "5 / 33".
+        aria-describedby={progressId}
         onPress={onTap}
         disabled={complete}
         className="items-center justify-center rounded-full"
@@ -46,22 +51,24 @@ export function Counter({
           minHeight: 168,
           borderWidth: 2,
         }}>
-        <Text
-          className="text-5xl"
-          // The circle is 168pt at least and grows with the text; 2x still fits inside it.
-          maxFontSizeMultiplier={2}
-          style={{
-            fontFamily: serif,
-            fontWeight: '600',
-            color: complete ? palette.onAccent : colors.label,
-          }}>
-          {complete ? '✓' : count}
-        </Text>
-        <Text
-          className="text-sm"
-          style={{ color: complete ? palette.onAccent : colors.secondaryLabel }}>
-          {complete ? `${target}` : `/ ${target}`}
-        </Text>
+        <View nativeID={progressId} className="items-center">
+          <Text
+            className="text-5xl"
+            // The circle is 168pt at least and grows with the text; 2x still fits inside it.
+            maxFontSizeMultiplier={2}
+            style={{
+              fontFamily: serif,
+              fontWeight: '600',
+              color: complete ? palette.onAccent : colors.label,
+            }}>
+            {complete ? '✓' : count}
+          </Text>
+          <Text
+            className="text-sm"
+            style={{ color: complete ? palette.onAccent : colors.secondaryLabel }}>
+            {complete ? `${target}` : `/ ${target}`}
+          </Text>
+        </View>
       </Pressable>
       {/* Kept mounted and merely invisible: unmounting it moved the Done
           button underneath on the very first tap, mid-interaction. */}

@@ -7,6 +7,7 @@ import {
   detailFor,
   distanceLabel,
   itemEntry,
+  onMakeUpFor,
   soonestEach,
   split,
   toEntry,
@@ -148,5 +149,34 @@ describe('soonestEach', () => {
     expect(soonestEach(entries)).toEqual([
       planned({ itemId: 'fast-white-days', reason: 'upcoming', daysAway: 2 }),
     ])
+  })
+
+  it('lists different items soonest first', () => {
+    const entries: PlannedItem[] = [
+      planned({ itemId: 'fast-monday', reason: 'upcoming', daysAway: 4 }),
+      planned({ itemId: 'fast-white-days', reason: 'upcoming', daysAway: 2 }),
+      planned({ itemId: 'fast-thursday', reason: 'upcoming' }),
+    ]
+    expect(soonestEach(entries).map((entry) => entry.itemId)).toEqual([
+      'fast-thursday',
+      'fast-white-days',
+      'fast-monday',
+    ])
+  })
+})
+
+describe('onMakeUpFor', () => {
+  const now = new Date('2026-09-23T12:00:00Z')
+
+  it('records the prayer once the time zone is known', () => {
+    const calls: unknown[][] = []
+    onMakeUpFor('America/Toronto', now, (...args) => calls.push(args))('asr')
+    expect(calls).toEqual([['asr', now, 'America/Toronto']])
+  })
+
+  it('records nothing without a time zone', () => {
+    const calls: unknown[][] = []
+    onMakeUpFor(undefined, now, (...args) => calls.push(args))('asr')
+    expect(calls).toEqual([])
   })
 })

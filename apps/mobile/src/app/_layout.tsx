@@ -11,6 +11,7 @@ import type { ReactElement } from 'react'
 import { useCallback, useEffect, useState } from 'react'
 import { AppState, Platform, Text, View } from 'react-native'
 import { cloudEnabled, startMobileCloud } from '@/cloud'
+import { startMobileContentUpdates } from '@/content/updates'
 import { useNotificationResponse } from '@/notifications/use-response'
 import { OnboardingFlow } from '@/onboarding/flow'
 import { colors } from '@/theme/colors'
@@ -84,6 +85,9 @@ export default function RootLayout(): ReactElement {
   const palette = usePalette()
   const onboarding = useOnboarding()
   useNotificationResponse(onboarding.completed)
+
+  // After the first render: newer content is fetched for the next open.
+  useEffect(() => startMobileContentUpdates(), [])
 
   useEffect(() => {
     if (!cloudEnabled) return

@@ -7,17 +7,32 @@
     "exports": "warn",
     "types": "warn"
   },
+  // The component-test harness (packages/ui/test, docs/TESTING.md) is
+  // installed in every workspace that renders React, so tests can be added
+  // without touching a package.json; a workspace with no component test yet
+  // would otherwise report them unused.
+  "ignoreDependencies": [
+    "@happy-dom/global-registrator",
+    "@testing-library/dom",
+    "@testing-library/jest-dom",
+    "@testing-library/react",
+    "@testing-library/user-event"
+  ],
   "workspaces": {
     ".": {
+      // The end-to-end suites (playwright.config.ts) and the root scripts.
+      "entry": ["scripts/*.ts", "e2e/**/*.spec.ts", "e2e/support/serve.ts"],
       "ignoreDependencies": [
         // cz-git runs through commitizen
         "commitizen",
         // installs the git hooks from lefthook.json, never imported
-        "lefthook"
+        "lefthook",
+        // for the accessibility checks the e2e suites will add
+        "@axe-core/playwright"
       ]
     },
     "apps/mobile": {
-      "entry": ["scripts/*.ts", "plugins/*.js"],
+      "entry": ["scripts/*.ts", "plugins/*.js", "src/**/*.test.{ts,tsx}"],
       // Guessed by knip's Expo plugin from app.json keys; expo-doctor decides
       // which config packages are actually required.
       "ignoreDependencies": ["expo-updates", "expo-system-ui"]
@@ -28,7 +43,7 @@
       "entry": ["src/**/*.test.ts"]
     },
     "apps/marketing": {
-      "entry": ["src/routes/**/*.tsx", "scripts/*.ts", "test/*.ts"]
+      "entry": ["src/routes/**/*.tsx", "scripts/*.ts", "test/*.ts", "src/**/*.test.{ts,tsx}"]
     },
     "packages/state": {
       // Consumers import any module through the `./*` export; tests are the
@@ -42,10 +57,12 @@
     },
     "packages/web": {
       // Both web apps import through the subpath exports.
-      "entry": ["src/*.{ts,tsx}", "src/hosting/*.ts"]
+      "entry": ["src/*.{ts,tsx}", "src/hosting/*.ts", "src/**/*.test.{ts,tsx}"],
+      // For component tests through the shared harness (docs/TESTING.md).
+      "ignoreDependencies": ["react-dom", "@types/react-dom"]
     },
     "apps/companion": {
-      "entry": ["src/routes/**/*.tsx", "scripts/*.ts", "test/*.ts"]
+      "entry": ["src/routes/**/*.tsx", "scripts/*.ts", "test/*.ts", "src/**/*.test.{ts,tsx}"]
     },
     "packages/ui": {
       // Apps import any screen or component through the subpath exports;
@@ -54,7 +71,10 @@
         "src/screens/*.{ts,tsx}",
         "src/components/*.tsx",
         "src/today/*.{ts,tsx}",
-        "src/*.{ts,tsx}"
+        "src/*.{ts,tsx}",
+        "src/**/*.test.{ts,tsx}",
+        // The component-test harness: preloaded from bunfig.toml, imported by tests.
+        "test/*.{ts,tsx}"
       ]
     }
   }

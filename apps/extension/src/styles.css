@@ -26,8 +26,14 @@ body,
   flex-direction: column;
 }
 
+/*
+ * An explicit page colour rather than the browser's canvas: the header and
+ * the Settings footer sit straight on it, and without one axe (and any tool
+ * reading computed styles) takes the background as white in the dark scheme.
+ */
 body {
   margin: 0;
+  background-color: var(--color-system-background);
   color: var(--color-ink);
   font-family: var(--font-serif);
 }

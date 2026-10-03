@@ -14,5 +14,5 @@
       "~/*": ["./src/*"]
     }
   },
-  "include": ["src", "scripts", "test", "vite.config.ts"]
+  "include": ["src", "scripts", "test", "vite.config.ts", "../../packages/ui/test/jest-dom.d.ts"]
 }

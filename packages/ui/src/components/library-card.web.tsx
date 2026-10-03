@@ -78,7 +78,11 @@ export function LibraryCard({ entry, selected = false, href }: LibraryCardProps)
 
   return (
     <Link href={href ?? entry.href} asChild>
-      <Pressable accessibilityRole="link" accessibilityState={{ selected }}>
+      <Pressable
+        accessibilityRole="link"
+        accessibilityState={{ selected }}
+        // react-native-web reads only aria-*; the entry open in the panel.
+        aria-current={selected ? 'true' : undefined}>
         {(state: WebPressableState) => body(state)}
       </Pressable>
     </Link>

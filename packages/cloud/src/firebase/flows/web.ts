@@ -13,6 +13,7 @@ import {
 import type { Cloud, SignInProvider } from '../../ports'
 import { AUTH_EMULATOR_PORT, type FirebaseConfig, firebaseApp, firestore } from '../app'
 import { createFirebaseAuth, type SignInFlow } from '../auth'
+import { createFirestoreFeedback } from '../feedback'
 import { createFirestoreSyncRemote } from '../sync-remote'
 
 function providerFor(provider: SignInProvider): AuthProvider {
@@ -41,10 +42,10 @@ export function createWebCloud(config: FirebaseConfig): Cloud {
   if (config.emulatorHost && !auth.emulatorConfig) {
     connectAuthEmulator(auth, `http://${config.emulatorHost}:${AUTH_EMULATOR_PORT}`)
   }
+  const db = firestore(app, { native: false, emulatorHost: config.emulatorHost })
   return {
     auth: createFirebaseAuth(auth, webFlow),
-    remote: createFirestoreSyncRemote(
-      firestore(app, { native: false, emulatorHost: config.emulatorHost }),
-    ),
+    remote: createFirestoreSyncRemote(db),
+    feedback: createFirestoreFeedback(db),
   }
 }

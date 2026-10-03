@@ -1,6 +1,7 @@
 {
   "name": "@ihsaanly/monorepo",
   "private": true,
+  "type": "module",
   "description": "Ihsaanly: the offline-first Sunnah companion (Expo app) and its marketing site (TanStack Start) and web app (TanStack Router SPA).",
   "packageManager": "bun@1.4.2",
   "workspaces": {
@@ -19,7 +20,13 @@
       "tailwindcss": "4.3.3",
       "react-native-web": "~0.21.0",
       "react-native-css": "3.1.0-rc.0",
-      "nativewind": "5.0.0-rc.0"
+      "nativewind": "5.0.0-rc.0",
+      "@types/react-dom": "~19.3.0",
+      "@happy-dom/global-registrator": "^20.14.5",
+      "@testing-library/react": "^16.3.3",
+      "@testing-library/dom": "^10.4.2",
+      "@testing-library/user-event": "^14.6.7",
+      "@testing-library/jest-dom": "^7.0.1"
     }
   },
   "scripts": {
@@ -35,8 +42,14 @@
     "build:extension:both": "bun run build:extension && bun run build:extension:beta",
     "lint": "biome check .",
     "format": "biome check --write .",
-    "typecheck": "turbo run typecheck",
+    "typecheck": "turbo run typecheck && tsc -p scripts && tsc -p e2e",
     "test": "turbo run test",
+    "coverage": "bun scripts/coverage.ts",
+    "coverage:enforce": "bun scripts/coverage.ts --enforce",
+    "e2e": "playwright test && (test ! -f e2e/extension/playwright.config.ts || playwright test -c e2e/extension/playwright.config.ts) && (test ! -f e2e/sync/playwright.config.ts || playwright test -c e2e/sync/playwright.config.ts)",
+    "e2e:web": "playwright test",
+    "e2e:extension": "playwright test -c e2e/extension/playwright.config.ts",
+    "e2e:sync": "playwright test -c e2e/sync/playwright.config.ts",
     "knip": "knip",
     "licenses": "bun scripts/licenses.ts",
     "check": "bun run lint && bun run typecheck && bun run test && bun run knip",
@@ -58,7 +71,11 @@
     "lefthook": "^2.1.14",
     "turbo": "2.11.4",
     "knip": "^6.38.0",
-    "@commitlint/cli": "^21.2.3"
+    "@commitlint/cli": "^21.2.3",
+    "@playwright/test": "^1.63.0",
+    "@axe-core/playwright": "^4.13.0",
+    "typescript": "catalog:",
+    "@types/bun": "catalog:"
   },
   "overrides": {
     "lightningcss": "1.30.1"

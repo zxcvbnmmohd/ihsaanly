@@ -2,6 +2,7 @@
 // local-only: no startCloud, no Account row. Firebase itself is only ever
 // reached through the dynamic import below, so it stays a separate chunk.
 import { firebaseConfigFrom } from '@ihsaanly/cloud/config'
+import type { FirebaseConfig } from '@ihsaanly/cloud/firebase/app'
 import { notifyForeground, startCloud } from '@ihsaanly/state/cloud/session'
 
 const config = firebaseConfigFrom({
@@ -15,9 +16,8 @@ const config = firebaseConfigFrom({
 export const cloudEnabled = config !== null
 
 /** Wires sync up once at launch; a no-op in a local-only build. */
-export function startCompanionCloud(): void {
-  if (!config) return
-  const firebase = config
+export function startCompanionCloud(firebase: FirebaseConfig | null = config): void {
+  if (!firebase) return
   startCloud(
     () => import('@ihsaanly/cloud/firebase/flows/web').then((m) => m.createWebCloud(firebase)),
     // Same as the Data screen after its own wipe: in-memory state is rebuilt from scratch.

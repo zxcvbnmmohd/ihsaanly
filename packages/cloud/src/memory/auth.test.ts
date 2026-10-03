@@ -100,4 +100,20 @@ describe('one account per email', () => {
     expect(erased).toBe(false)
     expect(auth.current()?.uid).toBe('apple-only')
   })
+
+  test('link and deleteAccount need a signed-in user', async () => {
+    const auth = createMemoryAuth()
+    await expect(auth.link('google')).rejects.toThrow('Not signed in')
+    await expect(auth.deleteAccount(async () => {})).rejects.toThrow('Not signed in')
+  })
+
+  test('onChange reports the current account at once, then changes until unsubscribed', async () => {
+    const auth = createMemoryAuth()
+    const seen: (string | null)[] = []
+    const unsubscribe = auth.onChange((account) => seen.push(account?.uid ?? null))
+    await auth.signIn('google')
+    unsubscribe()
+    await auth.signOut()
+    expect(seen).toEqual([null, 'memory-google'])
+  })
 })

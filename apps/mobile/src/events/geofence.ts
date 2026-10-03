@@ -21,22 +21,35 @@ export function currentHomeTransition(): HomeTransition {
 // module directly.
 setHomeTransitionSource(currentHomeTransition)
 
-// Registered at module scope because TaskManager requires it, and guarded
-// because this file sits in Today's import chain: a failure here must not take
-// the screen down with it.
-try {
-  TaskManager.defineTask(HOME_REGION_TASK, async ({ data, error }) => {
-    if (error) return
+/** The task body: remembers whether the last region event was entering or leaving home. */
+export async function onHomeRegionEvent({
+  data,
+  error,
+}: {
+  data?: unknown
+  error?: unknown
+}): Promise<void> {
+  if (error) return
 
-    const region = data as { eventType?: Location.GeofencingEventType } | undefined
-    if (!region) return
+  const region = data as { eventType?: Location.GeofencingEventType } | undefined
+  if (!region) return
 
-    lastTransition =
-      region.eventType === Location.GeofencingEventType.Enter ? 'entering-home' : 'leaving-home'
-  })
-} catch {
-  // Geofencing is unavailable here; home detection simply never fires.
+  lastTransition =
+    region.eventType === Location.GeofencingEventType.Enter ? 'entering-home' : 'leaving-home'
 }
+
+// Called at module scope because TaskManager requires registration there, and
+// guarded because this file sits in Today's import chain: a failure here must
+// not take the screen down with it.
+export function registerHomeRegionTask(): void {
+  try {
+    TaskManager.defineTask(HOME_REGION_TASK, onHomeRegionEvent)
+  } catch {
+    // Geofencing is unavailable here; home detection simply never fires.
+  }
+}
+
+registerHomeRegionTask()
 
 export async function startHomeMonitoring(home: HomeRegion): Promise<boolean> {
   const foreground = await Location.requestForegroundPermissionsAsync()

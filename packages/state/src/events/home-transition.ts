@@ -8,7 +8,12 @@
  */
 export type HomeTransition = 'entering-home' | 'leaving-home' | null
 
-let source: () => HomeTransition = () => null
+/** The default source: a host that never registers one never sees a transition. */
+export function noHomeTransition(): HomeTransition {
+  return null
+}
+
+let source: () => HomeTransition = noHomeTransition
 
 export function setHomeTransitionSource(fn: () => HomeTransition): void {
   source = fn

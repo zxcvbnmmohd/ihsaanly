@@ -160,9 +160,90 @@ export interface SyncMeta {
   lastSyncedAt: number | null
 }
 
+// --- feedback -----------------------------------------------------------
+
+export type FeedbackKind = 'bug' | 'idea' | 'other'
+
+export type FeedbackSurface = 'ios' | 'android' | 'web' | 'extension'
+
+/** The limits `firestore.rules` enforces; the screen shows the same ones. */
+export const FEEDBACK_MESSAGE_MAX = 5000
+export const FEEDBACK_EMAIL_MAX = 254
+/** One send per account per minute, checked by the rules against `feedbackLimits/{uid}`. */
+export const FEEDBACK_INTERVAL_MS = 60_000
+
+/** Which app sent it. Every field is short: the rules cap each one. */
+export interface FeedbackApp {
+  surface: FeedbackSurface
+  version: string
+  locale: string
+  os: string
+}
+
+/**
+ * The diagnostic report as it travels with feedback: what helps reproduce a
+ * bug, and nothing of the user's practice itself. No events, no preference
+ * values — only counts and key names. Coordinates are rounded to ~1 km, the
+ * same as the synced place.
+ */
+export interface FeedbackDiagnostics {
+  generatedAt: string
+  app: { version: string; platform: string; osVersion: string; device: string }
+  locale: string
+  timeZone: string
+  utcOffsetMinutes: number
+  daylightSaving: boolean
+  coordinates: { latitude: number; longitude: number } | null
+  notifications: {
+    windows: boolean
+    lookAhead: boolean
+    prayers: boolean
+    quietHours: { from: number; to: number } | null
+    maxPerDay: number
+    /** How many items override their category, not which. */
+    perItemOverrides: number
+  }
+  reminders: { permission: string; pending: number }
+  lastStorageError: string | null
+  /** At most 20, newest last, messages truncated, no stacks. */
+  failures: { at: string; label: string; message: string }[]
+  data: {
+    /** Events per kind. */
+    eventCounts: Record<string, number>
+    /** Distinct log days with at least one event. */
+    days: number
+    /** The names of the preferences set, never their values. */
+    preferenceKeys: string[]
+  }
+}
+
+export interface FeedbackDraft {
+  kind: FeedbackKind
+  message: string
+  contactEmail: string | null
+  app: FeedbackApp
+  diagnostics: FeedbackDiagnostics | null
+}
+
+/** The account sent feedback less than `FEEDBACK_INTERVAL_MS` ago. Try again later. */
+export class FeedbackRateLimitedError extends Error {
+  readonly code = 'rate-limited'
+
+  constructor() {
+    super('Feedback was sent from this account less than a minute ago')
+    this.name = 'FeedbackRateLimitedError'
+  }
+}
+
+export interface FeedbackService {
+  /** Rejects with `FeedbackRateLimitedError` inside the one-minute window. */
+  send: (uid: string, draft: FeedbackDraft) => Promise<void>
+}
+
 // --- the bundle an app wires up -------------------------------------------
 
 export interface Cloud {
   auth: AuthService
   remote: SyncRemote
+  feedback: FeedbackService
 }

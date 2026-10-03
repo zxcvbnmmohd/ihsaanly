@@ -21,8 +21,24 @@ export type { FailureEntry }
 let cached: FailureEntry[] | null = null
 
 function read(): FailureEntry[] {
-  cached ??= readPreference(KEY, FailureLog) ?? []
+  if (cached) return cached
+  // Called from inside catch blocks, and storage is often why they ran: an
+  // unreadable log is an empty one for now, and is tried again on the next call.
+  try {
+    cached = readPreference(KEY, FailureLog) ?? []
+  } catch {
+    return []
+  }
   return cached
+}
+
+/**
+ * Forgets the copy held in memory, so the next read goes back to storage. For a
+ * wipe done in place: without it the failures just erased would reappear in
+ * the next diagnostic bundle and be written back by the next failure.
+ */
+export function forgetFailures(): void {
+  cached = null
 }
 
 export function appendFailure(label: string, error: unknown): void {

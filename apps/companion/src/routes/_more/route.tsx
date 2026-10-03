@@ -38,6 +38,8 @@ function titleFor(path: MorePath, strings: Strings): string {
       return strings.diagnostics.title
     case '/events':
       return strings.events.title
+    case '/feedback':
+      return strings.feedback.title
     case '/hijri':
       return strings.hijri.title
     case '/history':

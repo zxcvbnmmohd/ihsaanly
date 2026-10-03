@@ -196,7 +196,7 @@ functions, so stores, sync and tests are written once.
 ```text
                          @ihsaanly/cloud
  ┌────────────────────────────────────────────────────────────────────────┐
- │ src/ports.ts   AuthService   SyncRemote   LocalStore   Cloud           │
+ │ src/ports.ts   AuthService  SyncRemote  LocalStore  FeedbackService  Cloud │
  │                     ▲             ▲            ▲                       │
  │ src/engine.ts  syncOnce(local, remote, uid) · adoptAccount(...)        │
  │                     │             │            │ (depends on ports only)│
@@ -266,6 +266,9 @@ It pulls first, so a push never overwrites a newer preference.
 - when the app comes to the foreground or the popup opens (`notifyForeground`);
 - 5 s after any local write to a synced key (debounced).
 
+The same sign-in, restore and foreground triggers also flush the feedback
+outbox (see Feedback below).
+
 Only one round runs at a time; a request that arrives mid-round queues a
 single rerun. Errors become a translated `AccountErrorCode` and never throw
 into the UI.
@@ -277,7 +280,7 @@ so a new key never leaks by accident.
 
 | Syncs | Stays on the device |
 | --- | --- |
-| the event log, `calculation`, `enabledItems`, `knownItems`, `fastBacklog`, `qadaBacklog`, `hijriOffset`, `locale`, `theme`, `notifications`, `onboarding`, `suggestion`, `userState`, `place` (**rounded to 2 decimals, about 1 km**) | `events` settings (they hold the **exact home coordinates** for the geofence), `qadaProcessedThrough` (the device's rollover cursor), `failureLog`, `sync` / `account` metadata |
+| the event log, `calculation`, `enabledItems`, `knownItems`, `fastBacklog`, `qadaBacklog`, `hijriOffset`, `locale`, `theme`, `notifications`, `onboarding`, `suggestion`, `userState`, `place` (**rounded to 2 decimals, about 1 km**) | `events` settings (they hold the **exact home coordinates** for the geofence), `qadaProcessedThrough` (the device's rollover cursor), `failureLog`, `sync` / `account` metadata, `feedbackOutbox` (unsent feedback) |
 
 ### Firestore layout and rules
 
@@ -285,6 +288,8 @@ so a new key never leaks by accident.
  users/{uid}                          { createdAt, schema: 1 }
  users/{uid}/eventMonths/{YYYY-MM}    { events: { "<at>|<kind>|<subject>": { l: logDay, d: delta } }, updatedAt }
  users/{uid}/state/preferences        { prefs: { <key>: { v: "<json>", t: updatedAtMs } }, updatedAt }
+ feedback/{autoId}                    { uid, kind, message, contactEmail, app, diagnostics, createdAt, status: 'new' }
+ feedbackLimits/{uid}                 { lastAt }
 ```
 
 The rules are in `packages/cloud/firestore.rules` and tested in
@@ -295,11 +300,48 @@ The rules are in `packages/cloud/firestore.rules` and tested in
 - document shapes and sizes are checked;
 - `updatedAt` must equal `request.time`, which the pull cursor depends on;
 - a month's event map can only grow, so the log is append-only on the server
-  too.
+  too;
+- `feedback` is create-only, for a signed-in user writing their own `uid`,
+  with an exact field allowlist, size caps (message 1–5000, email ≤254, the
+  diagnostics map ≤16 top-level keys), `status == 'new'` and
+  `createdAt == request.time`. No client may read, update or delete it;
+- the feedback rate limit needs no Cloud Functions: each send's batch also
+  stamps `feedbackLimits/{uid}.lastAt` with `request.time`, and the feedback
+  rule checks that stamp with `getAfter` and requires the previous one (if
+  any) to be at least 60 s old. The owner may create and update (only to
+  `request.time`) their limit doc, but never read or delete it: deleting it
+  before each send would bypass the limit.
 
 One document per month means a whole history uploads in a few dozen writes,
 and a sync with no changes costs about 2 reads. That fits the free Spark
 quota (20k writes and 50k reads a day, roughly 2k daily active users).
+
+### Feedback
+
+`FeedbackService.send(uid, draft)` (in `ports.ts`) writes `feedback/{autoId}`
+and `feedbackLimits/{uid}` in one batch (`src/firebase/feedback.ts`). Clients
+can't read either collection, so a `permission-denied` on that batch is
+reported as `FeedbackRateLimitedError`; any other denial would be a shape bug,
+which the rules tests catch.
+
+On the device, `@ihsaanly/state/feedback/store` queues every report in the
+`feedbackOutbox` preference first (device-only: never synced or exported),
+then sends it if signed in. A report that can't go yet (offline, signed out,
+or inside the one-minute window) stays queued and goes on the next sign-in,
+restore, foreground or retry. `useFeedback()` exposes the status and a
+`FeedbackErrorCode`. An attached diagnostic report is
+`buildFeedbackDiagnostics()`: the share-sheet diagnostics cut down to counts
+and key names (no events, no preference values), coordinates rounded to about
+1 km, at most 20 failures with clipped messages.
+
+Feedback lives outside `users/{uid}`, so `erase()` leaves it in place (kept
+for up to 2 years, as the privacy policy says), and so does
+`feedbackLimits/{uid}` (only a `lastAt` timestamp). No client can delete it,
+because a delete before each send would defeat the rate limit.
+
+**Admin view:** in the Firebase console, open the project → Firestore →
+`feedback`, sorted by `createdAt`. Change `status` to `seen` or `done` there;
+the console uses IAM and bypasses the rules, which give clients no update.
 
 ### Account flows
 
@@ -455,7 +497,7 @@ to them needs re-measuring.
   ships in the bundle and isn't a secret; the rules protect the data.
   **Secrets** hold `FTP_*` and `FIREBASE_SERVICE_ACCOUNT`.
 - **Turbo:** `turbo.json` declares `VITE_FIREBASE_*`, `VITE_APP_ENV`,
-  `VITE_SITE_URL` and the `.env.*` files as build inputs, so the cache never
+  `VITE_SITE_URL`, `VITE_CONTENT_URL` and the `.env.*` files as build inputs, so the cache never
   serves a build that points at the wrong project or environment.
 - **`VITE_APP_ENV`** (`development` | `production`, default production; unset
   under `vite dev` it is development): `deploy-ftp.yml` sets it from the
@@ -502,13 +544,69 @@ No site is nested in another. Keep the parent folders free of `.htaccess`,
 because Apache applies a parent folder's config to every folder below it. See
 [`apps/companion/HOSTING.md`](../apps/companion/HOSTING.md).
 
+## Content updates
+
+The content (`packages/core/content`: `items.json`, `glossary.json`,
+`translations/*.json`) is authored in git and bundled into every app. The
+marketing build also publishes it as static files on its own site, so a
+content fix reaches installed apps without a store release:
+
+```text
+ PR edits packages/core/content/**  (check.yml: content validator, tests)
+    │ merge to development / production
+    ▼
+ deploy-marketing.yml (path filter includes packages/core/**)
+    └─► deploy-ftp.yml: turbo build @ihsaanly/marketing
+          └─ scripts/postbuild.ts ─ buildContentBundle()  (core/src/content/bundle-build.ts)
+               validates every file with the zod schemas (fails the build), hashes them
+               └─► dist/client/content/manifest.json
+                   dist/client/content/v<version>/{items,glossary}.json
+                   dist/client/content/v<version>/translations/<lang>.json
+          └─► FTPS upload (old v<version>/ folders are removed)
+    ▼
+ https://ihsaanly.app/content/manifest.json      (production)
+ https://dev.ihsaanly.app/content/manifest.json  (development)
+    │  Access-Control-Allow-Origin: *   manifest: no-cache   v<version>/**: immutable, 1 year
+    ▼
+ clients (companion, extension, mobile) fetch the manifest, validate it and the files
+ with ContentManifest and the content schemas, and keep the bundled content on any failure
+```
+
+- **Contract:** `packages/core/src/content/bundle.ts` (pure, imported by the
+  apps): `CONTENT_SCHEMA_VERSION`, `DEFAULT_CONTENT_URL`,
+  `CONTENT_MANIFEST_PATH`, the `ContentManifest` zod schema (paths may only
+  point inside their own `v<version>/` folder), `ContentBundle`,
+  `bundlePaths()` and `contentUrl()`. The build-only writer is
+  `bundle-build.ts` (`node:fs`, `node:crypto`), which no app imports.
+- **Version:** the first 12 hex of a sha256 over each file's path and
+  canonical JSON, in path order. The same content always has the same version,
+  so rebuilding without a content change republishes the same folder and only
+  `publishedAt` moves.
+- **Only the current version is published.** The FTP upload is not atomic, so
+  for a moment a client can see a manifest whose files are missing (or a
+  manifest about to be replaced). Clients validate everything and fall back to
+  what they have, then try again later, so that window is safe.
+- **Where clients look:** `VITE_CONTENT_URL` (companion, extension) and
+  `EXPO_PUBLIC_CONTENT_URL` (mobile, via `eas.json` profiles), a base URL
+  ending `/content`, set per environment by `deploy-ftp.yml` and the apps'
+  `.env.*` files. **Unset means no update checks:** the app runs on its
+  bundled content, so local and test builds never reach the live site by
+  accident. (`DEFAULT_CONTENT_URL` only seeds the companion CSP's
+  `connect-src`.) The companion's CSP allows that origin in every build. The extension declares no CSP, and MV3's default
+  (`script-src 'self'; object-src 'self'`) does not restrict `connect-src`;
+  extension pages fetch cross-origin under CORS, which `*` satisfies, so no
+  `host_permissions` are needed.
+- **Privacy:** the fetch is an anonymous GET of public files; it sends no
+  user data, only what any HTTP request does (IP address, user agent) to our
+  own host.
+
 ## Privacy invariants
 
 Code changes must keep these true. The privacy policy, the sign-in notice and
 the store forms all depend on them.
 
 1. No account is needed, and without signing in nothing leaves the device.
-   The exceptions are an export or diagnostic report the user sends
+   The exceptions are an export, diagnostic report or feedback the user sends
    themselves.
 2. No analytics, telemetry, crash reporting, ads, installation IDs or push
    tokens.
@@ -516,7 +614,8 @@ the store forms all depend on them.
    coordinates never sync.
 4. The Firebase SDK loads only for someone who has signed in, or is signing in.
 5. Account deletion erases the cloud copy, and is available in-app and at
-   `/legal/delete-account`.
+   `/legal/delete-account`. Feedback the user sent is the one exception: it is
+   kept for up to 2 years and removed on request by email.
 
 A change to any of these needs the policy, `SYNCED_KEYS`, the sign-in notice
 and the store data forms updated together.
@@ -529,12 +628,18 @@ and the store data forms updated together.
 | Types | TypeScript | each workspace's `tsconfig.json`, extending `@ihsaanly/tsconfig` |
 | Unused code | knip | root `knip.jsonc` |
 | Unit tests | `bun test` | `src/**/*.test.ts` in each workspace |
+| Component tests | `bun test` + happy-dom + Testing Library, react-native-web resolution | `packages/ui/test/preload.ts`, `renderScreen` in `packages/ui/test/render.tsx` |
+| Coverage | `bun run coverage` (`--enforce` to gate) | `scripts/coverage.ts`, threshold and exclude list in `coverage.config.ts` |
+| End to end (web, extension) | Playwright | `playwright.config.ts`, `e2e/` |
+| End to end (mobile) | Maestro (not in CI yet) | `e2e/mobile` |
 | Sync engine | `bun test` against the memory adapters | `packages/cloud/src/engine.test.ts` |
 | Security rules | `@firebase/rules-unit-testing` + emulator | `bun run --cwd packages/cloud test:rules` (JDK 21) |
 | Site and web-app output | `bun test`, headless Chrome, CSP checks | `apps/marketing/test`, `apps/companion/test` |
 | Mobile health | `expo-doctor`, content validator | `apps/mobile` |
 | Licences | `bun run licenses` | writes `THIRD_PARTY_LICENSES.md` |
 | Commits | Lefthook, commitlint | `lefthook.json`, `commitlint.config.cjs` |
+
+How to write and run each kind of test: [TESTING.md](TESTING.md).
 
 `bun run check` runs lint, typecheck, tests and knip. CI runs these checks plus
 the builds and the rules suite.

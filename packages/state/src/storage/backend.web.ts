@@ -48,7 +48,8 @@ function isStore(value: unknown): value is Store {
   return typeof value === 'object' && value !== null && 'preferences' in value && 'events' in value
 }
 
-function load(): Store {
+/** Exported so the repair paths can be exercised against any stored blob. */
+export function load(): Store {
   try {
     const raw = globalThis.localStorage?.getItem(STORAGE_KEY)
     if (!raw) return emptyStore()
@@ -76,7 +77,7 @@ const chronological = (left: StoredEvent, right: StoredEvent): number =>
  * that shared an instant) are nudged forward by their rank so none is lost, and
  * anything still colliding after that is dropped.
  */
-function withUniqueIdentities(events: StoredEvent[]): StoredEvent[] {
+export function withUniqueIdentities(events: StoredEvent[]): StoredEvent[] {
   const ranks = new Map<string, number>()
   const seen = new Set<string>()
   const byId = [...events].sort((left, right) => left.id - right.id)
@@ -94,7 +95,12 @@ function withUniqueIdentities(events: StoredEvent[]): StoredEvent[] {
 // Loaded once, mirrored in memory from here on. A page reload reads it again.
 const store = load()
 store.events = withUniqueIdentities(store.events)
-let nextId = store.events.reduce((max, event) => Math.max(max, event.id), 0) + 1
+/** The id after the highest stored one. Exported to be tested apart from the blob loaded at import. */
+export function nextIdAfter(events: { id: number }[]): number {
+  return events.reduce((max, event) => Math.max(max, event.id), 0) + 1
+}
+
+let nextId = nextIdAfter(store.events)
 const identities = new Set(store.events.map(identity))
 
 // Best-effort: asks the browser not to evict this origin's storage under
@@ -148,6 +154,42 @@ export function preferenceRowsWithTime(): TimedPreferenceRow[] {
     value,
     updatedAt: store.preferenceTimes?.[key] ?? 0,
   }))
+}
+
+// --- downloaded content ------------------------------------------------------
+
+/**
+ * The content cache lives under its own keys, outside the blob above: it is
+ * ~100 KB that would otherwise be rewritten with every event, and it is never
+ * synced, exported or wiped with the user's data.
+ */
+const CONTENT_PREFIX = 'ihsaanly.content.v1.'
+
+export function readContentRow(key: string): string | null {
+  try {
+    return globalThis.localStorage?.getItem(CONTENT_PREFIX + key) ?? null
+  } catch {
+    return null
+  }
+}
+
+/** One setItem: the old value stays whole if it fails (a full quota, say). */
+export function writeContentRow(key: string, value: string): boolean {
+  try {
+    if (!globalThis.localStorage) return false
+    globalThis.localStorage.setItem(CONTENT_PREFIX + key, value)
+    return true
+  } catch {
+    return false
+  }
+}
+
+export function removeContentRow(key: string): void {
+  try {
+    globalThis.localStorage?.removeItem(CONTENT_PREFIX + key)
+  } catch {
+    // Nothing to do: the row is unreachable either way.
+  }
 }
 
 // --- events --------------------------------------------------------------

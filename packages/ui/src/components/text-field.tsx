@@ -60,6 +60,12 @@ interface TextFieldProps {
   kind?: 'search' | 'plain'
   returnKeyType?: TextInputProps['returnKeyType']
   autoCapitalize?: TextInputProps['autoCapitalize']
+  /** The accessible name, where the placeholder is not enough (a visible label sits above). */
+  label?: string
+  /** A taller, wrapping field for a message. It has no clear control: a draft is easy to lose. */
+  multiline?: boolean
+  maxLength?: number
+  keyboardType?: TextInputProps['keyboardType']
 }
 
 /**
@@ -74,6 +80,10 @@ export function TextField({
   kind = 'plain',
   returnKeyType,
   autoCapitalize = 'words',
+  label,
+  multiline = false,
+  maxLength,
+  keyboardType,
 }: TextFieldProps): ReactElement {
   const [thing, setThing] = useState<Thing>({ focused: false })
   const { strings, systemColors } = useUi()
@@ -85,13 +95,13 @@ export function TextField({
   return (
     <View
       // Material's secondary background is lavender next to the warm wash.
-      className="flex-row items-center gap-3 rounded-2xl ps-4 pe-3"
+      className={`flex-row gap-3 rounded-2xl ps-4 pe-3 ${multiline ? 'items-start' : 'items-center'}`}
       style={{
         backgroundColor:
           process.env.EXPO_OS === 'android'
             ? colors.surface
             : systemColors.secondarySystemBackground,
-        minHeight: 52,
+        minHeight: multiline ? 140 : 52,
         borderWidth: 1.5,
         borderColor: thing.focused ? ring : colors.fieldBorder,
         borderCurve: 'continuous',
@@ -103,15 +113,19 @@ export function TextField({
         onFocus={() => setThing({ focused: true })}
         onBlur={() => setThing({ focused: false })}
         placeholder={placeholder}
+        accessibilityLabel={label}
+        multiline={multiline}
+        maxLength={maxLength}
+        keyboardType={keyboardType}
         placeholderTextColor={systemColors.secondaryLabel}
         autoCorrect={false}
         autoCapitalize={autoCapitalize}
         returnKeyType={returnKeyType}
         clearButtonMode="never"
         className="flex-1 py-3 text-base"
-        style={{ color: systemColors.label }}
+        style={{ color: systemColors.label, ...(multiline ? { textAlignVertical: 'top' } : null) }}
       />
-      {value.length > 0 ? (
+      {value.length > 0 && !multiline ? (
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={strings.textField.clear}

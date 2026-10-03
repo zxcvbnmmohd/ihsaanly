@@ -156,4 +156,8 @@ describe('notification words', () => {
       ),
     ).toBeNull()
   })
+
+  it('refuses an entry of a kind it was never taught', () => {
+    expect(() => notificationContent({ kind: 'mystery' } as never, [item], en)).toThrow()
+  })
 })

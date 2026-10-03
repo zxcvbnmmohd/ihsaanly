@@ -1,0 +1,9 @@
+[test]
+# DOM + react-native-web for component tests (docs/TESTING.md).
+preload = ["./test/preload.ts"]
+# Read only by `bun test --coverage` (the test:coverage script). The root
+# `bun run coverage` (scripts/coverage.ts) checks coverage/lcov.info against
+# every source file in this workspace.
+coverageReporter = ["text", "lcov"]
+coverageDir = "coverage"
+coverageSkipTestFiles = true

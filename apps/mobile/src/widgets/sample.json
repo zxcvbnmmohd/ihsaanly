@@ -10,7 +10,7 @@
       "accent": "#a94a32",
       "onAccent": "#fff6f0",
       "label": "#2b1f1a",
-      "secondaryLabel": "#7a665c"
+      "secondaryLabel": "#66564d"
     },
     "dark": {
       "background": "#1b1411",
@@ -108,7 +108,18 @@
     }
   ],
   "allDay": [],
-  "comingUp": [],
+  "comingUp": [
+    {
+      "title": "Surah al-Kahf on Friday",
+      "detail": "In 2 days",
+      "url": "ihsaanly://item/kahf-friday"
+    },
+    {
+      "title": "Abundant salawat on the Prophet ﷺ",
+      "detail": "In 2 days",
+      "url": "ihsaanly://item/salawat-friday"
+    }
+  ],
   "quickDuas": [
     {
       "title": "Leaving home",

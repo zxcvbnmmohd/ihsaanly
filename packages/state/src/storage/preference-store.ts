@@ -25,21 +25,28 @@ export function reloadPreferences(): void {
   stores.forEach((store) => store.reload())
 }
 
+/**
+ * `fallback` may be a function, read each time the stored value is missing:
+ * for a default that depends on content installed after this module loads.
+ * Stored values are JSON, so a function is never a value itself.
+ */
 export function createPreferenceStore<T>(
   key: string,
   schema: ZodType<T>,
-  fallback: T,
+  fallback: T | (() => T),
 ): PreferenceStore<T> {
-  let current = fallback
+  const fallbackValue = (): T =>
+    typeof fallback === 'function' ? (fallback as () => T)() : fallback
+  let current: T | undefined
   let loaded = false
   const listeners = new Set<() => void>()
 
   const get = (): T => {
     if (!loaded) {
-      current = readPreference(key, schema) ?? fallback
+      current = readPreference(key, schema) ?? fallbackValue()
       loaded = true
     }
-    return current
+    return current as T
   }
 
   const subscribe = (listener: () => void): (() => void) => {

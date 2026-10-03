@@ -179,67 +179,72 @@ const VARIANTS: Record<string, Mark> = {
   outline: { background: wash, colour: rgb(ACCENT), scale: 0.68, outline: 0.032 },
 }
 
-const variantsFlag = process.argv.indexOf('--variants')
+/** Writes the brand assets, or the comparison sheets when `--variants <dir>` is given. */
+export async function main(argv: string[]): Promise<void> {
+  const variantsFlag = argv.indexOf('--variants')
 
-if (variantsFlag !== -1) {
-  const directory = process.argv[variantsFlag + 1]
-  if (!directory) throw new Error('--variants needs a directory')
+  if (variantsFlag !== -1) {
+    const directory = argv[variantsFlag + 1]
+    if (!directory) throw new Error('--variants needs a directory')
 
-  for (const [name, mark] of Object.entries(VARIANTS)) {
-    for (const size of [1024, 128]) {
-      const path = `${directory}/${name}-${size}.png`
-      await Bun.write(path, draw(size, mark))
-      console.log(`✔ ${path}`)
+    for (const [name, mark] of Object.entries(VARIANTS)) {
+      for (const size of [1024, 128]) {
+        const path = `${directory}/${name}-${size}.png`
+        await Bun.write(path, draw(size, mark))
+        console.log(`✔ ${path}`)
+      }
+    }
+  } else {
+    const chosen = VARIANTS.outline
+    if (!chosen) throw new Error('no such variant')
+
+    const white: Rgb = { r: 255, g: 255, b: 255 }
+    // Android masks the foreground hard, so the mark sits well inside the safe area. The
+    // notification glyph stays solid: at status-bar size a hairline outline disappears.
+    const outputs: [string, number, Mark][] = [
+      ['assets/images/icon.png', 1024, chosen],
+      [
+        'assets/images/adaptive-icon.png',
+        1024,
+        { background: null, colour: rgb(ACCENT), scale: 0.46, outline: 0.032 },
+      ],
+      [
+        'assets/images/adaptive-icon-mono.png',
+        1024,
+        { background: null, colour: white, scale: 0.46, outline: 0.032 },
+      ],
+      [
+        'assets/images/splash-icon.png',
+        512,
+        { background: null, colour: rgb(ACCENT), scale: 0.7, outline: 0.032 },
+      ],
+      [
+        'assets/images/notification-icon.png',
+        96,
+        { background: null, colour: white, scale: 0.78, outline: null },
+      ],
+      // The motif the app itself draws, as the icon draws it: one union rather than
+      // two overlapping squares, so an outline has no crossing lines inside it and a
+      // shaded one has no darker patch where the squares meet. White so `tintColor`
+      // can colour it from the palette at render time.
+      [
+        '../../packages/ui/assets/images/star-outline.png',
+        256,
+        { background: null, colour: white, scale: 0.94, outline: 0.032 },
+      ],
+      [
+        '../../packages/ui/assets/images/star-solid.png',
+        256,
+        { background: null, colour: white, scale: 0.94, outline: null },
+      ],
+    ]
+
+    for (const [path, size, mark] of outputs) {
+      const png = draw(size, mark)
+      await Bun.write(path, png)
+      console.log(`✔ ${path} — ${size}×${size}, ${png.length} bytes`)
     }
   }
-} else {
-  const chosen = VARIANTS.outline
-  if (!chosen) throw new Error('no such variant')
-
-  const white: Rgb = { r: 255, g: 255, b: 255 }
-  // Android masks the foreground hard, so the mark sits well inside the safe area. The
-  // notification glyph stays solid: at status-bar size a hairline outline disappears.
-  const outputs: [string, number, Mark][] = [
-    ['assets/images/icon.png', 1024, chosen],
-    [
-      'assets/images/adaptive-icon.png',
-      1024,
-      { background: null, colour: rgb(ACCENT), scale: 0.46, outline: 0.032 },
-    ],
-    [
-      'assets/images/adaptive-icon-mono.png',
-      1024,
-      { background: null, colour: white, scale: 0.46, outline: 0.032 },
-    ],
-    [
-      'assets/images/splash-icon.png',
-      512,
-      { background: null, colour: rgb(ACCENT), scale: 0.7, outline: 0.032 },
-    ],
-    [
-      'assets/images/notification-icon.png',
-      96,
-      { background: null, colour: white, scale: 0.78, outline: null },
-    ],
-    // The motif the app itself draws, as the icon draws it: one union rather than
-    // two overlapping squares, so an outline has no crossing lines inside it and a
-    // shaded one has no darker patch where the squares meet. White so `tintColor`
-    // can colour it from the palette at render time.
-    [
-      '../../packages/ui/assets/images/star-outline.png',
-      256,
-      { background: null, colour: white, scale: 0.94, outline: 0.032 },
-    ],
-    [
-      '../../packages/ui/assets/images/star-solid.png',
-      256,
-      { background: null, colour: white, scale: 0.94, outline: null },
-    ],
-  ]
-
-  for (const [path, size, mark] of outputs) {
-    const png = draw(size, mark)
-    await Bun.write(path, png)
-    console.log(`✔ ${path} — ${size}×${size}, ${png.length} bytes`)
-  }
 }
+
+if (import.meta.main) await main(process.argv)

@@ -19,6 +19,9 @@ export function Chip({ label, selected, onPress, palette }: ChipProps): ReactEle
     <Pressable
       accessibilityRole="button"
       accessibilityState={{ selected }}
+      // react-native-web reads only the aria-* form. A chip toggles a choice
+      // on a button, so it is "pressed" (aria-selected is not valid on one).
+      aria-pressed={selected}
       onPress={onPress}
       // px-3 py-2 is about 36pt tall; the slop carries it to the 44pt minimum
       // without making the pill itself look heavy in a row of them.

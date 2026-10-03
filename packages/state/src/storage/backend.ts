@@ -17,9 +17,14 @@ const APP_GROUP =
  */
 const SHARED_CONTAINER_ENABLED = false
 
+/** Exported so the switch-on path can be tested while the switch is off. */
+export function databaseDirectoryFor(enabled: boolean, group: string): string | undefined {
+  if (!enabled) return undefined
+  return Paths.appleSharedContainers[group]?.uri
+}
+
 function databaseDirectory(): string | undefined {
-  if (!SHARED_CONTAINER_ENABLED) return undefined
-  return Paths.appleSharedContainers[APP_GROUP]?.uri
+  return databaseDirectoryFor(SHARED_CONTAINER_ENABLED, APP_GROUP)
 }
 
 let openError: string | null = null
@@ -40,7 +45,8 @@ export function lastDatabaseError(): string | null {
  * ponytail: no recovery beyond that. If opening an in-memory database fails too,
  * the device has larger problems than this app can paper over.
  */
-function connect(): SQLite.SQLiteDatabase {
+export function connect(): SQLite.SQLiteDatabase {
+  openError = null
   try {
     const connection = SQLite.openDatabaseSync('ihsaanly.db', undefined, databaseDirectory())
     migrate(connection)
@@ -106,6 +112,35 @@ export function preferenceRowsWithTime(): TimedPreferenceRow[] {
   return database.getAllSync<TimedPreferenceRow>(
     'SELECT key, value, updated_at AS updatedAt FROM preferences',
   )
+}
+
+// --- downloaded content ------------------------------------------------------
+
+/** One row of the content cache, or null. Not a preference: never synced, exported or wiped. */
+export function readContentRow(key: string): string | null {
+  return (
+    database.getFirstSync<{ value: string }>('SELECT value FROM content_cache WHERE key = ?', key)
+      ?.value ?? null
+  )
+}
+
+/** Replaces the row in one statement, so a reader sees the old value or the new, never half. */
+export function writeContentRow(key: string, value: string): boolean {
+  try {
+    database.runSync(
+      `INSERT INTO content_cache (key, value) VALUES (?, ?)
+       ON CONFLICT(key) DO UPDATE SET value = excluded.value`,
+      key,
+      value,
+    )
+    return true
+  } catch {
+    return false
+  }
+}
+
+export function removeContentRow(key: string): void {
+  database.runSync('DELETE FROM content_cache WHERE key = ?', key)
 }
 
 // --- events ------------------------------------------------------------

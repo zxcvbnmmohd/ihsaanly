@@ -289,6 +289,55 @@ export const ja: Strings = {
     hideRaw: 'レポート全体を隠す',
     send: '送る',
     cancel: '今はしない',
+    reportProblem: 'この問題を報告',
+  },
+  feedback: {
+    title: 'フィードバックを送る',
+    explanation:
+      'うまくいかなかったことや、Ihsaanly がもっと良くなる案をお聞かせください。「送信」を押すまで何も送られません。',
+    signedOut:
+      'フィードバックはアカウントとともに送られます。お返事をしたり、迷惑な投稿を防いだりするためです。アプリのほかの機能では、サインインは任意です。',
+    signIn: 'サインインしてフィードバックを送る',
+    emailFallback: 'メールをご希望の場合は {email} までお書きください。',
+    kindLabel: '内容は何についてですか？',
+    kinds: {
+      bug: '問題を報告',
+      idea: 'アイデアを提案',
+      other: 'その他',
+    },
+    messageLabel: 'メッセージ',
+    messagePlaceholder: '何が起きましたか。どうなると助かりますか。',
+    counter: (used: number, max: number): string => `${used} / ${max}`,
+    contactLabel: '連絡先のメールアドレス',
+    contactHint: '任意です。返信が必要な場合のみ。',
+    contactPlaceholder: 'name@example.com',
+    fillAccountEmail: (email: string): string => `${email} を使う`,
+    includeDiagnostics: '診断情報を含める',
+    includeDiagnosticsDetail:
+      '任意です。アプリのバージョン、端末、おおよその現在地、問題の件数が含まれます。オンにするまでは含まれません。',
+    showIncluded: '含まれる内容を見る',
+    hideIncluded: '含まれる内容を隠す',
+    privacy:
+      'お返事のため、アカウントとともに Mohd Inc. に送られます。最長 2 年間保管されます。{privacy}',
+    privacyLink: 'プライバシーポリシーを読む',
+    send: '送信',
+    sending: '送信中…',
+    queuedTitle: 'あとで送るために保存しました',
+    queued:
+      'オフラインです。フィードバックはこの端末に保存され、オンラインに戻ったときに送信されます。',
+    sentTitle: 'ありがとうございます',
+    sent: 'フィードバックを送信しました。',
+    done: '完了',
+    sendAnother: 'もう 1 件送る',
+    errors: {
+      'rate-limited':
+        '先ほどフィードバックを送信したばかりです。1 分ほど待ってから、もう一度お試しください。',
+      network:
+        '接続できませんでした。メッセージはそのまま残っています。接続を確認して、もう一度お試しください。',
+      'signed-out': 'この端末に保存しました。サインインすると送信されます。',
+      invalid: 'メッセージと連絡先メールアドレスを確認してから、もう一度送信してください。',
+      unknown: '問題が発生しました。メッセージはそのまま残っています。もう一度お試しください。',
+    },
   },
   about: {
     title: 'このアプリについて',

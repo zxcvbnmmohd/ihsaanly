@@ -8,6 +8,7 @@
     "format": "biome check --write .",
     "typecheck": "tsc --noEmit",
     "test": "bun test",
+    "test:coverage": "bun test --coverage",
     "validate:content": "bun scripts/validate-content.ts",
     "doctor": "bunx expo-doctor",
     "check": "bun run lint && bun run typecheck && bun run test && bun run validate:content && bun run doctor",
@@ -69,7 +70,12 @@
     "tailwindcss": "catalog:",
     "typescript": "catalog:",
     "@ihsaanly/lint": "workspace:*",
-    "@ihsaanly/tsconfig": "workspace:*"
+    "@ihsaanly/tsconfig": "workspace:*",
+    "@happy-dom/global-registrator": "catalog:",
+    "@testing-library/react": "catalog:",
+    "@testing-library/dom": "catalog:",
+    "@testing-library/user-event": "catalog:",
+    "@testing-library/jest-dom": "catalog:"
   },
   "name": "@ihsaanly/mobile",
   "version": "0.1.0",

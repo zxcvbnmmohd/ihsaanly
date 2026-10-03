@@ -41,6 +41,13 @@ export const MIGRATIONS = [
    );
    CREATE UNIQUE INDEX events_identity ON events (kind, subject, at);
    ALTER TABLE preferences ADD COLUMN updated_at INTEGER NOT NULL DEFAULT 0;`,
+  // Content downloaded for the next open (state/content). Apart from
+  // `preferences` on purpose: it is public, replaceable, never synced or
+  // exported, and survives a wipe of the user's own data.
+  `CREATE TABLE content_cache (
+     key TEXT PRIMARY KEY NOT NULL,
+     value TEXT NOT NULL
+   ) STRICT;`,
 ]
 
 export function migrate(connection: SQLite.SQLiteDatabase): void {

@@ -26,6 +26,9 @@ async function consoleOf(chrome: string, url: string): Promise<string> {
       '--no-sandbox',
       '--virtual-time-budget=3000',
       '--enable-logging=stderr',
+      // Ordinary extensions stay out; policy-installed ones (a company's DLP,
+      // say) load anyway, which is why pageMessages() filters by source too.
+      '--disable-extensions',
       '--v=0',
       '--dump-dom',
       url,
@@ -33,6 +36,23 @@ async function consoleOf(chrome: string, url: string): Promise<string> {
     { stdout: 'ignore', stderr: 'pipe' },
   )
   return new Response(run.stderr).text()
+}
+
+/**
+ * The console messages Chrome logged for pages on `origin`: each
+ * `[…:CONSOLE:…] "message", source: URL (line)` entry, which may span lines,
+ * kept only when its source is this origin. Extensions installed by policy
+ * load even in a throwaway profile and log their own errors; those are not the
+ * page's problems.
+ */
+export function pageMessages(log: string, origin: string): string[] {
+  return log
+    .split(/\n(?=\[\d+:\d+:)/)
+    .filter((entry) => entry.includes(':CONSOLE'))
+    .filter((entry) => {
+      const source = /source: (\S*) \(\d+\)\s*$/.exec(entry)?.[1] ?? ''
+      return source.startsWith(origin)
+    })
 }
 
 export interface ChromePagesOptions {
@@ -54,9 +74,10 @@ export function describeChromePages({
     for (const path of pages) {
       test(path, async () => {
         const log = await consoleOf(chrome ?? '', `${baseUrl}${path}`)
-        expect(log).not.toContain('Content Security Policy')
+        const messages = pageMessages(log, baseUrl).join('\n')
+        expect(messages).not.toContain('Content Security Policy')
         // Hydration or render errors, such as an update loop in the demo.
-        expect(log).not.toMatch(/CONSOLE[^\n]*(?:Uncaught|Error\b)/)
+        expect(messages).not.toMatch(/Uncaught|Error\b/)
       }, 20_000)
     }
   })

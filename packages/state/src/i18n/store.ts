@@ -8,6 +8,7 @@ import {
   type SupportedLocale,
 } from '@ihsaanly/core/i18n/locale'
 import { z } from 'zod'
+import { notifyContentForeground } from '../content/updater'
 import { createPreferenceStore } from '../storage/preference-store'
 import { deviceLocaleTags } from './device'
 import { applyDirection } from './direction'
@@ -28,6 +29,8 @@ export const getLocale = store.get
 function chooseLocale(locale: SupportedLocale): void {
   setLocale(locale)
   setContentLanguage(languageOf(locale))
+  // Fetches this language's downloaded translation for the next open.
+  notifyContentForeground()
 }
 
 /**

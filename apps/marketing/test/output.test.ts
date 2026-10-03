@@ -1,10 +1,15 @@
 // The build writes every page the old site had, at the same URLs, with the
 // language, direction and head tags search engines already index.
-import { describe, expect, test } from 'bun:test'
-import { existsSync, readFileSync } from 'node:fs'
+import { describe, expect, spyOn, test } from 'bun:test'
+import { existsSync, readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { CONTENT_SCHEMA_VERSION, ContentManifest } from '@ihsaanly/core/content/bundle'
+import { buildContentBundle } from '@ihsaanly/core/content/bundle-build'
+import { ContentDocument, GlossaryDocument } from '@ihsaanly/core/content/schema'
+import { TranslationFile } from '@ihsaanly/core/content/translations'
 import { resolveAppEnv } from '@ihsaanly/web/app-env'
 import type { HeaderMap } from '@ihsaanly/web/hosting/csp'
+import { serve } from '@ihsaanly/web/hosting/serve'
 import { absolute, LOCALES, PAGES, pageUrl } from '../src/i18n/locales.ts'
 
 const CLIENT = join(import.meta.dir, '..', 'dist', 'client')
@@ -77,5 +82,54 @@ describe(`a ${resolveAppEnv(process.env.VITE_APP_ENV)} build`, () => {
     expect(read('/.htaccess').includes('X-Robots-Tag')).toBe(development)
     expect(read('/_headers').includes('X-Robots-Tag: noindex, nofollow')).toBe(development)
     expect(headerMap.headers?.['X-Robots-Tag']).toBe(development ? 'noindex, nofollow' : undefined)
+  })
+})
+
+// The content the apps fetch for remote updates (scripts/postbuild.ts,
+// publishContent): one valid version, served with the headers a
+// cross-origin client needs.
+describe('content updates', () => {
+  const content = join(CLIENT, 'content')
+  const manifest = ContentManifest.parse(
+    JSON.parse(readFileSync(join(content, 'manifest.json'), 'utf8')),
+  )
+  const parse = (path: string): unknown => JSON.parse(readFileSync(join(content, path), 'utf8'))
+
+  test('publishes the manifest and only the version it names', () => {
+    expect(manifest.schemaVersion).toBe(CONTENT_SCHEMA_VERSION)
+    expect(readdirSync(content).sort()).toEqual(['manifest.json', `v${manifest.version}`])
+    expect(manifest.version).toBe(buildContentBundle().manifest.version)
+  })
+
+  test('every file it names passes the schema the client checks', () => {
+    expect(ContentDocument.safeParse(parse(manifest.items)).success).toBe(true)
+    expect(GlossaryDocument.safeParse(parse(manifest.glossary)).success).toBe(true)
+    for (const [language, path] of Object.entries(manifest.translations))
+      expect(TranslationFile.parse(parse(path)).language).toBe(language)
+  })
+
+  test('is served cross-origin, the manifest revalidated and the files kept forever', async () => {
+    const log = spyOn(console, 'log').mockImplementation(() => {})
+    const headerMap: HeaderMap = JSON.parse(
+      readFileSync(join(CLIENT, '..', 'headers.json'), 'utf8'),
+    )
+    const server = serve({ root: CLIENT, headerMap, port: 0 })
+    log.mockRestore()
+    try {
+      const get = (path: string): Promise<Response> =>
+        fetch(`http://localhost:${server.port}/content/${path}`, {
+          headers: { Origin: 'chrome-extension://abcdefghijklmnop' },
+        })
+      const first = await get('manifest.json')
+      expect(first.headers.get('Access-Control-Allow-Origin')).toBe('*')
+      expect(first.headers.get('Content-Type')).toBe('application/json; charset=utf-8')
+      expect(first.headers.get('Cache-Control')).toBe('no-cache')
+      const items = await get(manifest.items)
+      expect(items.headers.get('Access-Control-Allow-Origin')).toBe('*')
+      expect(items.headers.get('Content-Type')).toBe('application/json; charset=utf-8')
+      expect(items.headers.get('Cache-Control')).toBe('public, max-age=31536000, immutable')
+    } finally {
+      server.stop(true)
+    }
   })
 })

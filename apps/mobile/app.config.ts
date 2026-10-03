@@ -97,6 +97,8 @@ const COLLECTED_DATA_TYPES = [
   'NSPrivacyCollectedDataTypeUserID',
   'NSPrivacyCollectedDataTypeCoarseLocation',
   'NSPrivacyCollectedDataTypeOtherUserContent',
+  // Send feedback, when the person turns on the optional diagnostic summary.
+  'NSPrivacyCollectedDataTypeOtherDiagnosticData',
   // The synced practice record reveals religious practice (App Store label: Sensitive Info).
   'NSPrivacyCollectedDataTypeSensitiveInfo',
 ].map((type) => ({

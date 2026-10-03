@@ -17,7 +17,9 @@ export function Header(): ReactNode {
         aria-label={a('common.brandHome')}
         className="brand inline-flex items-center gap-[0.6rem] font-serif text-ink text-xl tracking-[0.01em] no-underline">
         <BrandMark className="size-[1.9rem] text-accent" />
-        Ihsaanly
+        {/* Below 26rem the wordmark yields its room to the header button,
+            which names the app anyway; the link keeps its spoken label. */}
+        <span className="max-[26rem]:sr-only">Ihsaanly</span>
       </Link>
       <div className="flex items-center gap-[0.35rem]">
         {/* The one filled control on the page: the web app is the only surface

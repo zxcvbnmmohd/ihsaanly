@@ -20,6 +20,8 @@ export interface DiagnosticsScreenProps {
   onToggleRaw: () => void
   onSend: () => void
   onCancel: () => void
+  /** Opens Feedback with this report attached. Left out where there is no cloud. */
+  onReportProblem?: (() => void) | undefined
 }
 
 export function DiagnosticsScreen({
@@ -30,6 +32,7 @@ export function DiagnosticsScreen({
   onToggleRaw,
   onSend,
   onCancel,
+  onReportProblem,
 }: DiagnosticsScreenProps): ReactElement {
   const colors = useColors()
   const { strings, scheme } = useUi()
@@ -109,6 +112,15 @@ export function DiagnosticsScreen({
           color={palette.accent}
           onColor={palette.onAccent}
         />
+        {onReportProblem ? (
+          <Button
+            title={strings.diagnostics.reportProblem}
+            variant="secondary"
+            onPress={onReportProblem}
+            color={palette.accent}
+            onColor={palette.onAccent}
+          />
+        ) : null}
       </View>
 
       {message ? (

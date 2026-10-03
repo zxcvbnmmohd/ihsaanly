@@ -13,7 +13,8 @@
   "scripts": {
     "generate": "bun scripts/generate.ts",
     "typecheck": "tsc --noEmit",
-    "test": "bun test"
+    "test": "bun test",
+    "test:coverage": "bun test --coverage"
   },
   "devDependencies": {
     "@ihsaanly/tsconfig": "workspace:*",

@@ -112,4 +112,36 @@ export interface HeaderMap {
   fallback: string
   /** Replaces entries of COMMON_HEADERS for this site (e.g. a Permissions-Policy allowing geolocation). */
   headers?: Record<string, string>
+  /**
+   * Extra headers for the files under a path pattern, in Netlify's syntax:
+   * `:name` is one path segment and a trailing `*` anything after it. They
+   * replace the cache tiers, and patterns must not overlap (Netlify would
+   * join the values). Sent with successful responses only, except
+   * `Access-Control-*`, which every response carries so a cross-origin
+   * client can read an error too.
+   */
+  paths?: Record<string, Record<string, string>>
+}
+
+/** A `paths` pattern as anchored regular-expression source over the URL path (PCRE and JS alike). */
+export function pathRegex(pattern: string): string {
+  const source = pattern
+    .split('/')
+    .map((segment) => {
+      if (segment === '*') return '.*'
+      if (segment.startsWith(':')) return '[^/]+'
+      return segment.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+    })
+    .join('/')
+  return `^${source}$`
+}
+
+/** A `paths` pattern as an anchored RegExp over the URL path. */
+export function pathPattern(pattern: string): RegExp {
+  return new RegExp(pathRegex(pattern))
+}
+
+/** Whether a `paths` header is sent with error responses too. */
+export function sentAlways(name: string): boolean {
+  return name.toLowerCase().startsWith('access-control-')
 }

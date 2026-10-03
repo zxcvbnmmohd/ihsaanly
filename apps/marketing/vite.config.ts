@@ -20,6 +20,8 @@ export default defineConfig(
       // host keeps the same routes, loaders and server functions working at
       // request time.
       tanstackStart({
+        // Route tests live beside their routes; they are not routes themselves.
+        router: { routeFileIgnorePattern: '\\.test\\.' },
         prerender: {
           enabled: true,
           // In-page anchors like /#questions are the same file; crawling them re-renders it.

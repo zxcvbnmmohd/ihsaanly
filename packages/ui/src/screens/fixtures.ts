@@ -6,6 +6,7 @@ import type { CalculationScreenProps } from './calculation'
 import type { DataScreenProps } from './data'
 import type { DiagnosticsScreenProps } from './diagnostics'
 import type { EventsScreenProps } from './events'
+import type { FeedbackScreenProps } from './feedback'
 import type { GlossaryScreenProps } from './glossary'
 import type { HijriScreenProps } from './hijri'
 import type { HistoryScreenProps } from './history'
@@ -461,6 +462,40 @@ export const diagnosticsFixture: DiagnosticsScreenProps = {
   onToggleRaw: noop,
   onSend: noop,
   onCancel: noop,
+}
+
+/** Signed in, nothing typed yet. */
+export const feedbackFixture: FeedbackScreenProps = {
+  signedIn: true,
+  accountEmail: 'amina@example.com',
+  kind: 'bug',
+  onKind: noop,
+  message: '',
+  onMessage: noop,
+  contactEmail: 'amina@example.com',
+  onContactEmail: noop,
+  includeDiagnostics: false,
+  onIncludeDiagnostics: noop,
+  diagnosticsPreview: '{\n  "format": "ihsaanly-diagnostics"\n}',
+  previewShown: false,
+  onTogglePreview: noop,
+  status: 'idle',
+  errorCode: null,
+  onSend: noop,
+  onRetry: noop,
+  onSignIn: noop,
+  onDone: noop,
+  onSendAnother: noop,
+  supportEmailHref: 'mailto:support@ihsaanly.app',
+  privacyHref: 'https://ihsaanly.app/privacy',
+  onOpenLink: noop,
+}
+
+export const feedbackSignedOutFixture: FeedbackScreenProps = {
+  ...feedbackFixture,
+  signedIn: false,
+  accountEmail: null,
+  contactEmail: '',
 }
 
 export const accountSignedOutFixture: AccountScreenProps = {

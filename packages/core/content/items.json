@@ -481,6 +481,7 @@
           "en": "Before the prayer, clean the teeth with a siwak or a brush."
         }
       ],
+      "isPrayer": true,
       "reviewed": false
     },
     {
@@ -533,6 +534,7 @@
           "en": "Then pray Fajr."
         }
       ],
+      "isPrayer": true,
       "reviewed": false
     },
     {
@@ -579,6 +581,7 @@
           "en": "After the Dhuhr prayer and its dhikr, pray two rak'ah."
         }
       ],
+      "isPrayer": true,
       "reviewed": false
     },
     {
@@ -640,6 +643,7 @@
           "en": "Or pray two rak'ah once you are home."
         }
       ],
+      "isPrayer": true,
       "reviewed": false
     },
     {
@@ -1777,6 +1781,7 @@
           "en": "When the sun is well up and before midday, pray two rak'ah or more."
         }
       ],
+      "isPrayer": true,
       "reviewed": false
     },
     {
@@ -1825,6 +1830,7 @@
           "en": "Fajr and Maghrib stay as they are."
         }
       ],
+      "isPrayer": true,
       "reviewed": false
     },
     {
@@ -1872,9 +1878,10 @@
           "en": "Then pray Dhuhr."
         }
       ],
-      "reviewed": false,
       "audio": null,
-      "audioTranslation": null
+      "audioTranslation": null,
+      "isPrayer": true,
+      "reviewed": false
     },
     {
       "id": "sunnah-after-maghrib",
@@ -1918,9 +1925,10 @@
           "en": "After the Maghrib prayer and its dhikr, pray two rak'ah."
         }
       ],
-      "reviewed": false,
       "audio": null,
-      "audioTranslation": null
+      "audioTranslation": null,
+      "isPrayer": true,
+      "reviewed": false
     },
     {
       "id": "sunnah-after-isha",
@@ -1964,9 +1972,10 @@
           "en": "After the Isha prayer and its dhikr, pray two rak'ah."
         }
       ],
-      "reviewed": false,
       "audio": null,
-      "audioTranslation": null
+      "audioTranslation": null,
+      "isPrayer": true,
+      "reviewed": false
     },
     {
       "id": "witr",
@@ -2016,9 +2025,10 @@
           "en": "Make it the last prayer of your night."
         }
       ],
-      "reviewed": false,
       "audio": null,
-      "audioTranslation": null
+      "audioTranslation": null,
+      "isPrayer": true,
+      "reviewed": false
     },
     {
       "id": "dua-entering-home",
@@ -2341,13 +2351,14 @@
           "en": "Any amount counts; keep what you can keep every night."
         }
       ],
-      "reviewed": false,
       "audio": null,
-      "audioTranslation": null
+      "audioTranslation": null,
+      "isPrayer": true,
+      "reviewed": false
     },
     {
       "id": "dhul-hijjah-ten",
-      "category": "fasting",
+      "category": "adhkar",
       "title": {
         "en": "The first ten days of Dhul Hijjah",
         "ar": "عشر ذي الحجة"
@@ -2386,10 +2397,55 @@
           "en": "Say Allahu Akbar, la ilaha illa Allah, Allahu Akbar, wa lillahi al-hamd through the days."
         },
         {
+          "en": "Give something in charity."
+        }
+      ],
+      "reviewed": false,
+      "audio": null,
+      "audioTranslation": null
+    },
+    {
+      "id": "fast-dhul-hijjah",
+      "category": "fasting",
+      "title": {
+        "en": "Fasting the first nine days of Dhul Hijjah",
+        "ar": "صيام تسع ذي الحجة"
+      },
+      "ruling": "sunnah",
+      "arabic": null,
+      "transliteration": null,
+      "translation": null,
+      "repeat": 1,
+      "evidence": [
+        {
+          "type": "hadith",
+          "collection": "Sunan Abi Dawud",
+          "reference": "2437",
+          "grading": "sahih",
+          "gradedBy": "al-Albani",
+          "text": {
+            "en": "The Messenger of Allah ﷺ used to fast the nine days of Dhul Hijjah."
+          }
+        }
+      ],
+      "trigger": {
+        "kind": "day",
+        "day": "dhul-hijjah-fasting"
+      },
+      "defaultOn": true,
+      "note": null,
+      "why": {
+        "en": "Fasting is among the best deeds of the ten days, and the Prophet ﷺ is reported to have fasted the first nine. The tenth is Eid, when there is no fasting."
+      },
+      "reminder": {
+        "en": "The first days of Dhul Hijjah. Fast today if you can."
+      },
+      "how": [
+        {
           "en": "Fast whichever of the first nine days you can."
         },
         {
-          "en": "Give something in charity."
+          "en": "The 9th is Arafah, the most rewarded of them for those not on Hajj."
         }
       ],
       "reviewed": false,
@@ -2675,6 +2731,341 @@
           "en": "Keep asking until Maghrib if you can."
         }
       ],
+      "reviewed": false
+    },
+    {
+      "id": "remembrance-at-prayer-times",
+      "category": "adhkar",
+      "title": {
+        "en": "Remembrance at prayer times",
+        "ar": "الذكر في أوقات الصلاة"
+      },
+      "ruling": "mustahabb",
+      "arabic": null,
+      "transliteration": null,
+      "translation": null,
+      "repeat": 1,
+      "defaultOn": true,
+      "audio": null,
+      "audioTranslation": null,
+      "evidence": [
+        {
+          "type": "hadith",
+          "collection": "Sahih Muslim",
+          "reference": "373",
+          "grading": "sahih",
+          "gradedBy": null,
+          "text": {
+            "en": "The Prophet ﷺ used to remember Allah at all times."
+          }
+        },
+        {
+          "type": "quran",
+          "surah": 3,
+          "ayah": 191,
+          "text": {
+            "en": "Those who remember Allah standing, sitting and lying on their sides."
+          }
+        },
+        {
+          "type": "hadith",
+          "collection": "Sahih al-Bukhari",
+          "reference": "971",
+          "grading": "sahih",
+          "gradedBy": null,
+          "text": {
+            "en": "We were commanded to bring out even the menstruating women on the day of Eid. They would stay behind the people, saying the takbir with them and making du’a with them, hoping for the blessing and purity of that day."
+          }
+        }
+      ],
+      "trigger": {
+        "kind": "prayer",
+        "prayer": "any",
+        "when": "before"
+      },
+      "note": {
+        "en": "Sitting in your usual place of prayer at each prayer time is recommended by Hanafi jurists and others, so that the hour and the habit are kept. It is a practice the scholars recommend rather than a narrated sunnah, and not every school mentions it; some add making wudu first. Remembering Allah and making du’a are open at every time, and on that the scholars agree."
+      },
+      "why": {
+        "en": "Prayer is not owed at this time, but its hours still come. Sitting for a few minutes at each one to remember Allah keeps the rhythm of the day, and keeps the habit ready for when prayer returns."
+      },
+      "how": [
+        {
+          "en": "When a prayer’s time comes, sit in the place where you usually pray, if you can."
+        },
+        {
+          "en": "Spend a few minutes in remembrance: Subhan Allah, Alhamdulillah, La ilaha illa Allah, Allahu Akbar, and blessings on the Prophet ﷺ."
+        },
+        {
+          "en": "Ask Allah for what you need, in any words and any language."
+        }
+      ],
+      "reminder": {
+        "en": "The time has entered. A few minutes of remembrance keeps the hour, and the habit."
+      },
+      "onlyWhilePaused": true,
+      "reviewed": false
+    },
+    {
+      "id": "istighfar",
+      "category": "adhkar",
+      "title": {
+        "en": "Istighfar: asking forgiveness",
+        "ar": "الاستغفار"
+      },
+      "ruling": "sunnah",
+      "arabic": "أَسْتَغْفِرُ اللَّهَ وَأَتُوبُ إِلَيْهِ",
+      "transliteration": {
+        "en": "Astaghfiru-llāha wa atūbu ilayh"
+      },
+      "translation": {
+        "en": "I ask Allah’s forgiveness and turn to Him in repentance."
+      },
+      "repeat": 100,
+      "defaultOn": true,
+      "audio": null,
+      "audioTranslation": null,
+      "evidence": [
+        {
+          "type": "hadith",
+          "collection": "Sahih al-Bukhari",
+          "reference": "6307",
+          "grading": "sahih",
+          "gradedBy": null,
+          "text": {
+            "en": "By Allah, I ask Allah’s forgiveness and turn to Him in repentance more than seventy times a day."
+          }
+        },
+        {
+          "type": "hadith",
+          "collection": "Sahih Muslim",
+          "reference": "2702",
+          "grading": "sahih",
+          "gradedBy": null,
+          "text": {
+            "en": "O people, turn to Allah in repentance, for I turn to Him a hundred times a day."
+          }
+        },
+        {
+          "type": "quran",
+          "surah": 71,
+          "ayah": 10,
+          "text": {
+            "en": "Ask forgiveness of your Lord. Indeed, He is ever Most Forgiving."
+          }
+        }
+      ],
+      "trigger": {
+        "kind": "window",
+        "window": "evening"
+      },
+      "note": null,
+      "why": {
+        "en": "Asking Allah’s forgiveness, in a phrase short enough to say anywhere. The Prophet ﷺ, already forgiven, asked forgiveness more than seventy times a day, and a hundred in another narration."
+      },
+      "how": [
+        {
+          "en": "Say: Astaghfiru-llāha wa atūbu ilayh."
+        },
+        {
+          "en": "Repeat it as many times as you can, up to a hundred."
+        },
+        {
+          "en": "Say it sitting, walking or lying down; no wudu is needed for it."
+        }
+      ],
+      "reminder": {
+        "en": "A few minutes of istighfar before the day ends. The Prophet ﷺ asked forgiveness more than seventy times a day."
+      },
+      "onlyWhilePaused": true,
+      "reviewed": false
+    },
+    {
+      "id": "dua-times-of-acceptance",
+      "category": "adhkar",
+      "title": {
+        "en": "Du’a at the times it is answered",
+        "ar": "الدعاء في أوقات الإجابة"
+      },
+      "ruling": "sunnah",
+      "arabic": null,
+      "transliteration": null,
+      "translation": null,
+      "repeat": 1,
+      "defaultOn": true,
+      "audio": null,
+      "audioTranslation": null,
+      "evidence": [
+        {
+          "type": "hadith",
+          "collection": "Sahih al-Bukhari",
+          "reference": "1145",
+          "grading": "sahih",
+          "gradedBy": null,
+          "text": {
+            "en": "Our Lord, blessed and exalted, descends every night to the lowest heaven when the last third of the night remains, and says: Who is calling on Me, that I may answer him? Who is asking of Me, that I may give him? Who is asking My forgiveness, that I may forgive him?"
+          }
+        },
+        {
+          "type": "hadith",
+          "collection": "Sunan Abi Dawud",
+          "reference": "521",
+          "grading": "sahih",
+          "gradedBy": "al-Albani",
+          "text": {
+            "en": "Du’a made between the adhan and the iqamah is not turned back."
+          }
+        }
+      ],
+      "trigger": {
+        "kind": "window",
+        "window": "night"
+      },
+      "note": {
+        "en": "Friday’s hour of answer has its own item, in the last hour before Maghrib."
+      },
+      "why": {
+        "en": "Du’a is welcome at any time, and some times are named as times it is answered: the last third of the night, and between the adhan and the iqamah. Both stay open to you now."
+      },
+      "how": [
+        {
+          "en": "Before you sleep, or if you wake in the night, set a few minutes aside."
+        },
+        {
+          "en": "Praise Allah and send blessings on the Prophet ﷺ, then ask for what you need, for yourself and for others."
+        },
+        {
+          "en": "When you hear the adhan, keep asking until the iqamah."
+        }
+      ],
+      "reminder": {
+        "en": "The night is open for du’a, its last third most of all. Ask before you sleep, or if you wake."
+      },
+      "onlyWhilePaused": true,
+      "reviewed": false
+    },
+    {
+      "id": "listening-to-quran",
+      "category": "quran",
+      "title": {
+        "en": "Listening to the Qur’an",
+        "ar": "الاستماع إلى القرآن"
+      },
+      "ruling": "mustahabb",
+      "arabic": null,
+      "transliteration": null,
+      "translation": null,
+      "repeat": 1,
+      "defaultOn": true,
+      "audio": null,
+      "audioTranslation": null,
+      "evidence": [
+        {
+          "type": "quran",
+          "surah": 7,
+          "ayah": 204,
+          "text": {
+            "en": "So when the Qur’an is recited, listen to it and be silent, that you may receive mercy."
+          }
+        },
+        {
+          "type": "hadith",
+          "collection": "Sahih al-Bukhari",
+          "reference": "5049",
+          "grading": "sahih",
+          "gradedBy": null,
+          "text": {
+            "en": "The Prophet ﷺ said to me: Recite to me. I said: Shall I recite to you, when it was revealed to you? He said: I love to hear it from someone else."
+          }
+        }
+      ],
+      "trigger": {
+        "kind": "window",
+        "window": "morning"
+      },
+      "note": {
+        "en": "Listening is open to everyone at every time. Scholars differ over reciting from memory during menstruation: many, among them most Hanafi, Shafi’i and Hanbali scholars, hold that it is not done, while the Maliki school and others permit it. Most hold that the mushaf itself is not touched without purity. Follow the scholars you trust."
+      },
+      "why": {
+        "en": "Listening to the Qur’an with attention is worship in itself, and Allah ties His mercy to it. The Prophet ﷺ, to whom it was revealed, still loved to hear it recited by someone else."
+      },
+      "how": [
+        {
+          "en": "Choose a reciter and a surah, or carry on from where you stopped."
+        },
+        {
+          "en": "Listen with attention, as you would to someone speaking to you."
+        },
+        {
+          "en": "Follow a translation alongside if it helps you understand."
+        }
+      ],
+      "reminder": {
+        "en": "A few minutes of the Qur’an today, listened to with attention. Allah ties His mercy to listening."
+      },
+      "onlyWhilePaused": true,
+      "reviewed": false
+    },
+    {
+      "id": "sadaqah",
+      "category": "charity",
+      "title": {
+        "en": "Charity (sadaqah)",
+        "ar": "الصدقة"
+      },
+      "ruling": "sunnah",
+      "arabic": null,
+      "transliteration": null,
+      "translation": null,
+      "repeat": 1,
+      "defaultOn": true,
+      "audio": null,
+      "audioTranslation": null,
+      "evidence": [
+        {
+          "type": "hadith",
+          "collection": "Sahih al-Bukhari",
+          "reference": "1442",
+          "grading": "sahih",
+          "gradedBy": null,
+          "text": {
+            "en": "There is no day on which the servants wake except that two angels descend. One of them says: O Allah, give the one who spends a replacement. The other says: O Allah, give the one who withholds ruin."
+          }
+        },
+        {
+          "type": "hadith",
+          "collection": "Sahih Muslim",
+          "reference": "2588",
+          "grading": "sahih",
+          "gradedBy": null,
+          "text": {
+            "en": "Charity does not decrease wealth."
+          }
+        }
+      ],
+      "trigger": {
+        "kind": "window",
+        "window": "morning"
+      },
+      "note": null,
+      "why": {
+        "en": "Giving something for the sake of Allah, however small. Each morning two angels pray for the one who gives, and the Prophet ﷺ said that charity never decreases wealth."
+      },
+      "how": [
+        {
+          "en": "Give something today: money, food, or your time and help."
+        },
+        {
+          "en": "Small and regular is better than waiting for something large."
+        },
+        {
+          "en": "Give quietly where you can. A kind word is charity too."
+        }
+      ],
+      "reminder": {
+        "en": "Each morning two angels pray for the one who gives. Give something today, however small."
+      },
+      "onlyWhilePaused": true,
       "reviewed": false
     }
   ]

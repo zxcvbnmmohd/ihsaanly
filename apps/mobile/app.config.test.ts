@@ -31,6 +31,13 @@ afterEach(() => {
   }
 })
 
+const FIREBASE_PLUGIN_NAMES = [
+  '@react-native-firebase/app',
+  '@react-native-firebase/messaging',
+  '@react-native-firebase/crashlytics',
+  'expo-build-properties',
+]
+
 type PrivacyManifests = NonNullable<NonNullable<ExpoConfig['ios']>['privacyManifests']>
 
 const base: ExpoConfig = {
@@ -98,7 +105,9 @@ describe('variants', () => {
   it('works from an empty config', () => {
     process.env.APP_VARIANT = 'development'
     const config = run({} as ExpoConfig)
-    expect(config.plugins).toBeUndefined()
+    expect(config.plugins?.map((plugin) => (Array.isArray(plugin) ? plugin[0] : plugin))).toEqual(
+      FIREBASE_PLUGIN_NAMES,
+    )
     expect(config.ios?.entitlements).toEqual({
       'com.apple.security.application-groups': ['group.app.ihsaanly.companion.development'],
     })
@@ -181,7 +190,67 @@ describe('sign-in', () => {
 
   it('adds the sign-in plugins to a config that had none', () => {
     Object.assign(process.env, CLOUD)
-    expect(run({} as ExpoConfig).plugins).toEqual(['expo-apple-authentication'])
+    expect(run({} as ExpoConfig).plugins?.[0]).toBe('expo-apple-authentication')
+  })
+})
+
+describe('native Firebase', () => {
+  const names = (config: ExpoConfig): unknown[] =>
+    (config.plugins ?? []).map((plugin) => (Array.isArray(plugin) ? plugin[0] : plugin))
+
+  it.each([
+    ['development', 'development'],
+    ['staging', 'development'],
+    ['production', 'production'],
+  ])('%s uses the %s Firebase config files', (variant, dir) => {
+    process.env.APP_VARIANT = variant
+    const config = run()
+    expect(config.ios?.googleServicesFile).toBe(`./firebase/${dir}/GoogleService-Info.plist`)
+    expect(config.android?.googleServicesFile).toBe(`./firebase/${dir}/google-services.json`)
+  })
+
+  it('is production when APP_VARIANT is missing', () => {
+    expect(run().android?.googleServicesFile).toBe('./firebase/production/google-services.json')
+  })
+
+  it('adds the Firebase plugins last, whether or not sign-in is configured', () => {
+    expect(names(run()).slice(-4)).toEqual(FIREBASE_PLUGIN_NAMES)
+    Object.assign(process.env, CLOUD)
+    expect(names(run()).slice(-4)).toEqual(FIREBASE_PLUGIN_NAMES)
+  })
+
+  it('points at config files that exist, for the matching app', async () => {
+    for (const variant of ['development', 'production']) {
+      process.env.APP_VARIANT = variant
+      const config = run()
+      const plist = await Bun.file(`${import.meta.dir}/${config.ios?.googleServicesFile}`).text()
+      const json = await Bun.file(`${import.meta.dir}/${config.android?.googleServicesFile}`).text()
+      expect(plist).toContain(`<string>${config.ios?.bundleIdentifier}</string>`)
+      expect(json).toContain(`"package_name": "${config.android?.package}"`)
+    }
+  })
+
+  it('keeps crash collection and messaging auto-init off until the person opts in', async () => {
+    const json = await Bun.file(`${import.meta.dir}/firebase.json`).json()
+    expect(json['react-native']).toMatchObject({
+      crashlytics_auto_collection_enabled: false,
+      crashlytics_debug_enabled: false,
+      messaging_auto_init_enabled: false,
+    })
+  })
+
+  it('takes the Firebase pods from CocoaPods, linked as static frameworks', () => {
+    const plugins = run().plugins ?? []
+    expect(plugins).toContainEqual(['@react-native-firebase/app', { ios: { disableSPM: true } }])
+    expect(plugins).toContainEqual([
+      'expo-build-properties',
+      {
+        ios: {
+          useFrameworks: 'static',
+          forceStaticLinking: ['RNFBApp', 'RNFBMessaging', 'RNFBCrashlytics'],
+        },
+      },
+    ])
   })
 })
 
@@ -193,8 +262,10 @@ describe('privacy manifest', () => {
     expect(manifest()?.NSPrivacyTrackingDomains).toEqual([])
   })
 
-  it('declares every collected type as linked, untracked app functionality', () => {
-    const collected = manifest()?.NSPrivacyCollectedDataTypes ?? []
+  it('declares the account types as linked, untracked app functionality', () => {
+    const collected = (manifest()?.NSPrivacyCollectedDataTypes ?? []).filter(
+      (entry) => entry.NSPrivacyCollectedDataTypeLinked,
+    )
     expect(collected.map((entry) => entry.NSPrivacyCollectedDataType)).toEqual([
       'NSPrivacyCollectedDataTypeEmailAddress',
       'NSPrivacyCollectedDataTypeName',
@@ -205,7 +276,22 @@ describe('privacy manifest', () => {
       'NSPrivacyCollectedDataTypeSensitiveInfo',
     ])
     for (const entry of collected) {
-      expect(entry.NSPrivacyCollectedDataTypeLinked).toBe(true)
+      expect(entry.NSPrivacyCollectedDataTypeTracking).toBe(false)
+      expect(entry.NSPrivacyCollectedDataTypePurposes).toEqual([
+        'NSPrivacyCollectedDataTypeAppFunctionality',
+      ])
+    }
+  })
+
+  it('declares crash data and device ID as unlinked, untracked app functionality', () => {
+    const unlinked = (manifest()?.NSPrivacyCollectedDataTypes ?? []).filter(
+      (entry) => !entry.NSPrivacyCollectedDataTypeLinked,
+    )
+    expect(unlinked.map((entry) => entry.NSPrivacyCollectedDataType)).toEqual([
+      'NSPrivacyCollectedDataTypeCrashData',
+      'NSPrivacyCollectedDataTypeDeviceID',
+    ])
+    for (const entry of unlinked) {
       expect(entry.NSPrivacyCollectedDataTypeTracking).toBe(false)
       expect(entry.NSPrivacyCollectedDataTypePurposes).toEqual([
         'NSPrivacyCollectedDataTypeAppFunctionality',

@@ -40,6 +40,7 @@ export const prayerStripFixture: PrayerStripProps = {
 
 export const rightNowCardFixture: RightNowCardProps = {
   entry: firstOf(todayFixture.now, 'now'),
+  onCircle: noop,
 }
 
 const nextFixture = must(todayFixture.next, 'next')
@@ -47,6 +48,7 @@ const nextFixture = must(todayFixture.next, 'next')
 export const upNextCardFixture: UpNextCardProps = {
   next: nextFixture,
   names: prayerNames(en, nextFixture.jumuah),
+  onCircle: noop,
 }
 
 export const suggestionCardFixture: SuggestionCardProps = {
@@ -68,5 +70,6 @@ export const makeUpRowsFixture: MakeUpRowsProps = {
 
 export const agendaListFixture: AgendaListProps = {
   title: en.plan.alsoToday,
-  entries: todayFixture.allDay,
+  entries: todayFixture.now,
+  onCircle: noop,
 }

@@ -43,8 +43,20 @@ export const todayFixture: TodayScreenProps = {
   hijri: { year: 1448, month: 4, day: 6 },
   placeLabel: 'Toronto',
   now: [
-    { id: 'evening-adhkar', title: 'Evening adhkar', detail: null, href: '/item/evening-adhkar' },
-    { id: 'dua-travel', title: 'Setting out on a journey', detail: null, href: '/item/dua-travel' },
+    {
+      id: 'evening-adhkar',
+      title: 'Evening adhkar',
+      detail: null,
+      href: '/item/evening-adhkar',
+      mark: { done: false, progress: { kind: 'parts', value: 4, total: 11 } },
+    },
+    {
+      id: 'dua-travel',
+      title: 'Setting out on a journey',
+      detail: null,
+      href: '/item/dua-travel',
+      mark: { done: false, progress: null },
+    },
   ],
   next: {
     prayer: 'maghrib',
@@ -57,6 +69,7 @@ export const todayFixture: TodayScreenProps = {
         title: 'Tasbih after prayer',
         detail: null,
         href: '/item/tasbih-after-prayer',
+        mark: { done: false, progress: { kind: 'count', value: 12, total: 33 } },
       },
     ],
   },
@@ -66,6 +79,7 @@ export const todayFixture: TodayScreenProps = {
       title: 'Fasting the White Days',
       detail: 'In 3 days',
       href: '/item/fast-white-days',
+      mark: null,
     },
   ],
   tomorrow: [],
@@ -85,6 +99,28 @@ export const todayFixture: TodayScreenProps = {
   onRecordFastOwed: noop,
   onUndoFastOwed: noop,
   locationHref: '/location',
+  doneToday: [
+    {
+      id: 'morning-adhkar',
+      title: 'Morning adhkar',
+      detail: null,
+      href: '/item/morning-adhkar',
+      mark: { done: true, progress: null },
+    },
+  ],
+  onCircle: noop,
+  undo: null,
+  onDismissUndo: noop,
+  panel: null,
+  onClosePanel: noop,
+  onCount: noop,
+  onComplete: noop,
+  onMarkAll: noop,
+  onTogglePart: noop,
+  prayerHint: false,
+  tour: null,
+  paused: false,
+  checkIn: null,
 }
 
 /** A Friday morning for someone who prays Jumu'ah: the strip and Up next name it. */
@@ -93,8 +129,15 @@ export const todayOnJumuahFixture: TodayScreenProps = {
   jumuah: true,
   gregorian: 'Fri 25 Sep',
   now: [
-    { id: 'morning-adhkar', title: 'Morning adhkar', detail: null, href: '/item/morning-adhkar' },
+    {
+      id: 'morning-adhkar',
+      title: 'Morning adhkar',
+      detail: null,
+      href: '/item/morning-adhkar',
+      mark: { done: false, progress: null },
+    },
   ],
+  doneToday: [],
   next: {
     prayer: 'dhuhr',
     jumuah: true,
@@ -106,6 +149,7 @@ export const todayOnJumuahFixture: TodayScreenProps = {
         title: "Four rak'ah after Jumu'ah",
         detail: null,
         href: '/item/sunnah-after-jumuah',
+        mark: { done: false, progress: null },
       },
     ],
   },
@@ -142,6 +186,7 @@ export const todayWithoutLocationFixture: TodayScreenProps = {
   qada: [],
   fastingToday: null,
   fastsOwed: 0,
+  doneToday: [],
 }
 
 export const libraryFixture: LibraryScreenProps = {
@@ -336,6 +381,8 @@ export const trackingFixture: TrackingScreenProps = {
   userState: { travelling: true, trackingPaused: false, jumuah: 'auto' },
   showPause: true,
   onChange: noop,
+  checkInDays: 7,
+  onCheckInDays: noop,
 }
 
 export const notificationsFixture: NotificationsScreenProps = {
@@ -394,7 +441,7 @@ export const onboardingFixture: OnboardingScreenProps = {
   onUseDevice: noop,
   onSelectPlace: noop,
   onSelectGender: noop,
-  onToggleNotification: noop,
+  onToggleReminders: noop,
   onSelectPreset: noop,
   onNext: noop,
   onBack: noop,

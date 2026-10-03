@@ -9,6 +9,7 @@ const backend = await import('../storage/backend')
 const { buildExport } = await import('../data/export')
 const { SYNCED_KEYS } = await import('../cloud/keys')
 const cache = await import('./cache')
+const { CONTENT_SCHEMA_VERSION } = await import('@ihsaanly/core/content/bundle')
 
 const [first, ...rest] = english.items
 if (!first) throw new Error('no items')
@@ -52,7 +53,7 @@ describe('the content cache', () => {
   it('ignores a cache that is unreadable, of another schema, or from a build that shipped other content', () => {
     const stored = (overrides: Record<string, unknown>): string =>
       JSON.stringify({
-        schemaVersion: 1,
+        schemaVersion: CONTENT_SCHEMA_VERSION,
         version: 'aaaaaaaaaaaa',
         shipped: core.shippedContentFingerprint(),
         language: 'en',
@@ -65,7 +66,7 @@ describe('the content cache', () => {
     const cases = [
       '{not json',
       '{"version":1}',
-      stored({ schemaVersion: 2 }),
+      stored({ schemaVersion: CONTENT_SCHEMA_VERSION - 1 }),
       stored({ shipped: 'an older build' }),
     ]
     cases.forEach((raw) => {

@@ -1,6 +1,7 @@
-// Journey 3: two devices on one account converge — a mark travels B → A on
-// foreground, an unmark travels A → B on reopen.
-import { expect, foreground, prayer, setPrayer, test } from './support/device.ts'
+// Journey 3: two devices on one account converge — a mark travels B → A
+// while A is open (the live listener: no reload, no foreground), an unmark
+// travels A → B the same way, and survives a reopen.
+import { expect, prayer, setPrayer, test } from './support/device.ts'
 import { expectRemoteEvent, firstDevice, restoreDevice, toToday } from './support/journeys.ts'
 import { uidOf } from './support/rest.ts'
 
@@ -15,16 +16,17 @@ test('a mark on one device reaches the other, and so does an unmark', async ({ d
   await toToday(a.page)
   await expect(prayer(a.page, 'Asr')).not.toBeChecked()
 
-  // B marks Asr; its debounced push lands; A comes to the foreground and pulls it.
+  // B marks Asr; once its debounced push lands, A — open on Today — shows it.
   await setPrayer(b.page, 'Asr', true)
   await expectRemoteEvent(uid, 'prayer-performed', 'asr')
-  await foreground(a.page)
-  await expect(prayer(a.page, 'Asr')).toBeChecked()
+  await expect(prayer(a.page, 'Asr')).toBeChecked({ timeout: 5_000 })
   await expect(prayer(a.page, 'Fajr')).toBeChecked()
 
-  // A takes it back; B is reopened (a reload restores the session and syncs).
+  // A takes it back; B hears it live, and a reopen (a reload restores the
+  // session and syncs) agrees.
   await setPrayer(a.page, 'Asr', false)
   await expectRemoteEvent(uid, 'prayer-unmarked', 'asr')
+  await expect(prayer(b.page, 'Asr')).not.toBeChecked({ timeout: 5_000 })
   await b.page.reload()
   await expect(prayer(b.page, 'Asr')).not.toBeChecked()
   await expect(prayer(b.page, 'Fajr')).toBeChecked()

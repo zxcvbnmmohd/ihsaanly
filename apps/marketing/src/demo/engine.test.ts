@@ -244,3 +244,53 @@ describe('shareTextFor', () => {
     expect(demoItemById(first.id)).toBe(first)
   })
 })
+
+describe('buildToday: circles, done and panels', () => {
+  const build = (
+    signals = buildSignals(place, NOON, user),
+    view?: Parameters<typeof buildToday>[4],
+  ): ReturnType<typeof buildToday> => buildToday(signals, strings, 'en-US', 'Makkah', view)
+
+  test('open rows get a circle, and the demo opts out of the app-only extras', () => {
+    const { props } = build()
+    const marks = [...props.now, ...props.allDay].map((entry) => entry.mark)
+    expect(marks.length).toBeGreaterThan(0)
+    expect(marks.every((mark) => mark !== null && !mark.done)).toBe(true)
+    expect(props.tomorrow.concat(props.later).every((entry) => entry.mark === null)).toBe(true)
+    expect(props.tour).toBeNull()
+    expect(props.paused).toBe(false)
+    expect(props.checkIn).toBeNull()
+    expect(props.prayerHint).toBe(false)
+    expect(props.undo).toBeNull()
+    expect(props.panel).toBeNull()
+  })
+
+  test('a completed item moves to Done today with a done circle', () => {
+    const open = build().props.now[0]?.id ?? ''
+    const { props } = build(buildSignals(place, NOON, { ...user, completed: { [open]: NOON } }))
+    expect(props.now.map((entry) => entry.id)).not.toContain(open)
+    expect(props.doneToday.map((entry) => entry.id)).toContain(open)
+    expect(props.doneToday.every((entry) => entry.mark?.done === true)).toBe(true)
+  })
+
+  test("a counted item's ring shows its taps, and its panel is the counter", () => {
+    const signals = buildSignals(place, NOON, { ...user, marks: { dhuhr: NOON } })
+    const view = {
+      progress: { 'tasbih-after-prayer': { count: 5, parts: [] } },
+      panelItemId: 'tasbih-after-prayer',
+    }
+    const { props } = build(signals, view)
+    const row = [...props.now, ...props.allDay, ...(props.next?.after ?? [])].find(
+      (entry) => entry.id === 'tasbih-after-prayer',
+    )
+    expect(row?.mark?.progress).toEqual({ kind: 'count', value: 5, total: 33 })
+    expect(props.panel).toMatchObject({ kind: 'count', count: 5, target: 33 })
+  })
+
+  test('the next prayer card rows carry circles too', () => {
+    const next = build().props.next
+    for (const entry of [...(next?.before ?? []), ...(next?.after ?? [])]) {
+      expect(entry.mark).not.toBeNull()
+    }
+  })
+})

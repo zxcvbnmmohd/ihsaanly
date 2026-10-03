@@ -5,12 +5,13 @@
  * loads routes lazily, so a task defined inside a route's import chain is too
  * late; both are named here instead. The Android widget task handler is
  * registered here for the same reason: the launcher starts the app headless
- * to draw a widget.
+ * to draw a widget. Firebase's background message handler, likewise.
  *
  * Downloaded content is installed first of all, before any of them reads it.
  */
 import '@/content/install'
 import '@/events/geofence'
 import '@/notifications/background-task'
+import '@/push/background'
 import '@/widgets/android/register'
 import 'expo-router/entry'

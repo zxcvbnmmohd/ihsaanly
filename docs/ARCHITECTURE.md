@@ -245,17 +245,22 @@ It pulls first, so a push never overwrites a newer preference.
 ```text
  device (LocalStore)                    engine                         Firestore (SyncRemote)
         │                                  │                                     │
-        │  readMeta() {boundUid,cursor}    │                                     │
+        │  readMeta() {version,boundUid,   │                                     │
+        │   cursor,profileWritten,...}     │                                     │
         │◄─────────────────────────────────┤                                     │
         │                                  │ boundUid ≠ uid? ──► 'account-mismatch' (UI asks: merge / fresh)
-        │                                  │ pull(uid, cursor) ─────────────────►│ eventMonths where updatedAt > cursor
-        │                                  │◄──────────── events, prefs, cursor ─┤ + state/preferences
+        │                                  │ version < 2? ──► resetSynced, cursor = null (re-push all)
+        │                                  │ pull(uid, cursor) ─────────────────►│ ONE query: sync where updatedAt > cursor
+        │                                  │◄──────────── events, prefs, cursor ─┤ (changed months + prefs if changed)
         │  insertRemoteEvents (OR IGNORE)  │                                     │
         │◄─────────────────────────────────┤                                     │
         │  applyPreferences(newer remote)  │  per key: newer updatedAt wins;     │
         │◄─────────────────────────────────┤  tie + different value → remote     │
-        │  unsyncedEvents(), preferences() │                                     │
-        ├─────────────────────────────────►│ push(uid, {events, prefs}) ────────►│ merge into month docs + prefs doc
+        │  unsyncedEvents(), preferences() │  push a key only if its stamp ≠     │
+        ├─────────────────────────────────►│  meta.syncedPreferences[key]        │
+        │                                  │ push(uid, {events, prefs,           │
+        │                                  │   profile: !profileWritten}) ──────►│ one batch: months + prefs (merge),
+        │                                  │                                     │ users/{uid} on the first push only
         │  markSynced(ids), writeMeta      │                                     │
         │◄─────────────────────────────────┤                                     │
 ```
@@ -263,8 +268,27 @@ It pulls first, so a push never overwrites a newer preference.
 `session.ts` runs a round:
 
 - on sign-in and when a session is restored;
-- when the app comes to the foreground or the popup opens (`notifyForeground`);
-- 5 s after any local write to a synced key (debounced).
+- when the app comes to the foreground or the popup opens (`notifyForeground`)
+  and the live listener is not attached, unless the last successful sync (the
+  persisted `lastSyncedAt`) was less than 2 minutes ago
+  (`FOREGROUND_SYNC_INTERVAL_MS`), so flipping between apps costs no reads;
+- 5 s after any local write to a synced key (debounced), 1 s for item
+  progress (`progress:*`; a pending 5 s push is brought forward with it);
+- when the screen asks (`syncNow`).
+
+Only the foreground trigger is throttled; the others always run.
+
+**Live updates.** After a successful round, while the app is in front, the
+session holds the pull query open as a listener (`SyncRemote.watch`, a
+Firestore `onSnapshot` on `sync where updatedAt > cursor`). What it delivers is
+folded in by `applyRemoteChanges` — no pull, the listener already paid for the
+read — and the cursor moves on. `notifyBackground()` (apps call it when hidden
+or backgrounded) detaches it; the next `notifyForeground()` syncs (throttled)
+or, inside the throttle, just re-attaches from the cursor, which catches up on
+what it missed. Signing out, switching or deleting the account detaches it
+too. A popup counts as in front while it is open. Cost: the first snapshot is
+one read, then one read per changed document (this device's own pushes
+included), nothing while nobody writes.
 
 The same sign-in, restore and foreground triggers also flush the feedback
 outbox (see Feedback below).
@@ -276,45 +300,123 @@ into the UI.
 ### What syncs
 
 `packages/state/src/cloud/keys.ts` holds `SYNCED_KEYS`, an explicit allowlist,
-so a new key never leaks by accident.
+so a new key never leaks by accident, plus one prefix: item progress,
+`progress:<itemId>` (`packages/state/src/progress`), one key per item for its
+current period, pruned on every progress write (earlier days, then the oldest
+past `MAX_PROGRESS_KEYS`) so the preferences stay within the rules' 64 keys.
+A pruned or cleared key is deleted remotely (`PushChanges.removedPreferences`).
+When both devices changed the same item's progress for the same period since
+they last agreed, the engine merges instead of newest-wins: the higher count
+and every part either did (`LocalStore.mergePreference`).
 
 | Syncs | Stays on the device |
 | --- | --- |
-| the event log, `calculation`, `enabledItems`, `knownItems`, `fastBacklog`, `qadaBacklog`, `hijriOffset`, `locale`, `theme`, `notifications`, `onboarding`, `suggestion`, `userState`, `place` (**rounded to 2 decimals, about 1 km**) | `events` settings (they hold the **exact home coordinates** for the geofence), `qadaProcessedThrough` (the device's rollover cursor), `failureLog`, `sync` / `account` metadata, `feedbackOutbox` (unsent feedback) |
+| the event log, `calculation`, `enabledItems`, `knownItems`, `fastBacklog`, `qadaBacklog`, `hijriOffset`, `locale`, `theme`, `notifications`, `onboarding`, `suggestion`, `userState`, `place` (**rounded to 2 decimals, about 1 km**) | `events` settings (they hold the **exact home coordinates** for the geofence), `qadaProcessedThrough` (the device's rollover cursor), `failureLog`, `sync` / `account` metadata, `feedbackOutbox` (unsent feedback), `todayHints` (tour seen, prayers marked for the hint) |
 
 ### Firestore layout and rules
 
+Layout 2 (`SYNC_META_VERSION = 2` in `packages/cloud/src/engine.ts`):
+
 ```text
- users/{uid}                          { createdAt, schema: 1 }
- users/{uid}/eventMonths/{YYYY-MM}    { events: { "<at>|<kind>|<subject>": { l: logDay, d: delta } }, updatedAt }
- users/{uid}/state/preferences        { prefs: { <key>: { v: "<json>", t: updatedAtMs } }, updatedAt }
+ users/{uid}                          { createdAt, schemaVersion: 2 }
+ users/{uid}/sync/preferences         { type: 'preferences', preferences: { <key>: { value: "<json>", updatedAt: ms } }, updatedAt }
+ users/{uid}/sync/{YYYY-MM}           { type: 'events', month: 'YYYY-MM', events: { "<at>|<kind>|<subject>": { logDay, deltaSeconds } }, updatedAt }
  feedback/{autoId}                    { uid, kind, message, contactEmail, app, diagnostics, createdAt, status: 'new' }
- feedbackLimits/{uid}                 { lastAt }
+ feedbackLimits/{uid}                 { lastSentAt }
 ```
+
+Example documents:
+
+```jsonc
+// users/abc123/sync/2025-10
+{
+  "type": "events",
+  "month": "2025-10",
+  "events": {
+    "1760000000000|prayer-performed|fajr": { "logDay": "2025-10-09", "deltaSeconds": null },
+    "1760020000000|prayer-performed|dhuhr": { "logDay": "2025-10-09", "deltaSeconds": 120 }
+  },
+  "updatedAt": "2025-10-09T12:00:00.123456Z" // serverTimestamp()
+}
+
+// users/abc123/sync/preferences
+{
+  "type": "preferences",
+  "preferences": {
+    "theme": { "value": "\"dark\"", "updatedAt": 1760000000000 },
+    "place": { "value": "{\"latitude\":51.5,\"longitude\":-0.13,...}", "updatedAt": 1759990000000 }
+  },
+  "updatedAt": "2025-10-09T12:00:00.123456Z"
+}
+```
+
+Months and preferences share the `sync` collection on purpose: one query,
+`updatedAt > cursor` ordered by `updatedAt`, returns every changed month and
+the preferences document if (and only if) it changed. The cursor is the
+newest `updatedAt` seen, with nanoseconds.
 
 The rules are in `packages/cloud/firestore.rules` and tested in
 `packages/cloud/test/rules.test.ts` against the emulator:
 
 - deny by default;
 - a user can read and write only their own subtree;
-- document shapes and sizes are checked;
+- `users/{uid}`: exactly `{createdAt, schemaVersion}`, `createdAt ==
+  request.time`, `schemaVersion` an int. Create and update are the same
+  check, so a second device rewriting it is allowed;
+- `sync/preferences`: exactly `{type, preferences, updatedAt}`,
+  `type == 'preferences'`, at most 64 keys;
+- `sync/{YYYY-MM}`: exactly `{type, month, events, updatedAt}`,
+  `type == 'events'`, `month` equal to the document id, at most 3000 events;
+  an update may add events but never drop one, so the log is append-only on
+  the server too. Any other id under `sync` is refused;
 - `updatedAt` must equal `request.time`, which the pull cursor depends on;
-- a month's event map can only grow, so the log is append-only on the server
-  too;
+- layout 1 (`eventMonths/*`, `state/preferences`) is read- and delete-only
+  for the owner, so deleting an account still removes it. Remove those two
+  matches (and the `lastAt` fallback below) in a release after every client
+  has synced in layout 2;
 - `feedback` is create-only, for a signed-in user writing their own `uid`,
   with an exact field allowlist, size caps (message 1–5000, email ≤254, the
   diagnostics map ≤16 top-level keys), `status == 'new'` and
   `createdAt == request.time`. No client may read, update or delete it;
 - the feedback rate limit needs no Cloud Functions: each send's batch also
-  stamps `feedbackLimits/{uid}.lastAt` with `request.time`, and the feedback
-  rule checks that stamp with `getAfter` and requires the previous one (if
-  any) to be at least 60 s old. The owner may create and update (only to
-  `request.time`) their limit doc, but never read or delete it: deleting it
-  before each send would bypass the limit.
+  stamps `feedbackLimits/{uid}.lastSentAt` with `request.time`, and the
+  feedback rule checks that stamp with `getAfter` and requires the previous
+  one (if any) to be at least 60 s old. A stamp from before the rename
+  (`lastAt`) counts the same until the next send replaces it. The owner may
+  create and update (only to `request.time`) their limit doc, but never read
+  or delete it: deleting it before each send would bypass the limit.
 
-One document per month means a whole history uploads in a few dozen writes,
-and a sync with no changes costs about 2 reads. That fits the free Spark
-quota (20k writes and 50k reads a day, roughly 2k daily active users).
+**Index exemptions** (`packages/cloud/firestore.indexes.json`): Firestore
+indexes every field, map entries included, by default. Nothing queries
+inside `sync.events`, `sync.preferences`, `feedback.diagnostics` or
+`feedback.message`, so those four have `"indexes": []`: every event key
+would otherwise be an index entry (write cost, and the 40k-entries-per-doc
+limit a full month could approach), and a 5000-character message would be
+indexed for nothing. `sync.updatedAt` (the pull query) and feedback's
+`createdAt`, `kind` and `status` (the console view) keep the default
+indexes.
+
+**Cost per sync** (one round, after the first):
+
+| Round | Reads | Writes |
+| --- | --- | --- |
+| nothing changed anywhere | 1 (the query's minimum) | 0 |
+| another device changed _n_ months / the preferences | _n_ (+1 for preferences) | 0 |
+| this device logged events in _m_ months / changed preferences | 1 | _m_ (+1), one batch |
+| first push for an account on this device | 1 | + 1 (`users/{uid}`; remembered in local meta as `profileWritten`) |
+
+One document per month means a whole history uploads in a few dozen writes.
+With the 2-minute foreground throttle, that fits the free Spark quota (20k
+writes and 50k reads a day) for a few thousand daily active users.
+
+**Migration from layout 1** (only test accounts held layout-1 data): the
+device's sync meta carries a `version`. Meta written by a layout-1 client
+parses as version 1, and its next sync resets the cursor, marks the whole
+local log unsynced and forgets which preferences were pushed, so every
+device writes its own data into layout 2 (events are unique by identity, so
+several devices doing it converge). Nothing is migrated server-side; the
+old documents stay until the account is deleted, when `erase()` removes
+them with the rest.
 
 ### Feedback
 
@@ -336,7 +438,7 @@ and key names (no events, no preference values), coordinates rounded to about
 
 Feedback lives outside `users/{uid}`, so `erase()` leaves it in place (kept
 for up to 2 years, as the privacy policy says), and so does
-`feedbackLimits/{uid}` (only a `lastAt` timestamp). No client can delete it,
+`feedbackLimits/{uid}` (only a `lastSentAt` timestamp). No client can delete it,
 because a delete before each send would defeat the rate limit.
 
 **Admin view:** in the Firebase console, open the project → Firestore →
@@ -416,15 +518,78 @@ Firebase's popup code.
 ```text
  expo-router routes (src/app) ──► @ihsaanly/ui screens
       │
-      ├─ expo-sqlite (state/backend.ts)          ├─ expo-notifications (local only, no push token)
+      ├─ expo-sqlite (state/backend.ts)          ├─ expo-notifications (local reminders; shows
+      │                                          │   announcements that arrive in the foreground)
       ├─ expo-location + geofence (optional)     ├─ widgets (iOS expo-widgets, Android widget lib)
+      ├─ push/: RNFB Messaging, FCM topics only (opt-in "Announcements"; no token until then)
+      ├─ crash/: RNFB Crashlytics (opt-in "Share crash reports"; collection off until then)
       └─ cloud.ts: Apple/Google tokens ──► createNativeCloud (Firebase JS SDK, memory cache,
                                           auth persisted via expo-sqlite/kv-store)
 ```
 
-The build variants and the conditional sign-in plugins are set in
-`app.config.ts`, which also declares the iOS privacy manifest. The product
-specs live in [`apps/mobile/docs`](../apps/mobile/docs).
+The build variants, the conditional sign-in plugins and the native Firebase
+plugins are set in `app.config.ts`, which also declares the iOS privacy
+manifest. The product specs live in [`apps/mobile/docs`](../apps/mobile/docs).
+
+Native Firebase (`@react-native-firebase/app`, `messaging`, `crashlytics`)
+serves only the two opt-ins below; Auth and Firestore stay on the JS SDK. The
+two keep separate default apps (the native one is configured from
+`firebase/<project>/google-services.json` / `GoogleService-Info.plist`, the
+JS one from `EXPO_PUBLIC_FIREBASE_*`), so they do not collide. `firebase.json`
+(app root) turns off Crashlytics auto-collection, messaging auto-init and the
+iOS APNs auto-registration, so neither module does anything for someone who
+never turned its switch on. iOS links the Firebase pods from CocoaPods as
+static frameworks (`expo-build-properties` `useFrameworks: 'static'`, RNFB
+`disableSPM`). Both opt-ins are per device: `announcements` and `crashReports`
+are in `DEVICE_ONLY_KEYS`, never synced or exported.
+
+**Announcements (push).** More → Reminders → Announcements, off by default.
+Onboarding's reminders step offers the same opt-in next to "Daily reminders"
+(on by default; turning it off sets every reminder category off), as
+"Announcements from Ihsaanly", off until chosen. The mobile flow passes
+`enableAnnouncements` to `useOnboardingFlow`, which is what makes
+`OnboardingScreen` show the switch (`announcements?: OptIn`); the companion
+passes nothing and shows only daily reminders. "Allow notifications" asks the
+OS once (`ensurePermission`) if either is chosen; on a grant, a chosen
+Announcements runs `setAnnouncementsEnabled(true)`, the switch's own path
+(permission already granted, so no second prompt); on a refusal it stays off
+and reminders stay as chosen. With neither chosen the button is "Continue" and
+asks nothing; "Not now" asks nothing and leaves announcements off.
+
+```text
+ switch on ──► ensurePermission (same prompt as reminders) ── refused ──► stays off
+                 │ granted
+                 ▼
+ preference {enabled: true, subscribed: null}
+                 │ reconcileAnnouncements (queued, one pass at a time; also on launch
+                 ▼                         and on every app-language change)
+ register APNs (iOS) → getToken → subscribe "announcements" + "announcements-<lang>"
+                 │
+                 ▼  subscribed = <lang>     language changes: leave old <lang> topic, join new
+ switch off ──► unsubscribe both topics → deleteToken → subscribed = null
+```
+
+A failed pass (offline, no APNs yet) is logged with `noteFailure` and leaves
+`subscribed` saying what is true, so the next launch or language change
+retries. Delivery: in the background the system shows the message (Android on
+the `reminders` channel, the FCM default set in `firebase.json`); in the
+foreground Android gets `onMessage` and `push/announcements.ts` shows it
+through expo-notifications on the same channel, while iOS presents it through
+the expo-notifications handler. A tap with custom data `route` (an in-app
+path) opens it in the app, `url` (https only) opens the browser, neither
+opens Today. Taps reach `push/open.ts` from RNFB (`onNotificationOpenedApp`,
+`getInitialNotification`) and from `notifications/respond.ts` (a locally shown
+one, or iOS's own response); one tap seen by two doors is followed once.
+Topic names and how to send are in `TODO.md` §5. iOS delivery needs the APNs
+key uploaded to Firebase (Project settings → Cloud Messaging).
+
+**Crash reports.** Your data → Share crash reports, off by default. Turning
+it on deletes any reports Crashlytics cached while it was off, enables
+collection, and forwards every entry the app already logs with `noteFailure`
+(via `onFailure` in `state/storage/log.ts`) as a non-fatal `recordError`:
+label and message only. A user ID is never set. Turning it off disables
+collection, deletes unsent reports and stops forwarding. At launch the app
+re-applies the switch only if it is on.
 
 ### Companion (`apps/companion`)
 
@@ -600,6 +765,54 @@ content fix reaches installed apps without a store release:
   user data, only what any HTTP request does (IP address, user agent) to our
   own host.
 
+## Marking on Today
+
+Every Today route (mobile, companion, extension) takes its sunnah rows and
+everything about marking them from one hook, `useTodaySunnah`
+(`packages/state/src/today/use-today-sunnah.ts`): each row's circle (`mark`,
+with a ring for a counted or multi-part item, from `progress/store`), Done
+today (`plan.today.done`, so a mark moves the row at once), what a circle
+press means (mark with an undo bar, unmark, or open the counter or parts
+sheet), the prayer hint, the first-run tour and the pause notice and
+check-in. Unmarking from any path (`uncompleteItem`) clears the item's
+progress too. Progress periods come from `startProgress()`
+(`progress/configure.ts`), which each app calls once at startup: the item's
+trigger, the log day in the saved place's zone and the prayer window now. The
+tour and the hint are taught per device (`todayHints`, never synced); `?tour=1`
+(More → Show me around) replays the tour. The marketing demo mirrors this in
+its own in-memory state, with the same pure helpers (`markFor`, `panelFor` in
+`packages/ui/src/props/today.ts`).
+
+## Pause and period sunnahs
+
+`userState.trackingPaused` is manual and never inferred or timed. While it is
+on, the planner (`packages/core/src/plan/plan.ts`) sets aside every prayer
+(any prayer-triggered item, plus items flagged `isPrayer` in content: Duha,
+the nights of Ramadan, the rawatib, shortening on a journey) and every fast
+(category `fasting`), and offers instead the items flagged `onlyWhilePaused`:
+remembrance at the prayer times, istighfar, du'a at the times of answer,
+listening to the Qur'an and sadaqah. Those never appear otherwise, and are
+never suggested.
+
+- **Today:** `plan.today.pausedNotice` (`{ fastingResumes }`, null when not
+  paused) and `plan.today.checkInDue`.
+- **Reminders:** the prayer reminders the user opted into become
+  `remembrance` notifications at the same moments, with the neutral text
+  `notifications.pausedRemembrance`. Other reminders are unchanged. No
+  notification ever says pause, period or why: a locked screen is not private.
+- **Check-in:** pausing with "remind me in about N days" (3 to 10) stores
+  `userState.pauseCheckInOn` (YYYY-MM-DD). The plan schedules one `check-in`
+  notification at 10:00 local that day, through the same path as every other
+  reminder, and tapping it opens Today. Actions live in
+  `packages/state/src/plan/user-state-store.ts`: `pauseTracking`,
+  `resumeTracking`, `snoozeCheckIn`.
+- **Privacy:** the check-in date syncs inside `userState`, which is already
+  declared health-adjacent; nothing new leaves the device. `pauseItemsOffered`
+  (which pause items this device has switched on once) stays on the device.
+- **Content:** the flags and the `night` window are content schema 2
+  (`CONTENT_SCHEMA_VERSION`), so an app built for 1 ignores a newer bundle and
+  keeps the content it shipped with.
+
 ## Privacy invariants
 
 Code changes must keep these true. The privacy policy, the sign-in notice and
@@ -607,12 +820,22 @@ the store forms all depend on them.
 
 1. No account is needed, and without signing in nothing leaves the device.
    The exceptions are an export, diagnostic report or feedback the user sends
-   themselves.
-2. No analytics, telemetry, crash reporting, ads, installation IDs or push
-   tokens.
+   themselves, and the two opt-in switches in invariant 2.
+2. No analytics, telemetry, ads or advertising IDs, anywhere. The only
+   exceptions are two switches in the iOS and Android app, each off by default
+   and each requiring the user to turn it on: "Share crash reports"
+   (Firebase Crashlytics: crashes and error-log entries with device model, OS,
+   app version and a Firebase installation / crash identifier; never a user
+   ID, practice data or account) and "Announcements" (Firebase Cloud
+   Messaging topics `announcements` and `announcements-<lang>`; the FCM and
+   APNs tokens are held by Google and Apple and never linked to an account by
+   us). Neither exists in the web app or the extension. Nothing else may
+   create a device or installation identifier.
 3. Only `SYNCED_KEYS` sync. Location syncs rounded to about 1 km, and home
    coordinates never sync.
-4. The Firebase SDK loads only for someone who has signed in, or is signing in.
+4. The Firebase JS SDK (Auth and Firestore) loads only for someone who has signed in,
+   or is signing in. The native Crashlytics and Messaging modules are separate
+   and stay idle until their switch is on.
 5. Account deletion erases the cloud copy, and is available in-app and at
    `/legal/delete-account`. Feedback the user sent is the one exception: it is
    kept for up to 2 years and removed on request by email.

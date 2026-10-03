@@ -124,6 +124,18 @@ describe('handleResponse', () => {
     expect(router.calls).toEqual([['push', '/notifications']])
   })
 
+  it('follows an announcement shown while the app was open', async () => {
+    await handleResponse(
+      response(DEFAULT_ACTION, { v: 1, kind: 'announcement', route: '/hijri', url: null }),
+    )
+    expect(router.calls).toEqual([['push', '/hijri']])
+  })
+
+  it('follows a pushed announcement by its raw data, as iOS reports the tap', async () => {
+    await handleResponse(response(DEFAULT_ACTION, { route: '/library', 'gcm.message_id': '1' }))
+    expect(router.calls).toEqual([['push', '/library']])
+  })
+
   it('opens home for a prayer reminder, and for unknown actions', async () => {
     await handleResponse(response(DEFAULT_ACTION, { v: 1, kind: 'prayer', prayer: 'fajr' }))
     await handleResponse(response('something-else', { v: 1, kind: 'prayer', prayer: 'fajr' }))
@@ -131,6 +143,11 @@ describe('handleResponse', () => {
       ['push', '/'],
       ['push', '/'],
     ])
+  })
+
+  it('opens Today for a check-in reminder', async () => {
+    await handleResponse(response(DEFAULT_ACTION, { v: 1, kind: 'check-in' }))
+    expect(router.calls).toEqual([['push', '/']])
   })
 
   it('does not navigate from the background', async () => {

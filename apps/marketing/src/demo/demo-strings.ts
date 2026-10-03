@@ -9,8 +9,8 @@ export interface DemoCopy {
   tabsLabel: string
   /** Coach step "mark": points at the prayer chip whose window is current (or the fallback). */
   coachMarkPrayer: (prayer: string) => string
-  /** Coach step "open", with an item card to point at. */
-  coachOpenItem: string
+  /** Coach step "open", with an item card to point at: its circle. */
+  coachTapCircle: string
   /** Coach step "open", falling back to the Library tab when no item card is showing. */
   coachOpenLibrary: string
 }
@@ -19,63 +19,63 @@ const DEMO_COPY: Record<SupportedLanguage, DemoCopy> = {
   en: {
     tabsLabel: 'Tabs',
     coachMarkPrayer: (prayer: string): string => `Tap to mark ${prayer} as prayed`,
-    coachOpenItem: 'Tap to see where it comes from',
+    coachTapCircle: "Tap the circle when you've done it",
     coachOpenLibrary: 'Browse the library',
   },
   ar: {
     tabsLabel: 'علامات التبويب',
     coachMarkPrayer: (prayer: string): string => `اضغط لتسجيل ${prayer} كمُصلّاة`,
-    coachOpenItem: 'اضغط لمعرفة مصدره',
+    coachTapCircle: 'اضغط على الدائرة بعد أن تؤديها',
     coachOpenLibrary: 'تصفح المكتبة',
   },
   fr: {
     tabsLabel: 'Onglets',
     coachMarkPrayer: (prayer: string): string => `Touchez pour marquer ${prayer} comme priée`,
-    coachOpenItem: "Touchez pour voir d'où cela vient",
+    coachTapCircle: "Touchez le cercle quand vous l'avez fait",
     coachOpenLibrary: 'Parcourir la bibliothèque',
   },
   hi: {
     tabsLabel: 'टैब',
     coachMarkPrayer: (prayer: string): string => `${prayer} को पढ़ी हुई अंकित करने के लिए थपथपाएं`,
-    coachOpenItem: 'यह कहाँ से आया है यह देखने के लिए थपथपाएं',
+    coachTapCircle: 'करने के बाद गोले को थपथपाएं',
     coachOpenLibrary: 'लाइब्रेरी ब्राउज़ करें',
   },
   it: {
     tabsLabel: 'Schede',
     coachMarkPrayer: (prayer: string): string => `Tocca per segnare ${prayer} come pregata`,
-    coachOpenItem: 'Tocca per vedere da dove viene',
+    coachTapCircle: "Tocca il cerchio quando l'hai fatto",
     coachOpenLibrary: 'Sfoglia la biblioteca',
   },
   ja: {
     tabsLabel: 'タブ',
     coachMarkPrayer: (prayer: string): string => `${prayer}を礼拝済みにするにはタップ`,
-    coachOpenItem: '出典を見るにはタップ',
+    coachTapCircle: '終えたら丸をタップ',
     coachOpenLibrary: 'ライブラリを見る',
   },
   so: {
     tabsLabel: 'Tabbada',
     coachMarkPrayer: (prayer: string): string =>
       `Riix si aad ${prayer} u calaamadiso in la tukaday`,
-    coachOpenItem: 'Riix si aad u aragto halka ay ka timid',
+    coachTapCircle: 'Marka aad dhammayso, riix goobada',
     coachOpenLibrary: 'Baadh maktabadda',
   },
   ur: {
     tabsLabel: 'ٹیبز',
     coachMarkPrayer: (prayer: string): string =>
       `${prayer} کو پڑھی ہوئی نشان زد کرنے کے لیے تھپتھپائیں`,
-    coachOpenItem: 'یہ کہاں سے آیا دیکھنے کے لیے تھپتھپائیں',
+    coachTapCircle: 'کر لینے کے بعد دائرے کو تھپتھپائیں',
     coachOpenLibrary: 'کتب خانہ دیکھیں',
   },
   yue: {
     tabsLabel: '分頁',
     coachMarkPrayer: (prayer: string): string => `輕觸將${prayer}標記為已禮`,
-    coachOpenItem: '輕觸睇吓出處',
+    coachTapCircle: '做完就輕觸個圈',
     coachOpenLibrary: '瀏覽資料庫',
   },
   zh: {
     tabsLabel: '标签页',
     coachMarkPrayer: (prayer: string): string => `点击将${prayer}标记为已礼`,
-    coachOpenItem: '点击查看出处',
+    coachTapCircle: '完成后点击圆圈',
     coachOpenLibrary: '浏览资料库',
   },
 }

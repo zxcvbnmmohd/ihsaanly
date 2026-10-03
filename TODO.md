@@ -83,7 +83,7 @@ the terms' governing-law clause and the donation wording, and updates
 - [ ] Open <https://dev.companion.ihsaanly.app> → More → Account → **Sign in
   with Google**.
 - [ ] Mark a prayer, wait about 5 s, then check Firebase console →
-  `ihsaanly-development` → Firestore → `users/{uid}/eventMonths/<this month>`.
+  `ihsaanly-development` → Firestore → `users/{uid}/sync/<this month>`.
 - [ ] Open dev.companion in a second browser and sign in with the same
   account. The mark should appear.
 - [ ] Try **Sign out → Remove from this device**, then sign back in. The data
@@ -120,6 +120,45 @@ Sign in with Apple, the iOS release and iOS CI all need this.
    and the private key (the `.p8` contents).
 6. [ ] Tell Claude, who then tests account linking (Apple ↔ Google) and the
    iOS build path.
+7. [ ] **Push (Announcements):** tick **Push Notifications** on both App IDs
+   too. Then Keys → **+** → enable **Apple Push Notifications service
+   (APNs)** (one key serves sandbox and production, and both App IDs). Upload
+   that `.p8` to Firebase in **both** projects: Project settings → **Cloud
+   Messaging** → Apple app configuration → **APNs Authentication Key** →
+   Upload, with the Key ID and Team ID. Until this is done the iOS app still
+   subscribes to the topics, but Firebase cannot deliver to it; Android works
+   without it.
+
+### Sending an announcement (once the app is out)
+
+Announcements go to FCM **topics**, never to a person; the app never sends
+its token anywhere. Topics: `announcements` (everyone who turned the switch
+on) and `announcements-<lang>` (`en`, `ar`, `fr`, `it`, `ja`, `hi`, `ur`,
+`so`, `zh`, `yue`: the app language).
+
+1. Firebase console → the project (`ihsaanly-development` to test,
+   `ihsaanly-production` for real) → **Messaging** → **New campaign** →
+   **Notifications**.
+2. Title and text, in the topic's language. Leave the image empty.
+3. **Target** → **Topic** → `announcements-ar` (one campaign per language),
+   or `announcements` for one message to everyone.
+4. **Additional options → Custom data** (optional): `route` = an in-app path
+   such as `/item/fasting-monday`, or `url` = an `https://` page. A tap opens
+   the route, else the page, else Today. Anything else is ignored.
+5. Android notification channel: leave empty (the app's default, Reminders,
+   is used). Review → **Publish**.
+
+To test on a dev build: turn on More → Reminders → Announcements, then send
+to `announcements-en` in `ihsaanly-development`.
+
+**Staging:** `APP_VARIANT=staging` uses the development Firebase config, but
+that project has no app for `app.ihsaanly.companion.staging`, so the Android
+staging build fails at `processStagingReleaseGoogleServices` until one exists.
+Register it (and the iOS one), then re-download the files:
+`bunx firebase-tools@15 -P ihsaanly-development apps:create ANDROID "Ihsaanly Staging" --package-name app.ihsaanly.companion.staging`
+(and `apps:create IOS ... --bundle-id app.ihsaanly.companion.staging`), then
+`apps:sdkconfig` into `apps/mobile/firebase/development/` (a
+`google-services.json` holds every Android app of its project).
 
 ## 6. Android builds in GitHub Actions (Both)
 

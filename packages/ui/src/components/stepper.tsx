@@ -10,16 +10,24 @@ interface StepperProps {
   label: string
   value: number
   min?: number
+  max?: number
   onChange: (value: number) => void
   palette: Palette
 }
 
 /** A count nudged up or down one at a time. Big targets, no typing. */
-export function Stepper({ label, value, min = 0, onChange, palette }: StepperProps): ReactElement {
+export function Stepper({
+  label,
+  value,
+  min = 0,
+  max = Number.POSITIVE_INFINITY,
+  onChange,
+  palette,
+}: StepperProps): ReactElement {
   const colors = useColors()
 
   const step = (delta: number): void => {
-    const next = Math.max(min, value + delta)
+    const next = Math.min(max, Math.max(min, value + delta))
     if (next === value) return
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
     onChange(next)
@@ -66,7 +74,7 @@ export function Stepper({ label, value, min = 0, onChange, palette }: StepperPro
         }}>
         {value}
       </Text>
-      {control('+', 1, false)}
+      {control('+', 1, value >= max)}
     </View>
   )
 }

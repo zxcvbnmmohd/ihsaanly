@@ -1,7 +1,10 @@
+import { freshMeta } from '@ihsaanly/cloud/engine'
 import type { LocalStore, SyncMeta } from '@ihsaanly/cloud/ports'
 import { z } from 'zod'
 
+import { mergeProgress } from '../progress/model'
 import {
+  deletePreferenceRows,
   markEventsSynced,
   preferenceRowsWithTime,
   resetEventsSynced,
@@ -13,15 +16,20 @@ import {
 import { insertSyncedEvents } from '../storage/events'
 import { reloadPreferences } from '../storage/preference-store'
 import { readPreference } from '../storage/preferences'
-import { SYNC_META_KEY, SYNCED_KEYS } from './keys'
+import { isProgressKey, isSyncedKey, SYNC_META_KEY } from './keys'
 
+/**
+ * Meta written before layout 2 has none of the newer fields; it parses as
+ * version 1, which makes the next sync push everything again (engine.ts).
+ */
 const Meta = z.object({
+  version: z.number().default(1),
   boundUid: z.string().nullable(),
   cursor: z.string().nullable(),
   lastSyncedAt: z.number().nullable(),
+  profileWritten: z.boolean().default(false),
+  syncedPreferences: z.record(z.string(), z.number()).default({}),
 })
-
-const EMPTY_META: SyncMeta = { boundUid: null, cursor: null, lastSyncedAt: null }
 
 /** Two decimals of a degree is about 1 km: the most precision any coordinate leaves the device with. */
 export const roundCoordinate = (degrees: number): number => Math.round(degrees * 100) / 100
@@ -59,7 +67,7 @@ function forSync(row: TimedPreferenceRow): TimedPreferenceRow {
 }
 
 export function readSyncMeta(): SyncMeta {
-  return readPreference(SYNC_META_KEY, Meta) ?? EMPTY_META
+  return readPreference(SYNC_META_KEY, Meta) ?? freshMeta(null)
 }
 
 /**
@@ -76,17 +84,27 @@ export function createLocalStore(): LocalStore {
     insertRemoteEvents: insertSyncedEvents,
     preferences: () =>
       preferenceRowsWithTime()
-        .filter((row) => SYNCED_KEYS.has(row.key))
+        .filter((row) => isSyncedKey(row.key))
         .map(forSync),
     applyPreferences: (preferences): void => {
       // A key this build does not sync (a newer build's, say) stays in the cloud.
       preferences
-        .filter((preference) => SYNCED_KEYS.has(preference.key))
+        .filter((preference) => isSyncedKey(preference.key))
         .forEach((preference) =>
           writePreferenceRowAt(preference.key, preference.value, preference.updatedAt),
         )
       reloadPreferences()
     },
+    // Only progress is ever dropped (a finished item, a finished period);
+    // a settings key missing from the account is never a reason to lose it here.
+    removePreferences: (keys): void => {
+      const progress = keys.filter(isProgressKey)
+      if (progress.length === 0) return
+      deletePreferenceRows(progress)
+      reloadPreferences()
+    },
+    mergePreference: (ours, theirs) =>
+      isProgressKey(ours.key) ? mergeProgress(ours.value, theirs.value) : null,
     readMeta: readSyncMeta,
     writeMeta: (meta): void => writePreferenceRow(SYNC_META_KEY, JSON.stringify(meta)),
   }

@@ -4,7 +4,7 @@ import { screen, waitFor } from '@testing-library/react'
 import type { Root } from 'react-dom/client'
 import { fakeChrome } from '../test/chrome'
 import { resetApp, strings } from '../test/route'
-import { resetSession, startArgs } from '../test/session-mock'
+import { resetSession, sessionCalls, startArgs } from '../test/session-mock'
 import { OPEN_ROUTE_KEY } from './alarms'
 import { router } from './router'
 
@@ -47,6 +47,14 @@ afterEach(async () => {
 })
 
 describe('startPopup', () => {
+  it('starts item progress, so a mark on Today is kept', async () => {
+    const { addCount, getItemProgress } = await import('@ihsaanly/state/progress/store')
+    startPopup(mountRoot())
+    await screen.findByRole('heading', { name: strings.today.title })
+    addCount('morning-adhkar')
+    expect(getItemProgress('morning-adhkar').count).toBe(1)
+  })
+
   it('refuses to start without its mount point', () => {
     expect(() => startPopup(null)).toThrow('popup.html is missing #root')
   })
@@ -55,6 +63,9 @@ describe('startPopup', () => {
     startPopup(mountRoot())
     expect(await screen.findByRole('heading', { name: strings.today.title })).toBeInTheDocument()
     expect(startArgs).toBeNull()
+    // Closing the popup has nothing to detach when no account is wired.
+    window.dispatchEvent(new Event('pagehide'))
+    expect(sessionCalls).toEqual([])
     expect(document.documentElement.classList.contains('tab')).toBe(false)
   })
 
@@ -128,5 +139,13 @@ describe('startPopup in a build with an account', () => {
     startArgs?.options.onWiped?.()
     expect(reload).toHaveBeenCalledTimes(1)
     reload.mockRestore()
+  })
+
+  it('stops listening for sync when the popup closes', async () => {
+    startPopup(mountRoot())
+    await screen.findByRole('heading', { name: strings.today.title })
+    expect(sessionCalls).toEqual([])
+    window.dispatchEvent(new Event('pagehide'))
+    expect(sessionCalls).toEqual([{ name: 'notifyBackground', args: [] }])
   })
 })

@@ -21,6 +21,32 @@ export const ja: Strings = {
       '礼拝の時間帯、ヒジュラ暦の日付、そしてその日に求められることはすべて、おおよその位置から決まります。位置はこの端末の中で計算され、同期のためにサインインしない限り、端末の外には出ません。',
     chooseCity: '代わりに都市を選ぶ',
     chooseCityDetail: '許可は不要です。すべてそのまま使えます。',
+    prayerHint: '礼拝を終えたら、その礼拝をタップしてください',
+    markDone: (name: string): string => `${name}を完了にする`,
+    unmark: (name: string): string => `${name}の完了を取り消す`,
+    countItem: (name: string, count: number, target: number): string =>
+      `${name}をカウント、${count}/${target}`,
+    partsItem: (name: string, done: number, total: number): string =>
+      `${name}の各部分、${total}件中${done}件完了`,
+    open: (name: string): string => `${name}を開く`,
+    doneToday: (count: number): string => `今日できたこと（${count}）`,
+    markedDone: '完了にしました',
+    undo: '元に戻す',
+    undoItem: (name: string): string => `${name}を元に戻す`,
+    paused: '礼拝の記録は一時停止中です',
+    pausedFasting: '断食は、一時停止のあとに再び表示されます',
+    checkInTitle: '礼拝の記録を再開しますか？',
+    resume: '再開',
+    notYet: 'まだ',
+  },
+  tour: {
+    prayer: '丸をタップして礼拝を記録します',
+    sunnah: 'スンナを行ったら、その横の丸をタップしてください',
+    card: 'カードをタップすると、言葉・意味・出典を学べます',
+    step: (step: number, total: number): string => `${step}/${total}`,
+    skip: 'スキップ',
+    next: '次へ',
+    done: 'わかりました',
   },
   plan: {
     rightNow: '今',
@@ -84,8 +110,13 @@ export const ja: Strings = {
     whichItemsDetail: '知らせるタイミングがある項目だけがここに表示されます。',
     sendTest: 'テストのリマインダーを送る',
     sendTestDetail: '数秒で届きます。',
+    announcements: 'お知らせ',
+    announcementsDetail:
+      'ラマダンの始まりなど、Ihsaanlyからのときどきのお知らせです。毎日のリマインダーにはこの設定は必要ありません。',
     testTitle: 'テストのリマインダー',
     testBody: 'Ihsaanlyのリマインダーはこのように届きます。',
+    pausedRemembrance: 'ズィクルの時間です',
+    checkIn: 'Ihsaanlyからのひとこと',
     action: {
       done: '完了',
       later: 'あとで',
@@ -257,6 +288,9 @@ export const ja: Strings = {
     imported: (count: number): string => `${count}件を追加しました。`,
     importFailed: 'このファイルは読み込めませんでした。',
     shareFailed: 'この端末では共有を利用できません。',
+    crashReports: 'クラッシュレポートを共有',
+    crashReportsDetail:
+      '問題の修正に役立てるため、クラッシュレポートとエラーを送信します。端末の機種とアプリのバージョンが含まれますが、あなたの実践やアカウントは含まれません。',
     delete: 'データを削除',
     deleteDetail:
       'この端末にある設定と実践の記録のすべてです。アプリは最初からやり直しになります。',
@@ -423,6 +457,10 @@ export const ja: Strings = {
       dhuhr: 'ズフルを礼拝する',
     },
     jumuahAutoDetail: '旅行中か「女性」を選んだ場合を除き、金曜日はジュムアになります。',
+    checkIn: '確認のお知らせを受け取る',
+    checkInAfter: (days: number): string => `約${days}日後にお知らせ`,
+    checkInOff: 'お知らせなし。いつでも記録をオンに戻せます。',
+    checkInDays: '日数',
   },
   hijri: {
     title: 'ヒジュラ暦の日付',
@@ -505,6 +543,8 @@ export const ja: Strings = {
     home: '家',
     masjid: 'マスジド',
     prayer: '礼拝',
+    quran: 'クルアーン',
+    charity: '施し',
     sleep: '眠りと目覚め',
     travel: '旅',
   },
@@ -560,17 +600,16 @@ export const ja: Strings = {
     app: 'アプリ',
     practice: 'あなたの実践',
     empty: '履歴、設定、ヘルプはここに置かれます。',
+    help: 'ヘルプ',
+    showMeAround: 'アプリのご案内',
   },
   onboarding: {
     welcomeTitle: '時計ではなく、その時を。',
     welcomeBody:
       'Ihsaanlyは、夕べのアズカールの時間が始まったことを知らせます。時刻は表示しません。点数もつけません。',
-    howTitle: '礼拝を記録すると、スンナが現れます。',
-    howBody:
-      'ズフルを礼拝したらタップしてください。その後に続くズィクルが待っています。サインインして同期することを選ばない限り、すべてこの端末にとどまります。',
+    howTitle: 'Ihsaanlyはその時にふさわしいものを表示します。できたら丸をタップしてください。',
     language: '言語',
     appearance: '外観',
-    howSample: 'سُبْحَانَ اللهِ وَبِحَمْدِهِ',
     locationStep: 'どちらにいますか？',
     locationWhy:
       '一日の区切りを計算するために、この端末上で使います。同期のためにサインインしない限り、端末の外には出ません。',
@@ -585,10 +624,14 @@ export const ja: Strings = {
     skipDetail: 'いずれにしても一時停止は案内されます。',
     genderPrivacy:
       'この端末に保存され、サインインした場合にのみ同期されます。ほかの目的には使われません。',
-    remindersStep: 'リマインダー',
-    remindersWhy: '1日に2〜3回、夜中には届きません。あとで「その他」からいつでも変更できます。',
-    windowsDetail: 'それぞれの時間帯が始まるとき',
-    lookAheadDetail: '前日の夕方',
+    remindersStep: '通知',
+    remindersWhy:
+      'Ihsaanlyから受け取る通知を選んでください。どちらもあとで「その他」から変更できます。',
+    dailyReminders: '毎日のリマインダー',
+    dailyRemindersDetail: '朝と夕べのアズカールとこれからの断食の日。この端末で設定されます。',
+    announcementsChoice: 'Ihsaanlyからのお知らせ',
+    announcementsChoiceDetail:
+      'ラマダンの始まりなど、私たちからときどき届くお知らせです。オンにするまでオフのままです。',
     startStep: 'はじめの一歩',
     startWhy: 'まずは量を選んでください。ライブラリでいつでも追加したり外したりできます。',
     starting: 'はじめたばかり',
@@ -610,6 +653,7 @@ export const ja: Strings = {
     back: '戻る',
     continue: '続ける',
     allowReminders: 'リマインダーを許可',
+    allowNotifications: '通知を許可',
     notNow: '今はしない',
     done: 'はじめる',
     restore: 'すでにIhsaanlyをお使いですか？サインインしてデータを復元',
@@ -666,5 +710,8 @@ export const ja: Strings = {
   },
   panel: {
     close: '閉じる',
+    markAll: 'すべて完了にする',
+    progress: (count: number, target: number): string => `${count}/${target}`,
+    tapToCount: 'タップして数える',
   },
 }

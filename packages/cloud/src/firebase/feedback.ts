@@ -3,7 +3,7 @@ import { type FeedbackDraft, FeedbackRateLimitedError, type FeedbackService } fr
 
 /**
  * feedback/{autoId}        { uid, kind, message, contactEmail, app, diagnostics, createdAt, status: 'new' }
- * feedbackLimits/{uid}     { lastAt }
+ * feedbackLimits/{uid}     { lastSentAt }
  *
  * Top-level, not under users/{uid}, so erasing an account leaves feedback in
  * place (kept up to 2 years, as the privacy policy says). Clients can only
@@ -36,7 +36,7 @@ export function createFirestoreFeedback(db: Firestore): FeedbackService {
       // and compare it with the previous one, which is the whole rate limit.
       const batch = writeBatch(db)
       batch.set(doc(collection(db, FEEDBACK_COLLECTION)), feedbackDoc(uid, draft))
-      batch.set(doc(db, FEEDBACK_LIMITS_COLLECTION, uid), { lastAt: serverTimestamp() })
+      batch.set(doc(db, FEEDBACK_LIMITS_COLLECTION, uid), { lastSentAt: serverTimestamp() })
       try {
         await batch.commit()
       } catch (error) {

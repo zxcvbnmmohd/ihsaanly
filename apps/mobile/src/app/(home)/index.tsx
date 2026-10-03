@@ -30,10 +30,11 @@ import {
 import { useCalculationPreferences } from '@ihsaanly/state/prayer/store'
 import { useStrings } from '@ihsaanly/state/strings'
 import { useNow } from '@ihsaanly/state/time/use-now'
-import { onMakeUpFor, split, toEntry, toNext } from '@ihsaanly/ui/props/today'
+import { useTodaySunnah } from '@ihsaanly/state/today/use-today-sunnah'
+import { onMakeUpFor } from '@ihsaanly/ui/props/today'
 import type { LocationProblem } from '@ihsaanly/ui/screens/onboarding'
 import { type SuggestionEntry, TodayScreen } from '@ihsaanly/ui/screens/today'
-import { Stack } from 'expo-router'
+import { router, Stack, useLocalSearchParams } from 'expo-router'
 import { type ReactElement, useEffect, useState } from 'react'
 import { requestDeviceLocation } from '@/location/device'
 import { useNotificationSync } from '@/notifications/use-sync'
@@ -60,13 +61,21 @@ export default function TodayRoute(): ReactElement {
   const marks = useTodayMarks(place?.timeZone ?? 'UTC', now)
   const qada = useQada()
   const strings = useStrings()
-  const ahead = split(planned?.today.comingUp ?? [])
   const onboarding = useOnboarding()
   const suggestion = useSuggestion()
   const enabled = useEnabledItems()
   const locale = useLocale()
   const timeZone = place?.timeZone ?? 'UTC'
   const civilDay = (instant: Date): string => instant.toLocaleDateString('en-CA', { timeZone })
+  const { tour } = useLocalSearchParams<{ tour?: string }>()
+  const { notePrayerMarked, ...sunnah } = useTodaySunnah({
+    planned,
+    strings,
+    now,
+    timeZone: place?.timeZone ?? 'UTC',
+    replayTour: tour === '1',
+    onTourEnd: () => router.setParams({ tour: undefined }),
+  })
   const hijriOffset = useHijriOffset()
   const fastsOwed = useFastsOutstanding()
   const todayCivil = civilDateIn(now, timeZone)
@@ -138,6 +147,7 @@ export default function TodayRoute(): ReactElement {
     const current = windows.filter((entry) => entry.name === prayer && entry.startsAt <= now).pop()
 
     markPrayer(prayer, now, place.timeZone, current)
+    notePrayerMarked()
   }
 
   return (
@@ -163,11 +173,7 @@ export default function TodayRoute(): ReactElement {
         }).format(now)}
         hijri={planned?.today.hijri ?? null}
         placeLabel={place ? (place.label.split(',')[0]?.trim() ?? place.label) : null}
-        now={planned?.today.now.flatMap((entry) => toEntry(entry, strings, itemById) ?? []) ?? []}
-        next={toNext(planned?.today.next ?? null, now, strings, itemById)}
-        allDay={ahead.allDay.flatMap((entry) => toEntry(entry, strings, itemById, false) ?? [])}
-        tomorrow={ahead.tomorrow.flatMap((entry) => toEntry(entry, strings, itemById, false) ?? [])}
-        later={ahead.later.flatMap((entry) => toEntry(entry, strings, itemById) ?? [])}
+        {...sunnah}
         prayers={
           place && !signals?.userState.trackingPaused
             ? PRAYERS.map((prayer) => ({

@@ -6,9 +6,10 @@
 //   1. "mark"  — the prayer chip whose window is current, or the most recent
 //                unmarked one, is ringed: "Tap to mark {prayer} as prayed".
 //   2. "open"  — after a mark (or if step 1 had nothing to point at), the
-//                first "Right now" item card is ringed, or the Library tab
-//                when there is no card.
-//   3. "done"  — the visitor opened an item, tapped anything that wasn't the
+//                circle of the first "Right now" item is ringed ("Tap the
+//                circle when you've done it"), or the Library tab when there
+//                is no card.
+//   3. "done"  — the visitor tapped a circle, opened an item, tapped anything that wasn't the
 //                current target, or used the tab bar. The coach never
 //                reappears for the rest of the page view.
 //
@@ -79,7 +80,7 @@ function bubbleTextFor(target: CoachTarget, today: DemoToday, copy: DemoCopy): s
   if (target.step === 'mark') {
     return copy.coachMarkPrayer(today.names[target.prayer])
   }
-  return target.kind === 'item' ? copy.coachOpenItem : copy.coachOpenLibrary
+  return target.kind === 'item' ? copy.coachTapCircle : copy.coachOpenLibrary
 }
 
 function findTargetElement(
@@ -91,7 +92,7 @@ function findTargetElement(
     return contentEl.querySelector<HTMLElement>(`[data-testid="prayer-${target.prayer}"]`)
   }
   if (target.kind === 'item') {
-    return contentEl.querySelector<HTMLElement>('[data-testid="right-now"]')
+    return contentEl.querySelector<HTMLElement>(`[data-testid="circle-${target.itemId}"]`)
   }
   return tabbarEl.querySelector<HTMLElement>('[data-demo-tab="library"]')
 }

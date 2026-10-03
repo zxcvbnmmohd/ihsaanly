@@ -1,5 +1,6 @@
 import { eventsToAdd, parseExport } from '@ihsaanly/core/data/bundle'
 import { useAccount } from '@ihsaanly/state/cloud/session'
+import { useCrashReports } from '@ihsaanly/state/opt-ins/store'
 import { wipe } from '@ihsaanly/state/storage/backend'
 import { insertExportedEvents } from '@ihsaanly/state/storage/events'
 import { useStrings } from '@ihsaanly/state/strings'
@@ -10,6 +11,7 @@ import { File } from 'expo-file-system'
 import { router } from 'expo-router'
 import { type ReactElement, useState } from 'react'
 import { Alert } from 'react-native'
+import { setCrashReporting } from '@/crash/crash'
 import { buildExport, shareExport } from '@/data/export'
 
 interface Thing {
@@ -21,6 +23,7 @@ const MAX_IMPORT_BYTES = 8 * 1024 * 1024
 export default function DataRoute(): ReactElement {
   const strings = useStrings()
   const signedIn = useAccount().account !== null
+  const crashReports = useCrashReports()
   const [thing, setThing] = useState<Thing>({ message: null })
 
   const say = (message: string | null): void => setThing({ message })
@@ -77,6 +80,7 @@ export default function DataRoute(): ReactElement {
       onImport={runImport}
       onDiagnostics={() => router.push('/diagnostics')}
       onDelete={confirmDelete}
+      crashReports={{ on: crashReports, onChange: (on) => void setCrashReporting(on) }}
     />
   )
 }

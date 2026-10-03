@@ -1,5 +1,3 @@
-import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
 import { type Flavour, type Manifest, readManifest } from './builds.ts'
 import { expect, test } from './fixtures.ts'
 

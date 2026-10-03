@@ -26,6 +26,18 @@ export function reloadPreferences(): void {
 }
 
 /**
+ * Hears every `reloadPreferences`, for readers that are not a single-key
+ * store (item progress reads a key per item).
+ */
+export function onPreferencesReload(listener: () => void): () => void {
+  const entry = { reload: listener }
+  stores.add(entry)
+  return (): void => {
+    stores.delete(entry)
+  }
+}
+
+/**
  * `fallback` may be a function, read each time the stored value is missing:
  * for a default that depends on content installed after this module loads.
  * Stored values are JSON, so a function is never a value itself.

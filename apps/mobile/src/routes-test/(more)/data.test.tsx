@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'bun:test'
 import type { Account, Cloud } from '@ihsaanly/cloud/ports'
 import { act, render } from '@testing-library/react'
 import { Alert, type AlertButton } from 'react-native'
+import { crash } from '../../../test/firebase'
 import { flush, last, mockScreen, mockShareNative, type ShareNative } from '../../../test/more'
 import { router } from '../../../test/router'
 
@@ -12,6 +13,7 @@ interface Props {
   onImport: () => void
   onDiagnostics: () => void
   onDelete: () => void
+  crashReports: { on: boolean; onChange: (on: boolean) => void }
 }
 const renders = mockScreen<Props>('@ihsaanly/ui/screens/data', 'DataScreen')
 const native: ShareNative = mockShareNative()
@@ -26,6 +28,7 @@ const { allActions, recordEvent, reloadEvents } = await import('@ihsaanly/state/
 const { getStrings } = await import('@ihsaanly/state/strings')
 const { startCloud } = await import('@ihsaanly/state/cloud/session')
 const { ACCOUNT_KEY } = await import('@ihsaanly/state/cloud/keys')
+const { getCrashReports, setCrashReports } = await import('@ihsaanly/state/opt-ins/store')
 
 const strings = getStrings()
 const _settle = (): Promise<void> => new Promise((resolve) => setTimeout(resolve, 0))
@@ -230,5 +233,20 @@ describe('data route', () => {
         wipe()
       }
     })
+  })
+
+  it('turns crash reports on and off from the switch', async () => {
+    setCrashReports(false)
+    render(<DataRoute />)
+    expect(last(renders).crashReports.on).toBe(false)
+
+    await press(() => last(renders).crashReports.onChange(true))
+    expect(getCrashReports()).toBe(true)
+    expect(last(renders).crashReports.on).toBe(true)
+    expect(crash.collection).toBe(true)
+
+    await press(() => last(renders).crashReports.onChange(false))
+    expect(getCrashReports()).toBe(false)
+    expect(crash.collection).toBe(false)
   })
 })

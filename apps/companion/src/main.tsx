@@ -7,6 +7,7 @@ import { setContentLanguage } from '@ihsaanly/core/content'
 import { languageOf } from '@ihsaanly/core/i18n/locale'
 import { applyDirection } from '@ihsaanly/state/i18n/direction'
 import { getLocale } from '@ihsaanly/state/i18n/store'
+import { startProgress } from '@ihsaanly/state/progress/configure'
 import { RouterProvider } from '@tanstack/react-router'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
@@ -21,6 +22,7 @@ import './styles.css'
 installCachedContent()
 setContentLanguage(languageOf(getLocale()))
 applyDirection(getLocale())
+startProgress()
 startCompanionCloud()
 
 const root = document.getElementById('root')

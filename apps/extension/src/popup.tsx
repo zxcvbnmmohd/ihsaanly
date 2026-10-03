@@ -1,9 +1,10 @@
 import { setContentLanguage } from '@ihsaanly/core/content'
 import { languageOf } from '@ihsaanly/core/i18n/locale'
-import { startCloud } from '@ihsaanly/state/cloud/session'
+import { notifyBackground, startCloud } from '@ihsaanly/state/cloud/session'
 import { installCachedContent } from '@ihsaanly/state/content/cache'
 import { applyDirection } from '@ihsaanly/state/i18n/direction'
 import { getLocale } from '@ihsaanly/state/i18n/store'
+import { startProgress } from '@ihsaanly/state/progress/configure'
 import { RouterProvider } from '@tanstack/react-router'
 import { StrictMode } from 'react'
 import { createRoot, type Root } from 'react-dom/client'
@@ -25,7 +26,14 @@ export function startPopup(container: HTMLElement | null): Root {
 
   // Opening the popup is the app starting: a returning account syncs now, the SDK loading only then.
   // After a wipe the popup reloads so nothing stale stays in memory.
-  if (cloudEnabled) startCloud(loadCloud, { onWiped: () => location.reload() })
+  if (cloudEnabled) {
+    startCloud(loadCloud, { onWiped: () => location.reload() })
+    // A closing popup stops listening; opening one is the foreground, which startCloud already is.
+    window.addEventListener('pagehide', notifyBackground)
+  }
+
+  // Marks on Today are counted per period; the periods come from the saved place and prayer times.
+  startProgress()
 
   if (!container) throw new Error('popup.html is missing #root')
 

@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'bun:test'
+import { demoItemById } from './demo-content'
 import { type DemoAction, demoReducer, initialDemoState } from './state'
 
 const ZONE = 'Asia/Riyadh'
@@ -193,5 +194,119 @@ describe('back, reset-counter, remind and unknown actions', () => {
   test('an unknown action leaves the state as it was', () => {
     const state = initialDemoState(ZONE)
     expect(demoReducer(state, { type: 'nope' } as unknown as DemoAction)).toBe(state)
+  })
+})
+
+describe('Today circles', () => {
+  const at = new Date(Date.UTC(2026, 8, 30, 10))
+  const start = initialDemoState(ZONE)
+
+  function run(actions: DemoAction[]): ReturnType<typeof initialDemoState> {
+    return actions.reduce(demoReducer, start)
+  }
+
+  test('a circle on a single item completes it, shows the undo bar and ends the coach', () => {
+    const state = run([{ type: 'circle', id: 'witr', done: false, at }])
+    expect(state.completed.witr).toBe(at)
+    expect(state.undo).toEqual({ itemId: 'witr', seq: 1 })
+    expect(state.coachStep).toBe('done')
+  })
+
+  test('a circle on a done item unmarks it and clears its undo bar and progress', () => {
+    const state = run([
+      { type: 'circle', id: 'witr', done: false, at },
+      { type: 'circle', id: 'witr', done: true, at },
+    ])
+    expect(state.completed.witr).toBeUndefined()
+    expect(state.undo).toBeNull()
+  })
+
+  test("unmarking another item leaves the last item's undo bar", () => {
+    const state = run([
+      { type: 'circle', id: 'witr', done: false, at },
+      { type: 'circle', id: 'duha-prayer', done: true, at },
+    ])
+    expect(state.undo?.itemId).toBe('witr')
+  })
+
+  test('a circle on an unknown item does nothing', () => {
+    expect(run([{ type: 'circle', id: 'nope', done: false, at }])).toEqual(start)
+  })
+
+  test('the undo bar undoes the last mark, dismisses, and restarts for each mark', () => {
+    const marked = run([
+      { type: 'circle', id: 'witr', done: false, at },
+      { type: 'circle', id: 'duha-prayer', done: false, at },
+    ])
+    expect(marked.undo).toEqual({ itemId: 'duha-prayer', seq: 2 })
+    const undone = demoReducer(marked, { type: 'undo' })
+    expect(undone.completed['duha-prayer']).toBeUndefined()
+    expect(undone.completed.witr).toBe(at)
+    expect(demoReducer(undone, { type: 'undo' })).toBe(undone)
+    expect(demoReducer(marked, { type: 'dismiss-undo' }).undo).toBeNull()
+  })
+
+  test('a counted item opens its panel, counts up, and completes at its repeat', () => {
+    const opened = run([{ type: 'circle', id: 'tasbih-after-prayer', done: false, at }])
+    expect(opened.panelItemId).toBe('tasbih-after-prayer')
+    expect(opened.completed['tasbih-after-prayer']).toBeUndefined()
+    let state = opened
+    for (let tap = 0; tap < 32; tap++) {
+      state = demoReducer(state, { type: 'panel-count', id: 'tasbih-after-prayer', at })
+    }
+    expect(state.progress['tasbih-after-prayer']?.count).toBe(32)
+    expect(state.panelItemId).toBe('tasbih-after-prayer')
+    state = demoReducer(state, { type: 'panel-count', id: 'tasbih-after-prayer', at })
+    expect(state.completed['tasbih-after-prayer']).toBe(at)
+    expect(state.panelItemId).toBeNull()
+    expect(state.undo?.itemId).toBe('tasbih-after-prayer')
+    expect(demoReducer(state, { type: 'undo' }).progress['tasbih-after-prayer']).toBeUndefined()
+  })
+
+  test('the panel closes without completing, and Complete finishes a counted item', () => {
+    const opened = run([{ type: 'circle', id: 'istighfar', done: false, at }])
+    expect(demoReducer(opened, { type: 'close-panel' }).panelItemId).toBeNull()
+    const done = demoReducer(opened, { type: 'panel-complete', id: 'istighfar', at })
+    expect(done.completed.istighfar).toBe(at)
+    expect(done.panelItemId).toBeNull()
+  })
+
+  test('an item with parts opens a checklist that completes when every part is ticked', () => {
+    const opened = run([{ type: 'circle', id: 'morning-adhkar', done: false, at }])
+    expect(opened.panelItemId).toBe('morning-adhkar')
+    const ids = (demoItemById('morning-adhkar')?.parts ?? []).map((part) => part.id)
+    expect(ids.length).toBeGreaterThan(1)
+    let state = opened
+    for (const partId of ids.slice(0, -1)) {
+      state = demoReducer(state, { type: 'panel-toggle-part', id: 'morning-adhkar', partId, at })
+    }
+    expect(state.completed['morning-adhkar']).toBeUndefined()
+    // Untick one, tick it again, then the last.
+    const first = ids[0] ?? ''
+    state = demoReducer(state, {
+      type: 'panel-toggle-part',
+      id: 'morning-adhkar',
+      partId: first,
+      at,
+    })
+    expect(state.progress['morning-adhkar']?.parts).not.toContain(first)
+    for (const partId of [first, ids[ids.length - 1] ?? '']) {
+      state = demoReducer(state, { type: 'panel-toggle-part', id: 'morning-adhkar', partId, at })
+    }
+    expect(state.completed['morning-adhkar']).toBe(at)
+    expect(state.panelItemId).toBeNull()
+  })
+
+  test('Complete on an item with parts fills the checklist', () => {
+    const state = run([{ type: 'panel-complete', id: 'morning-adhkar', at }])
+    expect(state.progress['morning-adhkar']?.parts.length).toBeGreaterThan(1)
+  })
+
+  test('sheet actions on an unknown item still behave', () => {
+    const counted = run([{ type: 'panel-count', id: 'nope', at }])
+    expect(counted.completed.nope).toBe(at)
+    const ticked = run([{ type: 'panel-toggle-part', id: 'nope', partId: 'a', at }])
+    expect(ticked.completed.nope).toBe(at)
+    expect(run([{ type: 'panel-complete', id: 'nope', at }]).completed.nope).toBe(at)
   })
 })

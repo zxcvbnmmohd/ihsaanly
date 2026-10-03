@@ -1,5 +1,6 @@
 import { useMoreGroups } from '@ihsaanly/state/more/rows'
 import { useStrings } from '@ihsaanly/state/strings'
+import { SHOW_ME_AROUND_HREF } from '@ihsaanly/ui/props/more'
 import { MoreScreen } from '@ihsaanly/ui/screens/more'
 import { createFileRoute } from '@tanstack/react-router'
 import type { ReactElement } from 'react'
@@ -21,6 +22,7 @@ const IN_POPUP = new Set([
   '/qada',
   '/account',
   '/feedback',
+  SHOW_ME_AROUND_HREF,
 ])
 
 /**

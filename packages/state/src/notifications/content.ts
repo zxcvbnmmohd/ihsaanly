@@ -75,6 +75,36 @@ export function notificationContent(
         data: { v: 1, kind: 'prayer', prayer: entry.prayer },
       }
 
+    // Both can be read on a locked screen by anyone holding the phone, so
+    // neither says why: no pause, no reason, only the moment. The item's own
+    // reminder text is deliberately not used here.
+    case 'remembrance':
+      return {
+        identifier: identifierFor(entry),
+        title: prayerName(strings, entry.prayer, false),
+        body: strings.notifications.pausedRemembrance,
+        at: entry.at,
+        channelId: 'prayers',
+        categoryIdentifier: REMINDER_CATEGORY,
+        data: {
+          v: 1,
+          kind: 'item',
+          itemId: entry.itemId,
+          endsAt: entry.endsAt.getTime(),
+          reason: 'current-window',
+        },
+      }
+
+    case 'check-in':
+      return {
+        identifier: identifierFor(entry),
+        title: strings.notifications.checkIn,
+        body: '',
+        at: entry.at,
+        channelId: 'reminders',
+        data: { v: 1, kind: 'check-in' },
+      }
+
     default:
       return assertNever(entry)
   }

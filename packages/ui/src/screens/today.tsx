@@ -1,11 +1,13 @@
+import { assertNever } from '@ihsaanly/core/assert-never'
 import type { HijriDate } from '@ihsaanly/core/hijri/calendar'
 import { prayerNames } from '@ihsaanly/core/plan/jumuah'
 import type { Prayer } from '@ihsaanly/core/prayer/qada'
 import { palettes } from '@ihsaanly/tailwind/tokens'
-import type { ReactElement } from 'react'
+import type { ReactElement, ReactNode } from 'react'
 import { Text, View } from 'react-native'
 import { useColors } from '../colors'
 import { Button } from '../components/button'
+import { CoachMark } from '../components/coach-mark'
 import { OnboardingArt } from '../components/onboarding-art'
 import { Row } from '../components/row'
 import { Screen } from '../components/screen'
@@ -13,12 +15,26 @@ import { serif } from '../fonts'
 import { useLayout } from '../layout'
 import { useUi } from '../provider'
 import { AgendaList } from '../today/agenda-list'
+import { CounterPanel } from '../today/counter-panel'
+import { DoneSection } from '../today/done-section'
 import { MakeUpRows } from '../today/make-up-rows'
+import { PartsPanel } from '../today/parts-panel'
+import { CheckInCard, PausedNotice } from '../today/paused-notice'
 import { PrayerStrip } from '../today/prayer-strip'
 import { RightNowCard } from '../today/right-now-card'
 import { Section } from '../today/section'
 import { SuggestionCard } from '../today/suggestion-card'
+import { TourAnchorContext } from '../today/tour-anchor'
+import { UndoBar } from '../today/undo-bar'
 import { UpNextCard } from '../today/up-next-card'
+import {
+  type EntryMark,
+  TOUR_STEPS,
+  type TodayCheckIn,
+  type TodayPanel,
+  type TodayTour,
+  type TodayUndo,
+} from '../types'
 import type { LocationProblem } from './onboarding'
 
 export interface TodayEntry {
@@ -26,6 +42,8 @@ export interface TodayEntry {
   title: string
   detail: string | null
   href: string
+  /** The circle at the row's start; null for a row with nothing to mark (tomorrow, later). */
+  mark: EntryMark | null
 }
 
 export interface PrayerEntry {
@@ -96,6 +114,42 @@ export interface TodayScreenProps {
   onRecordFastOwed: () => void
   onUndoFastOwed: () => void
   locationHref: string
+  /** Sunnah already marked today, in the folded "Done today" section. */
+  doneToday: TodayEntry[]
+  /**
+   * A row's circle was pressed. The route decides what that means from the
+   * row's mark: mark or unmark it, count once, or open its panel.
+   */
+  onCircle: (id: string) => void
+  /** "Marked done · Undo" after a mark; null when there is nothing to undo. */
+  undo: TodayUndo | null
+  /** The undo bar timed out (`UNDO_MS`). */
+  onDismissUndo: () => void
+  /** The counter or parts sheet that is open, if any. */
+  panel: TodayPanel | null
+  onClosePanel: () => void
+  onCount: (itemId: string) => void
+  /** A counter reached its target. */
+  onComplete: (itemId: string) => void
+  onMarkAll: (itemId: string) => void
+  onTogglePart: (itemId: string, partId: string) => void
+  /** "Tap a prayer when you've prayed it" under the strip, until the route decides it is learned. */
+  prayerHint: boolean
+  /** The first-run tour, or null when it is not showing. */
+  tour: TodayTour | null
+  /** Prayer tracking is paused: a quiet notice stands where the strip was. */
+  paused: boolean
+  /** While paused, once the check-in the user asked for is due. */
+  checkIn: TodayCheckIn | null
+}
+
+/** The first row with a circle, which the tour's second and third steps point at. */
+function firstMarkable(groups: TodayEntry[][]): TodayEntry | null {
+  for (const group of groups) {
+    const found = group.find((entry) => entry.mark !== null)
+    if (found) return found
+  }
+  return null
 }
 
 export function TodayScreen({
@@ -125,6 +179,20 @@ export function TodayScreen({
   onRecordFastOwed,
   onUndoFastOwed,
   locationHref,
+  doneToday,
+  onCircle,
+  undo,
+  onDismissUndo,
+  panel,
+  onClosePanel,
+  onCount,
+  onComplete,
+  onMarkAll,
+  onTogglePart,
+  prayerHint,
+  tour,
+  paused,
+  checkIn,
 }: TodayScreenProps): ReactElement {
   const colors = useColors()
   const { strings, scheme } = useUi()
@@ -194,17 +262,64 @@ export function TodayScreen({
     )
   }
 
-  // Above Right now, so marking a prayer never moves the strip under the finger.
-  const prayerStripSection =
-    prayers.length > 0 ? (
-      <Section title={strings.plan.prayers}>
-        <PrayerStrip prayers={prayers} names={prayerNames(strings, jumuah)} onMark={onMarkPrayer} />
-      </Section>
+  // The tour points at the next prayer to mark, then at the first sunnah
+  // row. With nothing on screen to point at, the tip still shows, at the top.
+  const prayerTarget = prayers.findIndex((entry) => !entry.done)
+  const sunnahTarget = firstMarkable([now, next?.before ?? [], next?.after ?? [], allDay])
+  const tourTarget: 'strip' | 'row' | 'top' | null = !tour
+    ? null
+    : tour.step === 0
+      ? prayers.length > 0
+        ? 'strip'
+        : 'top'
+      : sunnahTarget
+        ? 'row'
+        : 'top'
+
+  const coachMark = (arrowAt: number | `${number}%` | null): ReactNode =>
+    tour ? (
+      <CoachMark
+        text={[strings.tour.prayer, strings.tour.sunnah, strings.tour.card][tour.step] ?? ''}
+        step={tour.step}
+        total={TOUR_STEPS}
+        onNext={tour.onNext}
+        onSkip={tour.onSkip}
+        arrowAt={arrowAt}
+      />
     ) : null
+
+  // Above Right now, so marking a prayer never moves the strip under the finger.
+  const prayerStripSection = paused ? (
+    <View className="gap-3">
+      <PausedNotice />
+      {checkIn ? <CheckInCard checkIn={checkIn} /> : null}
+    </View>
+  ) : prayers.length > 0 ? (
+    <Section title={strings.plan.prayers}>
+      <PrayerStrip prayers={prayers} names={prayerNames(strings, jumuah)} onMark={onMarkPrayer} />
+      {prayerHint ? (
+        <Text className="text-sm" style={{ color: colors.secondaryLabel }}>
+          {strings.today.prayerHint}
+        </Text>
+      ) : null}
+      {tourTarget === 'strip'
+        ? coachMark(`${((Math.max(prayerTarget, 0) + 0.5) / prayers.length) * 100}%`)
+        : null}
+    </Section>
+  ) : null
+
+  const topCoachMark = tourTarget === 'top' ? coachMark(null) : null
+
+  // The second step points at the circle (its centre is 30pt in from the
+  // card's start edge), the third at the card itself.
+  const tourAnchor = {
+    id: tourTarget === 'row' ? (sunnahTarget?.id ?? null) : null,
+    node: coachMark(tour?.step === 1 ? 30 : '50%'),
+  }
 
   const rightNowSection = rightNow ? (
     <Section title={strings.plan.rightNow}>
-      <RightNowCard entry={rightNow} />
+      <RightNowCard entry={rightNow} onCircle={onCircle} />
     </Section>
   ) : null
 
@@ -217,7 +332,7 @@ export function TodayScreen({
   const upNextSection =
     next && (next.before.length > 0 || next.after.length > 0) ? (
       <Section title={strings.plan.upNext}>
-        <UpNextCard next={next} names={prayerNames(strings, next.jumuah)} />
+        <UpNextCard next={next} names={prayerNames(strings, next.jumuah)} onCircle={onCircle} />
       </Section>
     ) : null
 
@@ -246,10 +361,57 @@ export function TodayScreen({
     </Section>
   ) : null
 
-  const alsoNowList = <AgendaList title={strings.plan.alsoNow} entries={alsoNow} />
-  const alsoTodayList = <AgendaList title={strings.plan.alsoToday} entries={allDay} />
-  const tomorrowList = <AgendaList title={strings.plan.tomorrow} entries={tomorrow} />
-  const laterList = <AgendaList title={strings.plan.comingUp} entries={later} />
+  const alsoNowList = (
+    <AgendaList title={strings.plan.alsoNow} entries={alsoNow} onCircle={onCircle} />
+  )
+  const alsoTodayList = (
+    <AgendaList title={strings.plan.alsoToday} entries={allDay} onCircle={onCircle} />
+  )
+  const tomorrowList = (
+    <AgendaList title={strings.plan.tomorrow} entries={tomorrow} onCircle={onCircle} />
+  )
+  const laterList = <AgendaList title={strings.plan.comingUp} entries={later} onCircle={onCircle} />
+  const doneSection = <DoneSection entries={doneToday} onCircle={onCircle} />
+
+  const panelSheet = ((): ReactNode => {
+    if (!panel) return null
+    switch (panel.kind) {
+      case 'count':
+        return (
+          <CounterPanel
+            panel={panel}
+            onCount={onCount}
+            onComplete={onComplete}
+            onMarkAll={onMarkAll}
+            onClose={onClosePanel}
+          />
+        )
+      case 'parts':
+        return (
+          <PartsPanel
+            panel={panel}
+            onTogglePart={onTogglePart}
+            onMarkAll={onMarkAll}
+            onClose={onClosePanel}
+          />
+        )
+      default:
+        return assertNever(panel)
+    }
+  })()
+
+  // The undo bar floats over the screen's foot, and the sheets are modal; the
+  // scroll view stays the first thing inside the screen so iOS's large title
+  // still collapses against it.
+  const overlay = (screen: ReactElement): ReactElement => (
+    <TourAnchorContext.Provider value={tourAnchor}>
+      <View className="flex-1">
+        {screen}
+        <UndoBar undo={undo} onDismiss={onDismissUndo} />
+        {panelSheet}
+      </View>
+    </TourAnchorContext.Provider>
+  )
 
   const approximateFootnote = (
     <Text className="text-xs" style={{ color: colors.secondaryLabel }}>
@@ -270,28 +432,35 @@ export function TodayScreen({
     </Text>
   ) : null
 
+  // Room under the last card so the undo bar never covers it.
+  const undoRoom = <View style={{ height: undo ? 72 : 0 }} />
+
   if (layout === 'compact') {
-    return (
+    return overlay(
       <Screen palette={palette} className="gap-6 p-4">
         {metaLine}
+        {topCoachMark}
         {prayerStripSection}
         {rightNowSection}
         {alsoNowList}
         {nothingElseNote}
         {upNextSection}
         {alsoTodayList}
+        {doneSection}
         {suggestionSection}
         {makeUpSection}
         {tomorrowList}
         {laterList}
         {approximateFootnote}
-      </Screen>
+        {undoRoom}
+      </Screen>,
     )
   }
 
-  return (
+  return overlay(
     <Screen palette={palette} maxWidth={1200} className="gap-6 p-4 md:p-6">
       {metaLine}
+      {topCoachMark}
       {prayerStripSection}
       <View className="flex-row items-start gap-6">
         <View className="flex-2 gap-6">
@@ -300,6 +469,7 @@ export function TodayScreen({
           {nothingElseNote}
           {upNextSection}
           {alsoTodayList}
+          {doneSection}
         </View>
         <View className="flex-1 gap-6">
           {suggestionSection}
@@ -309,6 +479,7 @@ export function TodayScreen({
         </View>
       </View>
       {approximateFootnote}
-    </Screen>
+      {undoRoom}
+    </Screen>,
   )
 }

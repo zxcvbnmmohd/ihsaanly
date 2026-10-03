@@ -186,3 +186,70 @@ describe('parts', () => {
     expect(parts.every((count) => count > 0)).toBe(true)
   })
 })
+
+describe('the pause flags', () => {
+  const recited = hadithFrom('Sahih Muslim', null)
+  const words = { why: { en: 'Why.' }, reminder: { en: 'Now.' } }
+
+  it('accepts an item offered only while paused, with its why and reminder', () => {
+    const result = validateContentDocument(
+      documentWith(recited, { ...words, onlyWhilePaused: true }),
+    )
+    expect(result.valid).toBe(true)
+  })
+
+  it('accepts a prayer flagged as one, and the night window', () => {
+    const night = { kind: 'window', window: 'night' }
+    expect(
+      validateContentDocument(documentWith(recited, { isPrayer: true, trigger: night })).valid,
+    ).toBe(true)
+  })
+
+  it('rejects a paused-only item that is a prayer or a fast', () => {
+    for (const overrides of [{ isPrayer: true }, { category: 'fasting' }]) {
+      const result = validateContentDocument(
+        documentWith(recited, { ...words, onlyWhilePaused: true, ...overrides }),
+      )
+      expect(result.valid === false && result.problems.join()).toContain(
+        'cannot be a prayer or a fast',
+      )
+    }
+  })
+
+  it('rejects a paused-only item with no why or no reminder', () => {
+    const result = validateContentDocument(documentWith(recited, { onlyWhilePaused: true }))
+    expect(result.valid === false && result.problems.join()).toContain('needs a why and a reminder')
+  })
+
+  it('ships the paused-only items with sources, words and every language', () => {
+    const shipped = validateContentDocument(shippedDocument)
+    if (!shipped.valid) throw new Error('shipped content is invalid')
+    const paused = shipped.document.items.filter((item) => item.onlyWhilePaused)
+
+    expect(paused.map((item) => item.id).sort()).toEqual([
+      'dua-times-of-acceptance',
+      'istighfar',
+      'listening-to-quran',
+      'remembrance-at-prayer-times',
+      'sadaqah',
+    ])
+    paused.forEach((item) => {
+      expect(item.evidence.length).toBeGreaterThan(0)
+      expect(item.defaultOn).toBe(true)
+      expect(item.reviewed).toBe(false)
+      expect(item.title.ar).toBeDefined()
+    })
+  })
+
+  it('flags every prayer the pause must set aside, whatever its trigger', () => {
+    const shipped = validateContentDocument(shippedDocument)
+    if (!shipped.valid) throw new Error('shipped content is invalid')
+    const prayers = shipped.document.items.filter((item) => item.isPrayer).map((item) => item.id)
+
+    expect(prayers).toContain('duha-prayer')
+    expect(prayers).toContain('ramadan-nights')
+    shipped.document.items
+      .filter((item) => item.category === 'prayer')
+      .forEach((item) => expect(prayers).toContain(item.id))
+  })
+})

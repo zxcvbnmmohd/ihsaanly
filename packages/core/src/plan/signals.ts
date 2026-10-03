@@ -103,6 +103,13 @@ export interface TodayModel {
   context: PlannedItem[]
   comingUp: PlannedItem[]
   next: NextPrayer | null
+  /**
+   * Set only while tracking is paused. `fastingResumes` says an enabled fast
+   * was set aside with the prayers, so Today can say it comes back after.
+   */
+  pausedNotice: { fastingResumes: boolean } | null
+  /** Paused, and the check-in day the user chose has come. */
+  checkInDue: boolean
 }
 
 /** An item reminder carries the window it belongs to, so the words and a snooze can respect its end. */
@@ -124,7 +131,30 @@ export interface PrayerNotification {
   at: Date
 }
 
-export type ScheduledNotification = ItemNotification | PrayerNotification
+/**
+ * While paused, in place of a prayer reminder: the same moment, for the
+ * remembrance item. Its words never say why prayer is not being asked for.
+ */
+export interface RemembranceNotification {
+  kind: 'remembrance'
+  itemId: string
+  prayer: Prayer
+  at: Date
+  /** When this prayer's window closes, past which a snooze is pointless. */
+  endsAt: Date
+}
+
+/** The one-off "is the pause over?" the user asked for when pausing. */
+export interface CheckInNotification {
+  kind: 'check-in'
+  at: Date
+}
+
+export type ScheduledNotification =
+  | ItemNotification
+  | PrayerNotification
+  | RemembranceNotification
+  | CheckInNotification
 
 export interface Plan {
   today: TodayModel

@@ -66,6 +66,10 @@ describe('Hijri triggers', () => {
     expect(matchesDay('shawwal-6', context({ hijri: { month: 10, day: 2 } }))).toBe(true)
     expect(matchesDay('shawwal-6', context({ hijri: { month: 10, day: 29 } }))).toBe(true)
     expect(matchesDay('shawwal-6', context({ hijri: { month: 11, day: 5 } }))).toBe(false)
+    expect(matchesDay('dhul-hijjah-fasting', context({ hijri: { month: 12, day: 9 } }))).toBe(true)
+    expect(matchesDay('dhul-hijjah-fasting', context({ hijri: { month: 12, day: 10 } }))).toBe(
+      false,
+    )
   })
 
   it('matches the first ten days of Dhul Hijjah', () => {

@@ -121,18 +121,49 @@ export interface SyncPreference {
 
 export interface RemoteChanges {
   events: SyncEvent[]
+  /**
+   * Only when the account's preferences changed since the cursor (then all of
+   * them); an empty list means "unchanged", not "none".
+   */
   preferences: SyncPreference[]
   /** Opaque to the engine; hand it back on the next pull. */
   cursor: string | null
 }
 
+export interface PushChanges {
+  events: SyncEvent[]
+  /** Only the keys that changed; the rest stay as they are remotely. */
+  preferences: SyncPreference[]
+  /**
+   * Keys this device dropped since it last synced them (finished item
+   * progress); deleted remotely. Absent means none.
+   */
+  removedPreferences?: string[]
+  /**
+   * Also write the account's profile (created time, schema version). The
+   * engine asks once per device and account, so later syncs read nothing to
+   * find out whether it exists.
+   */
+  profile?: boolean
+}
+
 export interface SyncRemote {
   pull: (uid: string, cursor: string | null) => Promise<RemoteChanges>
-  push: (
+  push: (uid: string, changes: PushChanges) => Promise<void>
+  /**
+   * Live changes while an app is open: `onChanges` gets what changed after
+   * `cursor`, in the same shape as `pull` (preferences all of them, only when
+   * they changed), each time with the cursor to resume from. This device's
+   * own pushes come back too. `onError` means the listener has stopped.
+   * Optional: a remote without a push channel is synced by `pull` alone.
+   */
+  watch?: (
     uid: string,
-    changes: { events: SyncEvent[]; preferences: SyncPreference[] },
-  ) => Promise<void>
-  /** Everything stored for `uid`. Account deletion only. */
+    cursor: string | null,
+    onChanges: (changes: RemoteChanges) => void,
+    onError?: (error: unknown) => void,
+  ) => Unsubscribe
+  /** Everything stored for `uid`, old layouts included. Account deletion only. */
   erase: (uid: string) => Promise<void>
 }
 
@@ -149,15 +180,39 @@ export interface LocalStore {
   preferences: () => SyncPreference[]
   /** Writes these as given (keeping their timestamps) and refreshes readers. */
   applyPreferences: (preferences: SyncPreference[]) => void
+  /**
+   * Deletes these keys (another device dropped them) and refreshes readers.
+   * The store decides which keys may go; without it nothing is deleted.
+   */
+  removePreferences?: (keys: string[]) => void
+  /**
+   * For a key both sides changed since they last agreed: the value that keeps
+   * both changes, or null for newest-wins. Must be commutative, so two devices
+   * merging the same pair agree. Without it every key is newest-wins.
+   */
+  mergePreference?: (ours: SyncPreference, theirs: SyncPreference) => string | null
   readMeta: () => SyncMeta
   writeMeta: (meta: SyncMeta) => void
 }
 
 export interface SyncMeta {
+  /**
+   * The layout this device last synced in. Older than `SYNC_META_VERSION`
+   * (engine.ts), the next sync pushes everything again into the current one.
+   */
+  version: number
   /** The account this device's data was last merged into. */
   boundUid: string | null
   cursor: string | null
   lastSyncedAt: number | null
+  /** Whether this device has written `boundUid`'s profile document. */
+  profileWritten: boolean
+  /**
+   * Each preference's timestamp as last pushed or pulled. A key whose local
+   * timestamp differs is pushed; the rest are not, because a pull only sees
+   * preferences when they changed remotely.
+   */
+  syncedPreferences: Record<string, number>
 }
 
 // --- feedback -----------------------------------------------------------

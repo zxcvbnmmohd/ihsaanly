@@ -21,7 +21,6 @@ interface Fixtures {
 
 export const test = base.extend<Fixtures>({
   flavour: ['local', { option: true }],
-  // biome-ignore lint/correctness/noEmptyPattern: Playwright reads dependencies from this pattern.
   context: async ({ flavour }, use) => {
     const dist = ensureBuilt(flavour)
     const context = await chromium.launchPersistentContext('', {

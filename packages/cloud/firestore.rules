@@ -18,35 +18,66 @@ service cloud.firestore {
       return request.resource.data.updatedAt == request.time;
     }
 
+    function exactKeys(data, keys) {
+      return data.keys().hasOnly(keys) && data.keys().hasAll(keys);
+    }
+
     match /users/{uid} {
       allow read, delete: if isOwner(uid);
+      // Written once per device and account; a later device rewrites the same
+      // two fields, so create and update are the same check.
       allow create, update: if isOwner(uid)
-        && request.resource.data.keys().hasOnly(['createdAt', 'schema'])
-        && request.resource.data.schema is int;
+        && exactKeys(request.resource.data, ['createdAt', 'schemaVersion'])
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.schemaVersion is int;
 
-      match /eventMonths/{month} {
-        // ponytail: 3000 events a month (~100 a day) keeps a doc far below 1 MiB.
-        function validMonth() {
-          return request.resource.data.keys().hasOnly(['events', 'updatedAt'])
-            && request.resource.data.events is map
-            && request.resource.data.events.size() <= 3000
+      // One collection for everything that syncs, so a single query on
+      // `updatedAt` finds every changed month and the preferences.
+      match /sync/{docId} {
+        function validPreferences() {
+          let data = request.resource.data;
+          return exactKeys(data, ['type', 'preferences', 'updatedAt'])
+            && data.type == 'preferences'
+            && data.preferences is map
+            && data.preferences.size() <= 64
             && stamped();
         }
 
+        // ponytail: 3000 events a month (~100 a day) keeps a doc far below 1 MiB.
+        function validMonth() {
+          let data = request.resource.data;
+          return exactKeys(data, ['type', 'month', 'events', 'updatedAt'])
+            && data.type == 'events'
+            && data.month == docId
+            && data.events is map
+            && data.events.size() <= 3000
+            && stamped();
+        }
+
+        function isMonth() {
+          return docId.matches('^[0-9]{4}-[0-9]{2}$');
+        }
+
         allow read, delete: if isOwner(uid);
-        allow create: if isOwner(uid) && month.matches('^[0-9]{4}-[0-9]{2}$') && validMonth();
-        // Append-only: an update may add events but never drop one.
-        allow update: if isOwner(uid) && month.matches('^[0-9]{4}-[0-9]{2}$') && validMonth()
-          && request.resource.data.events.keys().hasAll(resource.data.events.keys());
+        allow create: if isOwner(uid)
+          && ((docId == 'preferences' && validPreferences()) || (isMonth() && validMonth()));
+        // Months are append-only: an update may add events but never drop one.
+        allow update: if isOwner(uid)
+          && ((docId == 'preferences' && validPreferences())
+            || (isMonth() && validMonth()
+              && request.resource.data.events.keys().hasAll(resource.data.events.keys())));
+      }
+
+      // Layout 1, before users/{uid}/sync. Clients no longer write it; the
+      // owner may still read and delete it so erasing an account removes it.
+      // Remove both matches once no layout-1 data can be left (a release
+      // after every client syncs in layout 2).
+      match /eventMonths/{month} {
+        allow read, delete: if isOwner(uid);
       }
 
       match /state/{doc} {
         allow read, delete: if isOwner(uid) && doc == 'preferences';
-        allow write: if isOwner(uid) && doc == 'preferences'
-          && request.resource.data.keys().hasOnly(['prefs', 'updatedAt'])
-          && request.resource.data.prefs is map
-          && request.resource.data.prefs.size() <= 64
-          && stamped();
       }
     }
 
@@ -85,10 +116,15 @@ service cloud.firestore {
       // The rate limit: this batch must stamp feedbackLimits/{uid} with the
       // same request.time, and the stamp it replaces (if any) must be at
       // least a minute old. One account cannot flood the daily write quota.
+      // A stamp written before the rename carries `lastAt`; it counts the
+      // same until the next send replaces it (drop the fallback with the
+      // layout-1 matches above).
       function withinLimit() {
         let limit = /databases/$(database)/documents/feedbackLimits/$(request.auth.uid);
-        return getAfter(limit).data.lastAt == request.time
-          && (!exists(limit) || get(limit).data.lastAt <= request.time - duration.value(60, 's'));
+        return getAfter(limit).data.lastSentAt == request.time
+          && (!exists(limit)
+            || get(limit).data.get('lastSentAt', get(limit).data.get('lastAt', timestamp.value(0)))
+              <= request.time - duration.value(60, 's'));
       }
 
       allow create: if request.auth != null
@@ -101,8 +137,8 @@ service cloud.firestore {
     // account is erased, like the feedback it limits.
     match /feedbackLimits/{uid} {
       allow create, update: if isOwner(uid)
-        && request.resource.data.keys().hasOnly(['lastAt'])
-        && request.resource.data.lastAt == request.time;
+        && request.resource.data.keys().hasOnly(['lastSentAt'])
+        && request.resource.data.lastSentAt == request.time;
     }
   }
 }

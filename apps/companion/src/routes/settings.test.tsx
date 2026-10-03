@@ -1,7 +1,7 @@
 // The settings pages: each is a thin route over a @ihsaanly/ui screen, so
 // these check the wiring (what it reads, what a tap writes) through the real
 // route tree, stores and strings.
-import { afterEach, beforeEach, describe, expect, it } from 'bun:test'
+import { afterEach, beforeEach, describe, expect, it, setSystemTime } from 'bun:test'
 import { supportedLanguageOf } from '@ihsaanly/core/i18n/locale'
 import { en } from '@ihsaanly/core/strings/en'
 import { getEventSettings } from '@ihsaanly/state/events/store'
@@ -67,6 +67,47 @@ describe('Hijri date', () => {
 })
 
 describe('Tracking', () => {
+  const pauseSwitch = (): Promise<HTMLElement> =>
+    screen.findByRole('switch', { name: en.tracking.paused })
+
+  it('pauses with a check-in a week out, which Days adjusts and the switch turns off', async () => {
+    setSystemTime(new Date('2026-03-02T12:00:00Z'))
+    try {
+      const app = await renderApp('/tracking')
+      await app.user.click(await pauseSwitch())
+      expect(getUserState().trackingPaused).toBe(true)
+      expect(getUserState().pauseCheckInOn).toBe('2026-03-09')
+      expect(await screen.findByText(en.tracking.checkInAfter(7))).toBeInTheDocument()
+
+      await app.user.click(screen.getByRole('button', { name: `${en.tracking.checkInDays} +` }))
+      expect(getUserState().pauseCheckInOn).toBe('2026-03-10')
+      expect(await screen.findByText(en.tracking.checkInAfter(8))).toBeInTheDocument()
+
+      await app.user.click(screen.getByRole('switch', { name: en.tracking.checkIn }))
+      expect(getUserState().pauseCheckInOn).toBeNull()
+      expect(await screen.findByText(en.tracking.checkInOff)).toBeInTheDocument()
+
+      await app.user.click(screen.getByRole('switch', { name: en.tracking.checkIn }))
+      expect(getUserState().pauseCheckInOn).toBe('2026-03-09')
+
+      await app.user.click(screen.getByRole('switch', { name: en.tracking.paused }))
+      expect(getUserState().trackingPaused).toBe(false)
+      expect(getUserState().pauseCheckInOn).toBeNull()
+    } finally {
+      setSystemTime()
+    }
+  })
+
+  it('remembers a check-in choice made before pausing', async () => {
+    const app = await renderApp('/tracking')
+    await app.user.click(await pauseSwitch())
+    await app.user.click(screen.getByRole('switch', { name: en.tracking.checkIn }))
+    await app.user.click(screen.getByRole('switch', { name: en.tracking.paused }))
+    await app.user.click(await pauseSwitch())
+    expect(getUserState().trackingPaused).toBe(true)
+    expect(getUserState().pauseCheckInOn).toBeNull()
+  })
+
   it('saves the travelling switch and offers the pause to those it may apply to', async () => {
     const app = await renderApp('/tracking')
     const travelling = await screen.findByRole('switch', { name: 'Travelling' })

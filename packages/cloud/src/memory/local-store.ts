@@ -1,3 +1,4 @@
+import { freshMeta } from '../engine'
 import type { LocalStore, SyncEvent, SyncMeta, SyncPreference } from '../ports'
 
 export interface MemoryLocalStore extends LocalStore {
@@ -11,12 +12,15 @@ export interface MemoryLocalStore extends LocalStore {
 
 const identity = (event: SyncEvent): string => `${event.at}|${event.kind}|${event.subject}`
 
-/** A fake device: an event log with sync flags, a preference map and meta. */
-export function createMemoryLocalStore(): MemoryLocalStore {
+/**
+ * A fake device: an event log with sync flags, a preference map and meta.
+ * `merge` stands in for a store's `mergePreference`.
+ */
+export function createMemoryLocalStore(merge?: LocalStore['mergePreference']): MemoryLocalStore {
   const log: (SyncEvent & { id: number; synced: boolean })[] = []
   const preferences = new Map<string, SyncPreference>()
   let nextId = 1
-  let meta: SyncMeta = { boundUid: null, cursor: null, lastSyncedAt: null }
+  let meta: SyncMeta = freshMeta(null)
 
   const add = (event: SyncEvent, synced: boolean): void => {
     log.push({ ...event, id: nextId++, synced })
@@ -51,9 +55,13 @@ export function createMemoryLocalStore(): MemoryLocalStore {
     applyPreferences: (next) => {
       for (const preference of next) preferences.set(preference.key, preference)
     },
-    readMeta: () => ({ ...meta }),
+    removePreferences: (keys) => {
+      for (const key of keys) preferences.delete(key)
+    },
+    mergePreference: merge,
+    readMeta: () => structuredClone(meta),
     writeMeta: (next) => {
-      meta = { ...next }
+      meta = structuredClone(next)
     },
   }
 }

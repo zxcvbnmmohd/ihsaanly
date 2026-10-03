@@ -4,6 +4,7 @@
 // the URL the e2e builds point at (support/build.ts).
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { CONTENT_SCHEMA_VERSION } from '@ihsaanly/core/content/bundle'
 import type { BrowserContext, Page } from '@playwright/test'
 import { E2E_CONTENT_URL } from '../support/build.ts'
 import { contentItem } from './content.ts'
@@ -38,7 +39,7 @@ function updatedItems(): unknown {
 async function publish(context: BrowserContext, items: unknown): Promise<void> {
   const files: Record<string, unknown> = {
     'manifest.json': {
-      schemaVersion: 1,
+      schemaVersion: CONTENT_SCHEMA_VERSION,
       version: VERSION,
       publishedAt: '2026-10-01T00:00:00.000Z',
       items: `v${VERSION}/items.json`,

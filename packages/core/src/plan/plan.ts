@@ -10,6 +10,7 @@ import {
   windowAt,
 } from '../prayer/windows'
 
+import { checkInAt, isCheckInDue } from './check-in'
 import { matchesDay, matchesWindowDay, readingsDiverge } from './day-match'
 import { isJumuahAt, isJumuahDay, resolveTriggerPrayer } from './jumuah'
 import { isQuiet } from './quiet-hours'
@@ -32,10 +33,13 @@ const MAX_PENDING_NOTIFICATIONS = 60
  */
 const LOOK_AHEAD_OFFSET_MS = 20 * 60_000
 
-/** The prayer whose arrival closes each adhkar window. */
-const WINDOW_CLOSES: Record<'morning' | 'evening', Prayer> = {
+type ContentWindow = Extract<Trigger, { kind: 'window' }>['window']
+
+/** The prayer whose arrival closes each content window. */
+const WINDOW_CLOSES: Record<ContentWindow, Prayer> = {
   morning: 'dhuhr',
   evening: 'maghrib',
+  night: 'fajr',
 }
 
 /**
@@ -63,9 +67,10 @@ export const RULING_RANK: Record<Ruling, number> = {
   mubah: 5,
 }
 
-const WINDOW_FOR: Partial<Record<WindowName, 'morning' | 'evening'>> = {
+const WINDOW_FOR: Partial<Record<WindowName, ContentWindow>> = {
   sunrise: 'morning',
   asr: 'evening',
+  isha: 'night',
 }
 
 /** The prayer a window belongs to, where it has one. */
@@ -113,16 +118,37 @@ function isOptional(item: Item, signals: Signals): boolean {
   return signals.userState.travelling && item.category === 'fasting'
 }
 
+function isFast(item: Item): boolean {
+  return item.category === 'fasting'
+}
+
+/**
+ * What the pause sets aside: every prayer, whether its trigger is a prayer
+ * (the rawatib, the dhikr after salah) or not (Duha, the nights of Ramadan,
+ * flagged in content), and every fast.
+ */
+function setAsideWhilePaused(item: Item): boolean {
+  return item.trigger.kind === 'prayer' || item.isPrayer === true || isFast(item)
+}
+
 function availableItems(signals: Signals): Item[] {
   const enabled = new Set(signals.preferences.enabledItemIds)
   const { travelling, trackingPaused } = signals.userState
 
   return signals.items.filter((item) => {
     if (!enabled.has(item.id)) return false
-    if (trackingPaused && item.trigger.kind === 'prayer') return false
+    if (item.onlyWhilePaused) return trackingPaused
+    if (trackingPaused && setAsideWhilePaused(item)) return false
     if (travelling && isRawatib(item)) return false
     return true
   })
+}
+
+/** Whether an item could appear at all in this state, enabled or not. */
+export function isOfferedNow(item: Item, signals: Signals): boolean {
+  const { trackingPaused } = signals.userState
+  if (item.onlyWhilePaused) return trackingPaused
+  return !(trackingPaused && setAsideWhilePaused(item))
 }
 
 /**
@@ -341,11 +367,34 @@ function scheduleNotifications(signals: Signals, items: Item[]): ScheduledNotifi
     return true
   }
 
+  // First, so the pending cap can never crowd out the one the user asked for.
+  const checkIn = signals.userState.trackingPaused ? signals.userState.pauseCheckInOn : null
+  if (checkIn) {
+    const at = checkInAt(checkIn, signals.timeZone)
+    if (at > signals.now && admit(at, false)) scheduled.push({ kind: 'check-in', at })
+  }
+
+  // While paused, the prayer reminders the user opted into become the
+  // remembrance item's, at the same moments and under the same switch.
+  const remembrance = signals.userState.trackingPaused
+    ? items.find((item) => item.onlyWhilePaused && item.trigger.kind === 'prayer')
+    : undefined
+
   futureWindows(signals).forEach((window) => {
     const prayer = PRAYER_FOR_WINDOW[window.name]
     const jumuah = isJumuahAt(window.startsAt, signals.timeZone, signals.attendsJumuah)
-    if (prayer && notifications.prayers && admit(window.startsAt, false)) {
+    const paused = signals.userState.trackingPaused
+    if (prayer && notifications.prayers && !paused && admit(window.startsAt, false)) {
       scheduled.push({ kind: 'prayer', prayer, at: window.startsAt, jumuah })
+    }
+    if (prayer && notifications.prayers && remembrance && admit(window.startsAt, false)) {
+      scheduled.push({
+        kind: 'remembrance',
+        itemId: remembrance.id,
+        prayer,
+        at: window.startsAt,
+        endsAt: window.endsAt,
+      })
     }
 
     const name = WINDOW_FOR[window.name]
@@ -453,6 +502,9 @@ export function plan(signals: Signals): Plan {
       })
       .map((item) => item.id)
 
+  const { trackingPaused } = signals.userState
+  const enabled = new Set(signals.preferences.enabledItemIds)
+
   return {
     today: {
       hijri: signals.today.hijri,
@@ -478,6 +530,10 @@ export function plan(signals: Signals): Plan {
         ...open.filter((entry) => entry.reason === 'today'),
         ...lookAhead(items, signals.upcoming, signals),
       ],
+      pausedNotice: trackingPaused
+        ? { fastingResumes: signals.items.some((item) => enabled.has(item.id) && isFast(item)) }
+        : null,
+      checkInDue: isCheckInDue(signals.userState, signals.today.civil),
     },
     notifications: scheduleNotifications(signals, items),
   }

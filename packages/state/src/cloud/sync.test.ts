@@ -1,8 +1,9 @@
 import { afterAll, beforeEach, describe, expect, it } from 'bun:test'
+import { freshMeta, SYNC_META_VERSION } from '@ihsaanly/cloud/engine'
 import { createMemoryAuth } from '@ihsaanly/cloud/memory/auth'
 import { createMemoryFeedback } from '@ihsaanly/cloud/memory/feedback'
 import { createMemorySyncRemote } from '@ihsaanly/cloud/memory/sync-remote'
-import type { Cloud } from '@ihsaanly/cloud/ports'
+import type { Cloud, PushChanges } from '@ihsaanly/cloud/ports'
 import { z } from 'zod'
 
 import '../../test/native'
@@ -106,10 +107,32 @@ describe('the local store', () => {
 
   it('defaults meta and round-trips it', () => {
     const local = createLocalStore()
-    expect(local.readMeta()).toEqual({ boundUid: null, cursor: null, lastSyncedAt: null })
+    expect(local.readMeta()).toEqual(freshMeta(null))
 
-    local.writeMeta({ boundUid: 'u', cursor: '3', lastSyncedAt: 9 })
-    expect(local.readMeta()).toEqual({ boundUid: 'u', cursor: '3', lastSyncedAt: 9 })
+    const meta = {
+      ...freshMeta('u'),
+      cursor: '3',
+      lastSyncedAt: 9,
+      profileWritten: true,
+      syncedPreferences: { theme: 4 },
+    }
+    local.writeMeta(meta)
+    expect(local.readMeta()).toEqual(meta)
+  })
+
+  it('reads meta from before layout 2 as version 1, keeping the account it is bound to', () => {
+    backend.writePreferenceRow(
+      'sync',
+      JSON.stringify({ boundUid: 'u', cursor: '1.0', lastSyncedAt: 9 }),
+    )
+    expect(createLocalStore().readMeta()).toEqual({
+      version: 1,
+      boundUid: 'u',
+      cursor: '1.0',
+      lastSyncedAt: 9,
+      profileWritten: false,
+      syncedPreferences: {},
+    })
   })
 
   it('inserts remote events as synced and makes readers see them', () => {
@@ -199,8 +222,45 @@ describe('the cloud session', () => {
     ])
   })
 
+  it('moves a device that synced in layout 1 into the current layout on its next sync', async () => {
+    recordEvent({ kind: 'prayer-performed', subject: 'fajr', at: new Date(1_000), logDay: 'd' })
+    backend.writePreferenceRowAt('hijriOffset', '1', 7)
+    const local = createLocalStore()
+    local.markSynced(local.unsyncedEvents().map((event) => event.id))
+    // What a layout-1 client left behind: bound, everything pushed, an old cursor.
+    backend.writePreferenceRow(
+      'sync',
+      JSON.stringify({ boundUid: 'me', cursor: '1.0', lastSyncedAt: 5 }),
+    )
+    const pushes: PushChanges[] = []
+    const push = cloud.remote.push
+    cloud.remote.push = (uid, changes) => {
+      pushes.push(changes)
+      return push(uid, changes)
+    }
+
+    start()
+    await session.signIn('apple')
+    await session.syncNow()
+    await session.syncNow()
+
+    expect(pushes[0]).toMatchObject({
+      events: [{ kind: 'prayer-performed', subject: 'fajr' }],
+      preferences: [{ key: 'hijriOffset', value: '1', updatedAt: 7 }],
+      profile: true,
+    })
+    // Once: the next sync has nothing to push, the profile included.
+    expect(pushes).toHaveLength(1)
+    expect(createLocalStore().readMeta()).toMatchObject({
+      version: SYNC_META_VERSION,
+      boundUid: 'me',
+      profileWritten: true,
+      syncedPreferences: { hijriOffset: 7 },
+    })
+  })
+
   it('asks before merging into a different account, then merges', async () => {
-    createLocalStore().writeMeta({ boundUid: 'someone-else', cursor: null, lastSyncedAt: null })
+    createLocalStore().writeMeta(freshMeta('someone-else'))
     recordEvent({ kind: 'prayer-performed', subject: 'fajr', at: new Date(1_000), logDay: 'd' })
     start()
 

@@ -11,6 +11,7 @@ import {
   signIn,
   test,
 } from './support/device.ts'
+import { remoteMonths } from './support/journeys.ts'
 import { getDoc, listDocs, uidOf } from './support/rest.ts'
 
 const A = 'a@test.dev'
@@ -46,16 +47,38 @@ test('device A signs in and uploads its marks; device B restores them', async ({
   const marks = (local?.events ?? []).filter((event) => event.kind === 'prayer-performed')
   expect(marks.map((event) => event.subject).sort()).toEqual(['asr', 'fajr'])
   const month = (marks[0]?.logDay ?? '').slice(0, 7)
-  const months = await listDocs(`users/${uid}/eventMonths`)
-  expect(months.map((doc) => doc.name.split('/').pop())).toEqual([month])
-  const uploaded = Object.keys(months[0]?.data.events as Record<string, unknown>)
-  for (const mark of marks) expect(uploaded).toContain(`${mark.at}|${mark.kind}|${mark.subject}`)
+  // Layout 2: one `sync` collection holds the months and the preferences,
+  // with readable field names; the profile is written once.
+  const { doc: profile } = await getDoc(`users/${uid}`)
+  expect(Object.keys(profile?.data ?? {}).sort()).toEqual(['createdAt', 'schemaVersion'])
+  expect(profile?.data.schemaVersion).toBe(2)
+  const synced = await listDocs(`users/${uid}/sync`)
+  expect(synced.map((doc) => doc.name.split('/').pop()).sort()).toEqual([month, 'preferences'])
+  const months = await remoteMonths(uid)
+  expect(months[0]?.data).toMatchObject({ type: 'events', month })
+  const entries = months[0]?.data.events as Record<
+    string,
+    { logDay: string; deltaSeconds: unknown }
+  >
+  for (const mark of marks) {
+    const entry = entries[`${mark.at}|${mark.kind}|${mark.subject}`]
+    expect(entry?.logDay).toBe(mark.logDay)
+    expect(Object.keys(entry ?? {}).sort()).toEqual(['deltaSeconds', 'logDay'])
+  }
 
-  const { doc: preferences } = await getDoc(`users/${uid}/state/preferences`)
-  const prefs = preferences?.data.prefs as Record<string, { v: string; t: number }>
-  expect(Object.keys(prefs)).not.toContain('events')
-  expect(Object.keys(prefs)).toContain('onboarding')
-  const place = JSON.parse(prefs.place?.v ?? 'null') as { latitude: number; longitude: number }
+  const { doc: preferencesDoc } = await getDoc(`users/${uid}/sync/preferences`)
+  expect(preferencesDoc?.data.type).toBe('preferences')
+  const preferences = preferencesDoc?.data.preferences as Record<
+    string,
+    { value: string; updatedAt: number }
+  >
+  expect(Object.keys(preferences)).not.toContain('events')
+  expect(Object.keys(preferences)).toContain('onboarding')
+  expect(typeof preferences.onboarding?.updatedAt).toBe('number')
+  const place = JSON.parse(preferences.place?.value ?? 'null') as {
+    latitude: number
+    longitude: number
+  }
   // London, Westminster from the city list: the synced copy is rounded to 2 decimals (~1 km).
   const localPlace = JSON.parse(local?.preferences.place ?? 'null') as typeof place
   expect(place.latitude).toBe(Math.round(localPlace.latitude * 100) / 100)

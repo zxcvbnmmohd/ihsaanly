@@ -22,6 +22,18 @@ export const UserState = z.object({
   travelling: z.boolean(),
   trackingPaused: z.boolean(),
   jumuah: JumuahChoice.default('auto'),
+  /**
+   * The civil day (YYYY-MM-DD) to ask whether the pause is over, chosen when
+   * pausing; null or absent for no check-in. A question, never a timer: the
+   * pause still ends only when the user says so. It travels inside userState,
+   * already declared health-adjacent, and is optional so a row written before
+   * it existed, or by an older app, still parses.
+   */
+  pauseCheckInOn: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/)
+    .nullable()
+    .optional(),
 })
 
 export type UserState = z.infer<typeof UserState>
@@ -30,4 +42,5 @@ export const DEFAULT_USER_STATE: UserState = {
   travelling: false,
   trackingPaused: false,
   jumuah: 'auto',
+  pauseCheckInOn: null,
 }

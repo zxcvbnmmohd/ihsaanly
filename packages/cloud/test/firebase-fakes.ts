@@ -32,6 +32,8 @@ export const fake = {
   batches: [] as number[],
   /** Document reads (getDoc), by path. */
   reads: [] as string[],
+  /** Queries and collection reads (getDocs), by collection path. */
+  queries: [] as string[],
   clock: 1,
   /** How many auto ids `doc(collection)` has handed out. */
   autoIds: 0,
@@ -42,6 +44,22 @@ export const fake = {
   user: { uid: 'user-1' } as Data,
   /** A function name (e.g. 'signInWithPopup', or 'commit' for a batch) → the error it rejects with. */
   failures: new Map<string, unknown>(),
+  /** Open snapshot listeners (onSnapshot), in attach order. */
+  listeners: [] as Listener[],
+}
+
+/** One onSnapshot: what it has been told so far, and its callbacks. */
+export interface Listener {
+  query: QueryRef
+  known: Map<string, Data>
+  next: (snap: { docChanges: () => DocChange[] }) => void
+  error?: (error: unknown) => void
+  active: boolean
+}
+
+export interface DocChange {
+  type: 'added' | 'modified' | 'removed'
+  doc: Snapshot
 }
 
 export interface FakeAuth {
@@ -59,12 +77,14 @@ export function resetFakes(): void {
   fake.docs = new Map()
   fake.batches = []
   fake.reads = []
+  fake.queries = []
   fake.clock = 1
   fake.autoIds = 0
   fake.firestores = new Map()
   fake.auths = new Map()
   fake.user = { uid: 'user-1' }
   fake.failures = new Map()
+  fake.listeners = []
 }
 
 export function callsTo(fn: string, entry?: string): unknown[][] {
@@ -106,12 +126,14 @@ interface QueryRef {
   constraints: { type: 'where' | 'orderBy'; field: string; op?: string; value?: unknown }[]
 }
 const SERVER_TIME = { __serverTimestamp: true }
+const DELETE = { __delete: true }
 
 const isPlain = (value: unknown): value is Data =>
   typeof value === 'object' &&
   value !== null &&
   !(value instanceof Timestamp) &&
   value !== SERVER_TIME &&
+  value !== DELETE &&
   !Array.isArray(value)
 
 function resolveTimes(value: unknown, at: Timestamp): unknown {
@@ -123,29 +145,35 @@ function resolveTimes(value: unknown, at: Timestamp): unknown {
 function merge(into: Data, from: Data): Data {
   const out: Data = { ...into }
   for (const [key, value] of Object.entries(from)) {
+    if (value === DELETE) {
+      delete out[key]
+      continue
+    }
     const existing = out[key]
     out[key] = isPlain(value) && isPlain(existing) ? merge(existing, value) : value
   }
   return out
 }
 
-interface Snapshot {
+export interface Snapshot {
   id: string
   ref: Ref
   exists: () => boolean
   data: () => Data | undefined
   get: (field: string) => unknown
+  metadata: { hasPendingWrites: boolean }
 }
 
 const idOf = (path: string): string => path.slice(path.lastIndexOf('/') + 1)
 
-function snapshot(path: string, data: Data | undefined): Snapshot {
+export function snapshot(path: string, data: Data | undefined, hasPendingWrites = false): Snapshot {
   return {
     id: idOf(path),
     ref: { kind: 'doc', path } satisfies Ref,
     exists: () => data !== undefined,
     data: () => data,
     get: (field: string) => data?.[field],
+    metadata: { hasPendingWrites },
   }
 }
 
@@ -158,6 +186,38 @@ function childrenOf(col: string): [string, Data][] {
 
 const compare = (a: unknown, b: unknown): number =>
   a instanceof Timestamp && b instanceof Timestamp ? a.valueOf().localeCompare(b.valueOf()) : 0
+
+function run(source: Ref | QueryRef): [string, Data][] {
+  const col = source.kind === 'query' ? source.col : source
+  let rows = childrenOf(col.path)
+  for (const constraint of source.kind === 'query' ? source.constraints : []) {
+    if (constraint.type === 'where') {
+      rows = rows.filter(([, data]) => compare(data[constraint.field], constraint.value) > 0)
+    } else {
+      rows.sort(([, a], [, b]) => compare(a[constraint.field], b[constraint.field]))
+    }
+  }
+  return rows
+}
+
+/** Tells a listener what changed in its query since it last heard; the first time, always. */
+function emit(listener: Listener, first = false): void {
+  if (!listener.active) return
+  const rows = run(listener.query)
+  const changes: DocChange[] = []
+  for (const [path, data] of rows) {
+    const before = listener.known.get(path)
+    if (before !== data) {
+      changes.push({ type: before ? 'modified' : 'added', doc: snapshot(path, data) })
+    }
+  }
+  const present = new Set(rows.map(([path]) => path))
+  for (const [path, data] of listener.known) {
+    if (!present.has(path)) changes.push({ type: 'removed', doc: snapshot(path, data) })
+  }
+  listener.known = new Map(rows)
+  if (first || changes.length > 0) listener.next({ docChanges: () => changes })
+}
 
 mock.module('firebase/firestore', () => ({
   ...realFirestore,
@@ -186,6 +246,20 @@ mock.module('firebase/firestore', () => ({
     return { kind: 'doc', path: [...base, ...ids].join('/') }
   },
   serverTimestamp: () => SERVER_TIME,
+  deleteField: () => DELETE,
+  onSnapshot: (
+    source: QueryRef,
+    next: Listener['next'],
+    error?: Listener['error'],
+  ): (() => void) => {
+    record('firestore', 'onSnapshot', [source])
+    const listener: Listener = { query: source, known: new Map(), next, error, active: true }
+    fake.listeners.push(listener)
+    emit(listener, true)
+    return () => {
+      listener.active = false
+    }
+  },
   where: (field: string, op: string, value: unknown) => ({ type: 'where', field, op, value }),
   orderBy: (field: string) => ({ type: 'orderBy', field }),
   query: (col: Ref, ...constraints: QueryRef['constraints']): QueryRef => ({
@@ -199,15 +273,8 @@ mock.module('firebase/firestore', () => ({
   },
   getDocs: async (source: Ref | QueryRef) => {
     const col = source.kind === 'query' ? source.col : source
-    let rows = childrenOf(col.path)
-    for (const constraint of source.kind === 'query' ? source.constraints : []) {
-      if (constraint.type === 'where') {
-        rows = rows.filter(([, data]) => compare(data[constraint.field], constraint.value) > 0)
-      } else {
-        rows.sort(([, a], [, b]) => compare(a[constraint.field], b[constraint.field]))
-      }
-    }
-    return { docs: rows.map(([path, data]) => snapshot(path, data)) }
+    fake.queries.push(col.path)
+    return { docs: run(source).map(([path, data]) => snapshot(path, data)) }
   },
   writeBatch: () => {
     const ops: (() => void)[] = []
@@ -230,6 +297,7 @@ mock.module('firebase/firestore', () => ({
         fake.batches.push(ops.length)
         for (const op of ops) op()
         fake.clock += 1
+        for (const listener of fake.listeners) emit(listener)
       },
     }
   },

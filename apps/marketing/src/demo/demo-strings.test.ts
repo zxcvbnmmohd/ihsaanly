@@ -8,7 +8,7 @@ describe('demoCopyFor', () => {
     (language) => {
       const copy = demoCopyFor(language)
       expect(copy.tabsLabel).toBeTruthy()
-      expect(copy.coachOpenItem).toBeTruthy()
+      expect(copy.coachTapCircle).toBeTruthy()
       expect(copy.coachOpenLibrary).toBeTruthy()
       expect(copy.coachMarkPrayer('PRAYER-NAME')).toContain('PRAYER-NAME')
     },

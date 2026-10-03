@@ -3,7 +3,7 @@ import { sqlite } from '../../test/native'
 import { resetStorage } from '../../test/storage'
 
 const backend = await import('./backend')
-const { appendFailure, forgetFailures, recentFailures } = await import('./log')
+const { appendFailure, forgetFailures, onFailure, recentFailures } = await import('./log')
 
 describe('the failure log', () => {
   beforeEach(resetStorage)
@@ -56,5 +56,21 @@ describe('the failure log', () => {
     }
 
     expect(recentFailures().at(-1)).toMatchObject({ label: 'unwritable', message: 'disk' })
+  })
+
+  it('tells listeners about each failure until they stop listening', () => {
+    const heard: string[] = []
+    const stop = onFailure((entry) => heard.push(`${entry.label}: ${entry.message}`))
+    const stopBroken = onFailure(() => {
+      throw new Error('listener broke')
+    })
+
+    appendFailure('heard', new Error('one'))
+    stop()
+    stopBroken()
+    appendFailure('unheard', new Error('two'))
+
+    expect(heard).toEqual(['heard: one'])
+    expect(recentFailures().at(-1)).toMatchObject({ label: 'unheard' })
   })
 })

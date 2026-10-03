@@ -3,7 +3,7 @@ import { resetStorage } from '../../test/storage'
 import type { ContentCheckResult } from './updater'
 
 const core = await import('@ihsaanly/core/content')
-const { bundlePaths } = await import('@ihsaanly/core/content/bundle')
+const { bundlePaths, CONTENT_SCHEMA_VERSION } = await import('@ihsaanly/core/content/bundle')
 const { default: english } = await import('@ihsaanly/core/content/items.json')
 const { default: glossary } = await import('@ihsaanly/core/content/glossary.json')
 const backend = await import('../storage/backend')
@@ -29,7 +29,7 @@ function translation(language: string, title: string): unknown {
 
 function manifest(version: string, overrides: Record<string, unknown> = {}): unknown {
   return {
-    schemaVersion: 1,
+    schemaVersion: CONTENT_SCHEMA_VERSION,
     version,
     publishedAt: '2026-10-01T00:00:00.000Z',
     ...bundlePaths(version, ['fr', 'ar']),
@@ -136,7 +136,10 @@ describe('checking for a content update', () => {
   it('ignores a manifest for another schema version, keeping what it has', async () => {
     publish(V1, 'Version one')
     await check()
-    files['manifest.json'] = manifest(V2, { schemaVersion: 2, items: 'anything' })
+    files['manifest.json'] = manifest(V2, {
+      schemaVersion: CONTENT_SCHEMA_VERSION + 1,
+      items: 'anything',
+    })
     expect(await check()).toBe('skipped')
     expect(installed()).toBe('Version one')
 

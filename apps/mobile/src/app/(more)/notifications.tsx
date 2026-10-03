@@ -6,6 +6,7 @@ import {
   setNotificationPreferences,
   useNotificationPreferences,
 } from '@ihsaanly/state/notifications/store'
+import { useAnnouncements } from '@ihsaanly/state/opt-ins/store'
 import { useEnabledItems } from '@ihsaanly/state/plan/enabled-store'
 import { getStrings } from '@ihsaanly/state/strings'
 import { NotificationsScreen, type RemindableItem } from '@ihsaanly/ui/screens/notifications'
@@ -13,6 +14,7 @@ import * as Linking from 'expo-linking'
 import type { ReactElement } from 'react'
 import { usePermissionStatus } from '@/notifications/permission-store'
 import { scheduleTest } from '@/notifications/schedule'
+import { setAnnouncementsEnabled } from '@/push/announcements'
 
 /** Only window and calendar items are ever scheduled; the rest have no moment to remind of. */
 function categoryOf(item: Item): 'windows' | 'lookAhead' | null {
@@ -26,6 +28,7 @@ export default function NotificationsRoute(): ReactElement {
   const permission = usePermissionStatus()
   const enabled = useEnabledItems()
   const known = useKnownItems()
+  const announcements = useAnnouncements()
 
   const remindable: RemindableItem[] = items.flatMap((item) => {
     const category = categoryOf(item)
@@ -55,6 +58,10 @@ export default function NotificationsRoute(): ReactElement {
       }
       onOpenSettings={() => void Linking.openSettings()}
       onSendTest={() => void scheduleTest(getStrings())}
+      announcements={{
+        on: announcements.enabled,
+        onChange: (on) => void setAnnouncementsEnabled(on, getStrings()),
+      }}
     />
   )
 }

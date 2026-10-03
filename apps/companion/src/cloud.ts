@@ -3,7 +3,7 @@
 // reached through the dynamic import below, so it stays a separate chunk.
 import { firebaseConfigFrom } from '@ihsaanly/cloud/config'
 import type { FirebaseConfig } from '@ihsaanly/cloud/firebase/app'
-import { notifyForeground, startCloud } from '@ihsaanly/state/cloud/session'
+import { notifyBackground, notifyForeground, startCloud } from '@ihsaanly/state/cloud/session'
 
 const config = firebaseConfigFrom({
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -25,5 +25,6 @@ export function startCompanionCloud(firebase: FirebaseConfig | null = config): v
   )
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'visible') notifyForeground()
+    else notifyBackground()
   })
 }

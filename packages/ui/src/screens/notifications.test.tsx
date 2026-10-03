@@ -109,4 +109,20 @@ describe('NotificationsScreen', () => {
       screen.getByRole('radio', { name: strings.notifications.quietHoursOff }),
     ).toHaveAttribute('aria-checked', 'true')
   })
+
+  it('offers announcements only when the host has push', async () => {
+    const onChange = mock((_on: boolean) => {})
+    const { user, strings, unmount } = renderScreen(
+      <NotificationsScreen {...notificationsFixture} announcements={{ on: true, onChange }} />,
+    )
+    const toggle = screen.getByRole('switch', { name: strings.notifications.announcements })
+    expect(toggle).toHaveAttribute('aria-checked', 'true')
+    expect(screen.getByText(strings.notifications.announcementsDetail)).toBeInTheDocument()
+    await user.click(toggle)
+    expect(onChange).toHaveBeenCalledWith(false)
+    unmount()
+
+    renderScreen(<NotificationsScreen {...notificationsFixture} />)
+    expect(screen.queryByRole('switch', { name: strings.notifications.announcements })).toBeNull()
+  })
 })

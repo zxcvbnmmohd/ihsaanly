@@ -26,6 +26,32 @@ export const ur: Strings = {
       'نماز کے اوقات، ہجری تاریخ اور دن کا ہر عمل ایک اندازاً مقام سے طے ہوتا ہے۔ یہ اسی آلے پر حساب ہوتا ہے اور وہیں رہتا ہے، جب تک آپ ہم آہنگی کے لیے سائن اِن نہ کریں۔',
     chooseCity: 'اس کے بجائے شہر منتخب کریں',
     chooseCityDetail: 'کسی اجازت کی ضرورت نہیں۔ سب کچھ پھر بھی چلتا ہے۔',
+    prayerHint: 'نماز پڑھ لینے پر اس پر ٹیپ کریں',
+    markDone: (name: string): string => `${name} مکمل نشان زد کریں`,
+    unmark: (name: string): string => `${name} کا نشان ہٹائیں`,
+    countItem: (name: string, count: number, target: number): string =>
+      `${name} گنیں، ${target} میں سے ${count}`,
+    partsItem: (name: string, done: number, total: number): string =>
+      `${name} کے حصے، ${total} میں سے ${done} مکمل`,
+    open: (name: string): string => `${name} کھولیں`,
+    doneToday: (count: number): string => `آج مکمل (${count})`,
+    markedDone: 'مکمل نشان زد',
+    undo: 'واپس کریں',
+    undoItem: (name: string): string => `${name} واپس کریں`,
+    paused: 'نماز کا ریکارڈ رکا ہوا ہے',
+    pausedFasting: 'آپ کے وقفے کے بعد روزہ دوبارہ دکھائی دے گا',
+    checkInTitle: 'کیا نماز کا ریکارڈ دوبارہ شروع کریں؟',
+    resume: 'دوبارہ شروع کریں',
+    notYet: 'ابھی نہیں',
+  },
+  tour: {
+    prayer: 'نماز نشان زد کرنے کے لیے دائرے پر ٹیپ کریں',
+    sunnah: 'سنت ادا کرنے پر اس کے ساتھ والے دائرے پر ٹیپ کریں',
+    card: 'سیکھنے کے لیے کارڈ پر ٹیپ کریں: الفاظ، مفہوم اور حوالہ',
+    step: (step: number, total: number): string => `${total} میں سے ${step}`,
+    skip: 'چھوڑیں',
+    next: 'آگے',
+    done: 'سمجھ گیا',
   },
   plan: {
     rightNow: 'ابھی',
@@ -89,8 +115,13 @@ export const ur: Strings = {
     whichItemsDetail: 'یہاں صرف وہ اعمال نظر آتے ہیں جن کا کوئی وقت یاد دلانے کے لیے ہو۔',
     sendTest: 'آزمائشی یاد دہانی بھیجیں',
     sendTestDetail: 'چند سیکنڈ میں پہنچ جائے گی۔',
+    announcements: 'اعلانات',
+    announcementsDetail:
+      'احسانلی کی طرف سے کبھی کبھار پیغامات، جیسے رمضان کا آغاز۔ آپ کی روزانہ یاد دہانیوں کو اس کی ضرورت نہیں۔',
     testTitle: 'ایک آزمائشی یاد دہانی',
     testBody: 'احسانلی کی یاد دہانی ایسی دکھتی ہے۔',
+    pausedRemembrance: 'اذکار کا وقت',
+    checkIn: 'Ihsaanly کی طرف سے ایک مختصر پیغام',
     action: {
       done: 'ہو گیا',
       later: 'بعد میں',
@@ -261,6 +292,9 @@ export const ur: Strings = {
     imported: (n: number): string => `${count(n, 'اندراج', 'اندراجات')} شامل ہوئے۔`,
     importFailed: 'وہ فائل پڑھی نہیں جا سکی۔',
     shareFailed: 'اس آلے پر شیئر کرنا دستیاب نہیں۔',
+    crashReports: 'کریش رپورٹس شیئر کریں',
+    crashReportsDetail:
+      'مسائل حل کرنے میں مدد کے لیے کریش رپورٹس اور خرابیاں بھیجیں۔ ان میں آپ کے آلے کا ماڈل اور ایپ کا ورژن شامل ہوتا ہے، آپ کی عبادت یا اکاؤنٹ کبھی نہیں۔',
     delete: 'میرا ڈیٹا حذف کریں',
     deleteDetail: 'اس آلے پر سب کچھ: ترتیبات اور آپ کے عمل کا ریکارڈ۔ ایپ نئے سرے سے شروع ہو گی۔',
     deleteConfirmTitle: 'سب کچھ حذف کریں؟',
@@ -425,6 +459,10 @@ export const ur: Strings = {
       dhuhr: 'ظہر کی نماز',
     },
     jumuahAutoDetail: 'جمعے کے دن جمعہ، سوائے اس کے کہ آپ سفر میں ہوں یا آپ نے "بہن" چنا ہو۔',
+    checkIn: 'جانچ کے لیے یاد دلائیں',
+    checkInAfter: (days: number): string => `تقریباً ${days} دن میں یاد دلائیں`,
+    checkInOff: 'کوئی یاد دہانی نہیں۔ جب چاہیں ریکارڈ دوبارہ چالو کریں۔',
+    checkInDays: 'دن',
   },
   hijri: {
     title: 'ہجری تاریخ',
@@ -507,6 +545,8 @@ export const ur: Strings = {
     home: 'گھر',
     masjid: 'مسجد',
     prayer: 'نماز',
+    quran: 'قرآن',
+    charity: 'صدقہ',
     sleep: 'سونا اور جاگنا',
     travel: 'سفر',
   },
@@ -562,17 +602,16 @@ export const ur: Strings = {
     app: 'ایپ',
     practice: 'آپ کے اعمال',
     empty: 'ریکارڈ، ترتیبات اور مدد یہاں ہوں گی۔',
+    help: 'مدد',
+    showMeAround: 'ایپ دکھائیں',
   },
   onboarding: {
     welcomeTitle: 'لمحہ، گھڑی نہیں۔',
     welcomeBody:
       'احسانلی آپ کو بتاتی ہے کہ شام کے اذکار کا وقت کب ہے۔ کبھی گھڑی کا وقت نہیں۔ کبھی نمبر نہیں۔',
-    howTitle: 'آپ نماز نشان زد کریں۔ سنت سامنے آ جاتی ہے۔',
-    howBody:
-      'ظہر پڑھ لیں تو اس پر ٹیپ کریں، اور اس کے بعد کا ذکر منتظر ہو گا۔ سب کچھ اسی آلے پر رہتا ہے، جب تک آپ ہم آہنگی کے لیے سائن اِن کرنا نہ چنیں۔',
+    howTitle: 'Ihsaanly وہ دکھاتا ہے جو اس لمحے کے مطابق ہو۔ ادا کر لینے پر دائرے پر ٹیپ کریں۔',
     language: 'زبان',
     appearance: 'ظاہری شکل',
-    howSample: 'سُبْحَانَ اللهِ وَبِحَمْدِهِ',
     locationStep: 'آپ کہاں ہیں؟',
     locationWhy:
       'دن کے حصے معلوم کرنے کے لیے اسی آلے پر استعمال ہوتا ہے۔ وہیں رہتا ہے، جب تک آپ ہم آہنگی کے لیے سائن اِن نہ کریں۔',
@@ -587,10 +626,14 @@ export const ur: Strings = {
     skipDetail: 'وقفے کی پیشکش پھر بھی ہو گی۔',
     genderPrivacy:
       'اسی آلے پر محفوظ، اور صرف سائن اِن کرنے پر ہم آہنگ ہوتا ہے۔ کسی اور کام میں استعمال نہیں ہوتا۔',
-    remindersStep: 'یاد دہانیاں',
-    remindersWhy: 'دن میں دو یا تین، رات میں کبھی نہیں۔ یہ سب بعد میں "مزید" میں بدل سکتے ہیں۔',
-    windowsDetail: 'جب ہر وقت شروع ہو',
-    lookAheadDetail: 'ایک شام پہلے',
+    remindersStep: 'اطلاعات',
+    remindersWhy:
+      'چنیں کہ احسانلی آپ کو کس بارے میں اطلاع دے۔ دونوں کو بعد میں "مزید" میں بدل سکتے ہیں۔',
+    dailyReminders: 'روزانہ یاد دہانیاں',
+    dailyRemindersDetail: 'صبح و شام کے اذکار اور آنے والے روزوں کے دن، اسی ڈیوائس پر طے شدہ۔',
+    announcementsChoice: 'احسانلی کی طرف سے اعلانات',
+    announcementsChoiceDetail:
+      'کبھی کبھار کی خبریں، جیسے رمضان کا آغاز، جو ہم بھیجتے ہیں۔ جب تک آپ آن نہ کریں، بند رہتے ہیں۔',
     startStep: 'آغاز کی جگہ',
     startWhy: 'شروع کرنے کے لیے ایک مقدار چنیں۔ کتب خانے میں جب چاہیں کچھ بھی شامل کریں یا ہٹائیں۔',
     starting: 'بس شروعات',
@@ -612,6 +655,7 @@ export const ur: Strings = {
     back: 'واپس',
     continue: 'جاری رکھیں',
     allowReminders: 'یاد دہانیوں کی اجازت دیں',
+    allowNotifications: 'اطلاعات کی اجازت دیں',
     notNow: 'ابھی نہیں',
     done: 'شروع کریں',
     restore: 'پہلے سے Ihsaanly استعمال کرتے ہیں؟ اپنا ڈیٹا بحال کرنے کے لیے سائن اِن کریں',
@@ -668,5 +712,8 @@ export const ur: Strings = {
   },
   panel: {
     close: 'بند کریں',
+    markAll: 'سب مکمل نشان زد کریں',
+    progress: (count: number, target: number): string => `${target} میں سے ${count}`,
+    tapToCount: 'گننے کے لیے ٹیپ کریں',
   },
 }

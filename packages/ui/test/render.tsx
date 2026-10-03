@@ -16,7 +16,7 @@ import { zh } from '@ihsaanly/core/strings/zh'
 import { system } from '@ihsaanly/tailwind/tokens'
 import { act, type RenderResult, render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { Children, cloneElement, isValidElement, type ReactElement } from 'react'
+import { Children, cloneElement, isValidElement, type ReactElement, type ReactNode } from 'react'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import type { Layout } from '../src/layout'
 import { type UiContextValue, type UiLinkProps, UiProvider } from '../src/provider'
@@ -113,12 +113,15 @@ export function renderScreen(
   // react-native-web draws a disabled control with pointer-events: none;
   // clicking it anyway is how a test proves a disabled control does nothing.
   const user = userEvent.setup({ pointerEventsCheck: 0 })
-  const result = render(
+  const wrap = (element: ReactNode): ReactElement => (
     <SafeAreaProvider initialMetrics={NO_INSETS}>
-      <UiProvider value={value}>{ui}</UiProvider>
-    </SafeAreaProvider>,
+      <UiProvider value={value}>{element}</UiProvider>
+    </SafeAreaProvider>
   )
-  return { ...result, user, navigations, strings }
+  const result = render(wrap(ui))
+  // Re-renders inside the same providers, so a test can change props.
+  const rerender = (element: ReactNode): void => result.rerender(wrap(element))
+  return { ...result, rerender, user, navigations, strings }
 }
 
 /**

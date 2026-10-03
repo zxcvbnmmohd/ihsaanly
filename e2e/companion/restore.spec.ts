@@ -36,7 +36,7 @@ test('after onboarding, More has an Account row', async ({ page }) => {
   await page.getByRole('button', { name: /^London Westminster, United Kingdom/ }).click()
   await page.getByRole('button', { name: en.onboarding.continue }).click()
   await page.getByRole('button', { name: en.onboarding.continue }).click()
-  await page.getByRole('button', { name: en.onboarding.allowReminders }).click()
+  await page.getByRole('button', { name: en.onboarding.allowNotifications }).click()
   await page.getByRole('button', { name: en.onboarding.done }).click()
   await expect(page).toHaveURL(/\/today$/)
 

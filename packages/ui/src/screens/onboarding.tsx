@@ -22,7 +22,6 @@ import {
 import Animated, { FadeInRight, useReducedMotion } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useColors } from '../colors'
-import { ArabicText } from '../components/arabic-text'
 import { Button } from '../components/button'
 import { Chip } from '../components/chip'
 import { ChoiceRow } from '../components/choice-row'
@@ -34,7 +33,7 @@ import { SwitchRow } from '../components/switch-row'
 import { TextField } from '../components/text-field'
 import { serif } from '../fonts'
 import { useUi } from '../provider'
-import type { Gender } from '../types'
+import type { Gender, OptIn } from '../types'
 import { THEME_PREFERENCES, type ThemePreference } from '../types'
 
 export type OnboardingStep = 'welcome' | 'how' | 'location' | 'you' | 'reminders' | 'start'
@@ -68,7 +67,11 @@ export interface OnboardingScreenProps {
   onUseDevice: () => void
   onSelectPlace: (place: Place) => void
   onSelectGender: (gender: Gender) => void
-  onToggleNotification: (change: Partial<NotificationPreferences>) => void
+  /**
+   * The "Daily reminders" switch: the reminders scheduled on this device, on
+   * (the default categories) or off (every category).
+   */
+  onToggleReminders: (on: boolean) => void
   onSelectPreset: (preset: StarterPreset) => void
   onNext: () => void
   onBack: () => void
@@ -79,6 +82,21 @@ export interface OnboardingScreenProps {
    * then replaces this flow. Omitted in a local-only build, which hides it.
    */
   onRestore?: () => void
+  /**
+   * The "Announcements from Ihsaanly" choice on the reminders step: off until
+   * chosen, and applied only once notifications are allowed. Only a build that
+   * can receive push offers it; the others leave it out and show no switch.
+   */
+  announcements?: OptIn | undefined
+}
+
+function remindersOn(notifications: NotificationPreferences): boolean {
+  return notifications.windows || notifications.lookAhead || notifications.prayers
+}
+
+/** Whether the reminders step has anything to ask the OS permission for. */
+function wantsNotifications(props: OnboardingScreenProps): boolean {
+  return remindersOn(props.notifications) || props.announcements?.on === true
 }
 
 interface HeadingProps {
@@ -427,8 +445,11 @@ function StepBody(props: StepBodyProps): ReactElement {
           <View className="flex-1 items-center justify-center py-6">
             <OnboardingArt variant="how" color={palette.accent} onColor={palette.onAccent} />
           </View>
-          <Heading title={strings.onboarding.howTitle} body={strings.onboarding.howBody} />
-          <ArabicText>{strings.onboarding.howSample}</ArabicText>
+          <Text
+            className="text-center text-3xl leading-tight"
+            style={{ fontFamily: serif, color: colors.label, fontWeight: '600' }}>
+            {strings.onboarding.howTitle}
+          </Text>
         </>
       )
 
@@ -519,6 +540,8 @@ function StepBody(props: StepBodyProps): ReactElement {
 
     case 'reminders': {
       const quiet = props.notifications.quietHours
+      const daily = remindersOn(props.notifications)
+      const announcements = props.announcements
 
       return (
         <>
@@ -527,41 +550,36 @@ function StepBody(props: StepBodyProps): ReactElement {
             body={strings.onboarding.remindersWhy}
           />
           <SwitchRow
-            title={strings.notifications.windows}
-            detail={strings.onboarding.windowsDetail}
-            value={props.notifications.windows}
-            onValueChange={(windows) => props.onToggleNotification({ windows })}
+            title={strings.onboarding.dailyReminders}
+            detail={strings.onboarding.dailyRemindersDetail}
+            value={daily}
+            onValueChange={props.onToggleReminders}
             accent={palette.accent}
             knob={palette.knob}
             track={palette.wash[1]}
           />
-          <SwitchRow
-            title={strings.notifications.lookAhead}
-            detail={strings.onboarding.lookAheadDetail}
-            value={props.notifications.lookAhead}
-            onValueChange={(lookAhead) => props.onToggleNotification({ lookAhead })}
-            accent={palette.accent}
-            knob={palette.knob}
-            track={palette.wash[1]}
-          />
-          <SwitchRow
-            title={strings.notifications.prayers}
-            detail={strings.notifications.prayersDetail}
-            value={props.notifications.prayers}
-            onValueChange={(prayers) => props.onToggleNotification({ prayers })}
-            accent={palette.accent}
-            knob={palette.knob}
-            track={palette.wash[1]}
-          />
-          <Text className="pt-1 text-xs leading-snug" style={{ color: colors.secondaryLabel }}>
-            {quiet
-              ? strings.onboarding.reminderPolicy(
-                  props.notifications.maxPerDay,
-                  quiet.from,
-                  quiet.to,
-                )
-              : strings.onboarding.reminderCap(props.notifications.maxPerDay)}
-          </Text>
+          {announcements ? (
+            <SwitchRow
+              title={strings.onboarding.announcementsChoice}
+              detail={strings.onboarding.announcementsChoiceDetail}
+              value={announcements.on}
+              onValueChange={announcements.onChange}
+              accent={palette.accent}
+              knob={palette.knob}
+              track={palette.wash[1]}
+            />
+          ) : null}
+          {daily ? (
+            <Text className="pt-1 text-xs leading-snug" style={{ color: colors.secondaryLabel }}>
+              {quiet
+                ? strings.onboarding.reminderPolicy(
+                    props.notifications.maxPerDay,
+                    quiet.from,
+                    quiet.to,
+                  )
+                : strings.onboarding.reminderCap(props.notifications.maxPerDay)}
+            </Text>
+          ) : null}
         </>
       )
     }
@@ -637,9 +655,7 @@ export function OnboardingScreen(props: OnboardingScreenProps): ReactElement {
 
   const { step } = props
   const intro = step === 'welcome' || step === 'how'
-  const anyReminder =
-    props.notifications.windows || props.notifications.lookAhead || props.notifications.prayers
-  const asking = step === 'reminders' && anyReminder
+  const asking = step === 'reminders' && wantsNotifications(props)
   const needsPlace = step === 'location' && props.place === null
 
   // Every way past a step sits beside Back, so the footer is the same height
@@ -656,7 +672,7 @@ export function OnboardingScreen(props: OnboardingScreenProps): ReactElement {
     step === 'start'
       ? strings.onboarding.done
       : asking
-        ? strings.onboarding.allowReminders
+        ? strings.onboarding.allowNotifications
         : strings.onboarding.continue
 
   return (

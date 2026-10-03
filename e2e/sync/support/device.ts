@@ -30,7 +30,9 @@ async function openDevice(browser: Browser, baseURL: string): Promise<Device> {
   // https://apis.google.com/js/gen_204 now and then; postbuild's connect-src
   // does not list it, so Chrome logs two CSP lines. Google's telemetry, not
   // the app's: dropped here, and reported (it would show in production too).
-  const noise = /apis\.google\.com\/js\/gen_204/
+  // The Firestore SDK's occasional network probe (www.google.com/images/
+  // cleardot.gif) is blocked the same way and is just as harmless.
+  const noise = /apis\.google\.com\/js\/gen_204|www\.google\.com\/images\/cleardot\.gif/
   return {
     page,
     get errors() {
@@ -135,11 +137,6 @@ export async function expectSynced(page: Page, email: string): Promise<void> {
   await expect(main.getByText(email, { exact: true }).last()).toBeVisible()
   await expect(main.getByText(/^Last synced /)).toBeVisible()
   await expect(main.getByText(en.account.upToDate, { exact: true })).toBeVisible()
-}
-
-/** What the app does when it comes back to the foreground (apps/companion/src/cloud.ts). */
-export async function foreground(page: Page): Promise<void> {
-  await page.evaluate(() => document.dispatchEvent(new Event('visibilitychange')))
 }
 
 /** The device's local store (localStorage key ihsaanly.db.v1, packages/state storage/backend.web.ts). */

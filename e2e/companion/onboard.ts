@@ -31,7 +31,7 @@ export async function onboardWithCity(page: Page, strings: Strings = en): Promis
 
   await expect(page).toHaveURL(/\/onboarding\/reminders$/)
   await expect(page.getByText(s.remindersStep, { exact: true })).toBeVisible()
-  await page.getByRole('button', { name: s.allowReminders }).click()
+  await page.getByRole('button', { name: s.allowNotifications }).click()
 
   await expect(page).toHaveURL(/\/onboarding\/start$/)
   await expect(page.getByRole('radio', { name: new RegExp(`^${s.essentials}`) })).toBeChecked()

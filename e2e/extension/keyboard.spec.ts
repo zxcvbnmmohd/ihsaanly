@@ -1,11 +1,14 @@
 import { expect, test } from './fixtures.ts'
-import { chooseCity } from './helpers.ts'
+import { chooseCity, skipTour } from './helpers.ts'
 
 test('Tab moves through Today and every stop is a visible, focusable control', async ({
   openPopup,
 }) => {
   const { page } = await openPopup()
   await chooseCity(page)
+  await skipTour(page)
+  // Tab from the top of the page, not from where the tour left focus.
+  await page.reload()
   await expect(page.getByText('PRAYERS')).toBeVisible()
   const seen = new Set<string>()
   for (let i = 0; i < 12; i++) {
@@ -35,6 +38,7 @@ test('the More link is reachable by keyboard and Enter opens Settings', async ({
 test('a prayer can be toggled with the keyboard', async ({ openPopup }) => {
   const { page } = await openPopup()
   await chooseCity(page)
+  await skipTour(page)
   const box = page.getByRole('checkbox', { name: 'Isha' })
   await box.focus()
   await expect(box).toBeFocused()

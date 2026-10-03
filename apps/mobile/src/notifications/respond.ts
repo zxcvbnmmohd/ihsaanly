@@ -1,6 +1,7 @@
 import { getPlace } from '@ihsaanly/state/location/store'
 import type { NotificationContent } from '@ihsaanly/state/notifications/content'
 import {
+  announcementData,
   DEFAULT_ACTION,
   LATER_DELAY_MS,
   parseNotificationData,
@@ -8,6 +9,7 @@ import {
 } from '@ihsaanly/state/notifications/payload'
 import { completeItem } from '@ihsaanly/state/plan/completions'
 import { router } from 'expo-router'
+import { openAnnouncement } from '@/push/open'
 import { scheduleLater } from './schedule'
 
 /** The slice of a response this module reads; the full type belongs to expo-notifications. */
@@ -34,7 +36,8 @@ export async function handleResponse(response: Response, navigate = true): Promi
   handled.add(key)
 
   const { content } = response.notification.request
-  const data = parseNotificationData(content.data)
+  // A pushed announcement tapped on iOS carries the console's raw data, not ours.
+  const data = parseNotificationData(content.data) ?? announcementData(content.data)
   if (!data) return
 
   const timeZone = getPlace()?.timeZone ?? 'UTC'
@@ -67,6 +70,7 @@ export async function handleResponse(response: Response, navigate = true): Promi
       if (!navigate) return
       if (data.kind === 'item') router.push(`/item/${data.itemId}`)
       else if (data.kind === 'test') router.push('/notifications')
+      else if (data.kind === 'announcement') openAnnouncement(data)
       else router.push('/')
   }
 }

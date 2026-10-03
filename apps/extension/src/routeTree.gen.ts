@@ -21,6 +21,7 @@ import { Route as LocationRouteImport } from './routes/location'
 import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as QadaRouteImport } from './routes/qada'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as TodayRouteImport } from './routes/today'
 import { Route as ItemIdRouteImport } from './routes/item/$id'
 
 const IndexRoute = IndexRouteImport.update({
@@ -83,6 +84,11 @@ const SettingsRoute = SettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TodayRoute = TodayRouteImport.update({
+  id: '/today',
+  path: '/today',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ItemIdRoute = ItemIdRouteImport.update({
   id: '/item/$id',
   path: '/item/$id',
@@ -102,6 +108,7 @@ export interface FileRoutesByFullPath {
   '/notifications': typeof NotificationsRoute
   '/qada': typeof QadaRoute
   '/settings': typeof SettingsRoute
+  '/today': typeof TodayRoute
   '/item/$id': typeof ItemIdRoute
 }
 export interface FileRoutesByTo {
@@ -117,6 +124,7 @@ export interface FileRoutesByTo {
   '/notifications': typeof NotificationsRoute
   '/qada': typeof QadaRoute
   '/settings': typeof SettingsRoute
+  '/today': typeof TodayRoute
   '/item/$id': typeof ItemIdRoute
 }
 export interface FileRoutesById {
@@ -133,6 +141,7 @@ export interface FileRoutesById {
   '/notifications': typeof NotificationsRoute
   '/qada': typeof QadaRoute
   '/settings': typeof SettingsRoute
+  '/today': typeof TodayRoute
   '/item/$id': typeof ItemIdRoute
 }
 export interface FileRouteTypes {
@@ -150,6 +159,7 @@ export interface FileRouteTypes {
     | '/notifications'
     | '/qada'
     | '/settings'
+    | '/today'
     | '/item/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -165,6 +175,7 @@ export interface FileRouteTypes {
     | '/notifications'
     | '/qada'
     | '/settings'
+    | '/today'
     | '/item/$id'
   id:
     | '__root__'
@@ -180,6 +191,7 @@ export interface FileRouteTypes {
     | '/notifications'
     | '/qada'
     | '/settings'
+    | '/today'
     | '/item/$id'
   fileRoutesById: FileRoutesById
 }
@@ -196,6 +208,7 @@ export interface RootRouteChildren {
   NotificationsRoute: typeof NotificationsRoute
   QadaRoute: typeof QadaRoute
   SettingsRoute: typeof SettingsRoute
+  TodayRoute: typeof TodayRoute
   ItemIdRoute: typeof ItemIdRoute
 }
 
@@ -285,6 +298,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/today': {
+      id: '/today'
+      path: '/today'
+      fullPath: '/today'
+      preLoaderRoute: typeof TodayRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/item/$id': {
       id: '/item/$id'
       path: '/item/$id'
@@ -308,6 +328,7 @@ const rootRouteChildren: RootRouteChildren = {
   NotificationsRoute: NotificationsRoute,
   QadaRoute: QadaRoute,
   SettingsRoute: SettingsRoute,
+  TodayRoute: TodayRoute,
   ItemIdRoute: ItemIdRoute,
 }
 export const routeTree = rootRouteImport

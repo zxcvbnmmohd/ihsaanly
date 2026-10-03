@@ -80,6 +80,41 @@ function withSignIn(plugins: ExpoConfig['plugins']): ExpoConfig['plugins'] {
   ]
 }
 
+/**
+ * Native Firebase, for the two opt-ins only: announcements (Cloud Messaging
+ * topics) and crash reports (Crashlytics). Sign-in and sync stay on the JS
+ * SDK. The config files are public client config, like the web config, and
+ * are committed per Firebase project; staging shares development's project.
+ * `firebase.json` beside this file keeps Crashlytics collection and messaging
+ * auto-init off until the person turns each on.
+ */
+function firebaseFiles(name: Variant): { ios: string; android: string } {
+  const dir = `./firebase/${name === 'production' ? 'production' : 'development'}`
+  return { ios: `${dir}/GoogleService-Info.plist`, android: `${dir}/google-services.json` }
+}
+
+/**
+ * React Native Firebase resolves the Apple SDK with Swift Package Manager by
+ * default, which needs dynamic frameworks. Static frameworks are the
+ * long-standing Expo setup and what the other native modules here are built
+ * against, so SPM is turned off and the Firebase pods come from CocoaPods,
+ * linked statically (rnfirebase.io, "Expo" → "iOS").
+ */
+const FIREBASE_PLUGINS: NonNullable<ExpoConfig['plugins']> = [
+  ['@react-native-firebase/app', { ios: { disableSPM: true } }],
+  '@react-native-firebase/messaging',
+  '@react-native-firebase/crashlytics',
+  [
+    'expo-build-properties',
+    {
+      ios: {
+        useFrameworks: 'static',
+        forceStaticLinking: ['RNFBApp', 'RNFBMessaging', 'RNFBCrashlytics'],
+      },
+    },
+  ],
+]
+
 type PrivacyManifests = NonNullable<NonNullable<ExpoConfig['ios']>['privacyManifests']>
 
 const APP_FUNCTIONALITY = ['NSPrivacyCollectedDataTypeAppFunctionality']
@@ -104,6 +139,23 @@ const COLLECTED_DATA_TYPES = [
 ].map((type) => ({
   NSPrivacyCollectedDataType: type,
   NSPrivacyCollectedDataTypeLinked: true,
+  NSPrivacyCollectedDataTypeTracking: false,
+  NSPrivacyCollectedDataTypePurposes: APP_FUNCTIONALITY,
+}))
+
+/**
+ * What the opt-in "Share crash reports" (Crashlytics) and "Announcements"
+ * (FCM) switches can send: crash data, and the Firebase installation / FCM and
+ * APNs tokens, which Google's Firebase disclosure guide says to declare as
+ * Device ID. Neither is linked to the person (no account or user ID is
+ * attached) and neither tracks. Both are off until the person turns them on.
+ */
+const UNLINKED_DATA_TYPES = [
+  'NSPrivacyCollectedDataTypeCrashData',
+  'NSPrivacyCollectedDataTypeDeviceID',
+].map((type) => ({
+  NSPrivacyCollectedDataType: type,
+  NSPrivacyCollectedDataTypeLinked: false,
   NSPrivacyCollectedDataTypeTracking: false,
   NSPrivacyCollectedDataTypePurposes: APP_FUNCTIONALITY,
 }))
@@ -137,12 +189,14 @@ const ACCESSED_API_TYPES = [
 const PRIVACY_MANIFESTS: PrivacyManifests = {
   NSPrivacyTracking: false,
   NSPrivacyTrackingDomains: [],
-  NSPrivacyCollectedDataTypes: COLLECTED_DATA_TYPES,
+  NSPrivacyCollectedDataTypes: [...COLLECTED_DATA_TYPES, ...UNLINKED_DATA_TYPES],
   NSPrivacyAccessedAPITypes: ACCESSED_API_TYPES,
 }
 
 export default ({ config }: ConfigContext): ExpoConfig => {
-  const { suffix, name } = VARIANTS[variant()]
+  const current = variant()
+  const { suffix, name } = VARIANTS[current]
+  const firebase = firebaseFiles(current)
   const id = `${BASE_ID}${suffix}`
   const group = `group.${id}`
 
@@ -153,6 +207,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     ios: {
       ...config.ios,
       bundleIdentifier: id,
+      googleServicesFile: firebase.ios,
       privacyManifests: PRIVACY_MANIFESTS,
       ...(hasCloud() ? { usesAppleSignIn: true } : {}),
       entitlements: {
@@ -160,8 +215,8 @@ export default ({ config }: ConfigContext): ExpoConfig => {
         'com.apple.security.application-groups': [group],
       },
     },
-    android: { ...config.android, package: id },
-    plugins: withSignIn(withGroup(config.plugins, group)),
+    android: { ...config.android, package: id, googleServicesFile: firebase.android },
+    plugins: [...(withSignIn(withGroup(config.plugins, group)) ?? []), ...FIREBASE_PLUGINS],
     extra: { ...config.extra, appGroup: group },
   }
 }

@@ -30,15 +30,25 @@ import {
 import { useCalculationPreferences } from '@ihsaanly/state/prayer/store'
 import { useStrings } from '@ihsaanly/state/strings'
 import { useNow } from '@ihsaanly/state/time/use-now'
-import { onMakeUpFor, split, toEntry, toNext } from '@ihsaanly/ui/props/today'
+import { useTodaySunnah } from '@ihsaanly/state/today/use-today-sunnah'
+import { onMakeUpFor } from '@ihsaanly/ui/props/today'
 import type { LocationProblem } from '@ihsaanly/ui/screens/onboarding'
 import { type SuggestionEntry, TodayScreen } from '@ihsaanly/ui/screens/today'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { type ReactElement, useEffect, useState } from 'react'
 import { PageHeader } from '~/components/page-header'
 import { requestDeviceLocation } from '~/platform/location'
 
-export const Route = createFileRoute('/today')({ component: TodayRoute })
+interface TodaySearch {
+  tour?: 1
+}
+
+export const Route = createFileRoute('/today')({
+  component: TodayRoute,
+  // More → "Show me around" links to /today?tour=1.
+  validateSearch: (search: Record<string, unknown>): TodaySearch =>
+    search.tour === 1 || search.tour === '1' ? { tour: 1 } : {},
+})
 
 interface Thing {
   locating: boolean
@@ -55,7 +65,6 @@ function TodayRoute(): ReactElement {
   const marks = useTodayMarks(place?.timeZone ?? 'UTC', now)
   const qada = useQada()
   const strings = useStrings()
-  const ahead = split(planned?.today.comingUp ?? [])
   const onboarding = useOnboarding()
   const suggestion = useSuggestion()
   const enabled = useEnabledItems()
@@ -74,6 +83,15 @@ function TodayRoute(): ReactElement {
         entry.name === prayer && entry.endsAt <= now && civilDay(entry.startsAt) === civilDay(now),
     )
   const window = planned?.today.window ?? null
+  const navigate = useNavigate()
+  const { notePrayerMarked, ...sunnah } = useTodaySunnah({
+    planned,
+    strings,
+    now,
+    timeZone,
+    replayTour: Route.useSearch().tour === 1,
+    onTourEnd: () => void navigate({ to: '/today', search: {}, replace: true }),
+  })
 
   const phase: Phase =
     onboarding.completedAt &&
@@ -123,6 +141,7 @@ function TodayRoute(): ReactElement {
     }
     const current = windows.filter((entry) => entry.name === prayer && entry.startsAt <= now).pop()
     markPrayer(prayer, now, place.timeZone, current)
+    notePrayerMarked()
   }
 
   return (
@@ -147,11 +166,7 @@ function TodayRoute(): ReactElement {
         }).format(now)}
         hijri={planned?.today.hijri ?? null}
         placeLabel={place ? (place.label.split(',')[0]?.trim() ?? place.label) : null}
-        now={planned?.today.now.flatMap((entry) => toEntry(entry, strings, itemById) ?? []) ?? []}
-        next={toNext(planned?.today.next ?? null, now, strings, itemById)}
-        allDay={ahead.allDay.flatMap((entry) => toEntry(entry, strings, itemById, false) ?? [])}
-        tomorrow={ahead.tomorrow.flatMap((entry) => toEntry(entry, strings, itemById, false) ?? [])}
-        later={ahead.later.flatMap((entry) => toEntry(entry, strings, itemById) ?? [])}
+        {...sunnah}
         prayers={
           place && !signals?.userState.trackingPaused
             ? PRAYERS.map((prayer) => ({
@@ -167,7 +182,7 @@ function TodayRoute(): ReactElement {
         }))}
         onMarkPrayer={togglePrayer}
         onMakeUp={onMakeUpFor(place?.timeZone, now, markMadeUp)}
-        fastingToday={ramadan ? { recorded: fastOwedToday } : null}
+        fastingToday={ramadan && !sunnah.paused ? { recorded: fastOwedToday } : null}
         fastsOwed={fastsOwed}
         onRecordFastOwed={() => recordFastOwed(now, timeZone)}
         onUndoFastOwed={() => clearFastOwed(now, timeZone)}

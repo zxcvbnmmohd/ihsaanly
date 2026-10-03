@@ -2,13 +2,13 @@
 // writes, step state, and building the props OnboardingScreen renders. Shared
 // by mobile and the web companion, which differ only in two things neither
 // screen nor store can supply — asking the device for a location fix, and (on
-// mobile only) asking the OS for a reminders permission — so both come in as
-// parameters instead of being read here.
+// mobile only) asking the OS for notification permission and turning on
+// announcements — so those come in as parameters instead of being read here.
 import { items, resolveText } from '@ihsaanly/core/content'
 import { supportedLanguageOf } from '@ihsaanly/core/i18n/locale'
 import { searchCities } from '@ihsaanly/core/location/cities'
 import type { Place } from '@ihsaanly/core/location/place'
-import type { NotificationPreferences } from '@ihsaanly/core/plan/notification-preferences'
+import { DEFAULT_NOTIFICATION_PREFERENCES } from '@ihsaanly/core/plan/notification-preferences'
 import { idsForPreset, presetFor } from '@ihsaanly/core/plan/presets'
 import type {
   LocationProblem,
@@ -47,11 +47,18 @@ export interface OnboardingFlowActions {
   /** `expo-location` on mobile, `navigator.geolocation` on the web. */
   requestDeviceLocation: () => Promise<DeviceLocation>
   /**
-   * Asks the OS for permission to deliver reminders, if the platform has one
-   * to ask — a browser (`capabilities.reminders` off) does not, so the web
-   * companion omits this and the flow advances straight past the prompt.
+   * Asks the OS for permission to show notifications, if the platform has one
+   * to ask, and resolves to whether it was granted — a browser
+   * (`capabilities.reminders` off) does not, so the web companion omits this
+   * and the flow advances straight past the prompt.
    */
-  ensureReminderPermission?: () => Promise<void>
+  ensureReminderPermission?: () => Promise<boolean>
+  /**
+   * Turns announcements on, the same path as the More → Reminders switch.
+   * Given, the reminders step offers the choice (off until chosen) and this
+   * runs once permission is granted. Omitted where there is no push (the web).
+   */
+  enableAnnouncements?: () => Promise<unknown>
   /**
    * Where the current step lives when the host keeps it outside React state
    * (the web keeps it in the URL, so Back, Forward and reload work). Omitted,
@@ -67,6 +74,8 @@ interface Thing {
   query: string
   problem: LocationProblem
   locating: boolean
+  /** The reminders step's Announcements choice, applied only on a grant. */
+  announcements: boolean
 }
 
 /**
@@ -75,7 +84,13 @@ interface Thing {
  * through and arrive at a reasonable day without understanding the choices yet.
  */
 export function useOnboardingFlow(actions: OnboardingFlowActions): OnboardingScreenProps {
-  const [thing, setThing] = useState<Thing>({ index: 0, query: '', problem: null, locating: false })
+  const [thing, setThing] = useState<Thing>({
+    index: 0,
+    query: '',
+    problem: null,
+    locating: false,
+    announcements: false,
+  })
   const place = usePlace()
   const onboarding = useOnboarding()
   const notifications = useNotificationPreferences()
@@ -100,13 +115,28 @@ export function useOnboardingFlow(actions: OnboardingFlowActions): OnboardingScr
     go(index + 1)
   }
 
+  const enableAnnouncements = actions.enableAnnouncements
+  /** The announcements to turn on with the permission, if they were chosen. */
+  const announce = thing.announcements ? enableAnnouncements : undefined
+
   const next = (): void => {
     // The permission prompt belongs to the button that asks for it, not to
-    // the Today tab some time later. Where there is nothing to ask (the web),
-    // this just advances.
-    if (step === 'reminders' && anyReminder && actions.ensureReminderPermission) {
+    // the Today tab some time later, and one prompt covers both kinds of
+    // notification. Where there is nothing to ask (the web), or nothing was
+    // chosen, this just advances.
+    const ask = actions.ensureReminderPermission
+    if (step === 'reminders' && (anyReminder || announce) && ask) {
       // Advance whatever the prompt does; a rejection is handled here, not left unhandled.
-      void actions.ensureReminderPermission().then(advance, advance)
+      void ask().then((granted) => {
+        // Refused, announcements stay off; reminders stay as chosen, for
+        // when the permission is given later in system settings.
+        if (granted && announce) {
+          announce().catch(() => {
+            // Logged by the host; the switch in More shows what stuck.
+          })
+        }
+        advance()
+      }, advance)
       return
     }
     advance()
@@ -161,12 +191,24 @@ export function useOnboardingFlow(actions: OnboardingFlowActions): OnboardingScr
     onUseDevice: useDevice,
     onSelectPlace: choosePlace,
     onSelectGender: (gender: Gender) => setOnboarding({ ...onboarding, gender }),
-    onToggleNotification: (change: Partial<NotificationPreferences>) =>
-      setNotificationPreferences({ ...notifications, ...change }),
+    onToggleReminders: (on: boolean) => {
+      const { windows, lookAhead, prayers } = DEFAULT_NOTIFICATION_PREFERENCES
+      setNotificationPreferences(
+        on
+          ? { ...notifications, windows, lookAhead, prayers }
+          : { ...notifications, windows: false, lookAhead: false, prayers: false },
+      )
+    },
     onSelectPreset: (preset: StarterPreset) => setEnabledItems(idsForPreset(preset, items)),
     onNext: next,
     onBack: () => go(Math.max(0, index - 1)),
     onSkipIntro: () => go(SETUP_INDEX),
     onNotNow: advance,
+    announcements: enableAnnouncements
+      ? {
+          on: thing.announcements,
+          onChange: (on: boolean) => setThing((current) => ({ ...current, announcements: on })),
+        }
+      : undefined,
   }
 }

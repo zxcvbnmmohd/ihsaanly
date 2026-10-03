@@ -38,7 +38,8 @@ const Evidence = z.discriminatedUnion('type', [HadithEvidence, QuranEvidence])
 const Trigger = z.discriminatedUnion('kind', [
   z.object({
     kind: z.literal('window'),
-    window: z.enum(['morning', 'evening']),
+    // 'night' is the Isha window, running to Fajr: the night and its last third.
+    window: z.enum(['morning', 'evening', 'night']),
     // Narrows the window to one weekday, as the last hour of Friday is the
     // evening window on a Friday only. Absent means every day.
     day: z.enum(['friday']).optional(),
@@ -66,6 +67,8 @@ const Trigger = z.discriminatedUnion('kind', [
       'arafah',
       'shawwal-6',
       'dhul-hijjah',
+      // Its first nine days: the tenth is Eid, when fasting is not allowed.
+      'dhul-hijjah-fasting',
       'ramadan',
     ]),
   }),
@@ -139,6 +142,18 @@ const Item = z
     audioTranslation: LocalisedText.nullable(),
     /** The texts to say, in order, when the item is a set such as the morning adhkar. */
     parts: z.array(Part).optional(),
+    /**
+     * The act is a prayer, whatever its trigger: Duha is window-triggered and
+     * the night prayer of Ramadan day-triggered, yet both step aside while
+     * tracking is paused, as every prayer-triggered item already does. Said
+     * outright rather than guessed from the id or the category.
+     */
+    isPrayer: z.boolean().optional(),
+    /**
+     * Offered only while tracking is paused, in place of what the pause sets
+     * aside: remembrance at the prayer times, du'a, the Qur'an heard, charity.
+     */
+    onlyWhilePaused: z.boolean().optional(),
   })
   .superRefine((item, ctx) => {
     item.evidence.forEach((evidence, index) => {
@@ -161,6 +176,23 @@ const Item = z
         })
       }),
     )
+
+    // What the pause offers stands in for what it sets aside, so it can never
+    // be one of those things itself, and it always has a moment and words.
+    if (item.onlyWhilePaused && (item.isPrayer || item.category === 'fasting')) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['onlyWhilePaused'],
+        message: `"${item.id}" is offered only while paused, so it cannot be a prayer or a fast`,
+      })
+    }
+    if (item.onlyWhilePaused && (item.reminder === null || item.why === null)) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['onlyWhilePaused'],
+        message: `"${item.id}" is offered only while paused, so it needs a why and a reminder`,
+      })
+    }
 
     parts
       .map((part) => part.id)

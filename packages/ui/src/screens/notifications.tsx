@@ -13,7 +13,7 @@ import { Row } from '../components/row'
 import { Screen } from '../components/screen'
 import { SwitchRow } from '../components/switch-row'
 import { useUi } from '../provider'
-import type { PermissionStatus } from '../types'
+import type { OptIn, PermissionStatus } from '../types'
 
 export const QUIET_HOUR_PRESETS: (QuietHours | null)[] = [
   null,
@@ -38,6 +38,8 @@ export interface NotificationsScreenProps {
   onToggleItem: (id: string, on: boolean) => void
   onOpenSettings: () => void
   onSendTest: () => void
+  /** Occasional messages pushed to everyone who opted in. Left out where there is no push. */
+  announcements?: OptIn | undefined
 }
 
 interface SectionProps {
@@ -96,6 +98,7 @@ export function NotificationsScreen({
   onToggleItem,
   onOpenSettings,
   onSendTest,
+  announcements,
 }: NotificationsScreenProps): ReactElement {
   const { strings, scheme } = useUi()
   const palette = palettes[scheme]
@@ -144,6 +147,18 @@ export function NotificationsScreen({
           track={palette.wash[1]}
         />
       </View>
+
+      {announcements ? (
+        <SwitchRow
+          title={strings.notifications.announcements}
+          detail={strings.notifications.announcementsDetail}
+          value={announcements.on}
+          onValueChange={announcements.onChange}
+          accent={palette.accent}
+          knob={palette.knob}
+          track={palette.wash[1]}
+        />
+      ) : null}
 
       {items.length > 0 ? (
         <Section

@@ -41,9 +41,34 @@ export function forgetFailures(): void {
   cached = null
 }
 
+const listeners = new Set<(entry: FailureEntry) => void>()
+
+/**
+ * Hears every failure as it is logged. For crash reporting, which forwards
+ * them only while the person has it switched on; the returned function stops it.
+ */
+export function onFailure(listener: (entry: FailureEntry) => void): () => void {
+  listeners.add(listener)
+  return (): void => {
+    listeners.delete(listener)
+  }
+}
+
+function tell(entry: FailureEntry): void {
+  listeners.forEach((listener) => {
+    try {
+      listener(entry)
+    } catch {
+      // A listener failing is not a failure to log: that would loop.
+    }
+  })
+}
+
 export function appendFailure(label: string, error: unknown): void {
-  const next = appended(read(), entryFor(label, error, new Date()))
+  const entry = entryFor(label, error, new Date())
+  const next = appended(read(), entry)
   cached = next
+  tell(entry)
 
   try {
     writePreference(KEY, next)

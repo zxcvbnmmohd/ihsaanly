@@ -144,6 +144,16 @@ export function writePreferenceRowAt(key: string, json: string, updatedAt: numbe
   persist()
 }
 
+export function deletePreferenceRows(keys: string[]): void {
+  const times = { ...store.preferenceTimes }
+  for (const key of keys) {
+    delete store.preferences[key]
+    delete times[key]
+  }
+  store.preferenceTimes = times
+  persist()
+}
+
 export function allPreferenceRows(): { key: string; value: string }[] {
   return Object.entries(store.preferences).map(([key, value]) => ({ key, value }))
 }

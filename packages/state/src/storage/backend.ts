@@ -98,6 +98,13 @@ export function writePreferenceRowAt(key: string, json: string, updatedAt: numbe
   )
 }
 
+/** Item progress for a finished period, or a key another device dropped. Nothing else is deleted. */
+export function deletePreferenceRows(keys: string[]): void {
+  database.withTransactionSync(() => {
+    for (const key of keys) database.runSync('DELETE FROM preferences WHERE key = ?', key)
+  })
+}
+
 export function allPreferenceRows(): { key: string; value: string }[] {
   return database.getAllSync<{ key: string; value: string }>('SELECT key, value FROM preferences')
 }

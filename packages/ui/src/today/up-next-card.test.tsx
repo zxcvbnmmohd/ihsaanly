@@ -15,7 +15,7 @@ describe('UpNextCard', () => {
     expect(screen.queryByRole('heading', { name: strings.plan.before })).toBeNull()
     const [after] = upNextCardFixture.next.after
     if (!after) throw new Error('fixture has no after entry')
-    await user.click(screen.getByRole('link', { name: after.title }))
+    await user.click(screen.getByRole('link', { name: strings.today.open(after.title) }))
     expect(navigations).toEqual([after.href])
   })
 

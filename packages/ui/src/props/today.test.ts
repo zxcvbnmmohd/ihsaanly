@@ -7,7 +7,10 @@ import {
   detailFor,
   distanceLabel,
   itemEntry,
+  markFor,
+  markKind,
   onMakeUpFor,
+  panelFor,
   soonestEach,
   split,
   toEntry,
@@ -178,5 +181,65 @@ describe('onMakeUpFor', () => {
     const calls: unknown[][] = []
     onMakeUpFor(undefined, now, (...args) => calls.push(args))('asr')
     expect(calls).toEqual([])
+  })
+})
+
+describe('marks and panels', () => {
+  const tasbih = itemById('tasbih-after-prayer')
+  const adhkar = itemById('morning-adhkar')
+  const witr = { repeat: 1 }
+  if (!tasbih || !adhkar) throw new Error('content changed')
+  const none = { count: 0, parts: [] }
+
+  it('tells how an item is done', () => {
+    expect(markKind(witr)).toBe('once')
+    expect(markKind(tasbih)).toBe('count')
+    expect(markKind(adhkar)).toBe('parts')
+  })
+
+  it('draws a plain circle for an item done in one go, or one that is done', () => {
+    expect(markFor(witr, false, none)).toEqual({ done: false, progress: null })
+    expect(markFor(tasbih, true, { count: 12, parts: [] })).toEqual({ done: true, progress: null })
+  })
+
+  it('draws a ring of the count or of the parts said', () => {
+    expect(markFor(tasbih, false, { count: 12, parts: [] }).progress).toEqual({
+      kind: 'count',
+      value: 12,
+      total: 33,
+    })
+    const first = adhkar.parts?.[0]?.id ?? ''
+    expect(markFor(adhkar, false, { count: 0, parts: [first, 'gone'] }).progress).toEqual({
+      kind: 'parts',
+      value: 1,
+      total: adhkar.parts?.length ?? 0,
+    })
+  })
+
+  it('opens the counter or the checklist, and nothing for an item done in one go', () => {
+    expect(panelFor(tasbih, { count: 5, parts: [] })).toMatchObject({
+      kind: 'count',
+      itemId: 'tasbih-after-prayer',
+      count: 5,
+      target: 33,
+    })
+    const first = adhkar.parts?.[0]?.id ?? ''
+    const panel = panelFor(adhkar, { count: 0, parts: [first] })
+    expect(panel?.kind).toBe('parts')
+    expect(panel?.kind === 'parts' ? panel.parts.filter((part) => part.done) : []).toHaveLength(1)
+    const once = itemById('witr')
+    if (!once) throw new Error('content changed')
+    expect(panelFor(once, none)).toBeNull()
+  })
+
+  it('falls back to ids where content carries no title in this language', () => {
+    const bare = {
+      ...adhkar,
+      title: {},
+      parts: (adhkar.parts ?? []).map((part) => ({ ...part, title: {} })),
+    } as unknown as typeof adhkar
+    const panel = panelFor(bare, none)
+    expect(panel?.title).toBe('morning-adhkar')
+    expect(panel?.kind === 'parts' ? panel.parts[0]?.title : null).toBe(adhkar.parts?.[0]?.id)
   })
 })

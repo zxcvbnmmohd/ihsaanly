@@ -1,25 +1,27 @@
 import type { Prayer } from '@ihsaanly/core/prayer/qada'
 import type { ReactElement } from 'react'
-import { Pressable, Text, View } from 'react-native'
+import { Text, View } from 'react-native'
 import { useColors } from '../colors'
 import { Surface } from '../components/surface'
 import { serif } from '../fonts'
 import { useUi } from '../provider'
 import type { NextPrayerEntry, TodayEntry } from '../screens/today'
+import { EntryCard } from './entry-card'
 
 export interface UpNextCardProps {
   next: NextPrayerEntry
   names: Record<Prayer, string>
+  onCircle: (id: string) => void
 }
 
-/** The next prayer by name and rough distance, with what content asks around it. */
-export function UpNextCard({ next, names }: UpNextCardProps): ReactElement {
+/** The next prayer by name and rough distance, with the cards for what is asked around it. */
+export function UpNextCard({ next, names, onCircle }: UpNextCardProps): ReactElement {
   const colors = useColors()
-  const { strings, Link } = useUi()
+  const { strings } = useUi()
 
   const list = (title: string, entries: TodayEntry[]): ReactElement | null =>
     entries.length > 0 ? (
-      <View className="gap-1.5">
+      <View className="gap-2">
         <Text
           accessibilityRole="header"
           aria-level={2}
@@ -28,20 +30,14 @@ export function UpNextCard({ next, names }: UpNextCardProps): ReactElement {
           {title}
         </Text>
         {entries.map((entry) => (
-          <Link key={entry.id} href={entry.href} asChild>
-            <Pressable accessibilityRole="link" className="py-1">
-              <Text className="text-base" style={{ color: colors.label }}>
-                {entry.title}
-              </Text>
-            </Pressable>
-          </Link>
+          <EntryCard key={entry.id} entry={entry} onCircle={onCircle} />
         ))}
       </View>
     ) : null
 
   return (
-    <Surface style={{ borderRadius: 24, padding: 22 }}>
-      <View className="gap-4">
+    <View className="gap-4">
+      <Surface style={{ borderRadius: 24, padding: 22 }}>
         <View className="gap-0.5">
           <Text
             className="text-2xl leading-tight"
@@ -52,9 +48,9 @@ export function UpNextCard({ next, names }: UpNextCardProps): ReactElement {
             {next.distance}
           </Text>
         </View>
-        {list(strings.plan.before, next.before)}
-        {list(strings.plan.after, next.after)}
-      </View>
-    </Surface>
+      </Surface>
+      {list(strings.plan.before, next.before)}
+      {list(strings.plan.after, next.after)}
+    </View>
   )
 }

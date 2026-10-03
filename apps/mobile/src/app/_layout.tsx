@@ -1,8 +1,9 @@
 import { setContentLanguage } from '@ihsaanly/core/content'
 import { languageOf } from '@ihsaanly/core/i18n/locale'
-import { notifyForeground } from '@ihsaanly/state/cloud/session'
+import { notifyBackground, notifyForeground } from '@ihsaanly/state/cloud/session'
 import { getLocale } from '@ihsaanly/state/i18n/store'
 import { useOnboarding } from '@ihsaanly/state/onboarding/store'
+import { startProgress } from '@ihsaanly/state/progress/configure'
 import { useStrings } from '@ihsaanly/state/strings'
 import { NativeTabs } from 'expo-router/native-tabs'
 import { DarkTheme, DefaultTheme, ThemeProvider } from 'expo-router/react-navigation'
@@ -12,8 +13,10 @@ import { useCallback, useEffect, useState } from 'react'
 import { AppState, Platform, Text, View } from 'react-native'
 import { cloudEnabled, startMobileCloud } from '@/cloud'
 import { startMobileContentUpdates } from '@/content/updates'
+import { startCrashReporting } from '@/crash/crash'
 import { useNotificationResponse } from '@/notifications/use-response'
 import { OnboardingFlow } from '@/onboarding/flow'
+import { useAnnouncements } from '@/push/use-announcements'
 import { colors } from '@/theme/colors'
 import {
   applyThemePreference,
@@ -27,6 +30,7 @@ import '../../global.css'
 
 setContentLanguage(languageOf(getLocale()))
 applyThemePreference(getThemePreference())
+startProgress()
 
 /**
  * Today is the app, so it is where the app opens.
@@ -85,6 +89,12 @@ export default function RootLayout(): ReactElement {
   const palette = usePalette()
   const onboarding = useOnboarding()
   useNotificationResponse(onboarding.completed)
+  useAnnouncements(onboarding.completed)
+
+  // Crash reporting as the person left it; off unless they turned it on.
+  useEffect(() => {
+    void startCrashReporting()
+  }, [])
 
   // After the first render: newer content is fetched for the next open.
   useEffect(() => startMobileContentUpdates(), [])
@@ -94,6 +104,7 @@ export default function RootLayout(): ReactElement {
     const stop = startMobileCloud()
     const subscription = AppState.addEventListener('change', (state) => {
       if (state === 'active') notifyForeground()
+      else if (state === 'background' || state === 'inactive') notifyBackground()
     })
     return () => {
       subscription.remove()

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test'
 import { en } from '@ihsaanly/core/strings/en'
-import { filterGroups, type MoreGroupsInput, moreGroups } from './more'
+import { filterGroups, type MoreGroupsInput, moreGroups, SHOW_ME_AROUND_HREF } from './more'
 
 const baseInput: MoreGroupsInput = {
   strings: en,
@@ -43,6 +43,17 @@ describe('moreGroups', () => {
     const groups = moreGroups({ ...baseInput, qadaOwed: 4 })
     const qada = groups[2]?.rows.find((row) => row.href === '/qada')
     expect(qada?.detail).toBe(en.qada.summary(4))
+  })
+})
+
+describe('the Help group', () => {
+  it('ends the list with Show me around, which restarts the tour on Today', () => {
+    const help = moreGroups(baseInput).at(-1)
+    expect(help?.title).toBe(en.more.help)
+    expect(help?.rows).toEqual([
+      { href: SHOW_ME_AROUND_HREF, title: en.more.showMeAround, detail: null },
+    ])
+    expect(SHOW_ME_AROUND_HREF).toBe('/today?tour=1')
   })
 })
 

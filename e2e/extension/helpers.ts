@@ -27,3 +27,10 @@ export async function alarmNames(worker: import('@playwright/test').Worker): Pro
     (await chrome.alarms.getAll()).map((a: { name: string }) => a.name),
   )
 }
+
+/** Ends the first-run tour Today shows once there is a plan (it takes focus as it moves). */
+export async function skipTour(page: Page): Promise<void> {
+  const skip = page.getByRole('button', { name: 'Skip' })
+  await skip.click()
+  await skip.waitFor({ state: 'hidden' })
+}

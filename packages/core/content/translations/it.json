@@ -453,13 +453,22 @@
       "why": "I dieci giorni che portano all’Eid al-Adha, nei quali, disse il Profeta ﷺ, le azioni sono più amate da Allah che in qualsiasi altro giorno. Digiuno, dhikr ed elemosina contano tutti; il 9 è il giorno di Arafa.",
       "how": [
         "Di’ Allahu Akbar, la ilaha illa Allah, Allahu Akbar, wa lillahi al-hamd durante questi giorni.",
-        "Digiuna quelli dei primi nove giorni che riesci.",
         "Dai qualcosa in elemosina."
       ],
       "reminder": "I primi dieci giorni di Dhu al-Hijja. Le buone azioni di ogni giorno pesano in modo particolare in questi giorni.",
       "evidence": [
         "Non ci sono giorni in cui le buone azioni siano più amate da Allah di questi dieci giorni."
       ]
+    },
+    "fast-dhul-hijjah": {
+      "title": "Digiunare i primi nove giorni di Dhul Hijja",
+      "why": "Il digiuno è tra le opere migliori dei dieci giorni, ed è riportato che il Profeta ﷺ digiunava i primi nove. Il decimo è l’Eid, in cui non si digiuna.",
+      "reminder": "I primi giorni di Dhul Hijja. Digiuna oggi, se puoi.",
+      "how": [
+        "Digiuna quelli dei primi nove giorni che puoi.",
+        "Il 9 è il giorno di Arafa, il più ricompensato per chi non è al Hajj."
+      ],
+      "evidence": ["Il Messaggero di Allah ﷺ digiunava i nove giorni di Dhul Hijja."]
     },
     "sunnah-after-jumuah": {
       "title": "La sunna dopo la Jumu’ah",
@@ -542,6 +551,82 @@
       "evidence": [
         "In esso c’è un’ora: nessun servo musulmano la incontra mentre è in piedi in preghiera, chiedendo qualcosa ad Allah l’Altissimo, senza che Egli gliela conceda.",
         "… cercatela dunque nell’ultima ora dopo Asr."
+      ]
+    },
+    "remembrance-at-prayer-times": {
+      "title": "Il ricordo di Allah negli orari di preghiera",
+      "why": "La preghiera ora non è dovuta, ma i suoi orari continuano a venire. Sedersi qualche minuto a ciascuno per ricordare Allah mantiene il ritmo della giornata e tiene pronta l’abitudine per quando la preghiera tornerà.",
+      "how": [
+        "Quando arriva l’ora di una preghiera, siediti nel luogo in cui di solito preghi, se puoi.",
+        "Dedica qualche minuto al dhikr: Subhan Allah, Alhamdulillah, La ilaha illa Allah, Allahu Akbar, e le benedizioni sul Profeta ﷺ.",
+        "Chiedi ad Allah ciò di cui hai bisogno, con qualsiasi parola e in qualsiasi lingua."
+      ],
+      "reminder": "L’ora è entrata. Qualche minuto di dhikr mantiene l’ora, e l’abitudine.",
+      "note": "Sedersi nel proprio luogo di preghiera abituale a ogni orario di preghiera è raccomandato dai giuristi hanafiti e da altri, perché l’ora e l’abitudine siano mantenute. È una pratica che i sapienti raccomandano più che una sunna tramandata, e non tutte le scuole la menzionano; alcuni aggiungono di fare prima il wudu. Ricordare Allah e fare du’a è aperto in ogni momento, e su questo i sapienti concordano.",
+      "evidence": [
+        "Il Profeta ﷺ ricordava Allah in ogni momento.",
+        "Coloro che ricordano Allah in piedi, seduti e sdraiati sul fianco.",
+        "Ci fu ordinato di far uscire anche le donne mestruate nel giorno dell’Eid. Restavano dietro la gente, dicendo il takbir con loro e facendo du’a con loro, sperando nella benedizione e nella purezza di quel giorno."
+      ]
+    },
+    "istighfar": {
+      "title": "Istighfar: chiedere perdono",
+      "translation": "Chiedo perdono ad Allah e a Lui mi volgo in pentimento.",
+      "why": "Chiedere perdono ad Allah, con una frase abbastanza breve da dirla ovunque. Il Profeta ﷺ, già perdonato, chiedeva perdono più di settanta volte al giorno, e cento in un’altra versione.",
+      "how": [
+        "Di’: Astaghfiru-llāha wa atūbu ilayh.",
+        "Ripetilo quante volte puoi, fino a cento.",
+        "Dillo seduto, camminando o sdraiato; non serve il wudu."
+      ],
+      "reminder": "Qualche minuto di istighfar prima che il giorno finisca. Il Profeta ﷺ chiedeva perdono più di settanta volte al giorno.",
+      "evidence": [
+        "Per Allah, chiedo perdono ad Allah e a Lui mi volgo in pentimento più di settanta volte al giorno.",
+        "O gente, volgetevi ad Allah in pentimento, perché io mi volgo a Lui cento volte al giorno.",
+        "Chiedete perdono al vostro Signore. In verità Egli è sempre il Perdonatore."
+      ]
+    },
+    "dua-times-of-acceptance": {
+      "title": "La du’a nei momenti in cui viene esaudita",
+      "why": "La du’a è gradita in ogni momento, e alcuni momenti sono indicati come quelli in cui viene esaudita: l’ultimo terzo della notte e lo spazio tra l’adhan e l’iqamah. Entrambi restano aperti per te ora.",
+      "how": [
+        "Prima di dormire, o se ti svegli di notte, metti da parte qualche minuto.",
+        "Loda Allah e invoca le benedizioni sul Profeta ﷺ, poi chiedi ciò di cui hai bisogno, per te e per gli altri.",
+        "Quando senti l’adhan, continua a chiedere fino all’iqamah."
+      ],
+      "reminder": "La notte è aperta alla du’a, soprattutto il suo ultimo terzo. Chiedi prima di dormire, o se ti svegli.",
+      "note": "L’ora dell’esaudimento del venerdì ha un proprio elemento, nell’ultima ora prima del Maghrib.",
+      "evidence": [
+        "Il nostro Signore, benedetto ed esaltato, scende ogni notte al cielo più basso quando resta l’ultimo terzo della notte, e dice: Chi Mi invoca, perché io gli risponda? Chi Mi chiede, perché io gli dia? Chi Mi chiede perdono, perché io lo perdoni?",
+        "La du’a fatta tra l’adhan e l’iqamah non viene respinta."
+      ]
+    },
+    "listening-to-quran": {
+      "title": "Ascoltare il Corano",
+      "why": "Ascoltare il Corano con attenzione è di per sé adorazione, e Allah lega ad esso la Sua misericordia. Il Profeta ﷺ, a cui fu rivelato, amava comunque sentirlo recitare da un altro.",
+      "how": [
+        "Scegli un recitatore e una sura, oppure riprendi da dove ti eri fermato.",
+        "Ascolta con attenzione, come ascolteresti qualcuno che ti parla.",
+        "Segui una traduzione accanto, se ti aiuta a capire."
+      ],
+      "reminder": "Qualche minuto di Corano oggi, ascoltato con attenzione. Allah lega la Sua misericordia all’ascolto.",
+      "note": "L’ascolto è aperto a tutti in ogni momento. I sapienti divergono sulla recitazione a memoria durante le mestruazioni: molti, tra cui la maggior parte degli hanafiti, shafiiti e hanbaliti, ritengono che non si faccia, mentre la scuola malikita e altri la permettono. La maggior parte ritiene che il mushaf stesso non si tocchi senza purezza. Segui i sapienti di cui ti fidi.",
+      "evidence": [
+        "Quando il Corano viene recitato, ascoltatelo e state in silenzio, affinché possiate ricevere misericordia.",
+        "Il Profeta ﷺ mi disse: Recitami. Dissi: Devo recitarti, quando è stato rivelato a te? Disse: Amo sentirlo da un altro."
+      ]
+    },
+    "sadaqah": {
+      "title": "La carità (sadaqah)",
+      "why": "Dare qualcosa per amore di Allah, per quanto piccolo. Ogni mattina due angeli pregano per chi dà, e il Profeta ﷺ disse che la carità non diminuisce mai la ricchezza.",
+      "how": [
+        "Dai qualcosa oggi: denaro, cibo, oppure il tuo tempo e il tuo aiuto.",
+        "Poco e con regolarità è meglio che aspettare qualcosa di grande.",
+        "Dai in silenzio, dove puoi. Anche una parola gentile è carità."
+      ],
+      "reminder": "Ogni mattina due angeli pregano per chi dà. Dai qualcosa oggi, per quanto piccolo.",
+      "evidence": [
+        "Non c’è giorno in cui i servi si alzino senza che scendano due angeli. Uno dice: O Allah, da’ un compenso a chi spende. L’altro dice: O Allah, da’ rovina a chi trattiene.",
+        "La carità non diminuisce la ricchezza."
       ]
     }
   },

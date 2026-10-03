@@ -34,7 +34,7 @@ describe('createFirestoreFeedback', () => {
       'uid',
     ])
     expect(stored?.createdAt).toBeInstanceOf(Timestamp)
-    expect(fake.docs.get('feedbackLimits/u1')?.lastAt).toEqual(stored?.createdAt)
+    expect(fake.docs.get('feedbackLimits/u1')?.lastSentAt).toEqual(stored?.createdAt)
     // Nothing is read: the rules allow no reads of either collection.
     expect(fake.reads).toEqual([])
   })

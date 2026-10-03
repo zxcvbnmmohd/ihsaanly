@@ -14,8 +14,12 @@ import { z } from 'zod'
  * Every path in the manifest is relative to `<base>/` (the URL ending
  * `/content`). A client that does not understand `schemaVersion` ignores the
  * bundle and keeps the content it shipped with.
+ *
+ * 2: items gained `isPrayer`, `onlyWhilePaused` and the `night` window. An
+ * app built for 1 would drop the flags and show the pause's items to everyone,
+ * so it must not install a 2 bundle.
  */
-export const CONTENT_SCHEMA_VERSION = 1
+export const CONTENT_SCHEMA_VERSION = 2
 
 /** Where production publishes it; a build's VITE_CONTENT_URL overrides it (dev: https://dev.ihsaanly.app/content). */
 export const DEFAULT_CONTENT_URL = 'https://ihsaanly.app/content'

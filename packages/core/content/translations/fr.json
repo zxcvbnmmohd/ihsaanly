@@ -455,13 +455,22 @@
       "why": "Les dix jours qui mènent à l’Aïd al-Adha, dont le Prophète ﷺ a dit que les œuvres y sont plus aimées d’Allah qu’en tout autre jour. Le jeûne, le dhikr et l’aumône comptent tous ; le 9 est le jour d’Arafat.",
       "how": [
         "Dites Allahu Akbar, la ilaha illa Allah, Allahu Akbar, wa lillahi al-hamd tout au long de ces jours.",
-        "Jeûnez ceux des neuf premiers jours que vous pouvez.",
         "Donnez quelque chose en aumône."
       ],
       "reminder": "Les dix premiers jours de Dhul Hijja. Les bonnes œuvres ordinaires y pèsent tout particulièrement.",
       "evidence": [
         "Il n’est pas de jours où les bonnes œuvres sont plus aimées d’Allah que ces dix jours."
       ]
+    },
+    "fast-dhul-hijjah": {
+      "title": "Jeûner les neuf premiers jours de Dhul Hijja",
+      "why": "Le jeûne est parmi les meilleures œuvres des dix jours, et il est rapporté que le Prophète ﷺ jeûnait les neuf premiers. Le dixième est l’Aïd, où l’on ne jeûne pas.",
+      "reminder": "Les premiers jours de Dhul Hijja. Jeûnez aujourd’hui si vous le pouvez.",
+      "how": [
+        "Jeûnez ceux des neuf premiers jours que vous pouvez.",
+        "Le 9 est le jour d’Arafat, le plus récompensé pour qui n’est pas au Hajj."
+      ],
+      "evidence": ["Le Messager d’Allah ﷺ jeûnait les neuf jours de Dhul Hijja."]
     },
     "sunnah-after-jumuah": {
       "title": "La sunna après la Joumou’a",
@@ -544,6 +553,82 @@
       "evidence": [
         "Il s’y trouve une heure : aucun serviteur musulman ne la rencontre, debout en prière, demandant quelque chose à Allah le Très-Haut, sans qu’Il le lui accorde.",
         "… cherchez-la donc à la dernière heure après Asr."
+      ]
+    },
+    "remembrance-at-prayer-times": {
+      "title": "Le dhikr aux heures de prière",
+      "why": "La prière n’est pas due en ce moment, mais ses heures reviennent quand même. S’asseoir quelques minutes à chacune d’elles pour se souvenir d’Allah garde le rythme de la journée, et garde l’habitude prête pour le retour de la prière.",
+      "how": [
+        "Quand l’heure d’une prière arrive, asseyez-vous à l’endroit où vous priez d’habitude, si vous le pouvez.",
+        "Consacrez quelques minutes au dhikr : Subhan Allah, Alhamdulillah, La ilaha illa Allah, Allahu Akbar, et des prières sur le Prophète ﷺ.",
+        "Demandez à Allah ce dont vous avez besoin, avec les mots et dans la langue de votre choix."
+      ],
+      "reminder": "L’heure est entrée. Quelques minutes de dhikr gardent l’heure, et l’habitude.",
+      "note": "S’asseoir à son lieu de prière habituel à chaque heure de prière est recommandé par les juristes hanafites et d’autres, afin de garder l’heure et l’habitude. C’est une pratique que les savants recommandent plutôt qu’une sunna rapportée, et toutes les écoles ne la mentionnent pas ; certains ajoutent de faire d’abord le wudu. Se souvenir d’Allah et faire des invocations est ouvert à tout moment, et sur cela les savants s’accordent.",
+      "evidence": [
+        "Le Prophète ﷺ invoquait Allah en tout temps.",
+        "Ceux qui invoquent Allah debout, assis et couchés sur le côté.",
+        "Il nous fut ordonné de faire sortir même les femmes en période de règles le jour de l’Aïd. Elles restaient derrière les gens, disant le takbir avec eux et faisant des invocations avec eux, espérant la bénédiction et la pureté de ce jour."
+      ]
+    },
+    "istighfar": {
+      "title": "Istighfar : demander pardon",
+      "translation": "Je demande pardon à Allah et je me repens à Lui.",
+      "why": "Demander pardon à Allah, par une formule assez courte pour être dite partout. Le Prophète ﷺ, pourtant déjà pardonné, demandait pardon plus de soixante-dix fois par jour, et cent fois dans une autre version.",
+      "how": [
+        "Dites : Astaghfiru-llāha wa atūbu ilayh.",
+        "Répétez-le autant de fois que vous le pouvez, jusqu’à cent.",
+        "Dites-le assis, en marchant ou allongé ; le wudu n’est pas nécessaire."
+      ],
+      "reminder": "Quelques minutes d’istighfar avant la fin de la journée. Le Prophète ﷺ demandait pardon plus de soixante-dix fois par jour.",
+      "evidence": [
+        "Par Allah, je demande pardon à Allah et je me repens à Lui plus de soixante-dix fois par jour.",
+        "Ô gens, repentez-vous à Allah, car je me repens à Lui cent fois par jour.",
+        "Demandez pardon à votre Seigneur. Il est certes Grand Pardonneur."
+      ]
+    },
+    "dua-times-of-acceptance": {
+      "title": "L’invocation aux moments où elle est exaucée",
+      "why": "L’invocation est bienvenue à tout moment, et certains moments sont cités comme ceux où elle est exaucée : le dernier tiers de la nuit, et l’intervalle entre l’adhan et l’iqamah. Les deux vous restent ouverts maintenant.",
+      "how": [
+        "Avant de dormir, ou si vous vous réveillez la nuit, réservez quelques minutes.",
+        "Louez Allah et priez sur le Prophète ﷺ, puis demandez ce dont vous avez besoin, pour vous et pour les autres.",
+        "Quand vous entendez l’adhan, continuez à demander jusqu’à l’iqamah."
+      ],
+      "reminder": "La nuit est ouverte à l’invocation, surtout son dernier tiers. Demandez avant de dormir, ou si vous vous réveillez.",
+      "note": "L’heure exaucée du vendredi a son propre élément, à la dernière heure avant le Maghrib.",
+      "evidence": [
+        "Notre Seigneur, béni et exalté soit-Il, descend chaque nuit au ciel le plus proche lorsqu’il reste le dernier tiers de la nuit, et dit : Qui M’invoque, que Je lui réponde ? Qui Me demande, que Je lui donne ? Qui Me demande pardon, que Je lui pardonne ?",
+        "L’invocation faite entre l’adhan et l’iqamah n’est pas rejetée."
+      ]
+    },
+    "listening-to-quran": {
+      "title": "Écouter le Coran",
+      "why": "Écouter le Coran avec attention est en soi une adoration, et Allah y lie Sa miséricorde. Le Prophète ﷺ, à qui il fut révélé, aimait pourtant l’entendre réciter par un autre.",
+      "how": [
+        "Choisissez un récitant et une sourate, ou reprenez là où vous vous étiez arrêté.",
+        "Écoutez avec attention, comme vous écouteriez quelqu’un qui vous parle.",
+        "Suivez une traduction en parallèle si cela vous aide à comprendre."
+      ],
+      "reminder": "Quelques minutes de Coran aujourd’hui, écouté avec attention. Allah lie Sa miséricorde à l’écoute.",
+      "note": "L’écoute est ouverte à tous, à tout moment. Les savants divergent sur la récitation de mémoire pendant les règles : beaucoup, dont la plupart des hanafites, chaféites et hanbalites, estiment qu’on ne la fait pas, tandis que l’école malikite et d’autres la permettent. La plupart estiment qu’on ne touche pas au mushaf lui-même sans pureté. Suivez les savants en qui vous avez confiance.",
+      "evidence": [
+        "Quand le Coran est récité, écoutez-le et faites silence, afin que vous obteniez miséricorde.",
+        "Le Prophète ﷺ me dit : Récite-moi. Je dis : Te réciterai-je alors qu’il t’a été révélé ? Il dit : J’aime l’entendre d’un autre."
+      ]
+    },
+    "sadaqah": {
+      "title": "L’aumône (sadaqah)",
+      "why": "Donner quelque chose pour Allah, si petit soit-il. Chaque matin deux anges invoquent pour celui qui donne, et le Prophète ﷺ a dit que l’aumône ne diminue jamais la richesse.",
+      "how": [
+        "Donnez quelque chose aujourd’hui : de l’argent, de la nourriture, ou votre temps et votre aide.",
+        "Peu mais régulièrement vaut mieux qu’attendre de pouvoir donner beaucoup.",
+        "Donnez discrètement quand vous le pouvez. Une bonne parole est aussi une aumône."
+      ],
+      "reminder": "Chaque matin deux anges invoquent pour celui qui donne. Donnez quelque chose aujourd’hui, si petit soit-il.",
+      "evidence": [
+        "Il n’est pas de jour où les serviteurs se lèvent sans que deux anges descendent. L’un dit : Ô Allah, donne un remplaçant à celui qui dépense. L’autre dit : Ô Allah, donne la perte à celui qui retient.",
+        "L’aumône ne diminue pas la richesse."
       ]
     }
   },

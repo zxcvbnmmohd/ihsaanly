@@ -146,6 +146,30 @@ function PrivacyBody(): ReactNode {
       <p>{t('privacy.feedbackAccess')}</p>
       <p>{t('privacy.feedbackRetention')}</p>
 
+      <h2 className={H2_CLASS}>{t('privacy.announcementsTitle')}</h2>
+      <p>{t('privacy.announcementsIntro')}</p>
+      <List keys={['privacy.announcementsSent', 'privacy.announcementsToken']} />
+      <p>{t('privacy.announcementsProcessors')}</p>
+      <p>{t('privacy.announcementsBasis')}</p>
+      <p>{t('privacy.announcementsRetention')}</p>
+      <p>{t('privacy.announcementsOff')}</p>
+
+      <h2 className={H2_CLASS}>{t('privacy.crashTitle')}</h2>
+      <p>{t('privacy.crashIntro')}</p>
+      <List
+        keys={[
+          'privacy.crashReports',
+          'privacy.crashLog',
+          'privacy.crashDevice',
+          'privacy.crashId',
+        ]}
+      />
+      <p>{t('privacy.crashNever')}</p>
+      <p>{t('privacy.crashProcessors')}</p>
+      <p>{t('privacy.crashBasis')}</p>
+      <p>{t('privacy.crashRetention')}</p>
+      <p>{t('privacy.crashOff')}</p>
+
       <h2 className={H2_CLASS}>{t('privacy.notTitle')}</h2>
       <List
         keys={[

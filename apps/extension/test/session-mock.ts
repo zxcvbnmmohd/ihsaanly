@@ -35,6 +35,9 @@ mock.module('@ihsaanly/state/cloud/session', () => ({
   deleteAccount: record('deleteAccount'),
   linkProvider: record('linkProvider'),
   cancelLink: record('cancelLink'),
+  notifyBackground: () => {
+    sessionCalls.push({ name: 'notifyBackground', args: [] })
+  },
   startCloud: (load: () => Promise<unknown>, options: real.CloudOptions = {}) => {
     startArgs = { load, options }
     return () => {}

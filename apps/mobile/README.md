@@ -21,6 +21,14 @@ bun run android                       # or: bun run ios
 in Expo Go, so `bun run dev` alone will not run this app. Use a development
 build.
 
+`firebase/{development,production}/` holds the native Firebase config
+(`google-services.json`, `GoogleService-Info.plist`) for the two opt-ins that
+use native Firebase: announcements and crash reports. Like the web config,
+these are public client identifiers, not secrets, and are committed;
+`app.config.ts` picks the folder by `APP_VARIANT` (staging uses development).
+`firebase.json` keeps Crashlytics collection and messaging auto-init off until
+the person turns each on.
+
 ## Scripts
 
 |                            |                                                                |

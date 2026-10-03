@@ -27,3 +27,19 @@ it('shows the outcome message only when there is one', () => {
   renderScreen(<DataScreen {...dataFixture} message={null} />)
   expect(screen.queryByText('Exported 84 records')).toBeNull()
 })
+
+it('offers crash reports only when the host can send them', async () => {
+  const onChange = mock((_on: boolean) => {})
+  const { user, strings, unmount } = renderScreen(
+    <DataScreen {...dataFixture} crashReports={{ on: false, onChange }} />,
+  )
+  const toggle = screen.getByRole('switch', { name: strings.data.crashReports })
+  expect(toggle).toHaveAttribute('aria-checked', 'false')
+  expect(screen.getByText(strings.data.crashReportsDetail)).toBeInTheDocument()
+  await user.click(toggle)
+  expect(onChange).toHaveBeenCalledWith(true)
+  unmount()
+
+  renderScreen(<DataScreen {...dataFixture} />)
+  expect(screen.queryByRole('switch', { name: strings.data.crashReports })).toBeNull()
+})

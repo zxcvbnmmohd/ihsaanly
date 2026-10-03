@@ -25,14 +25,21 @@ import type { Strings } from '@ihsaanly/core/strings/en'
 import { cardFor, remindFor } from '@ihsaanly/ui/props/item'
 import { passes } from '@ihsaanly/ui/props/library'
 import { moreGroups } from '@ihsaanly/ui/props/more'
-import { soonestEach, toEntry, toNext } from '@ihsaanly/ui/props/today'
+import {
+  markFor,
+  type ProgressSoFar,
+  panelFor,
+  soonestEach,
+  toEntry,
+  toNext,
+} from '@ihsaanly/ui/props/today'
 import type { ItemDetail, ItemScreenProps } from '@ihsaanly/ui/screens/item'
 import type {
   LibraryFilter,
   LibraryScreenProps,
   LibrarySectionView,
 } from '@ihsaanly/ui/screens/library'
-import type { TodayScreenProps } from '@ihsaanly/ui/screens/today'
+import type { TodayEntry, TodayScreenProps } from '@ihsaanly/ui/screens/today'
 import type { MoreGroup } from '@ihsaanly/ui/types'
 import { demoItemById, demoItems } from './demo-content'
 
@@ -41,6 +48,16 @@ const HORIZON_DAYS = 7
 
 export type PrayerMarks = Partial<Record<Prayer, Date>>
 export type Completions = Partial<Record<string, Date>>
+/** Taps counted and part ids said so far, per item. */
+export type Progress = Partial<Record<string, ProgressSoFar>>
+
+const NO_PROGRESS: ProgressSoFar = { count: 0, parts: [] }
+
+/** Today's UI state that is not a mark: how far stepped items have got, and the open sheet. */
+export interface TodayView {
+  progress: Progress
+  panelItemId: string | null
+}
 
 /** A screen's props without its callbacks: the host wires those to the reducer. */
 export type Data<T> = {
@@ -135,11 +152,19 @@ function currentPrayerFor(window: WindowName | null): Prayer | null {
   return window
 }
 
+function nextWithMarks(
+  next: ReturnType<typeof toNext>,
+  withMark: (entry: TodayEntry) => TodayEntry,
+): ReturnType<typeof toNext> {
+  return next && { ...next, before: next.before.map(withMark), after: next.after.map(withMark) }
+}
+
 export function buildToday(
   signals: Signals,
   strings: Strings,
   locale: string,
   placeLabel: string,
+  view: TodayView = { progress: {}, panelItemId: null },
 ): DemoToday {
   const planned = plan(signals)
   const windows = buildWindows(signals.prayerTimes)
@@ -147,6 +172,14 @@ export function buildToday(
   const { now, timeZone } = signals
   const dayKey = civilDateKey(civilDateIn(now, timeZone))
   const upcoming = planned.today.comingUp.filter((entry) => entry.reason === 'upcoming')
+
+  const withMark = (entry: TodayEntry): TodayEntry => {
+    const item = demoItemById(entry.id)
+    return item
+      ? { ...entry, mark: markFor(item, false, view.progress[entry.id] ?? NO_PROGRESS) }
+      : entry
+  }
+  const panelItem = view.panelItemId ? demoItemById(view.panelItemId) : undefined
 
   const passed = (prayer: Prayer): boolean =>
     windows.some(
@@ -175,17 +208,31 @@ export function buildToday(
       }).format(now),
       hijri: planned.today.hijri,
       placeLabel,
-      now: planned.today.now.flatMap((entry) => toEntry(entry, strings, demoItemById) ?? []),
-      next: toNext(planned.today.next, now, strings, demoItemById),
+      now: planned.today.now
+        .flatMap((entry) => toEntry(entry, strings, demoItemById) ?? [])
+        .map(withMark),
+      next: nextWithMarks(toNext(planned.today.next, now, strings, demoItemById), withMark),
       allDay: planned.today.comingUp
         .filter((entry) => entry.reason === 'today')
-        .flatMap((entry) => toEntry(entry, strings, demoItemById, false) ?? []),
+        .flatMap((entry) => toEntry(entry, strings, demoItemById, false) ?? [])
+        .map(withMark),
       tomorrow: soonestEach(upcoming.filter((entry) => entry.daysAway === 1)).flatMap(
         (entry) => toEntry(entry, strings, demoItemById, false) ?? [],
       ),
       later: soonestEach(upcoming.filter((entry) => (entry.daysAway ?? 0) > 1)).flatMap(
         (entry) => toEntry(entry, strings, demoItemById) ?? [],
       ),
+      doneToday: planned.today.done
+        .filter((entry) => entry.reason !== 'upcoming')
+        .flatMap((entry) => toEntry(entry, strings, demoItemById, false) ?? [])
+        .map((entry) => ({ ...entry, mark: { done: true, progress: null } })),
+      undo: null,
+      panel: panelItem ? panelFor(panelItem, view.progress[panelItem.id] ?? NO_PROGRESS) : null,
+      // The demo has its own coach, no pause and no cloud: nothing else to teach.
+      prayerHint: false,
+      tour: null,
+      paused: false,
+      checkIn: null,
       prayers: PRAYERS.map((prayer) => ({
         prayer,
         done: signals.prayedToday[prayer] !== undefined,

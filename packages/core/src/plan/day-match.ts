@@ -58,6 +58,8 @@ export function matchesDay(day: DayTrigger, context: DayContext): boolean {
       return hijri.month === SHAWWAL && hijri.day >= 2
     case 'dhul-hijjah':
       return hijri.month === DHUL_HIJJAH && hijri.day <= 10
+    case 'dhul-hijjah-fasting':
+      return hijri.month === DHUL_HIJJAH && hijri.day <= 9
     case 'ramadan':
       return hijri.month === RAMADAN
     default:

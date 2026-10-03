@@ -5,19 +5,29 @@ import { Text, View } from 'react-native'
 import { useColors } from '../colors'
 import { ChoiceRow } from '../components/choice-row'
 import { Screen } from '../components/screen'
+import { Stepper } from '../components/stepper'
 import { SwitchRow } from '../components/switch-row'
 import { useUi } from '../provider'
+import { CHECK_IN_DAYS } from '../types'
 
 export interface TrackingScreenProps {
   userState: UserState
   showPause: boolean
   onChange: (change: Partial<UserState>) => void
+  /**
+   * While paused: remind the user to check in after about this many days
+   * (`CHECK_IN_DAYS.min`–`max`), or null for no reminder.
+   */
+  checkInDays: number | null
+  onCheckInDays: (days: number | null) => void
 }
 
 export function TrackingScreen({
   userState,
   showPause,
   onChange,
+  checkInDays,
+  onCheckInDays,
 }: TrackingScreenProps): ReactElement {
   const colors = useColors()
   const { strings, scheme } = useUi()
@@ -56,7 +66,7 @@ export function TrackingScreen({
       </View>
 
       {showPause ? (
-        <View className="pt-3">
+        <View className="gap-3 pt-3">
           <SwitchRow
             title={strings.tracking.paused}
             detail={strings.tracking.pausedDetail}
@@ -66,6 +76,33 @@ export function TrackingScreen({
             knob={palette.knob}
             track={palette.wash[1]}
           />
+          {userState.trackingPaused ? (
+            <>
+              <SwitchRow
+                title={strings.tracking.checkIn}
+                detail={
+                  checkInDays === null
+                    ? strings.tracking.checkInOff
+                    : strings.tracking.checkInAfter(checkInDays)
+                }
+                value={checkInDays !== null}
+                onValueChange={(on) => onCheckInDays(on ? CHECK_IN_DAYS.initial : null)}
+                accent={palette.accent}
+                knob={palette.knob}
+                track={palette.wash[1]}
+              />
+              {checkInDays === null ? null : (
+                <Stepper
+                  label={strings.tracking.checkInDays}
+                  value={checkInDays}
+                  min={CHECK_IN_DAYS.min}
+                  max={CHECK_IN_DAYS.max}
+                  onChange={onCheckInDays}
+                  palette={palette}
+                />
+              )}
+            </>
+          ) : null}
         </View>
       ) : null}
     </Screen>

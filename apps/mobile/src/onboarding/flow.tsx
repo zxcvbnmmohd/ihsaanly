@@ -1,6 +1,7 @@
 // The native-only half of onboarding: asking the device for a location fix
-// and, before advancing off the reminders step, asking the OS for permission
-// to deliver them. Everything else — store reads/writes, step state, and the
+// and, before advancing off the reminders step, asking the OS once for
+// permission to show notifications, then turning on announcements if they
+// were chosen (the same path as the More → Reminders switch). Everything else — store reads/writes, step state, and the
 // props OnboardingScreen renders — lives in
 // @ihsaanly/state/onboarding/use-onboarding-flow, shared with the web
 // companion (see apps/companion/src/onboarding/flow.tsx), which has neither.
@@ -11,6 +12,7 @@ import type { ReactElement } from 'react'
 import { RestoreAccount } from '@/account/restore'
 import { requestDeviceLocation } from '@/location/device'
 import { ensurePermission } from '@/notifications/schedule'
+import { setAnnouncementsEnabled } from '@/push/announcements'
 import { setThemePreference, useThemePreference } from '@/theme/store'
 
 interface OnboardingFlowProps {
@@ -32,7 +34,9 @@ export function OnboardingFlow({
     theme,
     onSelectTheme: setThemePreference,
     requestDeviceLocation,
-    ensureReminderPermission: () => ensurePermission(getStrings()).then(() => undefined),
+    ensureReminderPermission: () => ensurePermission(getStrings()),
+    // Already granted by then, so this asks nothing more of the OS.
+    enableAnnouncements: () => setAnnouncementsEnabled(true, getStrings()),
   })
 
   // The flow stays mounted under the sign-in, so its step is where it was.

@@ -16,6 +16,32 @@ export const en = {
       'Prayer windows, the Hijri date and everything the day asks of you follow from a rough location. It is worked out on this device and stays there unless you sign in to sync.',
     chooseCity: 'Choose a city instead',
     chooseCityDetail: 'No permission needed. Everything still works.',
+    prayerHint: "Tap a prayer when you've prayed it",
+    markDone: (name: string): string => `Mark ${name} done`,
+    unmark: (name: string): string => `Unmark ${name}`,
+    countItem: (name: string, count: number, target: number): string =>
+      `Count ${name}, ${count} of ${target}`,
+    partsItem: (name: string, done: number, total: number): string =>
+      `Parts of ${name}, ${done} of ${total} done`,
+    open: (name: string): string => `Open ${name}`,
+    doneToday: (count: number): string => `Done today (${count})`,
+    markedDone: 'Marked done',
+    undo: 'Undo',
+    undoItem: (name: string): string => `Undo ${name}`,
+    paused: 'Prayer tracking is paused',
+    pausedFasting: 'Fasting resumes after your pause',
+    checkInTitle: 'Ready to resume prayer tracking?',
+    resume: 'Resume',
+    notYet: 'Not yet',
+  },
+  tour: {
+    prayer: 'Tap a circle to mark a prayer',
+    sunnah: "Tap the circle beside a sunnah when you've done it",
+    card: 'Tap the card to learn it: the words, meaning and source',
+    step: (step: number, total: number): string => `${step} of ${total}`,
+    skip: 'Skip',
+    next: 'Next',
+    done: 'Got it',
   },
   plan: {
     rightNow: 'Right now',
@@ -79,8 +105,13 @@ export const en = {
     whichItemsDetail: 'Only items that have a moment to remind you of appear here.',
     sendTest: 'Send a test reminder',
     sendTestDetail: 'Arrives in a few seconds.',
+    announcements: 'Announcements',
+    announcementsDetail:
+      "Occasional messages from Ihsaanly, such as the start of Ramadan. Your daily reminders don't need this.",
     testTitle: 'A test reminder',
     testBody: 'This is what a reminder from Ihsaanly looks like.',
+    pausedRemembrance: 'Time for remembrance',
+    checkIn: 'A quick check-in from Ihsaanly',
     action: {
       done: 'Done',
       later: 'Later',
@@ -252,6 +283,9 @@ export const en = {
     imported: (count: number): string => `Added ${count} ${count === 1 ? 'entry' : 'entries'}.`,
     importFailed: 'That file could not be read.',
     shareFailed: 'Sharing is not available on this device.',
+    crashReports: 'Share crash reports',
+    crashReportsDetail:
+      'Send crash reports and errors to help fix problems. They include your device model and app version, never your practice or account.',
     delete: 'Delete my data',
     deleteDetail:
       'Everything on this device: settings and your practice record. The app starts over.',
@@ -417,6 +451,10 @@ export const en = {
       dhuhr: 'I pray Dhuhr',
     },
     jumuahAutoDetail: "Jumu'ah on Fridays unless you're travelling or chose Sister.",
+    checkIn: 'Remind me to check in',
+    checkInAfter: (days: number): string => `Remind me in about ${days} days`,
+    checkInOff: 'No reminder. Turn tracking back on whenever you like.',
+    checkInDays: 'Days',
   },
   hijri: {
     title: 'Hijri date',
@@ -501,6 +539,8 @@ export const en = {
     home: 'Home',
     masjid: 'Masjid',
     prayer: 'Prayer',
+    quran: 'Qur\u2019an',
+    charity: 'Charity',
     sleep: 'Sleep and waking',
     travel: 'Travel',
   } as Record<string, string>,
@@ -556,17 +596,16 @@ export const en = {
     app: 'App',
     practice: 'Your practice',
     empty: 'History, settings and help will live here.',
+    help: 'Help',
+    showMeAround: 'Show me around',
   },
   onboarding: {
     welcomeTitle: 'The moment, not the clock.',
     welcomeBody:
       'Ihsaanly tells you when the evening adhkar are open. Never a time. Never a score.',
-    howTitle: 'You mark the prayer. The sunnah appears.',
-    howBody:
-      'Tap Dhuhr when you have prayed it and the dhikr that follows is waiting. Everything stays on this device unless you choose to sign in and sync.',
+    howTitle: "Ihsaanly shows what fits the moment. Tap a circle when you've done it.",
     language: 'Language',
     appearance: 'Appearance',
-    howSample: 'سُبْحَانَ اللهِ وَبِحَمْدِهِ',
     locationStep: 'Where are you?',
     locationWhy:
       'Used on this device to work out the parts of the day. It stays there unless you sign in to sync.',
@@ -580,10 +619,14 @@ export const en = {
     skip: 'Prefer not to say',
     skipDetail: 'The pause is offered anyway.',
     genderPrivacy: 'Stored on this device, and synced only if you sign in. Used for nothing else.',
-    remindersStep: 'Reminders',
-    remindersWhy: 'Two or three a day, never in the night. Change any of this later in More.',
-    windowsDetail: 'When each window opens',
-    lookAheadDetail: 'The evening before',
+    remindersStep: 'Notifications',
+    remindersWhy: 'Choose what Ihsaanly may notify you about. Change either later in More.',
+    dailyReminders: 'Daily reminders',
+    dailyRemindersDetail:
+      'Morning and evening adhkar and upcoming fasting days, scheduled on this device.',
+    announcementsChoice: 'Announcements from Ihsaanly',
+    announcementsChoiceDetail:
+      'Occasional news, such as the start of Ramadan, sent by us. Off until you turn them on.',
     startStep: 'A starting point',
     startWhy:
       'Choose a size to begin with. Add or remove anything in the Library whenever you like.',
@@ -606,6 +649,7 @@ export const en = {
     back: 'Back',
     continue: 'Continue',
     allowReminders: 'Allow reminders',
+    allowNotifications: 'Allow notifications',
     notNow: 'Not now',
     done: 'Start',
     restore: 'Already use Ihsaanly? Sign in to restore your data',
@@ -661,6 +705,9 @@ export const en = {
   },
   panel: {
     close: 'Close',
+    markAll: 'Mark all done',
+    progress: (count: number, target: number): string => `${count} of ${target}`,
+    tapToCount: 'Tap to count',
   },
 }
 

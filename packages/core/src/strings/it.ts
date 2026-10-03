@@ -26,6 +26,32 @@ export const it: Strings = {
       'Le fasce di preghiera, la data dell’Egira e tutto ciò che la giornata ti chiede dipendono da una posizione approssimativa. Viene calcolata su questo dispositivo e resta lì, a meno che tu non acceda per sincronizzare.',
     chooseCity: 'Scegli invece una città',
     chooseCityDetail: 'Nessun permesso necessario. Tutto funziona lo stesso.',
+    prayerHint: 'Tocca una preghiera quando l’hai fatta',
+    markDone: (name: string): string => `Segna ${name} come fatto`,
+    unmark: (name: string): string => `Rimuovi il segno da ${name}`,
+    countItem: (name: string, count: number, target: number): string =>
+      `Conta ${name}, ${count} di ${target}`,
+    partsItem: (name: string, done: number, total: number): string =>
+      `Parti di ${name}, ${done} di ${total} fatte`,
+    open: (name: string): string => `Apri ${name}`,
+    doneToday: (count: number): string => `Fatto oggi (${count})`,
+    markedDone: 'Segnato come fatto',
+    undo: 'Annulla',
+    undoItem: (name: string): string => `Annulla ${name}`,
+    paused: 'La registrazione delle preghiere è sospesa',
+    pausedFasting: 'Il digiuno riprende dopo la tua pausa',
+    checkInTitle: 'Pronto a riprendere la registrazione delle preghiere?',
+    resume: 'Riprendi',
+    notYet: 'Non ancora',
+  },
+  tour: {
+    prayer: 'Tocca un cerchio per segnare una preghiera',
+    sunnah: 'Tocca il cerchio accanto a una sunna quando l’hai fatta',
+    card: 'Tocca la scheda per impararla: le parole, il significato e la fonte',
+    step: (step: number, total: number): string => `${step} di ${total}`,
+    skip: 'Salta',
+    next: 'Avanti',
+    done: 'Ho capito',
   },
   plan: {
     rightNow: 'Adesso',
@@ -89,8 +115,13 @@ export const it: Strings = {
     whichItemsDetail: 'Qui compaiono solo le voci che hanno un momento per cui ricordartele.',
     sendTest: 'Invia un promemoria di prova',
     sendTestDetail: 'Arriva tra pochi secondi.',
+    announcements: 'Annunci',
+    announcementsDetail:
+      'Messaggi occasionali da Ihsaanly, come l’inizio del Ramadan. I tuoi promemoria quotidiani non ne hanno bisogno.',
     testTitle: 'Un promemoria di prova',
     testBody: 'Ecco come appare un promemoria di Ihsaanly.',
+    pausedRemembrance: 'È il momento del dhikr',
+    checkIn: 'Un breve saluto da Ihsaanly',
     action: {
       done: 'Fatto',
       later: 'Più tardi',
@@ -271,6 +302,9 @@ export const it: Strings = {
       `${count(n, 'Aggiunta', 'Aggiunte')} ${n} ${count(n, 'voce', 'voci')}.`,
     importFailed: 'Impossibile leggere quel file.',
     shareFailed: 'La condivisione non è disponibile su questo dispositivo.',
+    crashReports: 'Condividi i rapporti sugli arresti anomali',
+    crashReportsDetail:
+      'Invia rapporti sugli arresti anomali e sugli errori per aiutare a risolvere i problemi. Includono il modello del dispositivo e la versione dell’app, mai la tua pratica o il tuo account.',
     delete: 'Elimina i miei dati',
     deleteDetail:
       'Tutto ciò che è su questo dispositivo: le impostazioni e il registro della tua pratica. L’app ricomincia da capo.',
@@ -439,6 +473,10 @@ export const it: Strings = {
     },
     jumuahAutoDetail:
       'La Jumu’ah il venerdì, a meno che tu sia in viaggio o abbia scelto «Sorella».',
+    checkIn: 'Ricordami di fare il punto',
+    checkInAfter: (days: number): string => `Ricordamelo tra circa ${days} giorni`,
+    checkInOff: 'Nessun promemoria. Riattiva la registrazione quando vuoi.',
+    checkInDays: 'Giorni',
   },
   hijri: {
     title: 'Data dell’Egira',
@@ -524,6 +562,8 @@ export const it: Strings = {
     home: 'Casa',
     masjid: 'Moschea',
     prayer: 'Preghiera',
+    quran: 'Corano',
+    charity: 'Carità',
     sleep: 'Sonno e risveglio',
     travel: 'Viaggio',
   },
@@ -579,17 +619,16 @@ export const it: Strings = {
     app: 'App',
     practice: 'La tua pratica',
     empty: 'Qui troveranno posto cronologia, impostazioni e aiuto.',
+    help: 'Aiuto',
+    showMeAround: 'Mostrami l’app',
   },
   onboarding: {
     welcomeTitle: 'Il momento, non l’orologio.',
     welcomeBody:
       'Ihsaanly ti dice quando è il momento degli adhkar della sera. Mai un orario. Mai un punteggio.',
-    howTitle: 'Tu segni la preghiera. La sunna compare.',
-    howBody:
-      'Tocca Dhuhr quando l’hai pregata e il dhikr che la segue ti sta aspettando. Tutto resta su questo dispositivo, a meno che tu non scelga di accedere per sincronizzare.',
+    howTitle: 'Ihsaanly mostra ciò che si addice al momento. Tocca un cerchio quando l’hai fatto.',
     language: 'Lingua',
     appearance: 'Aspetto',
-    howSample: 'سُبْحَانَ اللهِ وَبِحَمْدِهِ',
     locationStep: 'Dove ti trovi?',
     locationWhy:
       'Usata su questo dispositivo per calcolare le parti della giornata. Resta lì, a meno che tu non acceda per sincronizzare.',
@@ -604,10 +643,15 @@ export const it: Strings = {
     skipDetail: 'La sospensione viene proposta comunque.',
     genderPrivacy:
       'Conservato su questo dispositivo, e sincronizzato solo se accedi. Non usato per nient’altro.',
-    remindersStep: 'Promemoria',
-    remindersWhy: 'Due o tre al giorno, mai di notte. Puoi cambiare tutto più avanti in Altro.',
-    windowsDetail: 'Quando si apre ogni fascia',
-    lookAheadDetail: 'La sera prima',
+    remindersStep: 'Notifiche',
+    remindersWhy:
+      'Scegli che cosa può mandarti Ihsaanly. Puoi cambiare l’uno o l’altro più avanti in Altro.',
+    dailyReminders: 'Promemoria quotidiani',
+    dailyRemindersDetail:
+      'Adhkar del mattino e della sera e prossimi giorni di digiuno, programmati su questo dispositivo.',
+    announcementsChoice: 'Annunci da Ihsaanly',
+    announcementsChoiceDetail:
+      'Notizie occasionali, come l’inizio del Ramadan, inviate da noi. Disattivati finché non li attivi.',
     startStep: 'Un punto di partenza',
     startWhy:
       'Scegli con quanto cominciare. Aggiungi o togli qualsiasi cosa nella Biblioteca quando vuoi.',
@@ -630,6 +674,7 @@ export const it: Strings = {
     back: 'Indietro',
     continue: 'Continua',
     allowReminders: 'Consenti i promemoria',
+    allowNotifications: 'Consenti le notifiche',
     notNow: 'Non ora',
     done: 'Inizia',
     restore: 'Usi già Ihsaanly? Accedi per ripristinare i tuoi dati',
@@ -686,5 +731,8 @@ export const it: Strings = {
   },
   panel: {
     close: 'Chiudi',
+    markAll: 'Segna tutto come fatto',
+    progress: (count: number, target: number): string => `${count} di ${target}`,
+    tapToCount: 'Tocca per contare',
   },
 }

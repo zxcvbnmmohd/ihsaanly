@@ -148,10 +148,10 @@
     }
   ],
   "duaOfTheDay": {
-    "title": "Tasbih after prayer",
-    "arabic": "سُبْحَانَ اللَّهِ",
-    "translation": "Glory be to Allah.",
-    "url": "ihsaanly://item/tasbih-after-prayer"
+    "title": "Coming home",
+    "arabic": "بِسْمِ اللَّهِ",
+    "translation": "In the name of Allah.",
+    "url": "ihsaanly://item/dua-entering-home"
   },
   "makeUp": {
     "prayers": 1,

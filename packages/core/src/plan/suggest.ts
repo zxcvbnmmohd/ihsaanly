@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-import { isRelevantNow, RULING_RANK } from './plan'
+import { isOfferedNow, isRelevantNow, RULING_RANK } from './plan'
 import type { Signals } from './signals'
 
 export const SuggestionState = z.object({
@@ -31,8 +31,13 @@ export function suggest(signals: Signals, state: SuggestionState, phase: Phase):
   const known = new Set(signals.preferences.knownItemIds)
   const dismissed = new Set(state.dismissed)
 
+  // Never a fast while paused, nor what only the pause offers once it is over.
   const candidates = signals.items.filter(
-    (item) => !enabled.has(item.id) && !known.has(item.id) && !dismissed.has(item.id),
+    (item) =>
+      !enabled.has(item.id) &&
+      !known.has(item.id) &&
+      !dismissed.has(item.id) &&
+      isOfferedNow(item, signals),
   )
 
   const shownAt = state.shownAt ? new Date(state.shownAt).getTime() : null

@@ -2,11 +2,14 @@ import {
   type CollectionReference,
   collection,
   type DocumentReference,
+  type DocumentSnapshot,
+  deleteField,
   doc,
   type Firestore,
-  getDoc,
   getDocs,
+  onSnapshot,
   orderBy,
+  type Query,
   query,
   serverTimestamp,
   Timestamp,
@@ -15,24 +18,33 @@ import {
   writeBatch,
 } from 'firebase/firestore'
 import { z } from 'zod'
+import { SYNC_META_VERSION } from '../engine'
 import type { RemoteChanges, SyncEvent, SyncPreference, SyncRemote } from '../ports'
 
 /**
- * users/{uid}                      { createdAt, schema }
- * users/{uid}/eventMonths/{YYYY-MM} { events: { '<at>|<kind>|<subject>': { l, d } }, updatedAt }
- * users/{uid}/state/preferences    { prefs: { <key>: { v, t } }, updatedAt }
- * feedbackLimits/{uid}             { lastAt } — kept by erase(), like feedback (feedback.ts)
+ * users/{uid}                     { createdAt, schemaVersion: 2 }
+ * users/{uid}/sync/preferences    { type: 'preferences', preferences: { <key>: { value, updatedAt } }, updatedAt }
+ * users/{uid}/sync/{YYYY-MM}      { type: 'events', month, events: { '<at>|<kind>|<subject>': { logDay, deltaSeconds } }, updatedAt }
+ * feedbackLimits/{uid}            { lastSentAt } — kept by erase(), like feedback (feedback.ts)
  *
- * A month per document keeps a sync to one read per changed month instead of
- * one per event. ponytail: the Spark free tier (~20k writes / 50k reads a day)
- * carries a couple of thousand daily users at a sync or two each; past that
- * the upgrade is Blaze, not a new data model. firestore.rules caps a month at
- * 3000 events (~100 a day) and preferences at 64 keys.
+ * One collection, so one query (`updatedAt > cursor`) returns every month
+ * and the preferences that changed: a sync with nothing new costs one read
+ * (the minimum Firestore charges a query), and unchanged preferences are not
+ * read again. A month per document keeps that to one read per changed month
+ * instead of one per event. ponytail: the Spark free tier (~20k writes / 50k
+ * reads a day) carries a couple of thousand daily users at a sync or two
+ * each; past that the upgrade is Blaze, not a new data model.
+ * firestore.rules caps a month at 3000 events (~100 a day) and preferences at
+ * 64 keys; firestore.indexes.json keeps the two maps out of the indexes.
+ *
+ * Layout 1 (`eventMonths/*`, `state/preferences`, single-letter fields) is
+ * no longer read or written; each device re-pushes into this one (engine.ts)
+ * and `erase` still deletes it. Remove that once no layout-1 client is left.
  */
 
-const SCHEMA = 1
 /** Firestore allows 500 writes per batch; leave headroom. */
 const BATCH_LIMIT = 450
+const PREFERENCES_DOC = 'preferences'
 
 // --- pure helpers (unit-tested without the emulator) -----------------------
 
@@ -52,8 +64,8 @@ export function parseEventKey(key: string): { at: number; kind: string; subject:
 }
 
 interface MonthEntry {
-  l: string
-  d: number | null
+  logDay: string
+  deltaSeconds: number | null
 }
 
 export function toMonthDocs(events: SyncEvent[]): Map<string, Record<string, MonthEntry>> {
@@ -61,15 +73,15 @@ export function toMonthDocs(events: SyncEvent[]): Map<string, Record<string, Mon
   for (const event of events) {
     const month = monthOf(event.logDay)
     const entries = months.get(month) ?? {}
-    entries[eventKey(event)] = { l: event.logDay, d: event.deltaSeconds }
+    entries[eventKey(event)] = { logDay: event.logDay, deltaSeconds: event.deltaSeconds }
     months.set(month, entries)
   }
   return months
 }
 
 const monthEntry = z.object({
-  l: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-  d: z.number().nullable(),
+  logDay: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  deltaSeconds: z.number().nullable(),
 })
 const record = z.record(z.string(), z.unknown())
 
@@ -81,29 +93,29 @@ export function fromMonthDoc(data: unknown): SyncEvent[] {
     const identity = parseEventKey(key)
     const entry = monthEntry.safeParse(value)
     if (!identity || !entry.success) return []
-    return [{ ...identity, logDay: entry.data.l, deltaSeconds: entry.data.d }]
+    return [{ ...identity, ...entry.data }]
   })
 }
 
-export const toPrefsMap = (
+export const toPreferencesMap = (
   preferences: SyncPreference[],
-): Record<string, { v: string; t: number }> =>
-  Object.fromEntries(preferences.map((p) => [p.key, { v: p.value, t: p.updatedAt }]))
+): Record<string, { value: string; updatedAt: number }> =>
+  Object.fromEntries(preferences.map(({ key, value, updatedAt }) => [key, { value, updatedAt }]))
 
-const prefEntry = z.object({ v: z.string(), t: z.number() })
+const preferenceEntry = z.object({ value: z.string(), updatedAt: z.number() })
 
-export function fromPrefsDoc(data: unknown): SyncPreference[] {
-  const prefs = record.safeParse(record.safeParse(data).data?.prefs)
-  if (!prefs.success) return []
-  return Object.entries(prefs.data).flatMap(([key, value]) => {
-    const entry = prefEntry.safeParse(value)
-    return entry.success ? [{ key, value: entry.data.v, updatedAt: entry.data.t }] : []
+export function fromPreferencesDoc(data: unknown): SyncPreference[] {
+  const preferences = record.safeParse(record.safeParse(data).data?.preferences)
+  if (!preferences.success) return []
+  return Object.entries(preferences.data).flatMap(([key, value]) => {
+    const entry = preferenceEntry.safeParse(value)
+    return entry.success ? [{ key, ...entry.data }] : []
   })
 }
 
 /**
- * The cursor is the newest month's exact `updatedAt` as 'seconds.nanos'.
- * Millis would truncate, and `>` a truncated time re-reads that month forever.
+ * The cursor is the newest document's exact `updatedAt` as 'seconds.nanos'.
+ * Millis would truncate, and `>` a truncated time re-reads that document forever.
  */
 export const toCursor = (time: Timestamp): string => `${time.seconds}.${time.nanoseconds}`
 
@@ -112,14 +124,40 @@ export function fromCursor(cursor: string | null): Timestamp | null {
   return match ? new Timestamp(Number(match[1]), Number(match[2])) : null
 }
 
+/** What a set of sync documents holds, and the newest `updatedAt` among them and `since`. */
+export function readSyncDocs(
+  docs: Pick<DocumentSnapshot, 'get' | 'data'>[],
+  since: Timestamp | null,
+): { events: SyncEvent[]; preferences: SyncPreference[]; newest: Timestamp | null } {
+  let newest = since
+  const events: SyncEvent[] = []
+  const preferences: SyncPreference[] = []
+  for (const each of docs) {
+    const updatedAt = each.get('updatedAt')
+    if (updatedAt instanceof Timestamp && (!newest || updatedAt > newest)) newest = updatedAt
+    const type = each.get('type')
+    if (type === 'events') events.push(...fromMonthDoc(each.data()))
+    else if (type === 'preferences') preferences.push(...fromPreferencesDoc(each.data()))
+  }
+  return { events, preferences, newest }
+}
+
 // --- the adapter -------------------------------------------------------------
 
 export function createFirestoreSyncRemote(db: Firestore): SyncRemote {
   const userDoc = (uid: string): DocumentReference => doc(db, 'users', uid)
-  const months = (uid: string): CollectionReference => collection(db, 'users', uid, 'eventMonths')
-  const prefsDoc = (uid: string): DocumentReference => doc(db, 'users', uid, 'state', 'preferences')
-  /** Users whose root doc is known to exist, so a push checks once per session. */
-  const known = new Set<string>()
+  const synced = (uid: string): CollectionReference => collection(db, 'users', uid, 'sync')
+  /** Layout 1, deleted by `erase` only. */
+  const legacyMonths = (uid: string): CollectionReference =>
+    collection(db, 'users', uid, 'eventMonths')
+  const legacyPreferences = (uid: string): DocumentReference =>
+    doc(db, 'users', uid, 'state', 'preferences')
+
+  /** Every sync document written after the cursor, oldest first. */
+  const changedSince = (uid: string, since: Timestamp | null): Query =>
+    since
+      ? query(synced(uid), where('updatedAt', '>', since), orderBy('updatedAt'))
+      : query(synced(uid), orderBy('updatedAt'))
 
   async function commit(ops: ((batch: WriteBatch) => void)[]): Promise<void> {
     for (let i = 0; i < ops.length; i += BATCH_LIMIT) {
@@ -132,53 +170,70 @@ export function createFirestoreSyncRemote(db: Firestore): SyncRemote {
   return {
     pull: async (uid, cursor): Promise<RemoteChanges> => {
       const since = fromCursor(cursor)
-      const [monthSnap, prefsSnap] = await Promise.all([
-        getDocs(
-          since
-            ? query(months(uid), where('updatedAt', '>', since), orderBy('updatedAt'))
-            : query(months(uid), orderBy('updatedAt')),
-        ),
-        getDoc(prefsDoc(uid)),
-      ])
-      let newest = since
-      const events = monthSnap.docs.flatMap((snap) => {
-        const updatedAt = snap.get('updatedAt')
-        if (updatedAt instanceof Timestamp && (!newest || updatedAt > newest)) newest = updatedAt
-        return fromMonthDoc(snap.data())
-      })
-      return {
-        events,
-        preferences: fromPrefsDoc(prefsSnap.data()),
-        cursor: newest ? toCursor(newest) : cursor,
-      }
+      const snap = await getDocs(changedSince(uid, since))
+      const { events, preferences, newest } = readSyncDocs(snap.docs, since)
+      return { events, preferences, cursor: newest ? toCursor(newest) : cursor }
     },
 
-    push: async (uid, { events, preferences }) => {
+    // The same query as `pull`, held open. Firestore charges the first
+    // snapshot like a query (one read when nothing is new) and then one read
+    // per changed document, so a device that is only watching costs a read
+    // per write anywhere on the account (its own included), and nothing while
+    // nobody writes. A document only ever moves forward in `updatedAt`, so
+    // the filter set at attach time still matches every later change.
+    watch: (uid, cursor, onChanges, onError) => {
+      let since = fromCursor(cursor)
+      let last = cursor
+      return onSnapshot(
+        changedSince(uid, since),
+        (snap) => {
+          // Removed: an erase. Pending: this device's own write, before the
+          // server stamps it; it comes back confirmed in a later snapshot.
+          const docs = snap
+            .docChanges()
+            .filter((change) => change.type !== 'removed' && !change.doc.metadata.hasPendingWrites)
+            .map((change) => change.doc)
+          if (docs.length === 0) return
+          const { events, preferences, newest } = readSyncDocs(docs, since)
+          since = newest
+          last = newest ? toCursor(newest) : last
+          onChanges({ events, preferences, cursor: last })
+        },
+        (error) => onError?.(error),
+      )
+    },
+
+    push: async (uid, { events, preferences, removedPreferences = [], profile = false }) => {
       const ops: ((batch: WriteBatch) => void)[] = []
-      if (!known.has(uid)) {
-        if (!(await getDoc(userDoc(uid))).exists()) {
-          ops.push((b) =>
-            b.set(userDoc(uid), { createdAt: serverTimestamp(), schema: SCHEMA }, { merge: true }),
-          )
-        }
-        known.add(uid)
+      if (profile) {
+        // A plain set, not a merge: it also replaces a layout-1 profile
+        // ({ createdAt, schema }), which the rules' exact keys would refuse
+        // to merge into.
+        ops.push((b) =>
+          b.set(userDoc(uid), { createdAt: serverTimestamp(), schemaVersion: SYNC_META_VERSION }),
+        )
       }
       // set+merge with nested objects, never update() with field paths: keys
       // hold '.' and '/' that a field path would split on.
       for (const [month, entries] of toMonthDocs(events)) {
         ops.push((b) =>
           b.set(
-            doc(months(uid), month),
-            { events: entries, updatedAt: serverTimestamp() },
+            doc(synced(uid), month),
+            { type: 'events', month, events: entries, updatedAt: serverTimestamp() },
             { merge: true },
           ),
         )
       }
-      if (preferences.length > 0) {
+      if (preferences.length > 0 || removedPreferences.length > 0) {
+        const removals = Object.fromEntries(removedPreferences.map((key) => [key, deleteField()]))
         ops.push((b) =>
           b.set(
-            prefsDoc(uid),
-            { prefs: toPrefsMap(preferences), updatedAt: serverTimestamp() },
+            doc(synced(uid), PREFERENCES_DOC),
+            {
+              type: 'preferences',
+              preferences: { ...removals, ...toPreferencesMap(preferences) },
+              updatedAt: serverTimestamp(),
+            },
             { merge: true },
           ),
         )
@@ -187,15 +242,17 @@ export function createFirestoreSyncRemote(db: Firestore): SyncRemote {
     },
 
     erase: async (uid) => {
-      const snap = await getDocs(months(uid))
+      const [current, legacy] = await Promise.all([
+        getDocs(synced(uid)),
+        getDocs(legacyMonths(uid)),
+      ])
       await commit([
-        ...snap.docs.map((month) => (b: WriteBatch) => b.delete(month.ref)),
-        (b) => b.delete(prefsDoc(uid)),
+        ...[...current.docs, ...legacy.docs].map((each) => (b: WriteBatch) => b.delete(each.ref)),
+        (b) => b.delete(legacyPreferences(uid)),
         (b) => b.delete(userDoc(uid)),
         // feedback and feedbackLimits/{uid} stay (see feedback.ts): a client
         // that could delete its limit doc could dodge the rate limit.
       ])
-      known.delete(uid)
     },
   }
 }

@@ -1,6 +1,7 @@
 // The home page as a visitor meets it: the hero, the way into the companion,
 // the store badges before launch, and the phone demo they can play with.
 
+import { en } from '@ihsaanly/core/strings/en'
 import { expect, type Locator, type Page, test } from '@playwright/test'
 import { FIXED_NOW } from '../support/clock.ts'
 import { collectErrors } from '../support/console.ts'
@@ -60,6 +61,26 @@ test.describe('the "try it right here" demo', () => {
     await dhuhr.click()
     await expect(dhuhr).not.toBeChecked()
     await expect(phone.getByRole('link', { name: 'Two rak’ah after Dhuhr' })).toHaveCount(0)
+    expect(errors).toEqual([])
+  })
+
+  test('ticking a circle moves the item under Done today, and Undo brings it back', async ({
+    page,
+  }) => {
+    const errors = collectErrors(page)
+    await page.goto('/')
+    const phone = demo(page)
+    const title = 'Two rak’ah after Dhuhr'
+    await phone.getByRole('checkbox', { name: 'Dhuhr' }).click()
+    await expect(phone.getByRole('link', { name: en.today.open(title) })).toBeVisible()
+
+    await phone.getByRole('button', { name: en.today.markDone(title) }).click()
+    await expect(phone.getByRole('link', { name: en.today.open(title) })).toHaveCount(0)
+    await expect(phone.getByRole('button', { name: en.today.doneToday(1) })).toBeVisible()
+
+    await phone.getByRole('button', { name: en.today.undoItem(title) }).click()
+    await expect(phone.getByRole('link', { name: en.today.open(title) })).toBeVisible()
+    await expect(phone.getByRole('button', { name: en.today.doneToday(1) })).toHaveCount(0)
     expect(errors).toEqual([])
   })
 

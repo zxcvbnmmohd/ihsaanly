@@ -4,6 +4,7 @@
 import { en } from '@ihsaanly/core/strings/en'
 import { chooseLanguage } from '@ihsaanly/state/i18n/store'
 import { wipe } from '@ihsaanly/state/storage/backend'
+import { reloadEvents } from '@ihsaanly/state/storage/events'
 import { reloadPreferences } from '@ihsaanly/state/storage/preference-store'
 import {
   type AnyRouter,
@@ -27,6 +28,7 @@ export function resetApp(): void {
   localStorage.clear()
   fakeChrome.reset()
   act(() => {
+    reloadEvents()
     reloadPreferences()
     chooseLanguage('en')
     setThemePreference('system')

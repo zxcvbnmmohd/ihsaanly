@@ -27,6 +27,32 @@ export const so: Strings = {
       'Waqtiyada salaadda, taariikhda Hijriga iyo wax kasta oo maalintu kaa rabto waxay ku xiran yihiin goob qiyaas ah. Qalabkan ayaa lagu xisaabiyaa, halkaasna way ku jirtaa ilaa aad u gasho si loo iswaafajiyo.',
     chooseCity: 'Beddelkeeda magaalo dooro',
     chooseCityDetail: 'Ogolaansho looma baahna. Wax walba sidooda ayey u shaqeynayaan.',
+    prayerHint: 'Salaad markaad tukato, taabo',
+    markDone: (name: string): string => `Calaamadi ${name} inay dhammaatay`,
+    unmark: (name: string): string => `Ka saar calaamadda ${name}`,
+    countItem: (name: string, count: number, target: number): string =>
+      `Tiri ${name}, ${count} ka mid ah ${target}`,
+    partsItem: (name: string, done: number, total: number): string =>
+      `Qaybaha ${name}, ${done} ka mid ah ${total} waa dhammaatay`,
+    open: (name: string): string => `Fur ${name}`,
+    doneToday: (count: number): string => `Maanta la sameeyey (${count})`,
+    markedDone: 'Waa la calaamadeeyey',
+    undo: 'Dib u celi',
+    undoItem: (name: string): string => `Dib u celi ${name}`,
+    paused: 'Diiwaangelinta salaadda waa la hakiyey',
+    pausedFasting: 'Soonka wuu soo noqonayaa hakadkaaga kadib',
+    checkInTitle: 'Diyaar ma u tahay inaad sii wadato diiwaangelinta salaadda?',
+    resume: 'Sii wad',
+    notYet: 'Weli ma aha',
+  },
+  tour: {
+    prayer: 'Goobo taabo si aad salaad u calaamadiso',
+    sunnah: 'Markaad sunno sameyso, taabo goobada ku xigta',
+    card: 'Kaarka taabo si aad u barato: erayada, macnaha iyo isha',
+    step: (step: number, total: number): string => `${step} ka mid ah ${total}`,
+    skip: 'Ka bood',
+    next: 'Xiga',
+    done: 'Waan fahmay',
   },
   plan: {
     rightNow: 'Hadda',
@@ -91,8 +117,13 @@ export const so: Strings = {
     whichItemsDetail: 'Waxaa halkan ka muuqda oo keliya qodobbada leh waqti lagugu xusuusiyo.',
     sendTest: 'Dir xusuusiye tijaabo ah',
     sendTestDetail: 'Dhowr ilbiriqsi gudahood ayuu imanayaa.',
+    announcements: 'Ogeysiisyo',
+    announcementsDetail:
+      'Fariimo mararka qaarkood ka yimaada Ihsaanly, sida bilowga Ramadaan. Xusuusiyeyaashaada maalinlaha ah uma baahna tan.',
     testTitle: 'Xusuusiye tijaabo ah',
     testBody: 'Sidan ayuu u eg yahay xusuusiye ka yimaada Ihsaanly.',
+    pausedRemembrance: 'Waa waqtigii adkaarta',
+    checkIn: 'Salaan kooban oo ka yimid Ihsaanly',
     action: {
       done: 'Waa la sameeyey',
       later: 'Goor dambe',
@@ -268,6 +299,9 @@ export const so: Strings = {
     imported: (n: number): string => `Waxaa lagu daray ${count(n, 'hal diiwaan', 'diiwaan')}.`,
     importFailed: 'Faylkaas lama akhriyi karo.',
     shareFailed: 'Wadaagistu qalabkan kama shaqeyso.',
+    crashReports: 'La wadaag warbixinnada burburka',
+    crashReportsDetail:
+      'Dir warbixinnada burburka iyo khaladaadka si looga caawiyo hagaajinta dhibaatooyinka. Waxaa ku jira nooca qalabkaaga iyo nooca app-ka, marna cibaadadaada ama akoonkaaga.',
     delete: 'Tirtir xogtayda',
     deleteDetail:
       'Wax walba oo qalabkan ku jira: dejinta iyo diiwaanka camalkaaga. Abku mar kale ayuu bilaabanayaa.',
@@ -433,6 +467,11 @@ export const so: Strings = {
     },
     jumuahAutoDetail:
       'Jimce maalinta Jimcaha, haddii aadan safar ku jirin ama aadan dooran "Walaal (dhedig)".',
+    checkIn: 'I xusuusi inaan hubiyo',
+    checkInAfter: (days: number): string =>
+      `I xusuusi qiyaastii ${count(days, 'hal maalin', 'maalmood')} kadib`,
+    checkInOff: 'Xusuusin ma jirto. Dib u shid diiwaangelinta markaad rabto.',
+    checkInDays: 'Maalmo',
   },
   hijri: {
     title: 'Taariikhda Hijriga',
@@ -518,6 +557,8 @@ export const so: Strings = {
     home: 'Guri',
     masjid: 'Masaajid',
     prayer: 'Salaad',
+    quran: "Qur'aanka",
+    charity: 'Sadaqo',
     sleep: 'Hurdo iyo toosid',
     travel: 'Safar',
   },
@@ -573,17 +614,16 @@ export const so: Strings = {
     app: 'Abka',
     practice: 'Camalkaaga',
     empty: 'Taariikhda, dejinta iyo caawimaaddu halkan ayey ku jiri doonaan.',
+    help: 'Caawimaad',
+    showMeAround: 'Igu tus appka',
   },
   onboarding: {
     welcomeTitle: 'Xilliga, ee maaha saacadda.',
     welcomeBody:
       'Ihsaanly wuxuu kuu sheegaa marka adkaarta galabtu furan yihiin. Marna saacad maaha. Marna dhibco maaha.',
-    howTitle: 'Adigu salaadda calaamadi. Sunnadu way soo baxaysaa.',
-    howBody:
-      'Taabo Duhur marka aad tukato, dikriga ka dambeeyaana wuu ku sugayaa. Wax walba waxay ku jiraan qalabkan ilaa aad doorato inaad gasho si loo iswaafajiyo.',
+    howTitle: 'Ihsaanly wuxuu muujiyaa waxa waqtigan ku habboon. Goobo taabo markaad sameyso.',
     language: 'Luqadda',
     appearance: 'Muuqaalka',
-    howSample: 'سُبْحَانَ اللهِ وَبِحَمْدِهِ',
     locationStep: 'Xaggee joogtaa?',
     locationWhy:
       'Qalabkan ayaa loogu isticmaalaa ogaanshaha qaybaha maalinta. Halkaas ayay ku jirtaa ilaa aad gasho si loo iswaafajiyo.',
@@ -598,11 +638,14 @@ export const so: Strings = {
     skipDetail: 'Hakadka si kastaba waa la soo bandhigayaa.',
     genderPrivacy:
       'Qalabkan ayaa lagu kaydiyaa, waxaana la iswaafajiyaa oo keliya haddii aad gasho. Wax kale looma isticmaalo.',
-    remindersStep: 'Xusuusiyeyaal',
-    remindersWhy:
-      'Laba ama saddex maalintii, marna habeenkii. Waxaas oo dhan goor dambe ka beddel Dheeraad.',
-    windowsDetail: 'Marka waqti kasta furmo',
-    lookAheadDetail: 'Fiidka ka horreeya',
+    remindersStep: 'Fariimaha',
+    remindersWhy: 'Dooro waxa Ihsaanly kuu soo diri karto. Labadaba goor dambe ka beddel Dheeraad.',
+    dailyReminders: 'Xusuusiyeyaasha maalinlaha ah',
+    dailyRemindersDetail:
+      'Adkaarta subaxa iyo galabta iyo maalmaha soonka ee soo socda, lagu dejiyay qalabkan.',
+    announcementsChoice: 'Ogeysiisyo ka yimaada Ihsaanly',
+    announcementsChoiceDetail:
+      'War mararka qaarkood ah, sida bilowga Ramadaan, oo annagu soo dirno. Way dansan yihiin ilaa aad shiddo.',
     startStep: 'Meel laga bilaabo',
     startWhy:
       'Dooro cabbir aad ku bilowdo. Wax kasta Maktabadda ku dar ama ka saar goorta aad rabto.',
@@ -625,6 +668,7 @@ export const so: Strings = {
     back: 'Dib',
     continue: 'Sii wad',
     allowReminders: 'Oggolow xusuusiyeyaasha',
+    allowNotifications: 'Oggolow fariimaha',
     notNow: 'Hadda maya',
     done: 'Bilow',
     restore: 'Horey ma u isticmaashaa Ihsaanly? Gal si aad xogtaada u soo celiso',
@@ -680,5 +724,8 @@ export const so: Strings = {
   },
   panel: {
     close: 'Xir',
+    markAll: 'Dhammaan calaamadi',
+    progress: (count: number, target: number): string => `${count} ka mid ah ${target}`,
+    tapToCount: 'Taabo si aad u tirisid',
   },
 }

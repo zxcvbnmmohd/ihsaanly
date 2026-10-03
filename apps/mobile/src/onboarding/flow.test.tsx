@@ -4,7 +4,7 @@ import { act, render } from '@testing-library/react'
 import type { ReactElement } from 'react'
 import { BackHandler } from 'react-native'
 import { installProviderButtons, installSafeArea, screens } from '../../test/accounts'
-import { settle } from '../../test/act'
+import { run, settle } from '../../test/act'
 import { installLocation, location, resetLocation } from '../../test/location'
 import { fake, installReminderFakes, resetReminderFakes } from '../../test/reminders'
 import { appearance, installAppearance, restoreAppearance } from '../../test/theme'
@@ -32,6 +32,10 @@ const { DEFAULT_NOTIFICATION_PREFERENCES } = await import(
   '@ihsaanly/core/plan/notification-preferences'
 )
 const { getPlace, setPlace } = await import('@ihsaanly/state/location/store')
+const { DEFAULT_ANNOUNCEMENTS, getAnnouncements, setAnnouncements } = await import(
+  '@ihsaanly/state/opt-ins/store'
+)
+const { push } = await import('../../test/firebase')
 
 interface Screen {
   step: string
@@ -42,6 +46,8 @@ interface Screen {
   onSelectTheme: (theme: string) => void
   onUseDevice: () => void
   onRestore: (() => void) | undefined
+  onToggleReminders: (on: boolean) => void
+  announcements: { on: boolean; onChange: (on: boolean) => void } | undefined
 }
 const screen = (): Screen => onboardingScreens.at(-1) as unknown as Screen
 interface RestoreScreen {
@@ -87,6 +93,7 @@ beforeEach(() => {
   appearance.set = []
   setPlace(null as never)
   setNotificationPreferences({ ...DEFAULT_NOTIFICATION_PREFERENCES, windows: true })
+  setAnnouncements(DEFAULT_ANNOUNCEMENTS)
   spies.push(spyOn(restore, 'useRestoreOutcome').mockImplementation((() => outcome) as never))
   spies.push(
     spyOn(BackHandler, 'addEventListener').mockImplementation((() => ({
@@ -170,6 +177,44 @@ describe('the reminders step', () => {
     await settle()
     expect(fake.categories.length).toBeGreaterThan(0)
     expect(screen().step).toBe('start')
+  })
+
+  it('offers announcements, off until chosen', async () => {
+    toReminders()
+    expect(screen().announcements?.on).toBe(false)
+    await run(() => screen().onNext())
+    await settle()
+    expect(screen().step).toBe('start')
+    expect(getAnnouncements().enabled).toBe(false)
+  })
+
+  it('turns announcements on with the same permission, and subscribes the topics', async () => {
+    fake.requestResult = { granted: true }
+    toReminders()
+    act(() => screen().announcements?.onChange(true))
+    expect(screen().announcements?.on).toBe(true)
+
+    await run(() => screen().onNext())
+    await settle()
+    await settle()
+
+    expect(screen().step).toBe('start')
+    expect(getAnnouncements().enabled).toBe(true)
+    expect(push.topics.has('announcements')).toBe(true)
+  })
+
+  it('leaves announcements off when the permission is refused', async () => {
+    fake.requestResult = { granted: false }
+    toReminders()
+    act(() => screen().onToggleReminders(false))
+    act(() => screen().announcements?.onChange(true))
+
+    await run(() => screen().onNext())
+    await settle()
+
+    expect(screen().step).toBe('start')
+    expect(getAnnouncements()).toEqual(DEFAULT_ANNOUNCEMENTS)
+    expect(push.topics.size).toBe(0)
   })
 
   it('moves on even when no permission can be had', async () => {

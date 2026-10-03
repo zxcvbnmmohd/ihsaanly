@@ -7,6 +7,7 @@
 // loads it inside `<ClientOnly>` once the demo nears the viewport), so it may
 // read the clock, the time zone and the DOM freely.
 
+import { resolveText } from '@ihsaanly/core/content/language'
 import type { LanguagePack } from '@ihsaanly/core/i18n/language-pack'
 import type { Place } from '@ihsaanly/core/location/place'
 import type { Prayer } from '@ihsaanly/core/prayer/qada'
@@ -18,8 +19,10 @@ import { TodayScreen } from '@ihsaanly/ui/screens/today'
 import { WebUiProvider } from '@ihsaanly/web/ui-provider'
 import type { ReactElement, ReactNode } from 'react'
 import { cloneElement, isValidElement, useEffect, useReducer, useRef, useState } from 'react'
+import { type EdgeInsets, SafeAreaInsetsContext } from 'react-native-safe-area-context'
 import { useSite } from '~/i18n/use-site'
 import { CoachOverlay, coachMarkIsTarget } from './coach'
+import { demoItemById } from './demo-content'
 import {
   buildItem,
   buildLibrary,
@@ -54,6 +57,15 @@ function statusBarTime(at: Date): string {
 function initState(): ReturnType<typeof initialDemoState> {
   return initialDemoState(Intl.DateTimeFormat().resolvedOptions().timeZone)
 }
+
+/**
+ * The phone frame has no notch or home bar of its own to inset for. Given
+ * straight to the context: a SafeAreaProvider would measure the page instead.
+ */
+// Zero on every edge, named from a list so no physical direction is written as a style key.
+const NO_INSETS = Object.fromEntries(
+  ['top', 'left', 'right', 'bottom'].map((edge) => [edge, 0]),
+) as unknown as EdgeInsets
 
 const ITEM_HREF = /^\/item\/([^/?#]+)$/
 
@@ -113,7 +125,10 @@ export function Phone({ pack }: { pack: LanguagePack }): ReactElement {
   const { strings, intlLocale, copy, language } = demoLocale
   const signals = buildSignals(state.place, now, state)
   const placeLabel = placeLabelOf(state.place)
-  const today = buildToday(signals, strings, intlLocale, placeLabel)
+  const today = buildToday(signals, strings, intlLocale, placeLabel, {
+    progress: state.progress,
+    panelItemId: state.panelItemId,
+  })
   const activeTab: DemoTab = state.view === 'item' ? state.previousTab : state.view
 
   const handlers: ChromeHandlers = {
@@ -129,6 +144,9 @@ export function Phone({ pack }: { pack: LanguagePack }): ReactElement {
   }
 
   const ignore = (): void => undefined
+  const at = (): Date => new Date()
+  const doneIds = today.props.doneToday.map((entry) => entry.id)
+  const undoItem = state.undo ? demoItemById(state.undo.itemId) : undefined
   let title: string
   let showBack = false
   let screen: ReactNode
@@ -138,6 +156,22 @@ export function Phone({ pack }: { pack: LanguagePack }): ReactElement {
     screen = (
       <TodayScreen
         {...today.props}
+        undo={
+          state.undo
+            ? {
+                id: `${state.undo.itemId}#${state.undo.seq}`,
+                title: (undoItem ? resolveText(undoItem.title) : null) ?? state.undo.itemId,
+                onUndo: () => dispatch({ type: 'undo' }),
+              }
+            : null
+        }
+        onDismissUndo={() => dispatch({ type: 'dismiss-undo' })}
+        onCircle={(id) => dispatch({ type: 'circle', id, done: doneIds.includes(id), at: at() })}
+        onClosePanel={() => dispatch({ type: 'close-panel' })}
+        onCount={(id) => dispatch({ type: 'panel-count', id, at: at() })}
+        onComplete={(id) => dispatch({ type: 'panel-complete', id, at: at() })}
+        onMarkAll={(id) => dispatch({ type: 'panel-complete', id, at: at() })}
+        onTogglePart={(id, partId) => dispatch({ type: 'panel-toggle-part', id, partId, at: at() })}
         onMarkPrayer={onMarkPrayer}
         onUseMyLocation={ignore}
         onAddSuggestion={ignore}
@@ -219,7 +253,10 @@ export function Phone({ pack }: { pack: LanguagePack }): ReactElement {
           id={TABPANEL_ID}
           aria-labelledby={tabId(activeTab)}>
           <WebUiProvider strings={strings} Link={linkRef.current}>
-            {screen}
+            {/* Today's undo bar reads safe-area insets; the frame has none. */}
+            <SafeAreaInsetsContext.Provider value={NO_INSETS}>
+              {screen}
+            </SafeAreaInsetsContext.Provider>
           </WebUiProvider>
         </div>
         <div className="demo-tabbar-wrap">

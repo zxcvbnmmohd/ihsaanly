@@ -195,15 +195,15 @@ const EXPECTED: Record<Name, Record<Shape, Drawn>> = {
     },
   },
   DuaOfTheDayWidget: {
-    square: { texts: ['سُبْحَانَ اللَّهِ'], uris: ['ihsaanly://item/tasbih-after-prayer'] },
-    strip: { texts: ['سُبْحَانَ اللَّهِ'], uris: ['ihsaanly://item/tasbih-after-prayer'] },
+    square: { texts: ['بِسْمِ اللَّهِ'], uris: ['ihsaanly://item/dua-entering-home'] },
+    strip: { texts: ['بِسْمِ اللَّهِ'], uris: ['ihsaanly://item/dua-entering-home'] },
     medium: {
-      texts: ['Tasbih after prayer', 'سُبْحَانَ اللَّهِ'],
-      uris: ['ihsaanly://item/tasbih-after-prayer'],
+      texts: ['Coming home', 'بِسْمِ اللَّهِ'],
+      uris: ['ihsaanly://item/dua-entering-home'],
     },
     large: {
-      texts: ['Tasbih after prayer', 'سُبْحَانَ اللَّهِ', 'Glory be to Allah.'],
-      uris: ['ihsaanly://item/tasbih-after-prayer'],
+      texts: ['Coming home', 'بِسْمِ اللَّهِ', 'In the name of Allah.'],
+      uris: ['ihsaanly://item/dua-entering-home'],
     },
   },
   MakeUpWidget: {

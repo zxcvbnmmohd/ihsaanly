@@ -1,7 +1,16 @@
 import { describe, expect, it } from 'bun:test'
 
 import type { Item } from '@ihsaanly/core/content/schema'
+import { ar } from '@ihsaanly/core/strings/ar'
 import { en } from '@ihsaanly/core/strings/en'
+import { fr } from '@ihsaanly/core/strings/fr'
+import { hi } from '@ihsaanly/core/strings/hi'
+import { it as italian } from '@ihsaanly/core/strings/it'
+import { ja } from '@ihsaanly/core/strings/ja'
+import { so } from '@ihsaanly/core/strings/so'
+import { ur } from '@ihsaanly/core/strings/ur'
+import { yue } from '@ihsaanly/core/strings/yue'
+import { zh } from '@ihsaanly/core/strings/zh'
 
 import { notificationContent } from './content'
 
@@ -159,5 +168,68 @@ describe('notification words', () => {
 
   it('refuses an entry of a kind it was never taught', () => {
     expect(() => notificationContent({ kind: 'mystery' } as never, [item], en)).toThrow()
+  })
+})
+
+describe('words while paused', () => {
+  const remembrance: Item = {
+    ...item,
+    id: 'remembrance-at-prayer-times',
+    title: { en: 'Remembrance at prayer times' },
+    trigger: { kind: 'prayer', prayer: 'any', when: 'before' },
+    reminder: { en: 'An item sentence that must not be used.' },
+    onlyWhilePaused: true,
+  }
+  const entry = {
+    kind: 'remembrance' as const,
+    itemId: remembrance.id,
+    prayer: 'dhuhr' as const,
+    at,
+    endsAt,
+  }
+
+  it('names only the prayer time and the remembrance, and answers like an item', () => {
+    const content = notificationContent(entry, [remembrance], en)
+    expect(content).toEqual({
+      identifier: `plan:remembrance-at-prayer-times:dhuhr@${at.getTime()}`,
+      title: en.prayer.dhuhr,
+      body: en.notifications.pausedRemembrance,
+      at,
+      channelId: 'prayers',
+      categoryIdentifier: 'reminder',
+      data: {
+        v: 1,
+        kind: 'item',
+        itemId: 'remembrance-at-prayer-times',
+        endsAt: endsAt.getTime(),
+        reason: 'current-window',
+      },
+    })
+  })
+
+  it('sends the check-in as a bare question that opens Today', () => {
+    expect(notificationContent({ kind: 'check-in', at }, [], en)).toEqual({
+      identifier: `plan:check-in@${at.getTime()}`,
+      title: en.notifications.checkIn,
+      body: '',
+      at,
+      channelId: 'reminders',
+      data: { v: 1, kind: 'check-in' },
+    })
+  })
+
+  it('never says pause, period or why, in any language', () => {
+    expect(en.notifications.pausedRemembrance).not.toMatch(/paus|period|menstru|track/i)
+    expect(en.notifications.checkIn).not.toMatch(/paus|period|menstru|track/i)
+
+    for (const strings of [en, ar, fr, hi, italian, ja, so, ur, yue, zh]) {
+      const shown = [
+        notificationContent(entry, [remembrance], strings),
+        notificationContent({ kind: 'check-in', at }, [], strings),
+      ].flatMap((content) => (content ? [content.title, content.body] : []))
+      const telling = [strings.tracking.paused, strings.tracking.pausedDetail]
+      shown.forEach((text) => telling.forEach((tell) => expect(text).not.toContain(tell)))
+      expect(shown).not.toContain(remembrance.reminder?.en)
+    }
   })
 })

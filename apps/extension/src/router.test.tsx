@@ -30,6 +30,7 @@ describe('router', () => {
       '/notifications',
       '/qada',
       '/settings',
+      '/today',
     ])
   })
 })

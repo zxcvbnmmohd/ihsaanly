@@ -259,27 +259,21 @@ describe('iOS widgets on the sample entry', () => {
       ],
     },
     DuaOfTheDayWidget: {
-      accessoryInline: [['Tasbih after prayer'], 'ihsaanly://item/tasbih-after-prayer'],
-      accessoryCircular: [['Tasbih after prayer'], 'ihsaanly://item/tasbih-after-prayer'],
-      accessoryRectangular: [
-        [ARABIC, 'Tasbih after prayer'],
-        'ihsaanly://item/tasbih-after-prayer',
-      ],
-      systemSmall: [
-        ['Dua of the day', ARABIC, 'Tasbih after prayer'],
-        'ihsaanly://item/tasbih-after-prayer',
-      ],
+      accessoryInline: [['Coming home'], 'ihsaanly://item/dua-entering-home'],
+      accessoryCircular: [['Coming home'], 'ihsaanly://item/dua-entering-home'],
+      accessoryRectangular: [[ARABIC, 'Coming home'], 'ihsaanly://item/dua-entering-home'],
+      systemSmall: [['Dua of the day', ARABIC, 'Coming home'], 'ihsaanly://item/dua-entering-home'],
       systemMedium: [
-        ['Dua of the day', ARABIC, 'Tasbih after prayer'],
-        'ihsaanly://item/tasbih-after-prayer',
+        ['Dua of the day', ARABIC, 'Coming home'],
+        'ihsaanly://item/dua-entering-home',
       ],
       systemLarge: [
-        ['Dua of the day', ARABIC, 'Tasbih after prayer', 'Glory be to Allah.'],
-        'ihsaanly://item/tasbih-after-prayer',
+        ['Dua of the day', ARABIC, 'Coming home', 'In the name of Allah.'],
+        'ihsaanly://item/dua-entering-home',
       ],
       systemExtraLarge: [
-        ['Dua of the day', ARABIC, 'Tasbih after prayer', 'Glory be to Allah.'],
-        'ihsaanly://item/tasbih-after-prayer',
+        ['Dua of the day', ARABIC, 'Coming home', 'In the name of Allah.'],
+        'ihsaanly://item/dua-entering-home',
       ],
     },
     MakeUpWidget: {

@@ -5,12 +5,12 @@ import {
   eventKey,
   fromCursor,
   fromMonthDoc,
-  fromPrefsDoc,
+  fromPreferencesDoc,
   monthOf,
   parseEventKey,
   toCursor,
   toMonthDocs,
-  toPrefsMap,
+  toPreferencesMap,
 } from './sync-remote'
 
 const event = (overrides: Partial<SyncEvent> = {}): SyncEvent => ({
@@ -57,9 +57,11 @@ describe('month docs', () => {
     expect(
       fromMonthDoc({
         events: {
-          [eventKey(good)]: { l: good.logDay, d: null },
-          bad: { l: '2025-10-09', d: null },
-          [eventKey(event({ subject: 'x' }))]: { l: 'oct', d: 'soon' },
+          [eventKey(good)]: { logDay: good.logDay, deltaSeconds: null },
+          bad: { logDay: '2025-10-09', deltaSeconds: null },
+          [eventKey(event({ subject: 'x' }))]: { logDay: 'oct', deltaSeconds: 'soon' },
+          // Layout 1's single-letter fields are not read.
+          [eventKey(event({ subject: 'y' }))]: { l: '2025-10-09', d: null },
         },
       }),
     ).toEqual([good])
@@ -70,9 +72,17 @@ describe('month docs', () => {
 
 describe('preferences doc', () => {
   test('round-trips and skips malformed entries', () => {
-    const prefs = [{ key: 'theme.mode', value: '"dark"', updatedAt: 5 }]
-    expect(fromPrefsDoc({ prefs: { ...toPrefsMap(prefs), broken: { v: 1 } } })).toEqual(prefs)
-    expect(fromPrefsDoc(undefined)).toEqual([])
+    const preferences = [{ key: 'theme.mode', value: '"dark"', updatedAt: 5 }]
+    expect(toPreferencesMap(preferences)).toEqual({
+      'theme.mode': { value: '"dark"', updatedAt: 5 },
+    })
+    expect(
+      fromPreferencesDoc({
+        preferences: { ...toPreferencesMap(preferences), broken: { value: 1 } },
+      }),
+    ).toEqual(preferences)
+    expect(fromPreferencesDoc({ prefs: { a: { v: '1', t: 1 } } })).toEqual([])
+    expect(fromPreferencesDoc(undefined)).toEqual([])
   })
 })
 

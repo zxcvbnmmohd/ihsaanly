@@ -100,7 +100,7 @@ describe('finishing', () => {
     await waitFor(() => expect(path(app)).toBe('/onboarding/reminders'))
     await app.user.click((await screen.findAllByRole('switch'))[0] as HTMLElement)
     expect(getNotificationPreferences().windows).toBe(false)
-    await app.user.click(screen.getByRole('button', { name: en.onboarding.allowReminders }))
+    await app.user.click(screen.getByRole('button', { name: en.onboarding.continue }))
 
     await waitFor(() => expect(path(app)).toBe('/onboarding/start'))
     await app.user.click(

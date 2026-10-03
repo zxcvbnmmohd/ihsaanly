@@ -1,1 +1,9 @@
-{ "indexes": [], "fieldOverrides": [] }
+{
+  "indexes": [],
+  "fieldOverrides": [
+    { "collectionGroup": "sync", "fieldPath": "events", "indexes": [] },
+    { "collectionGroup": "sync", "fieldPath": "preferences", "indexes": [] },
+    { "collectionGroup": "feedback", "fieldPath": "diagnostics", "indexes": [] },
+    { "collectionGroup": "feedback", "fieldPath": "message", "indexes": [] }
+  ]
+}

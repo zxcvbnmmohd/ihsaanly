@@ -7,6 +7,9 @@ import { resetStorage } from '../../test/storage'
 const { act, renderHook } = await withDom()
 const { items, setContentLanguage } = await import('@ihsaanly/core/content')
 const { idsForPreset } = await import('@ihsaanly/core/plan/presets')
+const { DEFAULT_NOTIFICATION_PREFERENCES } = await import(
+  '@ihsaanly/core/plan/notification-preferences'
+)
 const { getLocale } = await import('../i18n/store')
 const { getPlace } = await import('../location/store')
 const { getNotificationPreferences } = await import('../notifications/store')
@@ -146,18 +149,21 @@ describe('the onboarding flow', () => {
     expect(getOnboarding().completed).toBe(true)
   })
 
-  it('"Not now" moves on without asking for anything', () => {
-    const ensureReminderPermission = mock(async () => {})
-    const { result } = flow({ ensureReminderPermission })
+  it('"Not now" moves on without asking for anything, and leaves announcements off', () => {
+    const ensureReminderPermission = mock(async () => true)
+    const enableAnnouncements = mock(async () => true)
+    const { result } = flow({ ensureReminderPermission, enableAnnouncements })
     act(() => result.current.onSkipIntro())
     act(() => result.current.onNext())
     act(() => result.current.onNext())
     expect(result.current.step).toBe('reminders')
+    act(() => result.current.announcements?.onChange(true))
 
     act(() => result.current.onNotNow())
 
     expect(result.current.step).toBe('start')
     expect(ensureReminderPermission).not.toHaveBeenCalled()
+    expect(enableAnnouncements).not.toHaveBeenCalled()
   })
 
   describe('the reminders step', () => {
@@ -167,22 +173,109 @@ describe('the onboarding flow', () => {
       act(() => result.current.onNext())
     }
 
-    it('asks the OS for permission before moving on, when reminders are on', async () => {
-      let granted = false
-      const ensureReminderPermission = mock(async () => {
-        await flush()
-        granted = true
-      })
-      const { result } = flow({ ensureReminderPermission })
-      toReminders(result)
-
+    const press = async (result: {
+      current: ReturnType<typeof useOnboardingFlow>
+    }): Promise<void> => {
       await act(async () => {
         result.current.onNext()
         await flush()
         await flush()
       })
+    }
+
+    const remindersOn = (): boolean => {
+      const { windows, lookAhead, prayers } = getNotificationPreferences()
+      return windows || lookAhead || prayers
+    }
+
+    it('offers announcements, off, only where the host can turn them on', () => {
+      expect(flow().result.current.announcements).toBeUndefined()
+
+      const { result } = flow({ enableAnnouncements: async () => true })
+      expect(result.current.announcements?.on).toBe(false)
+      act(() => result.current.announcements?.onChange(true))
+      expect(result.current.announcements?.on).toBe(true)
+      act(() => result.current.announcements?.onChange(false))
+      expect(result.current.announcements?.on).toBe(false)
+    })
+
+    it('reminders only (the default): asks once, keeps them, and leaves announcements off', async () => {
+      let granted = false
+      const ensureReminderPermission = mock(async () => {
+        await flush()
+        granted = true
+        return true
+      })
+      const enableAnnouncements = mock(async () => true)
+      const { result } = flow({ ensureReminderPermission, enableAnnouncements })
+      toReminders(result)
+
+      await press(result)
 
       expect(granted).toBe(true)
+      expect(ensureReminderPermission).toHaveBeenCalledTimes(1)
+      expect(enableAnnouncements).not.toHaveBeenCalled()
+      expect(remindersOn()).toBe(true)
+      expect(result.current.step).toBe('start')
+    })
+
+    it('announcements only: asks once, then turns them on, with reminders off', async () => {
+      const ensureReminderPermission = mock(async () => true)
+      const enableAnnouncements = mock(async () => true)
+      const { result } = flow({ ensureReminderPermission, enableAnnouncements })
+      toReminders(result)
+      act(() => result.current.onToggleReminders(false))
+      act(() => result.current.announcements?.onChange(true))
+
+      await press(result)
+
+      expect(ensureReminderPermission).toHaveBeenCalledTimes(1)
+      expect(enableAnnouncements).toHaveBeenCalledTimes(1)
+      expect(remindersOn()).toBe(false)
+      expect(result.current.step).toBe('start')
+    })
+
+    it('both: one prompt covers reminders and announcements', async () => {
+      const ensureReminderPermission = mock(async () => true)
+      const enableAnnouncements = mock(async () => true)
+      const { result } = flow({ ensureReminderPermission, enableAnnouncements })
+      toReminders(result)
+      act(() => result.current.announcements?.onChange(true))
+
+      await press(result)
+
+      expect(ensureReminderPermission).toHaveBeenCalledTimes(1)
+      expect(enableAnnouncements).toHaveBeenCalledTimes(1)
+      expect(remindersOn()).toBe(true)
+      expect(result.current.step).toBe('start')
+    })
+
+    it('neither: asks for nothing and just advances', () => {
+      const ensureReminderPermission = mock(async () => true)
+      const enableAnnouncements = mock(async () => true)
+      const { result } = flow({ ensureReminderPermission, enableAnnouncements })
+      toReminders(result)
+      act(() => result.current.onToggleReminders(false))
+
+      act(() => result.current.onNext())
+
+      expect(ensureReminderPermission).not.toHaveBeenCalled()
+      expect(enableAnnouncements).not.toHaveBeenCalled()
+      expect(result.current.step).toBe('start')
+    })
+
+    it('denied: announcements stay off, reminders stay as chosen, and it moves on', async () => {
+      const ensureReminderPermission = mock(async () => false)
+      const enableAnnouncements = mock(async () => true)
+      const { result } = flow({ ensureReminderPermission, enableAnnouncements })
+      toReminders(result)
+      act(() => result.current.announcements?.onChange(true))
+
+      await press(result)
+
+      expect(ensureReminderPermission).toHaveBeenCalledTimes(1)
+      expect(enableAnnouncements).not.toHaveBeenCalled()
+      expect(remindersOn()).toBe(true)
       expect(result.current.step).toBe('start')
     })
 
@@ -192,26 +285,23 @@ describe('the onboarding flow', () => {
       })
       toReminders(result)
 
-      await act(async () => {
-        result.current.onNext()
-        await flush()
-        await flush()
-      })
+      await press(result)
 
       expect(result.current.step).toBe('start')
     })
 
-    it('does not ask when every reminder is off, and just advances', () => {
-      const ensureReminderPermission = mock(async () => {})
-      const { result } = flow({ ensureReminderPermission })
-      act(() =>
-        result.current.onToggleNotification({ windows: false, lookAhead: false, prayers: false }),
-      )
+    it('moves on even if turning announcements on fails', async () => {
+      const enableAnnouncements = mock(() => Promise.reject(new Error('offline')))
+      const { result } = flow({
+        ensureReminderPermission: async () => true,
+        enableAnnouncements,
+      })
       toReminders(result)
+      act(() => result.current.announcements?.onChange(true))
 
-      act(() => result.current.onNext())
+      await press(result)
 
-      expect(ensureReminderPermission).not.toHaveBeenCalled()
+      expect(enableAnnouncements).toHaveBeenCalledTimes(1)
       expect(result.current.step).toBe('start')
     })
 
@@ -298,14 +388,26 @@ describe('the onboarding flow', () => {
       expect(result.current.gender).toBe('female')
     })
 
-    it('changes only the reminder switches that were touched', () => {
+    it('turns daily reminders off and back on, keeping the rest of the preferences', () => {
       const { result } = flow()
       const before = getNotificationPreferences()
 
-      act(() => result.current.onToggleNotification({ prayers: !before.prayers }))
+      act(() => result.current.onToggleReminders(false))
+      expect(getNotificationPreferences()).toEqual({
+        ...before,
+        windows: false,
+        lookAhead: false,
+        prayers: false,
+      })
+      expect(result.current.notifications.windows).toBe(false)
 
-      expect(getNotificationPreferences()).toEqual({ ...before, prayers: !before.prayers })
-      expect(result.current.notifications.prayers).toBe(!before.prayers)
+      act(() => result.current.onToggleReminders(true))
+      expect(getNotificationPreferences()).toEqual({
+        ...before,
+        windows: DEFAULT_NOTIFICATION_PREFERENCES.windows,
+        lookAhead: DEFAULT_NOTIFICATION_PREFERENCES.lookAhead,
+        prayers: DEFAULT_NOTIFICATION_PREFERENCES.prayers,
+      })
     })
 
     it('enables the items of a starter preset, and names them', () => {

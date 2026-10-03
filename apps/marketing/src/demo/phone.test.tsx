@@ -4,6 +4,7 @@ import { en } from '@ihsaanly/core/strings/en'
 import { act, fireEvent, screen, waitFor, within } from '@testing-library/react'
 import { renderSite, type SiteRender } from '../../test/site'
 import { applyDemoTranslation } from './demo-content'
+import { demoCopyFor } from './demo-strings'
 
 // The real Today screen, but watched: the demo has no location, suggestion,
 // make-up or fasting controls to press, so its inert callbacks are called directly.
@@ -72,7 +73,7 @@ describe('Phone: Today', () => {
     await user.click(dhuhr)
     expect(dhuhr).toHaveAttribute('aria-checked', 'true')
     await waitFor(() =>
-      expect(screen.getByRole('note')).toHaveTextContent('Tap to see where it comes from'),
+      expect(screen.getByRole('note')).toHaveTextContent(demoCopyFor('en').coachTapCircle),
     )
     await user.click(dhuhr)
     expect(dhuhr).toHaveAttribute('aria-checked', 'false')
@@ -97,6 +98,81 @@ describe('Phone: Today', () => {
     })
     expect(todayProps).not.toBeNull()
     expect(document.body.innerHTML).toBe(before)
+  })
+})
+
+describe('Phone: circles on Today', () => {
+  const circle = (name: string | RegExp): HTMLElement => screen.getByRole('button', { name })
+
+  test('ticking a circle moves the row to Done today and shows the undo bar', async () => {
+    const { user } = await phone()
+    const title = (todayProps?.now[0]?.title ?? '') as string
+    await user.click(circle(new RegExp(`^${en.today.markDone(title)}$`)))
+    expect(screen.queryByRole('link', { name: en.today.open(title) })).toBeNull()
+    expect(screen.getByRole('button', { name: en.today.undoItem(title) })).toBeInTheDocument()
+    expect(todayProps?.doneToday.map((entry) => entry.title)).toContain(title)
+    // The coach has done its job once a circle is tapped.
+    expect(screen.queryByRole('note')).toBeNull()
+  })
+
+  test('Undo puts the row back; the bar also times out', async () => {
+    const { user } = await phone()
+    const title = (todayProps?.now[0]?.title ?? '') as string
+    await user.click(circle(new RegExp(`^${en.today.markDone(title)}$`)))
+    await user.click(screen.getByRole('button', { name: en.today.undoItem(title) }))
+    expect(screen.getByRole('link', { name: en.today.open(title) })).toBeInTheDocument()
+    act(() => {
+      todayProps?.onDismissUndo()
+    })
+    expect(todayProps?.undo).toBeNull()
+  })
+
+  test('a done row can be unmarked from Done today', async () => {
+    const { user } = await phone()
+    const id = todayProps?.now[0]?.id ?? ''
+    await user.click(circle(new RegExp(`^${en.today.markDone(todayProps?.now[0]?.title ?? '')}$`)))
+    act(() => {
+      todayProps?.onCircle(id)
+    })
+    expect(todayProps?.doneToday.map((entry) => entry.id)).not.toContain(id)
+  })
+
+  test('a counted dhikr opens its counter, which counts to the end and closes', async () => {
+    const { user } = await phone()
+    await user.click(screen.getByRole('checkbox', { name: 'Dhuhr' }))
+    act(() => {
+      todayProps?.onCircle('tasbih-after-prayer')
+    })
+    expect(todayProps?.panel).toMatchObject({ kind: 'count', count: 0, target: 33 })
+    act(() => {
+      for (let tap = 0; tap < 33; tap++) todayProps?.onCount('tasbih-after-prayer')
+    })
+    expect(todayProps?.panel).toBeNull()
+    expect(todayProps?.doneToday.map((entry) => entry.id)).toContain('tasbih-after-prayer')
+  })
+
+  test('the sheet can be closed, completed and marked all, and parts toggled', async () => {
+    const { user } = await phone()
+    await user.click(screen.getByRole('checkbox', { name: 'Dhuhr' }))
+    act(() => {
+      todayProps?.onCircle('tasbih-after-prayer')
+    })
+    act(() => {
+      todayProps?.onClosePanel()
+    })
+    expect(todayProps?.panel).toBeNull()
+    act(() => {
+      todayProps?.onComplete('tasbih-after-prayer')
+    })
+    expect(todayProps?.doneToday.map((entry) => entry.id)).toContain('tasbih-after-prayer')
+    act(() => {
+      todayProps?.onMarkAll('istighfar')
+    })
+    expect(todayProps?.undo?.id).toStartWith('istighfar#')
+    act(() => {
+      todayProps?.onTogglePart('morning-adhkar', 'nope')
+    })
+    expect(todayProps?.panel).toBeNull()
   })
 })
 

@@ -4,7 +4,7 @@ import { en } from '@ihsaanly/core/strings/en'
 import { seriousViolations } from '../support/axe.ts'
 import { ONBOARDED_STATE } from '../support/global-setup.ts'
 import { COMPANION_CLOUD_URL } from '../support/ports.ts'
-import { expect, test } from './fixtures.ts'
+import { expect, skipTour, test } from './fixtures.ts'
 
 test('axe: onboarding welcome', async ({ page }) => {
   await page.goto('/onboarding/welcome')
@@ -15,8 +15,15 @@ test('axe: onboarding welcome', async ({ page }) => {
 test.describe('onboarded', () => {
   test.use({ storageState: ONBOARDED_STATE })
 
+  test('axe: Today, with the first-run tour', async ({ page }) => {
+    await page.goto('/today')
+    await expect(page.getByText(en.tour.prayer)).toBeVisible()
+    expect(await seriousViolations(page)).toEqual([])
+  })
+
   test('axe: Today', async ({ page }) => {
     await page.goto('/today')
+    await skipTour(page)
     await expect(page.getByRole('checkbox', { name: en.prayer.dhuhr })).toBeVisible()
     expect(await seriousViolations(page)).toEqual([])
   })

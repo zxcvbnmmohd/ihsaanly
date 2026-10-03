@@ -5,7 +5,8 @@
 //
 // `onboarded` tests start with the storage global-setup.ts saved after one
 // walk through onboarding, so they open straight on Today.
-import { test as base, expect } from '@playwright/test'
+import { en } from '@ihsaanly/core/strings/en'
+import { test as base, expect, type Page } from '@playwright/test'
 import { E2E_CONTENT_URL } from '../support/build.ts'
 import { FIXED_NOW } from '../support/clock.ts'
 import { collectErrors } from '../support/console.ts'
@@ -44,6 +45,15 @@ export const test = base.extend<Fixtures>({
 /** Starts each test of the file on Today, onboarded in London. */
 export function useOnboarded(): void {
   test.use({ storageState: ONBOARDED_STATE })
+}
+
+/**
+ * Dismisses the first-run tour, which an onboarded profile shows on its first
+ * Today. Journeys about something else call this so the tour stays out of the way.
+ */
+export async function skipTour(page: Page): Promise<void> {
+  await page.getByRole('button', { name: en.tour.skip }).click()
+  await expect(page.getByRole('button', { name: en.tour.skip })).toBeHidden()
 }
 
 export { expect }

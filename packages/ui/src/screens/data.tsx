@@ -4,7 +4,9 @@ import { Text } from 'react-native'
 import { useColors } from '../colors'
 import { Row } from '../components/row'
 import { Screen } from '../components/screen'
+import { SwitchRow } from '../components/switch-row'
 import { useUi } from '../provider'
+import type { OptIn } from '../types'
 
 export interface DataScreenProps {
   message: string | null
@@ -12,6 +14,8 @@ export interface DataScreenProps {
   onImport: () => void
   onDiagnostics: () => void
   onDelete: () => void
+  /** Sending crash reports from this device. Left out where there is no crash reporting. */
+  crashReports?: OptIn | undefined
 }
 
 export function DataScreen({
@@ -20,6 +24,7 @@ export function DataScreen({
   onImport,
   onDiagnostics,
   onDelete,
+  crashReports,
 }: DataScreenProps): ReactElement {
   const colors = useColors()
   const { strings, scheme } = useUi()
@@ -38,6 +43,17 @@ export function DataScreen({
         detail={strings.data.diagnosticsDetail}
         onPress={onDiagnostics}
       />
+      {crashReports ? (
+        <SwitchRow
+          title={strings.data.crashReports}
+          detail={strings.data.crashReportsDetail}
+          value={crashReports.on}
+          onValueChange={crashReports.onChange}
+          accent={palette.accent}
+          knob={palette.knob}
+          track={palette.wash[1]}
+        />
+      ) : null}
 
       <Row title={strings.data.delete} detail={strings.data.deleteDetail} onPress={onDelete} />
 

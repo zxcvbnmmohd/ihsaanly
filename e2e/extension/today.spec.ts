@@ -85,3 +85,69 @@ test('fasts owed: the made-up button records one', async ({ openPopup }) => {
   await expect(page.getByText('2 owed')).toBeHidden()
   await expect(page.getByText('1 owed')).toBeVisible()
 })
+
+test('sunnah rows have circles; ticking one marks it done and Undo takes it back', async ({
+  openPopup,
+}) => {
+  const { page, errors } = await openPopup()
+  await chooseCity(page)
+  const circle = page.getByRole('button', { name: /^Mark .* done$/ }).first()
+  await expect(circle).toBeVisible()
+  const label = (await circle.getAttribute('aria-label')) as string
+  const title = label.replace(/^Mark /, '').replace(/ done$/, '')
+
+  await circle.click()
+  await expect(page.getByText('Marked done')).toBeVisible()
+  await expect(page.getByRole('button', { name: label })).toHaveCount(0)
+  await page.getByRole('button', { name: 'Done today (1)' }).click()
+  await expect(page.getByRole('button', { name: `Unmark ${title}` })).toBeVisible()
+
+  await page.getByRole('button', { name: `Undo ${title}` }).click()
+  await expect(page.getByRole('button', { name: label })).toBeVisible()
+  await expect(page.getByText('Marked done')).toBeHidden()
+  expect(errors).toEqual([])
+})
+
+test('a ticked sunnah stays ticked when the popup is reopened', async ({ openPopup }) => {
+  const { page } = await openPopup()
+  await chooseCity(page)
+  const circle = page.getByRole('button', { name: /^Mark .* done$/ }).first()
+  await circle.click()
+  await expect(page.getByText('Marked done')).toBeVisible()
+  await page.reload()
+  await page.getByRole('button', { name: 'Done today (1)' }).click()
+  await expect(page.getByRole('button', { name: /^Unmark / }).first()).toBeVisible()
+})
+
+test('Show me around starts the tour on Today, and it fits inside the popup', async ({
+  openPopup,
+}) => {
+  const { page, errors } = await openPopup()
+  await chooseCity(page)
+  await go(page, '/settings')
+  await page.getByRole('link', { name: 'Show me around' }).first().click()
+  await expect(page).toHaveURL(/popup\.html#\/\?tour=1$/)
+
+  for (const step of [1, 2, 3]) {
+    const tip = page.getByRole('dialog', { name: `${step} of 3` })
+    await expect(tip).toBeVisible()
+    const frame = await page.evaluate(() => ({
+      width: document.documentElement.clientWidth,
+      height: document.documentElement.clientHeight,
+      scrollWidth: (document.scrollingElement as Element).scrollWidth,
+      clientWidth: (document.scrollingElement as Element).clientWidth,
+    }))
+    const box = await tip.boundingBox()
+    expect(box).not.toBeNull()
+    const { x, width, y, height } = box as NonNullable<typeof box>
+    expect(x).toBeGreaterThanOrEqual(0)
+    expect(x + width).toBeLessThanOrEqual(frame.width)
+    expect(y).toBeGreaterThanOrEqual(0)
+    expect(y + height).toBeLessThanOrEqual(frame.height)
+    expect(frame.scrollWidth).toBeLessThanOrEqual(frame.clientWidth)
+    await page.getByRole('button', { name: step === 3 ? 'Got it' : 'Next' }).click()
+  }
+  await expect(page.getByRole('dialog')).toHaveCount(0)
+  await expect(page).toHaveURL(/popup\.html#\/$/)
+  expect(errors).toEqual([])
+})

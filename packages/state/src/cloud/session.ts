@@ -1,9 +1,12 @@
-import { adoptAccount, syncOnce } from '@ihsaanly/cloud/engine'
+import { adoptAccount, applyRemoteChanges, freshMeta, syncOnce } from '@ihsaanly/cloud/engine'
 import {
   type Account,
   type Cloud,
   LinkRequiredError,
+  type RemoteChanges,
   type SignInProvider,
+  type SyncRemote,
+  type Unsubscribe,
 } from '@ihsaanly/cloud/ports'
 import { useSyncExternalStore } from 'react'
 import { z } from 'zod'
@@ -14,7 +17,7 @@ import { onLocalWrite } from '../storage/local-writes'
 import { forgetFailures } from '../storage/log'
 import { reloadPreferences } from '../storage/preference-store'
 import { codeOf, isNetworkError, messageOf } from './errors'
-import { ACCOUNT_KEY, SYNCED_KEYS } from './keys'
+import { ACCOUNT_KEY, isProgressKey, isSyncedKey } from './keys'
 import { createLocalStore, readSyncMeta } from './local-store'
 
 export type AccountStatus =
@@ -70,6 +73,11 @@ export interface CloudOptions {
   onWiped?: () => void
   /** How long local writes settle before they are pushed. */
   debounceMs?: number
+  /**
+   * The same for item progress, shorter so the count follows you to another
+   * device within seconds. A pending slower push is brought forward with it.
+   */
+  progressDebounceMs?: number
 }
 
 const SIGNED_OUT: AccountState = {
@@ -91,8 +99,14 @@ let cloud: Promise<Cloud> | null = null
 let options: CloudOptions = {}
 let stopListening: (() => void) | null = null
 let debounce: ReturnType<typeof setTimeout> | null = null
+/** Whether the pending debounce is the short (progress) one. */
+let debounceFast = false
 let running: Promise<void> | null = null
 let rerun = false
+/** Apps launch in the foreground; `notifyBackground` says otherwise. */
+let foreground = true
+/** The live listener on the account, while one is attached. */
+let unwatch: Unsubscribe | null = null
 
 const local = createLocalStore()
 
@@ -175,11 +189,13 @@ function handleAccount(account: Account | null): void {
   if (!account) {
     // Signed out elsewhere, or the session did not survive: back to local-only.
     if (signedInBefore()) rememberSignedIn(false)
+    stopWatch()
     setState({ ...SIGNED_OUT })
     return
   }
 
   const changed = state.account?.uid !== account.uid
+  if (changed) stopWatch()
   rememberSignedIn(true)
   setState({ account, lastSyncedAt: readSyncMeta().lastSyncedAt })
   if (changed) {
@@ -208,6 +224,7 @@ async function syncRound(): Promise<void> {
         lastSyncedAt: readSyncMeta().lastSyncedAt,
         mismatchUid: undefined,
       })
+      startWatch(remote, account.uid)
     }
   } catch (error) {
     noteFailure('cloudSync', error)
@@ -239,13 +256,60 @@ function runSync(): Promise<void> {
 
 function scheduleSync(preferenceKey: string | null): void {
   if (!state.account) return
-  if (preferenceKey !== null && !SYNCED_KEYS.has(preferenceKey)) return
+  if (preferenceKey !== null && !isSyncedKey(preferenceKey)) return
 
+  const fast = preferenceKey !== null && isProgressKey(preferenceKey)
+  // A progress push is already due sooner; it carries this write too.
+  if (!fast && debounce && debounceFast) return
   if (debounce) clearTimeout(debounce)
-  debounce = setTimeout(() => {
-    debounce = null
-    void runSync()
-  }, options.debounceMs ?? 5_000)
+  debounceFast = fast
+  debounce = setTimeout(
+    () => {
+      debounce = null
+      void runSync()
+    },
+    fast ? (options.progressDebounceMs ?? 1_000) : (options.debounceMs ?? 5_000),
+  )
+}
+
+/**
+ * Listens for the account's changes while the app is in front, after a
+ * successful round (so the cursor is current and the device is bound). What
+ * arrives is applied straight away, without a pull: the listener already
+ * paid for the read.
+ */
+function startWatch(remote: SyncRemote, uid: string): void {
+  if (!foreground || unwatch || !remote.watch || state.account?.uid !== uid) return
+  unwatch = remote.watch(
+    uid,
+    readSyncMeta().cursor,
+    (changes) => void applyWatched(uid, changes),
+    (error) => {
+      // The listener is gone; the next foreground (or round) attaches another.
+      noteFailure('cloudWatch', error)
+      unwatch = null
+    },
+  )
+}
+
+function stopWatch(): void {
+  unwatch?.()
+  unwatch = null
+}
+
+async function applyWatched(uid: string, changes: RemoteChanges): Promise<void> {
+  // Never mid-round: the round writes the meta this reads and moves. Always
+  // after the listener is in place, even for a first snapshot delivered at once.
+  await running
+  while (running !== null) await running
+  if (state.account?.uid !== uid || !unwatch) return
+  try {
+    const { pending } = applyRemoteChanges(local, changes)
+    // A merge produced something the account lacks: push it soon.
+    if (pending) scheduleSync(null)
+  } catch (error) {
+    noteFailure('cloudWatchApply', error)
+  }
 }
 
 /** Every store refreshed in place after a wipe, then the app's own hook. */
@@ -281,6 +345,9 @@ export function startCloud(load: () => Promise<Cloud>, opts: CloudOptions = {}):
     stopListening = null
     if (debounce) clearTimeout(debounce)
     debounce = null
+    debounceFast = false
+    stopWatch()
+    foreground = true
     loader = null
     cloud = null
     running = null
@@ -364,11 +431,50 @@ export function syncNow(): Promise<void> {
   return state.account ? runSync() : Promise.resolve()
 }
 
-/** For apps to call when they come to the foreground or a popup opens. */
+/**
+ * How soon after a successful sync coming to the foreground syncs again.
+ * Switching apps back and forth should not cost a read each time; local
+ * writes still push after their debounce, and `syncNow` is never held back.
+ */
+export const FOREGROUND_SYNC_INTERVAL_MS = 2 * 60_000
+
+/**
+ * For apps to call when they come to the foreground or a popup opens. While
+ * the live listener is attached nothing more is needed. Otherwise it syncs,
+ * unless the last successful round was within `FOREGROUND_SYNC_INTERVAL_MS`
+ * (persisted, so a reopened popup counts it too), and attaches the listener
+ * again — from the cursor, so it catches up on what it missed meanwhile.
+ * Feedback is flushed either way.
+ */
 export function notifyForeground(): void {
+  foreground = true
   if (!state.account) return
-  void runSync()
+  if (!unwatch) {
+    const last = readSyncMeta().lastSyncedAt
+    const since = last === null ? null : Date.now() - last
+    // A clock that went backwards (since < 0) does not hold sync back.
+    if (since === null || since < 0 || since >= FOREGROUND_SYNC_INTERVAL_MS) void runSync()
+    else void watchAgain()
+  }
   void flushFeedback()
+}
+
+/** Throttled foreground: no round, just the listener back on (if the device is settled). */
+async function watchAgain(): Promise<void> {
+  const account = state.account
+  if (!account || state.status !== 'idle') return
+  // Signed in means the cloud has loaded: this resolves at once.
+  startWatch((await ensureCloud()).remote, account.uid)
+}
+
+/**
+ * For apps to call when they go to the background, or a tab is hidden: the
+ * live listener is detached, so a device nobody is looking at reads nothing.
+ * Local writes still push after their debounce.
+ */
+export function notifyBackground(): void {
+  foreground = false
+  stopWatch()
 }
 
 /**
@@ -396,6 +502,7 @@ export async function signOut(mode: 'keep' | 'remove'): Promise<void> {
     return
   }
 
+  stopWatch()
   try {
     const { auth } = await ensureCloud()
     await auth.signOut()
@@ -422,6 +529,7 @@ export async function resolveMismatch(mode: 'merge' | 'fresh'): Promise<void> {
   if (!account) return
 
   await running
+  stopWatch()
   if (mode === 'fresh') {
     wipeLocal()
     rememberSignedIn(true)
@@ -440,12 +548,17 @@ export async function deleteAccount(mode: 'keep' | 'remove'): Promise<void> {
   if (!state.account) return
 
   await running
+  // The erase would otherwise reach the listener as deletions, then a denial.
+  stopWatch()
   try {
     const { auth, remote } = await ensureCloud()
     await auth.deleteAccount((uid) => remote.erase(uid))
   } catch (error) {
     // Deleting asks the provider to confirm who you are; closing that is not a failure.
-    if (isCancelled(error)) return
+    if (isCancelled(error)) {
+      void watchAgain()
+      return
+    }
     noteFailure('cloudDeleteAccount', error)
     setState({ status: 'error', error: classify(error, 'unknown') })
     return
@@ -458,7 +571,7 @@ export async function deleteAccount(mode: 'keep' | 'remove'): Promise<void> {
     options.onWiped?.()
   } else {
     local.resetSynced()
-    local.writeMeta({ boundUid: null, cursor: null, lastSyncedAt: null })
+    local.writeMeta(freshMeta(null))
   }
 }
 

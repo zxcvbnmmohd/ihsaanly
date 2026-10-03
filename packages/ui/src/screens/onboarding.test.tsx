@@ -96,14 +96,13 @@ describe('OnboardingScreen, welcome step options', () => {
 })
 
 describe('OnboardingScreen, how step', () => {
-  it('explains the approach with a sample in Arabic, and goes back or skips', async () => {
+  it('explains the approach in one sentence, and goes back or skips', async () => {
     const onBack = mock(() => {})
     const onSkipIntro = mock(() => {})
     const { user, strings } = renderScreen(
       <OnboardingScreen {...at('how')} onBack={onBack} onSkipIntro={onSkipIntro} />,
     )
     expect(screen.getByText(strings.onboarding.howTitle)).toBeInTheDocument()
-    expect(screen.getByText(strings.onboarding.howSample)).toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: strings.onboarding.back }))
     await user.click(screen.getByRole('button', { name: strings.onboarding.skipIntro }))
     expect(onBack).toHaveBeenCalledTimes(1)
@@ -259,19 +258,61 @@ describe('OnboardingScreen, you step', () => {
 })
 
 describe('OnboardingScreen, reminders step', () => {
-  it('toggles each reminder', async () => {
-    const onToggleNotification = mock((_change: object) => {})
+  const off = {
+    ...onboardingFixture.notifications,
+    windows: false,
+    lookAhead: false,
+    prayers: false,
+  }
+
+  it('offers daily reminders, on, and turns them off or on', async () => {
+    const onToggleReminders = mock((_on: boolean) => {})
     const { user, strings } = renderScreen(
-      <OnboardingScreen {...at('reminders')} onToggleNotification={onToggleNotification} />,
+      <OnboardingScreen {...at('reminders')} onToggleReminders={onToggleReminders} />,
     )
-    await user.click(screen.getByRole('switch', { name: strings.notifications.windows }))
-    await user.click(screen.getByRole('switch', { name: strings.notifications.lookAhead }))
-    await user.click(screen.getByRole('switch', { name: strings.notifications.prayers }))
-    expect(onToggleNotification.mock.calls.map(([change]) => change)).toEqual([
-      { windows: false },
-      { lookAhead: false },
-      { prayers: true },
-    ])
+    expect(screen.getByText(strings.onboarding.remindersWhy)).toBeInTheDocument()
+    const daily = screen.getByRole('switch', { name: named(strings.onboarding.dailyReminders) })
+    expect(daily).toBeChecked()
+    expect(screen.getByText(strings.onboarding.dailyRemindersDetail)).toBeInTheDocument()
+    await user.click(daily)
+    expect(onToggleReminders).toHaveBeenCalledWith(false)
+  })
+
+  it('shows daily reminders off when every category is off', async () => {
+    const onToggleReminders = mock((_on: boolean) => {})
+    const { user, strings } = renderScreen(
+      <OnboardingScreen
+        {...at('reminders', { notifications: off })}
+        onToggleReminders={onToggleReminders}
+      />,
+    )
+    const daily = screen.getByRole('switch', { name: named(strings.onboarding.dailyReminders) })
+    expect(daily).not.toBeChecked()
+    // Nothing to cap when nothing is scheduled.
+    expect(screen.queryByText(strings.onboarding.reminderPolicy(3, 22, 7))).toBeNull()
+    await user.click(daily)
+    expect(onToggleReminders).toHaveBeenCalledWith(true)
+  })
+
+  it('offers no announcements where the host cannot send them', () => {
+    const { strings } = renderScreen(<OnboardingScreen {...at('reminders')} />)
+    expect(
+      screen.queryByRole('switch', { name: named(strings.onboarding.announcementsChoice) }),
+    ).toBeNull()
+  })
+
+  it('offers announcements, off until chosen, and reports the choice', async () => {
+    const onChange = mock((_on: boolean) => {})
+    const { user, strings } = renderScreen(
+      <OnboardingScreen {...at('reminders', { announcements: { on: false, onChange } })} />,
+    )
+    const announcements = screen.getByRole('switch', {
+      name: named(strings.onboarding.announcementsChoice),
+    })
+    expect(announcements).not.toBeChecked()
+    expect(screen.getByText(strings.onboarding.announcementsChoiceDetail)).toBeInTheDocument()
+    await user.click(announcements)
+    expect(onChange).toHaveBeenCalledWith(true)
   })
 
   it('states the policy with quiet hours, and allows or declines', async () => {
@@ -281,7 +322,7 @@ describe('OnboardingScreen, reminders step', () => {
       <OnboardingScreen {...at('reminders')} onNext={onNext} onNotNow={onNotNow} />,
     )
     expect(screen.getByText(strings.onboarding.reminderPolicy(3, 22, 7))).toBeInTheDocument()
-    await user.click(screen.getByRole('button', { name: strings.onboarding.allowReminders }))
+    await user.click(screen.getByRole('button', { name: strings.onboarding.allowNotifications }))
     await user.click(screen.getByRole('button', { name: strings.onboarding.notNow }))
     expect(onNext).toHaveBeenCalledTimes(1)
     expect(onNotNow).toHaveBeenCalledTimes(1)
@@ -298,18 +339,35 @@ describe('OnboardingScreen, reminders step', () => {
     expect(screen.getByText(strings.onboarding.reminderCap(3))).toBeInTheDocument()
   })
 
-  it('just continues when every reminder is off', async () => {
+  it('asks to allow notifications for announcements alone', async () => {
     const onNext = mock(() => {})
-    const off = {
-      ...onboardingFixture.notifications,
-      windows: false,
-      lookAhead: false,
-      prayers: false,
-    }
     const { user, strings } = renderScreen(
-      <OnboardingScreen {...at('reminders', { notifications: off })} onNext={onNext} />,
+      <OnboardingScreen
+        {...at('reminders', {
+          notifications: off,
+          announcements: { on: true, onChange: () => {} },
+        })}
+        onNext={onNext}
+      />,
+    )
+    expect(screen.getByRole('button', { name: strings.onboarding.notNow })).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: strings.onboarding.allowNotifications }))
+    expect(onNext).toHaveBeenCalledTimes(1)
+  })
+
+  it('just continues when neither is chosen', async () => {
+    const onNext = mock(() => {})
+    const { user, strings } = renderScreen(
+      <OnboardingScreen
+        {...at('reminders', {
+          notifications: off,
+          announcements: { on: false, onChange: () => {} },
+        })}
+        onNext={onNext}
+      />,
     )
     expect(screen.queryByRole('button', { name: strings.onboarding.notNow })).toBeNull()
+    expect(screen.queryByRole('button', { name: strings.onboarding.allowNotifications })).toBeNull()
     await user.click(screen.getByRole('button', { name: strings.onboarding.continue }))
     expect(onNext).toHaveBeenCalledTimes(1)
   })

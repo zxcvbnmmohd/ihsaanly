@@ -72,6 +72,14 @@ const setCloud = (enabled: boolean): void => {
 }
 setCloud(false)
 
+const realSession = { ...(await import('@ihsaanly/state/cloud/session')) }
+const session = { seen: [] as string[] }
+mock.module('@ihsaanly/state/cloud/session', () => ({
+  ...realSession,
+  notifyForeground: () => session.seen.push('foreground'),
+  notifyBackground: () => session.seen.push('background'),
+}))
+
 // RNW's AppState is driven by page visibility; this records the subscription instead.
 const appState = {
   handlers: [] as ((state: string) => void)[],
@@ -110,6 +118,7 @@ const app = (): ReactElement => (
 
 afterAll(() => {
   mock.module('@/cloud', () => realCloud)
+  mock.module('@ihsaanly/state/cloud/session', () => realSession)
   mock.module('expo-router/native-tabs', () => nativeTabs)
   AppState.addEventListener = realAddEventListener
 })
@@ -214,13 +223,24 @@ describe('root layout', () => {
       expect(cloud.starts).toBe(1)
       expect(appState.handlers).toHaveLength(1)
 
-      appState.handlers[0]?.('background')
       appState.handlers[0]?.('active')
 
       view.unmount()
       expect(appState.removed).toBe(1)
       expect(cloud.stops).toBe(1)
     })
+  })
+})
+
+describe('app lifecycle', () => {
+  it('flushes the cloud on background and inactive, and syncs on active', () => {
+    setCloud(true)
+    render(app())
+    session.seen.length = 0
+    appState.handlers[0]?.('background')
+    appState.handlers[0]?.('inactive')
+    appState.handlers[0]?.('active')
+    expect(session.seen).toEqual(['background', 'background', 'foreground'])
   })
 })
 

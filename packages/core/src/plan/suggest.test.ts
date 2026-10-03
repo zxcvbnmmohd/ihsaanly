@@ -118,4 +118,18 @@ describe('what to try next', () => {
     }
     expect(suggest(signals([morning, evening]), old, 'settled')).toBe('evening')
   })
+
+  it('offers no fast while paused, and nothing the pause alone offers once it is over', () => {
+    const remembrance = item(
+      'remembrance',
+      { kind: 'prayer', prayer: 'any', when: 'before' },
+      { onlyWhilePaused: true, defaultOn: true },
+    )
+    const unpaused = signals([monday, remembrance])
+    expect(suggest(unpaused, DEFAULT_SUGGESTION, 'settled')).toBe('monday')
+
+    const paused = { ...unpaused, userState: { ...unpaused.userState, trackingPaused: true } }
+    expect(suggest(paused, DEFAULT_SUGGESTION, 'settled')).toBe('remembrance')
+    expect(suggest({ ...paused, items: [monday] }, DEFAULT_SUGGESTION, 'settled')).toBeNull()
+  })
 })

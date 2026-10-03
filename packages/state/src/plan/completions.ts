@@ -1,4 +1,5 @@
 import { civilDateKey, logDay } from '@ihsaanly/core/day/boundaries'
+import { clearProgress } from '../progress/store'
 import { recordEvent, useCompletedOn } from '../storage/events'
 
 /**
@@ -22,6 +23,10 @@ export function completeItem(
   })
 }
 
+/**
+ * Takes a completion back. Its progress goes with it, whichever path unmarked
+ * it, so the circle starts again from empty rather than one tap from done.
+ */
 export function uncompleteItem(itemId: string, at: Date, timeZone: string): void {
   recordEvent({
     kind: 'item-uncompleted',
@@ -29,6 +34,7 @@ export function uncompleteItem(itemId: string, at: Date, timeZone: string): void
     at,
     logDay: civilDateKey(logDay(at, timeZone)),
   })
+  clearProgress(itemId)
 }
 
 export function useCompletedToday(timeZone: string, now: Date): Partial<Record<string, Date>> {

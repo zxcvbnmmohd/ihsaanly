@@ -5,6 +5,8 @@ import { resetStorage } from '../../test/storage'
 const { act, renderHook } = await withDom()
 const events = await import('../storage/events')
 const { completeItem, uncompleteItem, useCompletedToday } = await import('./completions')
+const progress = await import('../progress/store')
+const backend = await import('../storage/backend')
 
 const at = new Date('2026-09-22T09:00:00Z')
 
@@ -42,6 +44,13 @@ describe('completions', () => {
 
     act(() => uncompleteItem('witr', new Date(at.getTime() + 1_000), 'UTC'))
     expect(result.current).toEqual({})
+  })
+
+  it('starts the progress over, whichever path unmarks it', () => {
+    progress.addCount('tasbih', 5)
+    expect(backend.readPreferenceRow('progress:tasbih')).not.toBeNull()
+    uncompleteItem('tasbih', at, 'UTC')
+    expect(backend.readPreferenceRow('progress:tasbih')).toBeNull()
   })
 
   it("does not show yesterday's completions today", () => {

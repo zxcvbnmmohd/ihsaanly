@@ -1,4 +1,5 @@
-import { afterAll, beforeEach, describe, expect, it } from 'bun:test'
+import { afterAll, afterEach, beforeEach, describe, expect, it, setSystemTime } from 'bun:test'
+import { freshMeta } from '@ihsaanly/cloud/engine'
 import { createMemoryAuth } from '@ihsaanly/cloud/memory/auth'
 import { createMemoryFeedback } from '@ihsaanly/cloud/memory/feedback'
 import { createMemorySyncRemote } from '@ihsaanly/cloud/memory/sync-remote'
@@ -244,18 +245,85 @@ describe('the cloud session, beyond the happy path', () => {
       expect(pushes).toBe(1)
     })
 
-    it('syncs when the app returns to the foreground, and does nothing when signed out', async () => {
+    it('does nothing in the foreground when signed out', async () => {
       start()
       session.notifyForeground()
       await session.syncNow()
       expect(session.getAccountState().status).toBe('signed-out')
+      expect(loads).toBe(0)
+    })
 
-      await signedIn()
-      recordEvent(fajr)
-      session.notifyForeground()
-      await settle()
+    describe('foreground throttle', () => {
+      let pulls = 0
+      const countPulls = (): void => {
+        const pull = cloud.remote.pull
+        cloud.remote.pull = (...args) => {
+          pulls += 1
+          return pull(...args)
+        }
+      }
 
-      expect((await cloud.remote.pull('me', null)).events).toHaveLength(1)
+      beforeEach(() => {
+        pulls = 0
+      })
+      afterEach(() => setSystemTime())
+
+      it('skips a foreground sync within two minutes of the last one, then syncs', async () => {
+        setSystemTime(new Date(1_000_000))
+        countPulls()
+        await signedIn()
+        const after = pulls
+        expect(session.getAccountState().lastSyncedAt).toBe(1_000_000)
+
+        // The throttle applies once the live listener is off (in the background).
+        session.notifyBackground()
+        setSystemTime(new Date(1_000_000 + session.FOREGROUND_SYNC_INTERVAL_MS - 1))
+        session.notifyForeground()
+        await settle()
+        expect(pulls).toBe(after)
+
+        session.notifyBackground()
+        setSystemTime(new Date(1_000_000 + session.FOREGROUND_SYNC_INTERVAL_MS))
+        session.notifyForeground()
+        await settle()
+        expect(pulls).toBe(after + 1)
+      })
+
+      it('remembers the last sync across launches', async () => {
+        countPulls()
+        await signedIn()
+        stop()
+        start()
+        await settle()
+        const after = pulls
+        session.notifyForeground()
+        await settle()
+        expect(pulls).toBe(after)
+      })
+
+      it('never holds back sign-in, syncNow or a local write', async () => {
+        countPulls()
+        await signedIn()
+        const after = pulls
+        await session.syncNow()
+        expect(pulls).toBe(after + 1)
+        recordEvent(fajr)
+        await settle()
+        expect(pulls).toBe(after + 2)
+        expect((await cloud.remote.pull('me', null)).events).toHaveLength(1)
+      })
+
+      it('a clock that went backwards does not hold sync back', async () => {
+        setSystemTime(new Date(5_000_000))
+        countPulls()
+        await signedIn()
+        const after = pulls
+        setSystemTime(new Date(4_000_000))
+        session.notifyBackground()
+        session.notifyForeground()
+        await settle()
+        expect(pulls).toBe(after + 1)
+      })
     })
 
     it('stops everything when the session is torn down mid-debounce', async () => {
@@ -320,7 +388,7 @@ describe('the cloud session, beyond the happy path', () => {
 
   describe("an account that is not this device's", () => {
     const mismatch = async (): Promise<void> => {
-      createLocalStore().writeMeta({ boundUid: 'someone-else', cursor: null, lastSyncedAt: null })
+      createLocalStore().writeMeta(freshMeta('someone-else'))
       recordEvent(fajr)
       start()
       await session.signIn('apple')
@@ -383,11 +451,7 @@ describe('the cloud session, beyond the happy path', () => {
       expect(session.getAccountState().status).toBe('signed-out')
       expect(allActions()).toHaveLength(1)
       expect(createLocalStore().unsyncedEvents()).toHaveLength(1)
-      expect(createLocalStore().readMeta()).toEqual({
-        boundUid: null,
-        cursor: null,
-        lastSyncedAt: null,
-      })
+      expect(createLocalStore().readMeta()).toEqual(freshMeta(null))
       expect(wiped).toBe(0)
     })
 

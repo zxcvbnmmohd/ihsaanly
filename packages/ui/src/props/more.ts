@@ -8,6 +8,12 @@ import type { CalculationPreferences } from '@ihsaanly/core/prayer/calculation'
 import type { Strings } from '@ihsaanly/core/strings/en'
 import type { MoreGroup, ThemePreference } from '../types'
 
+/**
+ * "Show me around" restarts the first-run tour on Today. A plain href, so a
+ * host can follow it as a link or intercept it and start the tour itself.
+ */
+export const SHOW_ME_AROUND_HREF = '/today?tour=1'
+
 export interface MoreGroupsInput {
   strings: Strings
   placeLabel: string | null
@@ -106,6 +112,10 @@ export function moreGroups(input: MoreGroupsInput): MoreGroup[] {
           : [{ href: '/account', title: strings.account.title, detail: accountDetail }]),
         { href: '/data', title: strings.data.title, detail: null },
       ],
+    },
+    {
+      title: strings.more.help,
+      rows: [{ href: SHOW_ME_AROUND_HREF, title: strings.more.showMeAround, detail: null }],
     },
   ]
 }

@@ -10,7 +10,7 @@ import {
   setPrayer,
   signIn,
 } from './device.ts'
-import { listDocs } from './rest.ts'
+import { type Doc, listDocs } from './rest.ts'
 
 /** Onboards, marks `prayers`, signs in as `email` and waits for the first sync. */
 export async function firstDevice(
@@ -33,9 +33,14 @@ export async function restoreDevice(device: Device, email: string): Promise<void
   await expect(device.page).toHaveURL(/\/today$/)
 }
 
+/** A user's month documents (`users/{uid}/sync/{YYYY-MM}`), without the preferences one. */
+export async function remoteMonths(uid: string): Promise<Doc[]> {
+  return (await listDocs(`users/${uid}/sync`)).filter((doc) => doc.data.type === 'events')
+}
+
 /** Every event key (`<at>|<kind>|<subject>`) in a user's month documents. */
 export async function remoteEventKeys(uid: string): Promise<string[]> {
-  const months = await listDocs(`users/${uid}/eventMonths`)
+  const months = await remoteMonths(uid)
   return months.flatMap((doc) => Object.keys((doc.data.events ?? {}) as Record<string, unknown>))
 }
 

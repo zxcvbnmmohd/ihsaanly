@@ -125,6 +125,16 @@ describe('the web storage backend', () => {
     expect(rows.find((row) => row.key === 'locale')?.updatedAt).toBeGreaterThanOrEqual(before)
   })
 
+  it('deletes preference rows with their stamps, leaving the rest', () => {
+    backend.writePreferenceRowAt('progress:a', '{}', 1)
+    backend.writePreferenceRowAt('progress:b', '{}', 2)
+    backend.deletePreferenceRows(['progress:a', 'missing'])
+    expect(backend.readPreferenceRow('progress:a')).toBeNull()
+    expect(
+      backend.preferenceRowsWithTime().filter((row) => row.key.startsWith('progress:')),
+    ).toEqual([{ key: 'progress:b', value: '{}', updatedAt: 2 }])
+  })
+
   it('folds a toggle pair to the latest state per subject', () => {
     backend.insertEvents([
       { ...EVENT, kind: 'prayer-performed', subject: 'fajr', at: 1_000 },

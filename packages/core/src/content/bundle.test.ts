@@ -54,6 +54,13 @@ describe('ContentManifest', () => {
   })
 })
 
+describe('CONTENT_SCHEMA_VERSION', () => {
+  it('is 2, so an app built for 1 keeps its shipped content rather than lose the pause flags', () => {
+    expect(CONTENT_SCHEMA_VERSION).toBe(2)
+    expect(ContentManifest.safeParse({ ...manifest, schemaVersion: 2 }).success).toBe(true)
+  })
+})
+
 describe('contentUrl', () => {
   it('joins a base with or without a trailing slash', () => {
     expect(contentUrl('https://ihsaanly.app/content', CONTENT_MANIFEST_PATH)).toBe(

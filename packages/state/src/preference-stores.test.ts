@@ -22,6 +22,7 @@ const userState = await import('./plan/user-state-store')
 const backlog = await import('./prayer/backlog-store')
 const calculation = await import('./prayer/store')
 const fasting = await import('./fasting/store')
+const optIns = await import('./opt-ins/store')
 const contentModule = await import('@ihsaanly/core/content')
 const { glossary } = await import('@ihsaanly/core/content/glossary')
 const { DEFAULT_SUGGESTION } = await import('@ihsaanly/core/plan/suggest')
@@ -171,6 +172,26 @@ const cases: Case<unknown>[] = [
     value: { fajr: 3 },
     invalid: '{"fajr":-1}',
   },
+  {
+    name: 'announcements',
+    key: 'announcements',
+    get: optIns.getAnnouncements,
+    set: optIns.setAnnouncements as (value: unknown) => void,
+    use: optIns.useAnnouncements,
+    fallback: optIns.DEFAULT_ANNOUNCEMENTS,
+    value: { enabled: true, subscribed: 'ar' },
+    invalid: '{"enabled":true,"subscribed":"klingon"}',
+  },
+  {
+    name: 'crash reports',
+    key: 'crashReports',
+    get: optIns.getCrashReports,
+    set: optIns.setCrashReports as (value: unknown) => void,
+    use: optIns.useCrashReports,
+    fallback: false,
+    value: true,
+    invalid: '"yes"',
+  },
 ]
 
 describe.each(cases)('the $name store', (store) => {
@@ -196,6 +217,13 @@ describe.each(cases)('the $name store', (store) => {
     reloadPreferences()
 
     expect(store.get()).toEqual(store.fallback)
+  })
+})
+
+describe('announcement topics', () => {
+  it('are the shared topic and the language one', () => {
+    expect(optIns.announcementTopics('ar')).toEqual(['announcements', 'announcements-ar'])
+    expect(optIns.languageTopic('zh')).toBe('announcements-zh')
   })
 })
 

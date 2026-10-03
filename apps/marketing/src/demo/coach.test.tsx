@@ -72,7 +72,7 @@ interface Scene {
   library: HTMLElement
 }
 
-function scene(): Scene {
+function scene(today = todayWith()): Scene {
   const content = document.createElement('div')
   const scroller = document.createElement('div')
   scroller.style.overflowY = 'auto'
@@ -80,7 +80,7 @@ function scene(): Scene {
   chip.dataset.testid = 'prayer-dhuhr'
   chip.setAttribute('data-testid', 'prayer-dhuhr')
   const card = document.createElement('div')
-  card.setAttribute('data-testid', 'right-now')
+  card.setAttribute('data-testid', `circle-${today.props.now[0]?.id}`)
   scroller.append(chip, card)
   content.append(scroller)
   const tabbar = document.createElement('div')
@@ -222,10 +222,10 @@ describe('CoachOverlay', () => {
     ).toEqual(['20px'])
   })
 
-  test('"open" rings the first Right now card', () => {
+  test('"open" rings the circle of the first Right now item', () => {
     const s = scene()
     overlay(s, 'open')
-    expect(s.scroller.querySelector('#demo-coach-bubble')).toHaveTextContent(copy.coachOpenItem)
+    expect(s.scroller.querySelector('#demo-coach-bubble')).toHaveTextContent(copy.coachTapCircle)
     expect(s.card).toHaveAttribute('aria-describedby', 'demo-coach-bubble')
   })
 
@@ -238,9 +238,10 @@ describe('CoachOverlay', () => {
   })
 
   test('a "mark" step with nothing to mark falls through to "open"', () => {
-    const s = scene()
-    overlay(s, 'mark', todayWith({ fajr: MIDDAY, dhuhr: MIDDAY }))
-    expect(s.scroller.querySelector('#demo-coach-bubble')).toHaveTextContent(copy.coachOpenItem)
+    const today = todayWith({ fajr: MIDDAY, dhuhr: MIDDAY })
+    const s = scene(today)
+    overlay(s, 'mark', today)
+    expect(s.scroller.querySelector('#demo-coach-bubble')).toHaveTextContent(copy.coachTapCircle)
   })
 
   test('"done" draws nothing', () => {

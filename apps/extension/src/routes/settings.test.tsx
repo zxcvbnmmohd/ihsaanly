@@ -33,6 +33,7 @@ describe('/settings', () => {
       '/language',
       '/appearance',
       '/qada',
+      '/today?tour=1',
     ])
   })
 

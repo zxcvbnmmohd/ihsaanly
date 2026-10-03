@@ -26,8 +26,25 @@ export type NotificationData =
     }
   | { v: 1; kind: 'prayer'; prayer: Prayer }
   | { v: 1; kind: 'test' }
+  | { v: 1; kind: 'check-in' }
+  | { v: 1; kind: 'announcement'; route: string | null; url: string | null }
 
 const PRAYERS: Prayer[] = ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha']
+
+/** An in-app path such as `/item/fasting-monday`; never a scheme or a host. */
+function routeOf(value: unknown): string | null {
+  return typeof value === 'string' && /^\/(?!\/)[^\s\\]*$/.test(value) ? value : null
+}
+
+/** Only https: an announcement never opens another app or a plain-text page. */
+function urlOf(value: unknown): string | null {
+  if (typeof value !== 'string') return null
+  try {
+    return new URL(value).protocol === 'https:' ? value : null
+  } catch {
+    return null
+  }
+}
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null
@@ -49,9 +66,25 @@ export function parseNotificationData(value: unknown): NotificationData | null {
         : null
     case 'test':
       return { v: 1, kind: 'test' }
+    case 'check-in':
+      return { v: 1, kind: 'check-in' }
+    case 'announcement':
+      return { v: 1, kind: 'announcement', route: routeOf(value.route), url: urlOf(value.url) }
     default:
       return null
   }
+}
+
+/**
+ * An announcement's own data, as the console sends it: optional `route` (an
+ * in-app path) and `url` (an https page), both plain strings. Anything else in
+ * it is ignored, and a malformed target is dropped rather than followed.
+ */
+export function announcementData(value: unknown): NotificationData | null {
+  if (!isRecord(value)) return null
+  // Without either key it is not ours to route: the tap just opens the app.
+  if (typeof value.route !== 'string' && typeof value.url !== 'string') return null
+  return parseNotificationData({ v: 1, kind: 'announcement', route: value.route, url: value.url })
 }
 
 /**
@@ -65,6 +98,10 @@ export function identifierFor(entry: ScheduledNotification): string {
       return `plan:${entry.itemId}@${entry.at.getTime()}`
     case 'prayer':
       return `plan:prayer:${entry.prayer}@${entry.at.getTime()}`
+    case 'remembrance':
+      return `plan:${entry.itemId}:${entry.prayer}@${entry.at.getTime()}`
+    case 'check-in':
+      return `plan:check-in@${entry.at.getTime()}`
     default:
       return assertNever(entry)
   }

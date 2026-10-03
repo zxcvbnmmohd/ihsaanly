@@ -1,16 +1,17 @@
-import { afterAll, beforeEach, expect, it, mock } from 'bun:test'
+import { afterAll, beforeEach, expect, it, mock, setSystemTime } from 'bun:test'
 import type { FirebaseConfig } from '@ihsaanly/cloud/firebase/app'
 import { createMemoryAuth } from '@ihsaanly/cloud/memory/auth'
 import { createMemoryFeedback } from '@ihsaanly/cloud/memory/feedback'
 import { createMemorySyncRemote } from '@ihsaanly/cloud/memory/sync-remote'
 
 const configs: FirebaseConfig[] = []
+let remote = createMemorySyncRemote()
 mock.module('@ihsaanly/cloud/firebase/flows/web', () => ({
   createWebCloud: (config: FirebaseConfig) => {
     configs.push(config)
     return {
       auth: createMemoryAuth({ uid: 'me' }),
-      remote: createMemorySyncRemote(),
+      remote,
       feedback: createMemoryFeedback(),
     }
   },
@@ -26,6 +27,7 @@ afterAll(async () => {
 
 beforeEach(() => {
   configs.length = 0
+  remote = createMemorySyncRemote()
   // Whatever loader an earlier test file (main.tsx starts sync) left behind.
   session.startCloud(() => Promise.reject(new Error('stopped')))()
 })
@@ -68,12 +70,13 @@ it('starts sync with the web flow, and a wipe reloads the page', async () => {
   }
 })
 
-it('syncs when the page becomes visible again, not when it is hidden', async () => {
+it('stops listening when hidden, and syncs and listens again when visible', async () => {
   const cloud = await import('./cloud')
   cloud.startCompanionCloud({ apiKey: 'key', authDomain: 'a', projectId: 'p', appId: 'app' })
   await session.signIn('google')
   await session.syncNow()
   const before = session.getAccountState().lastSyncedAt
+  expect(remote.watchers()).toBe(1)
 
   const visibility = Object.getOwnPropertyDescriptor(document, 'visibilityState')
   const setVisibility = (value: string): void => {
@@ -83,11 +86,15 @@ it('syncs when the page becomes visible again, not when it is hidden', async () 
   document.dispatchEvent(new Event('visibilitychange'))
   await new Promise((resolve) => setTimeout(resolve, 20))
   expect(session.getAccountState().lastSyncedAt).toBe(before)
+  expect(remote.watchers()).toBe(0)
 
-  await new Promise((resolve) => setTimeout(resolve, 5))
+  // Past the foreground throttle (session.ts): a sync a moment ago is not repeated.
+  setSystemTime(new Date(Date.now() + session.FOREGROUND_SYNC_INTERVAL_MS))
   setVisibility('visible')
   document.dispatchEvent(new Event('visibilitychange'))
   await new Promise((resolve) => setTimeout(resolve, 20))
   expect(session.getAccountState().lastSyncedAt).not.toBe(before)
+  expect(remote.watchers()).toBe(1)
+  setSystemTime()
   if (visibility) Object.defineProperty(document, 'visibilityState', visibility)
 })

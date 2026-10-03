@@ -9,6 +9,7 @@ import type { NextPrayer, PlannedItem } from '@ihsaanly/core/plan/signals'
 import type { Prayer } from '@ihsaanly/core/prayer/qada'
 import type { Strings } from '@ihsaanly/core/strings/en'
 import type { NextPrayerEntry, TodayEntry } from '../screens/today'
+import type { EntryMark, TodayPanel } from '../types'
 
 /** Looks an item up by id from whichever content source the host uses. */
 export type ItemLookup = (id: string) => Item | undefined
@@ -48,7 +49,7 @@ export function distanceLabel(minutes: number, strings: Strings): string {
 export function itemEntry(id: string, lookup: ItemLookup): TodayEntry | null {
   const item = lookup(id)
   return item
-    ? { id, title: resolveText(item.title) ?? id, detail: null, href: `/item/${id}` }
+    ? { id, title: resolveText(item.title) ?? id, detail: null, href: `/item/${id}`, mark: null }
     : null
 }
 
@@ -82,6 +83,7 @@ export function toEntry(
     title: resolveText(item.title) ?? item.id,
     detail: detailFor(planned, strings, showWhen),
     href: `/item/${item.id}`,
+    mark: null,
   }
 }
 
@@ -131,5 +133,61 @@ export function onMakeUpFor(
 ): (prayer: Prayer) => void {
   return (prayer) => {
     if (timeZone) markMadeUp(prayer, now, timeZone)
+  }
+}
+
+/** Where an item has got in its current period: taps counted, part ids said. */
+export interface ProgressSoFar {
+  count: number
+  parts: readonly string[]
+}
+
+/** How an item is done: in one go, by counting to its repeat, or part by part. */
+export function markKind(item: Pick<Item, 'repeat' | 'parts'>): 'once' | 'count' | 'parts' {
+  if ((item.parts ?? []).length > 0) return 'parts'
+  return item.repeat > 1 ? 'count' : 'once'
+}
+
+/** The circle for a row: done, or how far it has got (a ring) when it is done in steps. */
+export function markFor(
+  item: Pick<Item, 'repeat' | 'parts'>,
+  done: boolean,
+  progress: ProgressSoFar,
+): EntryMark {
+  const kind = markKind(item)
+  if (done || kind === 'once') return { done, progress: null }
+  if (kind === 'count') {
+    return { done, progress: { kind: 'count', value: progress.count, total: item.repeat } }
+  }
+  const parts = item.parts ?? []
+  return {
+    done,
+    progress: {
+      kind: 'parts',
+      value: parts.filter((part) => progress.parts.includes(part.id)).length,
+      total: parts.length,
+    },
+  }
+}
+
+/** The sheet a stepped item opens in: the counter, or the checklist of its parts. */
+export function panelFor(item: Item, progress: ProgressSoFar): TodayPanel | null {
+  const title = resolveText(item.title) ?? item.id
+  switch (markKind(item)) {
+    case 'count':
+      return { kind: 'count', itemId: item.id, title, count: progress.count, target: item.repeat }
+    case 'parts':
+      return {
+        kind: 'parts',
+        itemId: item.id,
+        title,
+        parts: (item.parts ?? []).map((part) => ({
+          id: part.id,
+          title: resolveText(part.title) ?? part.id,
+          done: progress.parts.includes(part.id),
+        })),
+      }
+    default:
+      return null
   }
 }

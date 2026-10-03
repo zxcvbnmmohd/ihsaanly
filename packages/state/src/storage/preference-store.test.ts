@@ -5,11 +5,24 @@ import { resetStorage } from '../../test/storage'
 
 const { act, renderHook } = await withDom()
 const backend = await import('./backend')
-const { createPreferenceStore, reloadPreferences } = await import('./preference-store')
+const { createPreferenceStore, onPreferencesReload, reloadPreferences } = await import(
+  './preference-store'
+)
 const { onLocalWrite } = await import('./local-writes')
 
 describe('a preference store', () => {
   beforeEach(resetStorage)
+
+  it('tells a reload listener until it unsubscribes', () => {
+    let heard = 0
+    const stop = onPreferencesReload(() => {
+      heard += 1
+    })
+    reloadPreferences()
+    stop()
+    reloadPreferences()
+    expect(heard).toBe(1)
+  })
 
   it('answers the fallback until something is stored', () => {
     const store = createPreferenceStore('pref-a', z.string(), 'dflt')

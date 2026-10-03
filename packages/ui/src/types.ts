@@ -121,3 +121,92 @@ export type FeedbackErrorCode = 'rate-limited' | 'network' | 'signed-out' | 'inv
 
 /** The longest message the cloud accepts. */
 export const FEEDBACK_MESSAGE_MAX = 5000
+
+/**
+ * A per-device opt-in the host can offer, such as announcements or crash
+ * reports. A host that cannot provide the feature leaves the prop out, and the
+ * screen shows no switch for it.
+ */
+export interface OptIn {
+  on: boolean
+  onChange: (on: boolean) => void
+}
+
+/**
+ * How far a Today row has got when it is done in parts: a counted dhikr
+ * (`count`, 12 of 33) or an item with several parts (`parts`, 4 of 11).
+ */
+export interface EntryProgress {
+  kind: 'count' | 'parts'
+  value: number
+  total: number
+}
+
+/**
+ * The circle at the start of a Today row. `progress` is null for an item done
+ * in one go; a row with no mark at all (tomorrow, later) has no circle.
+ */
+export interface EntryMark {
+  done: boolean
+  progress: EntryProgress | null
+}
+
+/** The counter sheet for a counted dhikr. It closes itself at `target`. */
+export interface CountPanel {
+  kind: 'count'
+  itemId: string
+  title: string
+  count: number
+  target: number
+}
+
+export interface PanelPart {
+  id: string
+  title: string
+  done: boolean
+}
+
+/** The checklist sheet for an item done in parts. */
+export interface PartsPanel {
+  kind: 'parts'
+  itemId: string
+  title: string
+  parts: PanelPart[]
+}
+
+export type TodayPanel = CountPanel | PartsPanel
+
+/** The three first-run coach marks on Today: a prayer circle, a sunnah circle, a card. */
+export type TourStep = 0 | 1 | 2
+
+export const TOUR_STEPS = 3
+
+export interface TodayTour {
+  step: TourStep
+  /** Next, or "Got it" on the last step: the route advances or ends the tour. */
+  onNext: () => void
+  /** Skip, or Escape: the route ends the tour. */
+  onSkip: () => void
+}
+
+/**
+ * The snackbar after something was marked done. `id` changes with each new
+ * mark, which restarts the timer; the same mark re-rendered does not.
+ */
+export interface TodayUndo {
+  id: string
+  title: string
+  onUndo: () => void
+}
+
+/** How long the undo bar stays before `onDismissUndo`. */
+export const UNDO_MS = 5000
+
+/** Shown on Today while paused, once the check-in reminder is due. */
+export interface TodayCheckIn {
+  onResume: () => void
+  onNotYet: () => void
+}
+
+/** The "Remind me in about N days" range on Tracking, and where it starts. */
+export const CHECK_IN_DAYS = { min: 3, max: 10, initial: 7 } as const

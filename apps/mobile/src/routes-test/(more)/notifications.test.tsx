@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, mock } from 'bun:test'
 import { items, resolveText } from '@ihsaanly/core/content'
 import type { NotificationPreferences } from '@ihsaanly/core/plan/notification-preferences'
 import { act, render } from '@testing-library/react'
+import { push } from '../../../test/firebase'
 import { flush, last, mockScreen } from '../../../test/more'
 
 interface Remindable {
@@ -18,6 +19,7 @@ interface Props {
   onToggleItem: (id: string, on: boolean) => void
   onOpenSettings: () => void
   onSendTest: () => void
+  announcements: { on: boolean; onChange: (on: boolean) => void }
 }
 const renders = mockScreen<Props>('@ihsaanly/ui/screens/notifications', 'NotificationsScreen')
 
@@ -57,6 +59,9 @@ const { getNotificationPreferences, setNotificationPreferences } = await import(
 )
 const { setEnabledItems } = await import('@ihsaanly/state/plan/enabled-store')
 const { setKnownItems } = await import('@ihsaanly/state/memorise/store')
+const { DEFAULT_ANNOUNCEMENTS, getAnnouncements, setAnnouncements } = await import(
+  '@ihsaanly/state/opt-ins/store'
+)
 
 const settle = (): Promise<void> => new Promise((resolve) => setTimeout(resolve, 0))
 const windowItem = items.find((item) => item.trigger.kind === 'window')
@@ -73,6 +78,7 @@ describe('notifications route', () => {
     setNotificationPreferences(DEFAULT_NOTIFICATION_PREFERENCES)
     setEnabledItems([])
     setKnownItems([])
+    setAnnouncements(DEFAULT_ANNOUNCEMENTS)
   })
 
   it('lists only enabled, unknown window and day items, with their effective state', () => {
@@ -147,5 +153,23 @@ describe('notifications route', () => {
     await settle()
     expect(native.scheduled).toHaveLength(1)
     expect(native.scheduled[0]?.identifier).toStartWith('test:')
+  })
+
+  it('turns announcements on and off from the switch', async () => {
+    render(<NotificationsRoute />)
+    expect(last(renders).announcements.on).toBe(false)
+
+    act(() => last(renders).announcements.onChange(true))
+    await settle()
+    await flush()
+    expect(getAnnouncements().enabled).toBe(true)
+    expect(last(renders).announcements.on).toBe(true)
+    expect(push.topics.has('announcements')).toBe(true)
+
+    act(() => last(renders).announcements.onChange(false))
+    await settle()
+    await flush()
+    expect(getAnnouncements()).toEqual(DEFAULT_ANNOUNCEMENTS)
+    expect(push.topics.size).toBe(0)
   })
 })

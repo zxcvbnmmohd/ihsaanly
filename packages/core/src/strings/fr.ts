@@ -26,6 +26,32 @@ export const fr: Strings = {
       'Les plages de prière, la date hégirienne et tout ce que la journée vous demande découlent d’une position approximative. Elle est calculée sur cet appareil et y reste, sauf si vous vous connectez pour synchroniser.',
     chooseCity: 'Choisir plutôt une ville',
     chooseCityDetail: 'Aucune autorisation nécessaire. Tout fonctionne quand même.',
+    prayerHint: 'Touchez une prière lorsque vous l’avez priée',
+    markDone: (name: string): string => `Marquer ${name} comme fait`,
+    unmark: (name: string): string => `Retirer la marque de ${name}`,
+    countItem: (name: string, count: number, target: number): string =>
+      `Compter ${name}, ${count} sur ${target}`,
+    partsItem: (name: string, done: number, total: number): string =>
+      `Parties de ${name}, ${done} sur ${total} faites`,
+    open: (name: string): string => `Ouvrir ${name}`,
+    doneToday: (count: number): string => `Fait aujourd’hui (${count})`,
+    markedDone: 'Marqué comme fait',
+    undo: 'Annuler',
+    undoItem: (name: string): string => `Annuler ${name}`,
+    paused: 'Le suivi des prières est suspendu',
+    pausedFasting: 'Le jeûne reprend après votre pause',
+    checkInTitle: 'Prêt à reprendre le suivi des prières ?',
+    resume: 'Reprendre',
+    notYet: 'Pas encore',
+  },
+  tour: {
+    prayer: 'Touchez un cercle pour marquer une prière',
+    sunnah: 'Touchez le cercle à côté d’une sunna lorsque vous l’avez faite',
+    card: 'Touchez la carte pour l’apprendre : les mots, le sens et la source',
+    step: (step: number, total: number): string => `${step} sur ${total}`,
+    skip: 'Passer',
+    next: 'Suivant',
+    done: 'Compris',
   },
   plan: {
     rightNow: 'En ce moment',
@@ -89,8 +115,13 @@ export const fr: Strings = {
     whichItemsDetail: 'Seuls les éléments liés à un moment précis apparaissent ici.',
     sendTest: 'Envoyer un rappel test',
     sendTestDetail: 'Arrive dans quelques secondes.',
+    announcements: 'Annonces',
+    announcementsDetail:
+      'Des messages occasionnels d’Ihsaanly, comme le début du Ramadan. Vos rappels quotidiens n’en ont pas besoin.',
     testTitle: 'Un rappel test',
     testBody: 'Voici à quoi ressemble un rappel d’Ihsaanly.',
+    pausedRemembrance: 'Un moment pour le dhikr',
+    checkIn: 'Un petit mot d’Ihsaanly',
     action: {
       done: 'Fait',
       later: 'Plus tard',
@@ -268,6 +299,9 @@ export const fr: Strings = {
       `${count} ${plural(count, 'entrée ajoutée', 'entrées ajoutées')}.`,
     importFailed: 'Ce fichier n’a pas pu être lu.',
     shareFailed: 'Le partage n’est pas disponible sur cet appareil.',
+    crashReports: 'Partager les rapports de plantage',
+    crashReportsDetail:
+      'Envoyer les rapports de plantage et les erreurs pour aider à corriger les problèmes. Ils contiennent le modèle de votre appareil et la version de l’app, jamais votre pratique ni votre compte.',
     delete: 'Supprimer mes données',
     deleteDetail:
       'Tout ce qui se trouve sur cet appareil : les réglages et l’historique de votre pratique. L’application repart de zéro.',
@@ -436,6 +470,10 @@ export const fr: Strings = {
     },
     jumuahAutoDetail:
       'La Joumou’a le vendredi, sauf si vous êtes en voyage ou avez choisi « Sœur ».',
+    checkIn: 'Me rappeler de faire le point',
+    checkInAfter: (days: number): string => `Me le rappeler dans environ ${days} jours`,
+    checkInOff: 'Aucun rappel. Réactivez le suivi quand vous voulez.',
+    checkInDays: 'Jours',
   },
   hijri: {
     title: 'Date hégirienne',
@@ -521,6 +559,8 @@ export const fr: Strings = {
     home: 'Maison',
     masjid: 'Mosquée',
     prayer: 'Prière',
+    quran: 'Coran',
+    charity: 'Aumône',
     sleep: 'Sommeil et réveil',
     travel: 'Voyage',
   },
@@ -576,17 +616,16 @@ export const fr: Strings = {
     app: 'Application',
     practice: 'Votre pratique',
     empty: 'L’historique, les réglages et l’aide se trouveront ici.',
+    help: 'Aide',
+    showMeAround: 'Faites-moi visiter',
   },
   onboarding: {
     welcomeTitle: 'Le moment, pas l’horloge.',
     welcomeBody:
       'Ihsaanly vous dit quand les adhkar du soir sont ouverts. Jamais une heure. Jamais un score.',
-    howTitle: 'Vous marquez la prière. La sunna apparaît.',
-    howBody:
-      'Touchez Dhuhr une fois que vous l’avez priée, et le dhikr qui la suit vous attend. Tout reste sur cet appareil, sauf si vous choisissez de vous connecter pour synchroniser.',
+    howTitle: 'Ihsaanly montre ce qui convient à l’instant. Touchez un cercle quand c’est fait.',
     language: 'Langue',
     appearance: 'Apparence',
-    howSample: 'سُبْحَانَ اللهِ وَبِحَمْدِهِ',
     locationStep: 'Où êtes-vous ?',
     locationWhy:
       'Utilisée sur cet appareil pour déterminer les parties de la journée. Elle y reste, sauf si vous vous connectez pour synchroniser.',
@@ -601,11 +640,15 @@ export const fr: Strings = {
     skipDetail: 'La pause est proposée quand même.',
     genderPrivacy:
       'Enregistré sur cet appareil, et synchronisé seulement si vous vous connectez. Utilisé pour rien d’autre.',
-    remindersStep: 'Rappels',
+    remindersStep: 'Notifications',
     remindersWhy:
-      'Deux ou trois par jour, jamais la nuit. Vous pourrez tout modifier plus tard dans Plus.',
-    windowsDetail: 'À l’ouverture de chaque plage',
-    lookAheadDetail: 'La veille au soir',
+      'Choisissez ce qu’Ihsaanly peut vous envoyer. Vous pourrez changer l’un ou l’autre plus tard dans Plus.',
+    dailyReminders: 'Rappels quotidiens',
+    dailyRemindersDetail:
+      'Adhkar du matin et du soir et jours de jeûne à venir, programmés sur cet appareil.',
+    announcementsChoice: 'Annonces d’Ihsaanly',
+    announcementsChoiceDetail:
+      'Des nouvelles occasionnelles, comme le début du Ramadan, envoyées par nous. Désactivées tant que vous ne les activez pas.',
     startStep: 'Un point de départ',
     startWhy:
       'Choisissez une taille pour commencer. Ajoutez ou retirez ce que vous voulez dans la Bibliothèque, quand vous voulez.',
@@ -628,6 +671,7 @@ export const fr: Strings = {
     back: 'Retour',
     continue: 'Continuer',
     allowReminders: 'Autoriser les rappels',
+    allowNotifications: 'Autoriser les notifications',
     notNow: 'Pas maintenant',
     done: 'Commencer',
     restore: 'Vous utilisez déjà Ihsaanly ? Connectez-vous pour restaurer vos données',
@@ -684,5 +728,8 @@ export const fr: Strings = {
   },
   panel: {
     close: 'Fermer',
+    markAll: 'Tout marquer comme fait',
+    progress: (count: number, target: number): string => `${count} sur ${target}`,
+    tapToCount: 'Touchez pour compter',
   },
 }

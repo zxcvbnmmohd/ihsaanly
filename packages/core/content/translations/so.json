@@ -457,10 +457,19 @@
       "reminder": "Tobanka maalmood ee ugu horreeya Dul Xijja. Camallada wanaagsan ee caadiga ahi si gaar ah ayey ugu culus yihiin.",
       "how": [
         "Maalmaha oo dhan dheh Allaahu Akbar, laa ilaaha illallaah, Allaahu Akbar, wa lillaahil xamd.",
-        "Soom inta aad karto sagaalka maalmood ee ugu horreeya.",
         "Wax sadaqo ah bixi."
       ],
       "evidence": ["Ma jiraan maalmo camal wanaagsan Alle ugu jecel yahay tobankan maalmood."]
+    },
+    "fast-dhul-hijjah": {
+      "title": "Soonka sagaalka maalmood ee ugu horreeya Dul Xijja",
+      "why": "Soonku waa camallada ugu wanaagsan tobanka maalmood, waxaana la sheegay in Nabigu ﷺ soomi jiray sagaalka hore. Tobnaad waa Ciid, lamana soomo.",
+      "reminder": "Maalmaha hore ee Dul Xijja. Maanta soom haddii aad karto.",
+      "how": [
+        "Soom inta aad karto sagaalka maalmood ee ugu horreeya.",
+        "9-ku waa Carafo, kan ugu ajarka badan qofka aan Xajka joogin."
+      ],
+      "evidence": ["Rasuulka Alle ﷺ wuxuu soomi jiray sagaalka maalmood ee Dul Xijja."]
     },
     "sunnah-after-jumuah": {
       "title": "Sunnada Jimcaha kadib",
@@ -543,6 +552,82 @@
       "evidence": [
         "Waxaa ku jirta saacad: addoon Muslim ah oo la kulma isagoo taagan oo tukanaya, Alle Sarreeyaha wax weydiinaya, Alle waa siiyaa.",
         "… ee ka raadiya saacadda ugu dambaysa Casarka kadib."
+      ]
+    },
+    "remembrance-at-prayer-times": {
+      "title": "Xusuusta Alle waqtiyada salaadda",
+      "why": "Salaadda hadda lagama sugayo, laakiin waqtiyadeedu weli way yimaadaan. Daqiiqado ku fadhiisasho waqti kasta si aad Alle u xusuusato waxay ilaalisaa habeynta maalinta, waxayna diyaar ka dhigtaa caadada marka salaaddu soo noqoto.",
+      "how": [
+        "Marka waqtiga salaad yimaado, fadhiiso meesha aad caadi ahaan ku tukato, haddaad awooddo.",
+        "Daqiiqado ku qaado xusuusta: Subxaanallaah, Alxamdulillaah, Laa ilaaha illallaah, Allaahu Akbar, iyo salaan Nabiga ﷺ.",
+        "Alle weydii waxaad u baahan tahay, erayo kasta iyo luqad kasta."
+      ],
+      "reminder": "Waqtigii waa soo galay. Daqiiqado xusuus ah ayaa ilaaliya saacadda, iyo caadada.",
+      "note": "Fadhiisashada meesha aad caadi ahaan ku tukato waqti salaad kasta waxaa lagula talinayaa culimada Xanafiga iyo kuwa kale, si waqtiga iyo caadada loo ilaaliyo. Waa dhaqan ay culimadu ku taliyaan, ma aha sunno la weriyay, mana aha mid dugsi kasta sheego; qaar baa ku daraya in marka hore wudu la qaato. Alle xusuusashada iyo ducada waa furan yihiin waqti kasta, taas oo culimadu ku heshiiyeen.",
+      "evidence": [
+        "Nabiga ﷺ wuxuu Alle xusi jiray wakhti kasta.",
+        "Kuwa Alle xusa isagoo taagan, fadhiya iyo dhinac jiifa.",
+        "Waxaa nalagu amray inaan soo saarno xataa dumarka caadada qaba maalinta Ciidda. Waxay dhabarka dadka ka dambeynayeen, iyagoo la tikbiirinaya oo la ducaynaya, iyagoo rajaynaya barakada iyo daahirnimada maalintaas."
+      ]
+    },
+    "istighfar": {
+      "title": "Istighfaar: dambi dhaaf weydiisasho",
+      "translation": "Waxaan Alle dambi dhaaf weydiistaa, oo isaga ku towbad keenaa.",
+      "why": "Alle dambi dhaaf weydiisasho, weedh dhaqso loo dhihi karo meel kasta. Nabiga ﷺ, isagoo hore loo dhaafay, wuxuu maalintii dambi dhaaf weydiisan jiray in ka badan toddobaatan jeer, boqol jeerna weriye kale.",
+      "how": [
+        "Dheh: Astaghfiru-llāha wa atūbu ilayh.",
+        "Ku celi inta aad awooddo, ilaa boqol jeer.",
+        "Dheh adigoo fadhiya, socda ama jiifa; wudu looma baahna."
+      ],
+      "reminder": "Daqiiqado istighfaar ah kahor intaan maalintu dhammaan. Nabiga ﷺ wuxuu maalintii dambi dhaaf weydiisan jiray in ka badan toddobaatan jeer.",
+      "evidence": [
+        "Alle ayaan ku dhaartay, waxaan Alle dambi dhaaf weydiistaa oo ku towbad keenaa maalintii in ka badan toddobaatan jeer.",
+        "Dadow, Alle ku towbad keena, aniga ayaa maalintii boqol jeer ku towbad keena.",
+        "Rabbigiin dambi dhaaf weydiista. Hubaal, isagu waa dambi dhaafe aad u badan."
+      ]
+    },
+    "dua-times-of-acceptance": {
+      "title": "Ducada waqtiyada la aqbalo",
+      "why": "Ducadu waqti kasta way fiican tahay, qaar ka mid ah waqtiyada ayaana loo sheegay inay yihiin kuwa la aqbalo: saddexdii dambe ee habeenka, iyo inta u dhexaysa azaanka iyo iqaamada. Labaduba hadda way furan yihiin.",
+      "how": [
+        "Intaadan seexan, ama haddaad habeenkii tooso, daqiiqado u qoondee.",
+        "Alle ammaan oo Nabiga ﷺ salaan u dir, kadibna weydii waxaad u baahan tahay, adiga iyo dadka kaleba.",
+        "Marka aad azaanka maqasho, sii wad weydiinta ilaa iqaamada."
+      ],
+      "reminder": "Habeenku wuu u furan yahay ducada, gaar ahaan saddexdiisa dambe. Weydii intaadan seexan, ama haddaad tooso.",
+      "note": "Saacadda la aqbalo ee Jimcaha waxay leedahay shay u gaar ah, saacadda ugu dambaysa Maqribka ka hor.",
+      "evidence": [
+        "Rabbigeenna, barakeeyay oo sarreeyay, habeen kasta wuxuu u dhaadhacaa samada hoose marka saddexdii dambe ee habeenka hadhsan tahay, wuxuuna yidhaahdaa: Yaa i barya, aan ka jawaabo? Yaa i weydiista, aan siiyo? Yaa dambi dhaaf iga weydiista, aan u dhaafo?",
+        "Ducada u dhexaysa azaanka iyo iqaamada lama celiyo."
+      ]
+    },
+    "listening-to-quran": {
+      "title": "Dhegaysiga Qur’aanka",
+      "why": "Qur’aanka dhegaysiga feejignaan leh waa cibaado laftiisa, Alle wuxuuna naxariistiisa ku xidhay. Nabiga ﷺ, kii loo soo dejiyay, weli wuu jeclaa inuu maqlo qof kale oo akhrinaya.",
+      "how": [
+        "Dooro akhriste iyo suurad, ama ka sii wad meeshii aad ku joojisay.",
+        "Dhegayso feejignaan, sidii aad u dhegaysanayso qof kula hadlaya.",
+        "Raac tarjumaad haddii ay kaa caawinayso inaad fahamto."
+      ],
+      "reminder": "Daqiiqado Qur’aan ah maanta, feejignaan lagu dhegaystay. Alle naxariistiisa wuxuu ku xidhay dhegaysiga.",
+      "note": "Dhegaysigu wuu u furan yahay qof kasta waqti kasta. Culimadu way ku kala duwan yihiin akhriska xifdi ahaan inta caadada la jiro: qaar badan, ay ku jiraan inta badan culimada Xanafiga, Shaafici iyo Xanbalka, waxay aaminsan yihiin in aan la akhrin, halka dugsiga Maalikiga iyo kuwa kale ay oggolaadaan. Inta badan waxay aaminsan yihiin in mushafka laftiisa aan la taaban daahirnimo la’aan. Raac culimada aad aamintid.",
+      "evidence": [
+        "Marka Qur’aanka la akhriyo, dhegaysta oo aamusa, si naxariis laydiin siiyo.",
+        "Nabiga ﷺ wuxuu ii yiri: Ii akhri. Waxaan idhi: Ma ku akhriyaa, adigoo lagu soo dejiyay? Wuxuu yiri: Waan jeclahay inaan qof kale ka maqlo."
+      ]
+    },
+    "sadaqah": {
+      "title": "Sadaqada",
+      "why": "Wax Alle aawadiis loo bixiyo, in kastoo yar. Subax kasta laba malaa’ig ayaa u duceeya kan bixiya, Nabiga ﷺ wuxuuna yiri sadaqadu hantida ma dhimto.",
+      "how": [
+        "Bixi wax maanta: lacag, cunto, ama waqtigaaga iyo caawimaadaada.",
+        "Yar oo joogto ah ayaa ka wanaagsan inaad sugto wax weyn.",
+        "Si qarsoon u bixi haddaad awooddo. Hadal wanaagsan sadaqo ayuu ahaa."
+      ],
+      "reminder": "Subax kasta laba malaa’ig ayaa u duceeya kan bixiya. Bixi wax maanta, in kastoo yar.",
+      "evidence": [
+        "Maalin aysan addoommadu tooseen mooyee ma jirto laba malaa’ig oo hoos u dhaadhaca. Midkood wuxuu yiraahdaa: Allahayow, bixiyaha u sii beddel. Kan kalena wuxuu yiraahdaa: Allahayow, kan hakada u sii halaag.",
+        "Sadaqadu hantida ma dhimto."
       ]
     }
   },

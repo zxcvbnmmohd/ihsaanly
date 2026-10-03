@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import { items as realItems } from '../content'
 
 import type { Item, Trigger } from '../content/schema'
 import { civilDateIn } from '../day/boundaries'
@@ -703,5 +704,228 @@ describe('an item with an unknown trigger', () => {
   it('fails loudly rather than being silently dropped', () => {
     const broken = makeItem('broken', { kind: 'moon' } as unknown as Trigger)
     expect(() => plan(makeSignals([broken]))).toThrow('Unhandled case')
+  })
+})
+
+describe('the pause', () => {
+  const paused = { travelling: false, trackingPaused: true, jumuah: 'auto' as const }
+  const fastThursday = makeItem(
+    'fast-thursday',
+    { kind: 'day', day: 'thursday' },
+    {
+      category: 'fasting',
+    },
+  )
+  const duha = makeItem('duha', { kind: 'window', window: 'evening' }, { isPrayer: true })
+  const nightPrayer = makeItem(
+    'ramadan-nights',
+    { kind: 'day', day: 'ramadan' },
+    {
+      isPrayer: true,
+    },
+  )
+  const remembrance = makeItem(
+    'remembrance',
+    { kind: 'prayer', prayer: 'any', when: 'before' },
+    { onlyWhilePaused: true },
+  )
+  const istighfar = makeItem(
+    'istighfar',
+    { kind: 'window', window: 'evening' },
+    { onlyWhilePaused: true },
+  )
+  const nightDua = makeItem(
+    'night-dua',
+    { kind: 'window', window: 'night' },
+    {
+      onlyWhilePaused: true,
+    },
+  )
+  const ramadan = dayContext(0, { month: 9, day: 6 })
+  const ids = (entries: { itemId: string }[]): string[] => entries.map((entry) => entry.itemId)
+
+  it('keeps the dhikr of Dhul Hijjah and sets aside its fasting', () => {
+    const dhulHijjah = realItems.filter((item) => item.id.includes('dhul-hijjah'))
+    const result = plan(
+      makeSignals(dhulHijjah, { today: dayContext(0, { month: 12, day: 3 }), userState: paused }),
+    )
+    expect(ids(result.today.comingUp)).toEqual(['dhul-hijjah-ten'])
+    const unpaused = plan(makeSignals(dhulHijjah, { today: dayContext(0, { month: 12, day: 3 }) }))
+    expect(ids(unpaused.today.comingUp).sort()).toEqual(['dhul-hijjah-ten', 'fast-dhul-hijjah'])
+  })
+
+  it('sets aside every prayer, whatever its trigger, and every fast', () => {
+    const items = [rawatib, dhikr, duha, nightPrayer, fastThursday, eveningAdhkar]
+    const result = plan(
+      makeSignals(items, {
+        today: ramadan,
+        upcoming: [dayContext(1, { month: 9, day: 7 })],
+        prayedToday: { asr: justNow },
+        userState: paused,
+      }),
+    )
+    expect(ids(result.today.now)).toEqual(['evening-adhkar'])
+    expect(ids(result.today.comingUp)).toEqual([])
+
+    const unpaused = plan(makeSignals(items, { today: ramadan, prayedToday: { asr: justNow } }))
+    expect(ids(unpaused.today.now)).toContain('duha')
+    expect(ids(unpaused.today.comingUp).sort()).toEqual(['fast-thursday', 'ramadan-nights'])
+  })
+
+  it('says fasting resumes only while paused, and only when a fast is enabled', () => {
+    const withFast = plan(makeSignals([fastThursday, eveningAdhkar], { userState: paused }))
+    expect(withFast.today.pausedNotice).toEqual({ fastingResumes: true })
+
+    const withoutFast = plan(
+      makeSignals([fastThursday, eveningAdhkar], {
+        userState: paused,
+        preferences: {
+          enabledItemIds: ['evening-adhkar'],
+          knownItemIds: [],
+          notifications: { ...DEFAULT_NOTIFICATION_PREFERENCES, quietHours: null },
+        },
+      }),
+    )
+    expect(withoutFast.today.pausedNotice).toEqual({ fastingResumes: false })
+
+    expect(plan(makeSignals([fastThursday])).today.pausedNotice).toBeNull()
+  })
+
+  it('offers its own items only while paused', () => {
+    const items = [remembrance, istighfar, nightDua]
+    expect(plan(makeSignals(items)).today.now).toEqual([])
+
+    const atAsr = plan(makeSignals(items, { userState: paused }))
+    expect(atAsr.today.now).toEqual([
+      { itemId: 'istighfar', reason: 'current-window', optional: false, caveat: undefined },
+      { itemId: 'remembrance', reason: 'before-prayer', optional: false, caveat: undefined },
+    ])
+    expect(atAsr.today.next?.before).toEqual(['remembrance'])
+
+    const atIsha = plan(makeSignals(items, { now: startOf('isha'), userState: paused }))
+    expect(ids(atIsha.today.now)).toEqual(['night-dua', 'remembrance'])
+  })
+
+  it('counts the remembrance done for one prayer time only', () => {
+    const done = new Date(startOf('asr').getTime() + 60_000)
+    const later = new Date(startOf('asr').getTime() + 120_000)
+    const asr = plan(
+      makeSignals([remembrance], {
+        now: later,
+        userState: paused,
+        completedToday: { remembrance: done },
+      }),
+    )
+    expect(ids(asr.today.done)).toEqual(['remembrance'])
+
+    const maghrib = plan(
+      makeSignals([remembrance], {
+        now: startOf('maghrib'),
+        userState: paused,
+        completedToday: { remembrance: done },
+      }),
+    )
+    expect(ids(maghrib.today.now)).toEqual(['remembrance'])
+  })
+
+  describe('reminders', () => {
+    const prayersOn = {
+      enabledItemIds: ['remembrance', 'night-dua', 'evening-adhkar'],
+      knownItemIds: [],
+      notifications: { ...DEFAULT_NOTIFICATION_PREFERENCES, quietHours: null, prayers: true },
+    }
+    const items = [remembrance, nightDua, eveningAdhkar]
+
+    it('turns the prayer reminders into the remembrance item’s, at the same moments', () => {
+      const result = plan(makeSignals(items, { userState: paused, preferences: prayersOn }))
+      const kinds = new Set(result.notifications.map((entry) => entry.kind))
+      expect(kinds.has('prayer')).toBe(false)
+
+      const remembrances = result.notifications.filter((entry) => entry.kind === 'remembrance')
+      const maghrib = windowOf('maghrib')
+      expect(remembrances[0]).toEqual({
+        kind: 'remembrance',
+        itemId: 'remembrance',
+        prayer: 'maghrib',
+        at: maghrib.startsAt,
+        endsAt: maghrib.endsAt,
+      })
+      expect(
+        new Set(remembrances.map((entry) => entry.kind === 'remembrance' && entry.prayer)),
+      ).toEqual(new Set(['fajr', 'dhuhr', 'asr', 'maghrib', 'isha']))
+    })
+
+    it('reminds of a night item at Isha, open until Fajr', () => {
+      const result = plan(makeSignals(items, { userState: paused, preferences: prayersOn }))
+      const night = result.notifications.find(
+        (entry) => entry.kind === 'item' && entry.itemId === 'night-dua',
+      )
+      expect(night).toMatchObject({
+        at: windowOf('isha').startsAt,
+        window: { closes: 'fajr', endsAt: windowOf('isha').endsAt },
+      })
+    })
+
+    it('sends no remembrance without the prayer reminders, or with the item off', () => {
+      const off = plan(makeSignals(items, { userState: paused }))
+      expect(off.notifications.some((entry) => entry.kind === 'remembrance')).toBe(false)
+
+      const disabled = plan(
+        makeSignals(items, {
+          userState: paused,
+          preferences: { ...prayersOn, enabledItemIds: ['evening-adhkar'] },
+        }),
+      )
+      expect(disabled.notifications.some((entry) => entry.kind === 'remembrance')).toBe(false)
+    })
+
+    it('keeps the prayer reminders, and none of the pause’s, when not paused', () => {
+      const result = plan(makeSignals(items, { preferences: prayersOn }))
+      const kinds = result.notifications.map((entry) => entry.kind)
+      expect(kinds).toContain('prayer')
+      expect(kinds).not.toContain('remembrance')
+      expect(itemIds(result.notifications)).not.toContain('night-dua')
+      expect(itemIds(result.notifications)).toContain('evening-adhkar')
+    })
+  })
+
+  describe('the check-in', () => {
+    const on = (offset: number): string => {
+      const day = dayContext(offset, { month: 4, day: 6 }).civil
+      return `${day.year}-${String(day.month).padStart(2, '0')}-${String(day.day).padStart(2, '0')}`
+    }
+
+    it('schedules one reminder on the chosen day, far past the prayer horizon', () => {
+      const result = plan(makeSignals([], { userState: { ...paused, pauseCheckInOn: on(10) } }))
+      const checkIns = result.notifications.filter((entry) => entry.kind === 'check-in')
+      expect(checkIns).toHaveLength(1)
+      expect(checkIns[0]?.at.getTime()).toBeGreaterThan(times.at(-1)?.isha.getTime() ?? 0)
+      expect(result.today.checkInDue).toBe(false)
+    })
+
+    it('is due from the day itself, with nothing left to schedule once its hour has gone', () => {
+      const result = plan(
+        makeSignals([], {
+          now: startOf('isha'),
+          userState: { ...paused, pauseCheckInOn: on(0) },
+        }),
+      )
+      expect(result.today.checkInDue).toBe(true)
+      expect(result.notifications.some((entry) => entry.kind === 'check-in')).toBe(false)
+    })
+
+    it('does nothing when not paused, or when no check-in was asked for', () => {
+      const unpaused = plan(
+        makeSignals([], {
+          userState: { ...paused, trackingPaused: false, pauseCheckInOn: on(0) },
+        }),
+      )
+      expect(unpaused.today.checkInDue).toBe(false)
+      expect(unpaused.notifications).toEqual([])
+
+      const none = plan(makeSignals([], { userState: { ...paused, pauseCheckInOn: null } }))
+      expect(none.today.checkInDue).toBe(false)
+      expect(none.notifications).toEqual([])
+    })
   })
 })

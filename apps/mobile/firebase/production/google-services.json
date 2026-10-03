@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "331499339770",
+    "project_id": "ihsaanly-production",
+    "storage_bucket": "ihsaanly-production.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:331499339770:android:d0d738f7ffe76721c6ee43",
+        "android_client_info": {
+          "package_name": "app.ihsaanly.companion"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "331499339770-m2slkbu2r0ughebumcrcf55sf30hdonn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "app.ihsaanly.companion",
+            "certificate_hash": "9c7c5966b95743f8b5f8527d638a8e8c5653b0ef"
+          }
+        },
+        {
+          "client_id": "331499339770-hmnub22plkuqjkmrsnhbks1b5tlkgug9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAS0rHFYKYdG649uuY2dAKrIfFMslEGL9Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "331499339770-hmnub22plkuqjkmrsnhbks1b5tlkgug9.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "331499339770-42i9gc9tqv79r3d4ofhc5ni6rgvp2utj.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "app.ihsaanly.companion"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

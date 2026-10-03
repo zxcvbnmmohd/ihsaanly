@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, test } from 'bun:test'
 import { Timestamp } from 'firebase/firestore'
-import { fake, resetFakes } from '../../test/firebase-fakes'
-import type { SyncEvent, SyncPreference } from '../ports'
+import { fake, resetFakes, snapshot } from '../../test/firebase-fakes'
+import type { RemoteChanges, SyncEvent, SyncPreference } from '../ports'
 
 const { createFirestoreSyncRemote, eventKey } = await import('./sync-remote')
 
@@ -28,7 +28,7 @@ beforeEach(() => {
 })
 
 describe('push', () => {
-  test('creates the user document, one document per month and the preferences', async () => {
+  test('writes one sync document per month and the preferences, with readable fields', async () => {
     await remote.push('u1', {
       events: [
         event(),
@@ -38,32 +38,42 @@ describe('push', () => {
       preferences: [pref('theme', '"dark"', 7)],
     })
 
-    expect(stored('users/u1')).toMatchObject({ schema: 1 })
-    expect(stored('users/u1')?.createdAt).toBeInstanceOf(Timestamp)
-    expect(Object.keys(stored('users/u1/eventMonths/2025-10')?.events as object)).toEqual([
+    const october = stored('users/u1/sync/2025-10')
+    expect(october).toMatchObject({ type: 'events', month: '2025-10' })
+    expect(Object.keys(october ?? {}).sort()).toEqual(['events', 'month', 'type', 'updatedAt'])
+    expect(Object.keys(october?.events as object)).toEqual([
       eventKey(event()),
       eventKey(event({ subject: 'dhuhr' })),
     ])
-    const october = stored('users/u1/eventMonths/2025-10')?.events as Record<string, unknown>
-    expect(october[eventKey(event({ subject: 'dhuhr' }))]).toEqual({ l: '2025-10-09', d: 90 })
-    expect(stored('users/u1/eventMonths/2025-11')).toBeDefined()
-    expect(stored('users/u1/eventMonths/2025-10')?.updatedAt).toBeInstanceOf(Timestamp)
-    expect(stored('users/u1/state/preferences')?.prefs).toEqual({ theme: { v: '"dark"', t: 7 } })
-    expect(fake.batches).toEqual([4])
+    const entries = october?.events as Record<string, unknown>
+    expect(entries[eventKey(event({ subject: 'dhuhr' }))]).toEqual({
+      logDay: '2025-10-09',
+      deltaSeconds: 90,
+    })
+    expect(october?.updatedAt).toBeInstanceOf(Timestamp)
+    expect(stored('users/u1/sync/2025-11')).toMatchObject({ type: 'events', month: '2025-11' })
+    expect(stored('users/u1/sync/preferences')).toMatchObject({
+      type: 'preferences',
+      preferences: { theme: { value: '"dark"', updatedAt: 7 } },
+    })
+    expect(stored('users/u1/sync/preferences')?.updatedAt).toBeInstanceOf(Timestamp)
+    // No profile unless asked for, and nothing is read to decide.
+    expect(stored('users/u1')).toBeUndefined()
+    expect(fake.reads).toEqual([])
+    expect(fake.queries).toEqual([])
+    expect(fake.batches).toEqual([3])
   })
 
-  test('only checks for the user document once per session', async () => {
-    await remote.push('u1', { events: [event()], preferences: [] })
-    await remote.push('u1', { events: [event({ at: 2 })], preferences: [] })
-    expect(fake.reads).toEqual(['users/u1'])
-    expect(fake.batches).toEqual([2, 1])
-  })
-
-  test('leaves an existing user document alone', async () => {
+  test('writes the profile only when asked, replacing a layout-1 one', async () => {
     fake.docs.set('users/u1', { schema: 1, createdAt: 'earlier' })
-    await remote.push('u1', { events: [event()], preferences: [] })
-    expect(stored('users/u1')?.createdAt).toBe('earlier')
+    await remote.push('u1', { events: [], preferences: [], profile: true })
+    expect(Object.keys(stored('users/u1') ?? {}).sort()).toEqual(['createdAt', 'schemaVersion'])
+    expect(stored('users/u1')).toMatchObject({ schemaVersion: 2 })
+    expect(stored('users/u1')?.createdAt).toBeInstanceOf(Timestamp)
     expect(fake.batches).toEqual([1])
+
+    await remote.push('u1', { events: [event()], preferences: [], profile: false })
+    expect(fake.batches).toEqual([1, 1])
   })
 
   test('merges into a month instead of replacing it, and keeps other preferences', async () => {
@@ -72,27 +82,49 @@ describe('push', () => {
       events: [event({ subject: 'asr' })],
       preferences: [pref('a', '3', 9)],
     })
-    expect(Object.keys(stored('users/u1/eventMonths/2025-10')?.events as object)).toHaveLength(2)
-    expect(stored('users/u1/state/preferences')?.prefs).toEqual({
-      a: { v: '3', t: 9 },
-      b: { v: '2', t: 1 },
+    expect(Object.keys(stored('users/u1/sync/2025-10')?.events as object)).toHaveLength(2)
+    expect(stored('users/u1/sync/preferences')?.preferences).toEqual({
+      a: { value: '3', updatedAt: 9 },
+      b: { value: '2', updatedAt: 1 },
     })
   })
 
-  test('writes no preferences document when there are none', async () => {
+  test('deletes removed preference keys in the same merge, keeping the rest', async () => {
+    await remote.push('u1', {
+      events: [],
+      preferences: [pref('a', '1'), pref('progress:x', '{}'), pref('progress:y', '{}')],
+    })
+    await remote.push('u1', {
+      events: [],
+      preferences: [pref('a', '2', 3)],
+      removedPreferences: ['progress:x'],
+    })
+    expect(stored('users/u1/sync/preferences')?.preferences).toEqual({
+      a: { value: '2', updatedAt: 3 },
+      'progress:y': { value: '{}', updatedAt: 1 },
+    })
+    // A removal alone still writes (and stamps) the document.
+    await remote.push('u1', { events: [], preferences: [], removedPreferences: ['progress:y'] })
+    expect(stored('users/u1/sync/preferences')?.preferences).toEqual({
+      a: { value: '2', updatedAt: 3 },
+    })
+    expect(fake.batches).toEqual([1, 1, 1])
+  })
+
+  test('writes no preferences document when there are none, and nothing at all for an empty push', async () => {
     await remote.push('u1', { events: [], preferences: [] })
-    expect(stored('users/u1/state/preferences')).toBeUndefined()
-    expect(fake.batches).toEqual([1])
+    expect(stored('users/u1/sync/preferences')).toBeUndefined()
+    expect(fake.batches).toEqual([])
   })
 
   test('splits a large push into batches of at most 450 writes', async () => {
-    // One month document each: years 1..1000, plus the user document.
+    // One month document each: years 1..1000, plus the profile.
     const events = Array.from({ length: 1000 }, (_, i) =>
       event({ at: i + 1, logDay: `${String(i + 1).padStart(4, '0')}-01-01` }),
     )
-    await remote.push('u1', { events, preferences: [] })
+    await remote.push('u1', { events, preferences: [], profile: true })
     expect(fake.batches).toEqual([450, 450, 101])
-    expect([...fake.docs.keys()].filter((path) => path.includes('eventMonths'))).toHaveLength(1000)
+    expect([...fake.docs.keys()].filter((path) => path.includes('/sync/'))).toHaveLength(1000)
   })
 })
 
@@ -101,7 +133,7 @@ describe('pull', () => {
     expect(await remote.pull('u1', null)).toEqual({ events: [], preferences: [], cursor: null })
   })
 
-  test('reads every month and the preferences, and returns the newest updatedAt as cursor', async () => {
+  test('reads every month and the preferences in one query, and returns the newest updatedAt as cursor', async () => {
     await remote.push('u1', {
       events: [event({ logDay: '2025-10-09' }), event({ at: 2, logDay: '2025-11-02' })],
       preferences: [pref('theme', '"dark"', 7)],
@@ -110,16 +142,24 @@ describe('pull', () => {
     expect(pulled.events).toHaveLength(2)
     expect(pulled.preferences).toEqual([pref('theme', '"dark"', 7)])
     expect(pulled.cursor).toBe('1.0')
+    expect(fake.queries).toEqual(['users/u1/sync'])
+    expect(fake.reads).toEqual([])
   })
 
-  test('only months written after the cursor come back, and the cursor advances', async () => {
-    await remote.push('u1', { events: [event()], preferences: [] })
+  test('only documents written after the cursor come back, preferences included, and the cursor advances', async () => {
+    await remote.push('u1', { events: [event()], preferences: [pref('theme', '"dark"', 7)] })
     const first = await remote.pull('u1', null)
     await remote.push('u1', { events: [event({ at: 2, logDay: '2025-12-01' })], preferences: [] })
 
     const second = await remote.pull('u1', first.cursor)
     expect(second.events.map((e) => e.logDay)).toEqual(['2025-12-01'])
+    // Unchanged preferences are not read again.
+    expect(second.preferences).toEqual([])
     expect(second.cursor).not.toBe(first.cursor)
+
+    await remote.push('u1', { events: [], preferences: [pref('theme', '"light"', 9)] })
+    const third = await remote.pull('u1', second.cursor)
+    expect(third).toMatchObject({ events: [], preferences: [pref('theme', '"light"', 9)] })
   })
 
   test('with nothing new the cursor is unchanged', async () => {
@@ -134,13 +174,29 @@ describe('pull', () => {
     expect((await remote.pull('empty', 'garbage')).cursor).toBe('garbage')
   })
 
-  test('a month without a server time does not move the cursor', async () => {
-    fake.docs.set('users/u1/eventMonths/2025-10', {
-      events: { [eventKey(event())]: { l: '2025-10-09', d: null } },
+  test('a document without a server time does not move the cursor, and an unknown type is skipped', async () => {
+    fake.docs.set('users/u1/sync/2025-10', {
+      type: 'events',
+      month: '2025-10',
+      events: { [eventKey(event())]: { logDay: '2025-10-09', deltaSeconds: null } },
     })
+    fake.docs.set('users/u1/sync/other', { type: 'mystery', updatedAt: new Timestamp(5, 0) })
     const pulled = await remote.pull('u1', null)
     expect(pulled.events).toHaveLength(1)
-    expect(pulled.cursor).toBeNull()
+    expect(pulled.preferences).toEqual([])
+    expect(pulled.cursor).toBe('5.0')
+  })
+
+  test('layout-1 documents are not read', async () => {
+    fake.docs.set('users/u1/eventMonths/2025-10', {
+      events: { [eventKey(event())]: { l: '2025-10-09', d: null } },
+      updatedAt: new Timestamp(5, 0),
+    })
+    fake.docs.set('users/u1/state/preferences', {
+      prefs: { a: { v: '1', t: 1 } },
+      updatedAt: new Timestamp(5, 0),
+    })
+    expect(await remote.pull('u1', null)).toEqual({ events: [], preferences: [], cursor: null })
   })
 
   test("does not read another user's data", async () => {
@@ -150,15 +206,18 @@ describe('pull', () => {
 })
 
 describe('erase', () => {
-  test('deletes every month, the preferences, and the user documents, only for that user; keeps feedback and its limit', async () => {
+  test('deletes every sync document, any layout-1 data and the profile, only for that user; keeps feedback and its limit', async () => {
     await remote.push('u1', {
       events: [event(), event({ at: 2, logDay: '2025-11-02' })],
       preferences: [pref('a', '1')],
+      profile: true,
     })
-    await remote.push('u2', { events: [event()], preferences: [] })
+    await remote.push('u2', { events: [event()], preferences: [], profile: true })
+    fake.docs.set('users/u1/eventMonths/2025-09', { events: {} })
+    fake.docs.set('users/u1/state/preferences', { prefs: {} })
 
-    fake.docs.set('feedbackLimits/u1', { lastAt: 1 })
-    fake.docs.set('feedbackLimits/u2', { lastAt: 1 })
+    fake.docs.set('feedbackLimits/u1', { lastSentAt: 1 })
+    fake.docs.set('feedbackLimits/u2', { lastSentAt: 1 })
     fake.docs.set('feedback/f1', { uid: 'u1' })
 
     await remote.erase('u1')
@@ -171,18 +230,112 @@ describe('erase', () => {
   })
 
   test('chunks the deletes too', async () => {
-    for (let i = 1; i <= 500; i++) {
+    for (let i = 1; i <= 250; i++) {
+      fake.docs.set(`users/u1/sync/${String(i).padStart(4, '0')}-01`, { events: {} })
       fake.docs.set(`users/u1/eventMonths/${String(i).padStart(4, '0')}-01`, { events: {} })
     }
     await remote.erase('u1')
     expect(fake.batches).toEqual([450, 52])
     expect(fake.docs.size).toBe(0)
   })
+})
 
-  test('a push afterwards recreates the user document', async () => {
+describe('watch', () => {
+  const watching = (
+    cursor: string | null,
+  ): { heard: RemoteChanges[]; errors: unknown[]; stop: () => void } => {
+    const heard: RemoteChanges[] = []
+    const errors: unknown[] = []
+    const stop = remote.watch?.(
+      'u1',
+      cursor,
+      (changes) => heard.push(changes),
+      (error) => errors.push(error),
+    )
+    if (!stop) throw new Error('no watch')
+    return { heard, errors, stop }
+  }
+
+  test('listens on the same query as pull: after the cursor, ordered by updatedAt', async () => {
     await remote.push('u1', { events: [event()], preferences: [] })
-    await remote.erase('u1')
+    const { cursor } = await remote.pull('u1', null)
+    watching(cursor)
+    expect(fake.listeners[0]?.query).toMatchObject({
+      col: { path: 'users/u1/sync' },
+      constraints: [
+        { type: 'where', field: 'updatedAt', op: '>' },
+        { type: 'orderBy', field: 'updatedAt' },
+      ],
+    })
+    watching(null)
+    expect(fake.listeners[1]?.query.constraints).toEqual([{ type: 'orderBy', field: 'updatedAt' }])
+  })
+
+  test('maps each snapshot to changes and advances the cursor; an empty first snapshot says nothing', async () => {
     await remote.push('u1', { events: [event()], preferences: [] })
-    expect(stored('users/u1')).toMatchObject({ schema: 1 })
+    const { cursor } = await remote.pull('u1', null)
+    const { heard } = watching(cursor)
+    expect(heard).toEqual([])
+
+    await remote.push('u1', {
+      events: [event({ at: 2, logDay: '2025-12-01' })],
+      preferences: [pref('theme', '"dark"', 7)],
+    })
+    expect(heard).toEqual([
+      {
+        events: [event({ at: 2, logDay: '2025-12-01' })],
+        preferences: [pref('theme', '"dark"', 7)],
+        cursor: '2.0',
+      },
+    ])
+
+    // A month changed again: only that document, the preferences are not re-read.
+    await remote.push('u1', { events: [event({ at: 3, logDay: '2025-12-01' })], preferences: [] })
+    expect(heard[1]?.preferences).toEqual([])
+    expect(heard[1]?.events).toHaveLength(2)
+    expect(heard[1]?.cursor).toBe('3.0')
+    // No query was made for any of it.
+    expect(fake.queries).toEqual(['users/u1/sync'])
+  })
+
+  test('from no cursor, the first snapshot is everything', async () => {
+    await remote.push('u1', { events: [event()], preferences: [pref('a', '1')] })
+    const { heard } = watching(null)
+    expect(heard).toEqual([{ events: [event()], preferences: [pref('a', '1')], cursor: '1.0' }])
+  })
+
+  test("skips removed documents and this device's unconfirmed writes", async () => {
+    const { heard } = watching(null)
+    const listener = fake.listeners[0]
+    const data = { type: 'preferences', preferences: { a: { value: '1', updatedAt: 1 } } }
+    listener?.next({
+      docChanges: () => [
+        { type: 'removed', doc: snapshot('users/u1/sync/2025-10', { type: 'events' }) },
+        { type: 'added', doc: snapshot('users/u1/sync/preferences', data, true) },
+      ],
+    })
+    expect(heard).toEqual([])
+
+    // Confirmed but without a server time (cannot happen under the rules): the cursor holds.
+    listener?.next({
+      docChanges: () => [{ type: 'added', doc: snapshot('users/u1/sync/preferences', data) }],
+    })
+    expect(heard).toEqual([{ events: [], preferences: [pref('a', '1')], cursor: null }])
+  })
+
+  test('reports a listener failure, and stops hearing once unsubscribed', async () => {
+    const { heard, errors, stop } = watching(null)
+    const failure = new Error('permission-denied')
+    fake.listeners[0]?.error?.(failure)
+    expect(errors).toEqual([failure])
+
+    stop()
+    await remote.push('u1', { events: [event()], preferences: [] })
+    expect(heard).toEqual([])
+  })
+
+  test('a failure without an error callback is ignored', () => {
+    remote.watch?.('u1', null, () => {})
+    expect(() => fake.listeners[0]?.error?.(new Error('x'))).not.toThrow()
   })
 })

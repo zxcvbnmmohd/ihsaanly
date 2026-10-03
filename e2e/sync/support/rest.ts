@@ -92,6 +92,27 @@ export async function listDocs(collection: string): Promise<Doc[]> {
   return (body.documents ?? []).map((doc) => ({ name: doc.name, data: decodeFields(doc.fields) }))
 }
 
+/** Plain JSON in Firestore's REST value encoding (strings, integers, null, maps). */
+function encode(value: unknown): Value {
+  if (value === null) return { nullValue: null }
+  if (typeof value === 'number') return { integerValue: String(value) }
+  if (typeof value === 'string') return { stringValue: value }
+  return { mapValue: { fields: encodeFields(value as Record<string, unknown>) } }
+}
+function encodeFields(data: Record<string, unknown>): Record<string, Value> {
+  return Object.fromEntries(Object.entries(data).map(([key, value]) => [key, encode(value)]))
+}
+
+/** Writes a document as admin, past the rules (seeding data an older client left). */
+export async function setDocAsAdmin(path: string, data: Record<string, unknown>): Promise<void> {
+  const response = await fetch(`${DOCUMENTS}/${path}`, {
+    method: 'PATCH',
+    headers: { ...OWNER, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ fields: encodeFields(data) }),
+  })
+  if (!response.ok) throw new Error(`PATCH ${path}: ${response.status}`)
+}
+
 /** A fresh email/password user, straight through the Auth REST API: its uid and ID token. */
 export async function signUp(email: string): Promise<{ uid: string; idToken: string }> {
   const response = await fetch(
@@ -105,4 +126,39 @@ export async function signUp(email: string): Promise<{ uid: string; idToken: str
   const body = (await response.json()) as { localId: string; idToken: string }
   if (!response.ok) throw new Error(`signUp ${email}: ${JSON.stringify(body)}`)
   return { uid: body.localId, idToken: body.idToken }
+}
+
+/**
+ * Sets one key of `users/{uid}/sync/preferences` as admin, the way a device's
+ * push leaves it: the other keys kept, `updatedAt` the server's time (which
+ * the pull cursor and the live listener go by).
+ */
+export async function setPreferenceAsAdmin(
+  uid: string,
+  key: string,
+  value: string,
+  updatedAt: number,
+): Promise<void> {
+  const root = `projects/${PROJECT}/databases/(default)/documents`
+  const response = await fetch(`${FIRESTORE_URL}/v1/${root}:commit`, {
+    method: 'POST',
+    headers: { ...OWNER, 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      writes: [
+        {
+          update: {
+            name: `${root}/users/${uid}/sync/preferences`,
+            fields: encodeFields({
+              type: 'preferences',
+              preferences: { [key]: { value, updatedAt } },
+            }),
+          },
+          // Backticks: the key holds ':', which a bare field path cannot.
+          updateMask: { fieldPaths: ['type', `preferences.\`${key}\``] },
+          updateTransforms: [{ fieldPath: 'updatedAt', setToServerValue: 'REQUEST_TIME' }],
+        },
+      ],
+    }),
+  })
+  if (!response.ok) throw new Error(`commit ${key}: ${response.status} ${await response.text()}`)
 }

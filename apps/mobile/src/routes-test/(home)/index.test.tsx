@@ -442,7 +442,8 @@ describe('sunnah rows', () => {
         act(() => last().onMarkPrayer(prayer))
       }
     }
-  })
+    // Four full renders of Today: past the 5 s default on a CI runner.
+  }, 20_000)
 
   // Marks are ordered by time, so a test after another's marks needs a later instant.
   it('does not count unmarking a prayer', () => {

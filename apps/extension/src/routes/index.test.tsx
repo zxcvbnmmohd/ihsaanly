@@ -229,7 +229,8 @@ describe('Today sunnah marking', () => {
     }
     expect(await screen.findByRole('status')).toHaveTextContent(strings.today.markedDone)
     expect(screen.queryByRole('button', { name: strings.panel.markAll })).toBeNull()
-  })
+    // 33 taps, each a full render: near the 5 s default on a CI runner.
+  }, 20_000)
 
   it('marks a counted item all done from its panel, or closes the panel', async () => {
     const { user } = await renderRoute('/')

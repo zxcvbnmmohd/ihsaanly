@@ -48,6 +48,7 @@ const session = await import('@ihsaanly/state/cloud/session')
 const { LEGAL_URLS } = await import('@/cloud')
 const { FEEDBACK_OUTBOX_KEY } = await import('@ihsaanly/state/cloud/keys')
 const { writePreferenceRow } = await import('@ihsaanly/state/storage/backend')
+const { getLocale } = await import('@ihsaanly/state/i18n/store')
 
 const platform = Platform as { OS: string }
 let stopCloud: (() => void) | null = null
@@ -132,7 +133,9 @@ describe('feedback route', () => {
       app: {
         surface: 'ios',
         version: '3.1.4',
-        locale: 'en-US',
+        // Whatever language the app is in on this machine (the store falls
+        // back to the device's), not a fixed one: CI's default is en-GB.
+        locale: getLocale(),
         os: `ios ${String(Platform.Version)}`,
       },
       diagnostics: null,

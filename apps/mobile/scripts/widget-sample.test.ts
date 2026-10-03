@@ -3,7 +3,17 @@ import { mkdirSync, mkdtempSync, readFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 
-it('regenerates src/widgets/sample.json exactly as committed', async () => {
+/**
+ * The sample's dates are formatted by the runtime's ICU data, whose CLDR
+ * version decides small abbreviations (en-GB "Sep" on macOS, "Sept" on newer
+ * Linux builds). Those differences are the platform's, not the model's, so
+ * month abbreviations are normalised before comparing.
+ */
+function normaliseMonths(json: string): string {
+  return json.replace(/\bSept\b/g, 'Sep')
+}
+
+it('regenerates src/widgets/sample.json as committed (up to ICU month abbreviations)', async () => {
   // The script writes a path relative to the app, so run it from a scratch copy of the tree.
   const scratch = mkdtempSync(join(tmpdir(), 'widget-sample-'))
   mkdirSync(join(scratch, 'src/widgets'), { recursive: true })
@@ -16,6 +26,6 @@ it('regenerates src/widgets/sample.json exactly as committed', async () => {
   }
   const written = readFileSync(join(scratch, 'src/widgets/sample.json'), 'utf8')
   const committed = readFileSync(join(import.meta.dir, '../src/widgets/sample.json'), 'utf8')
-  expect(written).toBe(committed)
+  expect(normaliseMonths(written)).toBe(normaliseMonths(committed))
   expect(written.endsWith('}\n')).toBe(true)
 })

@@ -40,22 +40,21 @@ _Last updated 2026-10-01._
 
 ## 1. Housekeeping (You, 5 min)
 
-- [ ] **Apply the Nix change (JDK 21 through mise):** run `nix-rebuild` in a
-  terminal; it needs your sudo password.
+- [x] **Apply the Nix change (JDK 21 through mise):** `nix-rebuild` done;
+  `mise exec -- java -version` gives 21 in this repo.
 - [x] **Untrack the stray worktree copy:** `.kilo` is untracked and ignored.
 - [x] **Commit and push to `development`.** Done; both sites are deployed.
 
-## 2. Lock the GitHub environments to their branches (Claude, or you in 2 min)
+## 2. Lock the GitHub environments to their branches (done)
 
-Right now any branch's workflow can use the `development` and `production`
-secrets.
-
-- [ ] Settings → Environments → `development` → Deployment branches and tags
-  → **Selected branches and tags** → add `development`.
-- [ ] Do the same for `production`, with `production`. Optionally add
-  **Required reviewers** → yourself, so every prod deploy waits for your
-  approval.
-- Claude can do both with `gh api`. Just say so.
+- [x] `development` secrets and variables are usable only from the
+  `development` branch, and `production` only from `production` (custom
+  deployment branch policies, set with `gh api`).
+- [x] **Required reviewers** on `production`: you (`zxcvbnmmohd`). Every
+  production deploy (Firestore, marketing, companion) now waits for your
+  approval: the run's page → **Review deployments** → tick `production` →
+  **Approve and deploy**, or `gh run view <id>` to find it. Checks and
+  `development` deploys are not affected.
 
 ## 3. Business details for the legal pages (You decide, Claude applies)
 

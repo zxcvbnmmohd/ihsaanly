@@ -1,3 +1,0 @@
-[install]
-# Hoisted: React Native autolinking needs one copy of each native module.
-linker = "hoisted"

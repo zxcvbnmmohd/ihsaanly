@@ -1,7 +1,0 @@
-// Metro resolves assets through require(); everything else uses import.
-language js
-
-`require($path)` as $call where {
-  not $path <: r".*\.(?:png|jpe?g|gif|svg|xml)['\"]",
-  register_diagnostic(span=$call, message="Use import. require() is only for assets Metro resolves (png, jpg, gif, svg, xml).", severity="error")
-}

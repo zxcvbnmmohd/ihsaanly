@@ -40,12 +40,10 @@ _Last updated 2026-10-01._
 
 ## 1. Housekeeping (You, 5 min)
 
-- [ ] **Apply the Nix change:** `nix-switch`, or
-  `sudo darwin-rebuild switch --flake ~/.config/nix#my-macbook`.
-- [ ] **Untrack the stray worktree copy:** `git rm -r --cached .kilo`. It's
-  already in `.gitignore`.
-- [ ] **Commit and push to `development`.** That deploys the new legal pages
-  and the sign-in UI to dev.ihsaanly.app and dev.companion.ihsaanly.app.
+- [ ] **Apply the Nix change (JDK 21 through mise):** run `nix-rebuild` in a
+  terminal; it needs your sudo password.
+- [x] **Untrack the stray worktree copy:** `.kilo` is untracked and ignored.
+- [x] **Commit and push to `development`.** Done; both sites are deployed.
 
 ## 2. Lock the GitHub environments to their branches (Claude, or you in 2 min)
 
@@ -96,8 +94,8 @@ the terms' governing-law clause and the donation wording, and updates
 
 Sign in with Apple, the iOS release and iOS CI all need this.
 
-1. [ ] **Enrol** at <https://developer.apple.com/programs/> as an organisation
-   (Mohd Inc.). You'll need a D-U-N-S number, and it costs US$99/yr.
+1. [x] **Enrol** at <https://developer.apple.com/programs/> as an organisation
+   (Mohd Inc.). Done: the Apple Developer account exists.
 2. [ ] **App IDs:** Certificates, IDs & Profiles → Identifiers → **+** → App
    IDs. Create `app.ihsaanly.companion` and
    `app.ihsaanly.companion.development`, and tick **Sign in with Apple** on
@@ -190,7 +188,7 @@ Free on this public repo, and it replaces EAS.
      the env file from the variables, decode the keystore, then build. The
      `development` branch produces an installable `.apk` as a workflow
      artifact; the `production` branch produces an `.aab`.
-4. [ ] **You:** create the app in **Play Console**
+4. [ ] **You:** (the Play developer account exists) create the app in **Play Console**
    (<https://play.google.com/console>) and upload the first `.aab` to
    **Internal testing** by hand. Play needs a manual first upload before it
    accepts automated ones.

@@ -49,7 +49,7 @@ describe('FeedbackScreen form', () => {
     expect(screen.getByText(strings.feedback.explanation)).toBeInTheDocument()
     expect(screen.getByText(strings.feedback.counter(0, FEEDBACK_MESSAGE_MAX))).toBeInTheDocument()
     expect(screen.getByRole('button', { name: strings.feedback.send })).toBeDisabled()
-    expect(document.body.textContent).toContain('Mohd Inc.')
+    expect(document.body.textContent).toContain('Moh’d Inc.')
     expect(screen.getByRole('link', { name: strings.feedback.privacyLink })).toHaveAttribute(
       'href',
       feedbackFixture.privacyHref,

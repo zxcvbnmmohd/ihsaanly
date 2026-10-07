@@ -14,6 +14,7 @@ import {
   localeFor,
   PAGES,
   type Page,
+  PRIVACY_EMAIL,
   pageUrl,
 } from './locales'
 import type { Messages } from './messages'
@@ -58,12 +59,15 @@ export function useSite(): Site {
     privacy: pageUrl(locale, PAGES.privacy.path),
     terms: pageUrl(locale, PAGES.terms.path),
     deleteAccount: pageUrl(locale, PAGES.deleteAccount.path),
-    province: BUSINESS.province ?? '',
     support: `${pageUrl(locale, '')}#questions`,
     donate: DONATE_URL,
     companion: COMPANION_URL,
     companionHost: new URL(COMPANION_URL).host,
     email: `mailto:${EMAIL}`,
+    privacyEmail: `mailto:${PRIVACY_EMAIL}`,
+    // The province in this language, for the terms' governing law; the postal
+    // block on the legal pages keeps the address form (BUSINESS.province).
+    province: BUSINESS.province ? (messages.strings['common.province'] ?? BUSINESS.province) : '',
     english: pageUrl(english, page?.path ?? ''),
     year: String(new Date().getUTCFullYear()),
     date: page?.updated ? formatDate(page.updated, locale) : '',

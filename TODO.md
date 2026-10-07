@@ -56,24 +56,25 @@ _Last updated 2026-10-01._
   **Approve and deploy**, or `gh run view <id>` to find it. Checks and
   `development` deploys are not affected.
 
-## 3. Business details for the legal pages (You decide, Claude applies)
+## 3. Business details for the legal pages (done)
 
-Send Claude:
+From the Corporations Canada profile (kept local, git-ignored):
 
-- [ ] the province or territory where Mohd Inc. is incorporated;
-- [ ] a mailing address for privacy notices (registered office, PO box or
-  virtual mailbox);
-- [ ] the privacy contact (`support@ihsaanly.app`, or a separate
-  `privacy@…`);
-- [ ] the donation processor (Stripe? LaunchGood?), and whether
-  `donate.ihsaanly.app` has its own privacy notice;
-- [ ] EU/UK plans: an Art. 27 representative, or launch outside the EU/UK
-  first;
-- [ ] the `LICENSE` holder (currently "MugenCraft"; change to "Mohd Inc."?).
-
-Claude then sets `BUSINESS` in `apps/marketing/src/i18n/locales.ts`, updates
-the terms' governing-law clause and the donation wording, and updates
-`LICENSE`.
+- [x] **Publisher:** Moh’d Inc., a federal (CBCA) corporation with its
+  registered office in Ontario. The terms are governed by the laws of Ontario
+  and the federal laws of Canada.
+- [x] **Address:** city only (“Toronto, Ontario, Canada”), by choice. When you
+  have a PO box or virtual mailbox, Claude puts it in `BUSINESS.address`
+  (`apps/marketing/src/i18n/locales.ts`).
+- [x] **Privacy contact:** `privacy@ihsaanly.app` for privacy requests and
+  account deletion; `support@ihsaanly.app` stays for everything else.
+  - [ ] **You:** create the `privacy@ihsaanly.app` mailbox or alias.
+- [x] **Donations:** PayPal, at donate.ihsaanly.app, named in the privacy
+  policy, the terms and the delete-account page.
+- [x] **EU/UK:** offered everywhere. You live in the UK, so the UK Article 27
+  representative rule likely does not apply; the EU one technically still
+  does. Raise it in the lawyer review (step 10).
+- [x] **LICENSE:** Moh’d Inc.
 
 ## 4. First real sign-in test on dev (You, 10 min, after step 1)
 

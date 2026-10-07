@@ -339,7 +339,7 @@ export const yue: Strings = {
       '可選。包括 App 版本、裝置、大概位置同問題數量。除非你開啟，否則唔會附上。',
     showIncluded: '睇吓包括啲乜',
     hideIncluded: '收埋包括啲乜',
-    privacy: '連同你嘅帳戶傳送俾 Mohd Inc.，方便我哋跟進。最多保存 2 年。{privacy}',
+    privacy: '連同你嘅帳戶傳送俾 Moh’d Inc.，方便我哋跟進。最多保存 2 年。{privacy}',
     privacyLink: '閱讀私隱政策',
     send: '傳送',
     sending: '傳送緊…',

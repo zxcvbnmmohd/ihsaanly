@@ -347,7 +347,7 @@ export const en = {
     showIncluded: 'See what’s included',
     hideIncluded: 'Hide what’s included',
     privacy:
-      'Sent to Mohd Inc. with your account so we can follow up. Kept for up to 2 years. {privacy}',
+      'Sent to Moh’d Inc. with your account so we can follow up. Kept for up to 2 years. {privacy}',
     privacyLink: 'Read the Privacy Policy',
     send: 'Send',
     sending: 'Sending…',

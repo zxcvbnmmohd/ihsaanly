@@ -116,7 +116,7 @@ in `google-play/README.md`), or paste by hand in Play Console.
   }
   ```
 
-- [x] **Copyright holder.** `"copyright": "2026 Mohd Inc."`, the company that publishes
+- [x] **Copyright holder.** `"copyright": "2026 Moh’d Inc."`, the company that publishes
       the app on both stores.
 - [ ] **Screenshots:** 6.9"/6.7" and 6.5" iPhone, 13" iPad, Android phone. Per locale if
       you want localised shots; otherwise the English ones are used everywhere.

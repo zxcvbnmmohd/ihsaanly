@@ -45,4 +45,4 @@ account". Details: [ihsaanly.app/legal/delete-account](https://ihsaanly.app/lega
 
 ## Contact
 
-Mohd Inc. · support@ihsaanly.app
+Moh’d Inc. · support@ihsaanly.app

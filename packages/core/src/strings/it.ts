@@ -367,7 +367,7 @@ export const it: Strings = {
     showIncluded: 'Vedi cosa è incluso',
     hideIncluded: 'Nascondi cosa è incluso',
     privacy:
-      'Inviato a Mohd Inc. insieme al tuo account per poterti rispondere. Conservato per un massimo di 2 anni. {privacy}',
+      'Inviato a Moh’d Inc. insieme al tuo account per poterti rispondere. Conservato per un massimo di 2 anni. {privacy}',
     privacyLink: 'Leggi l’informativa sulla privacy',
     send: 'Invia',
     sending: 'Invio in corso…',

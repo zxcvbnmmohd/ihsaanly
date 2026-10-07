@@ -27,7 +27,7 @@ function jsonLd(locale: Locale, strings: Strings): string {
       {
         '@type': 'Organization',
         '@id': `${BASE_URL}/#organization`,
-        name: 'Mohd Inc.',
+        name: 'Moh’d Inc.',
         url: `${BASE_URL}/`,
         email: EMAIL,
         logo: absolute('/assets/apple-touch-icon.png'),

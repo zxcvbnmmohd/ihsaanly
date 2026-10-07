@@ -403,7 +403,7 @@ export const ar: Strings = {
     showIncluded: 'اطّلع على ما سيُضمَّن',
     hideIncluded: 'إخفاء ما سيُضمَّن',
     privacy:
-      'تُرسل إلى Mohd Inc. مع حسابك لنتمكن من المتابعة معك. تُحفظ مدة تصل إلى سنتين. {privacy}',
+      'تُرسل إلى Moh’d Inc. مع حسابك لنتمكن من المتابعة معك. تُحفظ مدة تصل إلى سنتين. {privacy}',
     privacyLink: 'اقرأ سياسة الخصوصية',
     send: 'إرسال',
     sending: 'جارٍ الإرسال…',

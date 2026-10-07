@@ -196,3 +196,6 @@ e2e/.report/
 firestore-debug.log
 firebase-debug.log
 ui-debug.log
+
+# Corporate records: kept local, never published.
+/Corporate-Profile*.pdf

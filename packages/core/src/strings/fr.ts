@@ -364,7 +364,7 @@ export const fr: Strings = {
     showIncluded: 'Voir ce qui est inclus',
     hideIncluded: 'Masquer ce qui est inclus',
     privacy:
-      'Envoyé à Mohd Inc. avec votre compte afin que nous puissions vous répondre. Conservé jusqu’à 2 ans. {privacy}',
+      'Envoyé à Moh’d Inc. avec votre compte afin que nous puissions vous répondre. Conservé jusqu’à 2 ans. {privacy}',
     privacyLink: 'Lire la politique de confidentialité',
     send: 'Envoyer',
     sending: 'Envoi…',

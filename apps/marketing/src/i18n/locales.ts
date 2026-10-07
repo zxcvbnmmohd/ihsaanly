@@ -13,6 +13,8 @@ import {
 export const BASE_URL = 'https://ihsaanly.app'
 export const DONATE_URL = 'https://donate.ihsaanly.app'
 export const EMAIL = 'support@ihsaanly.app'
+/** Privacy requests and account deletion, named on the legal pages. */
+export const PRIVACY_EMAIL = 'privacy@ihsaanly.app'
 export const LOCALE_KEY = 'ihsaanly.locale'
 
 /**
@@ -25,7 +27,15 @@ export const BUSINESS: {
   province: string | null
   address: string | null
   email: string
-} = { name: 'Mohd Inc.', country: 'Canada', province: null, address: null, email: EMAIL }
+} = {
+  // As registered with Corporations Canada (CBCA), registered office in Ontario.
+  name: 'Moh’d Inc.',
+  country: 'Canada',
+  province: 'Ontario',
+  // ponytail: city only, by choice; a PO box or mailbox address goes here once there is one.
+  address: 'Toronto',
+  email: PRIVACY_EMAIL,
+}
 
 export interface Locale {
   /** The app's own language code, used in URLs and the message file name. */
@@ -94,21 +104,21 @@ export const PAGES: Record<PageId, Page> = {
     path: 'legal/privacy/',
     titleKey: 'privacy.pageTitle',
     descriptionKey: 'privacy.description',
-    updated: new Date(Date.UTC(2026, 9, 3)),
+    updated: new Date(Date.UTC(2026, 9, 7)),
   },
   terms: {
     id: 'terms',
     path: 'legal/terms/',
     titleKey: 'terms.pageTitle',
     descriptionKey: 'terms.description',
-    updated: new Date(Date.UTC(2026, 8, 29)),
+    updated: new Date(Date.UTC(2026, 9, 7)),
   },
   deleteAccount: {
     id: 'deleteAccount',
     path: 'legal/delete-account/',
     titleKey: 'deleteAccount.pageTitle',
     descriptionKey: 'deleteAccount.description',
-    updated: new Date(Date.UTC(2026, 9, 2)),
+    updated: new Date(Date.UTC(2026, 9, 7)),
   },
 }
 

@@ -352,7 +352,7 @@ export const ja: Strings = {
     showIncluded: '含まれる内容を見る',
     hideIncluded: '含まれる内容を隠す',
     privacy:
-      'お返事のため、アカウントとともに Mohd Inc. に送られます。最長 2 年間保管されます。{privacy}',
+      'お返事のため、アカウントとともに Moh’d Inc. に送られます。最長 2 年間保管されます。{privacy}',
     privacyLink: 'プライバシーポリシーを読む',
     send: '送信',
     sending: '送信中…',

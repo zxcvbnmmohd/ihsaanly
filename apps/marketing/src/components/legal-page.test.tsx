@@ -51,6 +51,8 @@ describe('LegalPage', () => {
   })
 
   test('the publisher block never prints a placeholder for an unknown province or address', () => {
+    BUSINESS.province = null
+    BUSINESS.address = null
     const { strings } = renderSite(<LegalPage page="privacy" />, {
       routeId: '/{-$lang}/legal/privacy/',
     })

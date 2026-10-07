@@ -340,7 +340,7 @@ export const zh: Strings = {
       '可选。包括应用版本、设备、大致位置和问题数量。除非你打开，否则不会附上。',
     showIncluded: '查看包含的内容',
     hideIncluded: '隐藏包含的内容',
-    privacy: '连同你的账户发送给 Mohd Inc.，以便我们跟进。最长保存 2 年。{privacy}',
+    privacy: '连同你的账户发送给 Moh’d Inc.，以便我们跟进。最长保存 2 年。{privacy}',
     privacyLink: '阅读隐私政策',
     send: '发送',
     sending: '正在发送…',

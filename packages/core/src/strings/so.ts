@@ -363,7 +363,7 @@ export const so: Strings = {
     showIncluded: 'Arag waxa ku jira',
     hideIncluded: 'Qari waxa ku jira',
     privacy:
-      'Waxaa loo diraa Mohd Inc. oo lala socdo akoonkaaga si aan kuugu soo laabanno. Waxaa la haynayaa ilaa 2 sano. {privacy}',
+      'Waxaa loo diraa Moh’d Inc. oo lala socdo akoonkaaga si aan kuugu soo laabanno. Waxaa la haynayaa ilaa 2 sano. {privacy}',
     privacyLink: 'Akhri Siyaasadda Asturnaanta',
     send: 'Dir',
     sending: 'Waa la dirayaa…',

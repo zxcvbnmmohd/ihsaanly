@@ -199,3 +199,11 @@ ui-debug.log
 
 # Corporate records: kept local, never published.
 /Corporate-Profile*.pdf
+
+# Signing keys and keystores: never in the repo (Android upload key lives in ~/.config/ihsaanly/android-upload/).
+*.jks
+*.keystore
+!debug.keystore
+*.p8
+*.p12
+*.mobileprovision

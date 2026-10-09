@@ -14,11 +14,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "331499339770-m2slkbu2r0ughebumcrcf55sf30hdonn.apps.googleusercontent.com",
+          "client_id": "331499339770-smuvjn7fm5rj0cvoidp8jockbhqop3l1.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "app.ihsaanly.companion",
-            "certificate_hash": "9c7c5966b95743f8b5f8527d638a8e8c5653b0ef"
+            "certificate_hash": "d4e67ab9a4f02f2b3fe03c41ebd4e8ed70163ffc"
           }
         },
         {

@@ -201,14 +201,15 @@ the hooks with `--no-verify`.
 
 ### Pull requests
 
-1. Fork (outside contributors) or branch (team) from **`development`**.
+1. Fork (outside contributors) or branch (team) from **`production`**.
    Name the branch after the change: `fix/counter-focus`.
 2. Keep it to one change. Small pull requests get reviewed faster.
 3. Run the [tests](#tests) and fill in the pull request template: what
    changed, why this way, the checks, and what you verified it on.
-4. Open the pull request against **`development`**.
-5. A maintainer reviews. Expect questions; they're about the code, not you.
-6. Once approved and green, a maintainer squash-merges it.
+4. Open the pull request against **`production`**.
+5. A maintainer merges your branch into `development` to try it on the dev
+   sites, then reviews. Expect questions; they're about the code, not you.
+6. Once approved and green, a maintainer squash-merges it into `production`.
 
 Changes to these need a maintainer's extra care, so call them out in the
 description:
@@ -251,20 +252,39 @@ description:
 | `development` | dev.ihsaanly.app, dev.companion.ihsaanly.app, `ihsaanly-development` | Its own environment secrets only. |
 | `production` | ihsaanly.app, companion.ihsaanly.app, `ihsaanly-production` | Environment secrets, and every deploy waits for a maintainer's approval. |
 
-1. Work lands in `development` through pull requests (or a direct push for
-   small team changes). It deploys to the dev sites and dev Firebase at once.
-2. Check it on the dev sites.
-3. Release by moving `production` to the same commit:
-   `git push origin development:production` (a fast-forward; the branches
-   should never diverge).
-4. Approve the waiting deploys: the run's page → **Review deployments** →
-   `production` → **Approve and deploy**.
-5. Check the live sites. Firestore rules deploy with their own workflow when
-   they change.
+Every change goes through its own branch. Never commit to `development` or
+`production` directly, and never open a pull request from `development` to
+`production`: `development` holds other changes still being tested.
 
-Keep `development` and `production` identical after a release:
-`git rev-parse origin/development origin/production` should print the same
-commit twice.
+1. Branch from an up-to-date `production`:
+
+   ```sh
+   git switch production && git pull
+   git switch -c fix/counter-focus
+   # commit, then:
+   git push -u origin fix/counter-focus
+   ```
+
+2. Merge the branch into `development` by hand. It deploys to the dev sites
+   and dev Firebase at once.
+
+   ```sh
+   git switch development && git pull
+   git merge --no-ff fix/counter-focus
+   git push
+   ```
+
+3. Check it on the dev sites. If it needs fixing, commit on the branch and
+   merge it into `development` again.
+4. Open a pull request from the branch into `production` for the final
+   review: `gh pr create --base production --head fix/counter-focus`.
+5. Merge it, then approve the waiting deploys: the run's page → **Review
+   deployments** → `production` → **Approve and deploy**.
+6. Check the live sites, then delete the branch. Firestore rules deploy with
+   their own workflow when they change.
+
+`development` and `production` are not kept identical: `development` can be
+ahead with changes still under test.
 
 ### Environments and configuration
 

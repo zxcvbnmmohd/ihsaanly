@@ -21,13 +21,15 @@ describe('MoreScreen', () => {
 
   it('searches through the host-owned query', async () => {
     const onQueryChange = mock((_query: string) => {})
-    const { user } = renderScreen(
+    const { user, strings } = renderScreen(
       <MoreScreen
         {...moreFixture}
         searchable={{ query: '', onQueryChange, placeholder: 'Search settings' }}
       />,
     )
-    await user.type(screen.getByPlaceholderText('Search settings'), 'q')
+    const field = screen.getByRole('textbox', { name: strings.more.searchLabel })
+    expect(field).toHaveAttribute('placeholder', 'Search settings')
+    await user.type(field, 'q')
     expect(onQueryChange).toHaveBeenCalledWith('q')
   })
 

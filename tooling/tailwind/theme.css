@@ -15,7 +15,7 @@
   --color-indicator: rgba(169, 74, 50, 0.16);
   --color-rule: rgba(43, 31, 26, 0.14);
   --color-rule-strong: #7d6d63;
-  --color-field-border: #7c7c82;
+  --color-field-border: #717177;
   --color-tint: rgba(169, 74, 50, 0.1);
   --color-system-label: #000000;
   --color-system-secondary-label: #3c3c43;
@@ -49,7 +49,7 @@
     --color-indicator: rgba(226, 140, 111, 0.22);
     --color-rule: rgba(247, 236, 230, 0.16);
     --color-rule-strong: #8c766c;
-    --color-field-border: #6b6b70;
+    --color-field-border: #85858a;
     --color-tint: rgba(226, 140, 111, 0.14);
     --color-system-label: #ffffff;
     --color-system-secondary-label: rgba(235, 235, 245, 0.6);

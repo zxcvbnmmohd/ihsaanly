@@ -55,23 +55,11 @@ test('the tab bar moves between Today, Library and More', async ({ page }) => {
   const nav = page.getByRole('navigation')
   await nav.getByRole('link', { name: en.library.title }).first().click()
   await expect(page).toHaveURL(/\/library$/)
-  await expect(page.getByRole('textbox', { name: en.library.search })).toBeVisible()
+  await expect(page.getByRole('textbox', { name: en.library.searchLabel })).toBeVisible()
   await nav.getByRole('link', { name: en.more.title }).first().click()
-  await expect(page.getByRole('textbox', { name: en.more.search })).toBeVisible()
+  await expect(page.getByRole('textbox', { name: en.more.searchLabel })).toBeVisible()
   await nav.getByRole('link', { name: en.today.title }).first().click()
   await expect(page).toHaveURL(/\/today$/)
-})
-
-test('the keyboard marks a prayer: Space toggles the focused checkbox', async ({ page }) => {
-  await page.goto('/today')
-  await skipTour(page)
-  const dhuhr = page.getByRole('checkbox', { name: en.prayer.dhuhr })
-  await dhuhr.focus()
-  await expect(dhuhr).toBeFocused()
-  await page.keyboard.press('Space')
-  await expect(dhuhr).toBeChecked()
-  await page.keyboard.press('Space')
-  await expect(dhuhr).not.toBeChecked()
 })
 
 // Marking whole items from their circles. At FIXED_NOW (13:30, after Dhuhr

@@ -46,7 +46,7 @@ test('every row of More opens its page', async ({ page, errors, isMobile }) => {
 test('searching settings narrows the list', async ({ page }) => {
   await page.goto('/more')
   const main = page.getByRole('main')
-  await main.getByRole('textbox', { name: en.more.search }).fill('data')
+  await main.getByRole('textbox', { name: en.more.searchLabel }).fill('data')
   await expect(main.locator('a[href="/data"]').first()).toBeVisible()
   await expect(main.locator('a[href="/hijri"]')).toHaveCount(0)
 })
@@ -64,7 +64,7 @@ test('Appearance: Dark applies at once and survives a reload', async ({ page }) 
 
 test('Location: a new city replaces the old one', async ({ page }) => {
   await page.goto('/location')
-  await page.getByRole('textbox', { name: en.location.search }).fill('Manchester')
+  await page.getByRole('textbox', { name: en.location.searchLabel }).fill('Manchester')
   await page
     .getByRole('button', { name: /^Manchester\b.*United Kingdom/ })
     .first()

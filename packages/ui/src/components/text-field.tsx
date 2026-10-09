@@ -60,7 +60,7 @@ interface TextFieldProps {
   kind?: 'search' | 'plain'
   returnKeyType?: TextInputProps['returnKeyType']
   autoCapitalize?: TextInputProps['autoCapitalize']
-  /** The accessible name, where the placeholder is not enough (a visible label sits above). */
+  /** The accessible name, never shown. The placeholder is only a hint, and vanishes once typed over. */
   label?: string
   /** A taller, wrapping field for a message. It has no clear control: a draft is easy to lose. */
   multiline?: boolean

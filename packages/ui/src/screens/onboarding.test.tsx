@@ -89,6 +89,18 @@ describe('OnboardingScreen, welcome step options', () => {
     expect(screen.queryByRole('button', { name: strings.onboarding.restore })).toBeNull()
   })
 
+  it('links the privacy policy on the first step only, when the host offers it', async () => {
+    const onOpenPrivacy = mock(() => {})
+    const { user, strings, unmount } = renderScreen(
+      <OnboardingScreen {...at('welcome')} onOpenPrivacy={onOpenPrivacy} />,
+    )
+    await user.click(screen.getByRole('link', { name: strings.about.privacyPolicy }))
+    expect(onOpenPrivacy).toHaveBeenCalledTimes(1)
+    unmount()
+    renderScreen(<OnboardingScreen {...at('how')} onOpenPrivacy={onOpenPrivacy} />)
+    expect(screen.queryByRole('link', { name: strings.about.privacyPolicy })).toBeNull()
+  })
+
   it('has no Back on the first step', () => {
     const { strings } = renderScreen(<OnboardingScreen {...at('welcome')} />)
     expect(screen.queryByRole('button', { name: strings.onboarding.back })).toBeNull()
@@ -124,7 +136,7 @@ describe('OnboardingScreen, location step', () => {
     expect(screen.getByText(strings.location.useDeviceDetail)).toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: named(strings.location.useDevice) }))
     expect(onUseDevice).toHaveBeenCalledTimes(1)
-    await user.type(screen.getByPlaceholderText(strings.location.search), 'o')
+    await user.type(screen.getByRole('textbox', { name: strings.location.searchLabel }), 'o')
     expect(onQueryChange).toHaveBeenCalledWith('torono')
   })
 

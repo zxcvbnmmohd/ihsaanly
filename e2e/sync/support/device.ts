@@ -82,7 +82,7 @@ export async function onboard(page: Page, city = 'London'): Promise<void> {
   await expect(page).toHaveURL(/\/onboarding\/how$/)
   await page.getByRole('button', { name: o.continue, exact: true }).click()
   await expect(page).toHaveURL(/\/onboarding\/location$/)
-  await page.getByRole('textbox', { name: 'Search for a city' }).fill(city)
+  await page.getByRole('textbox', { name: 'Search cities' }).fill(city)
   await page
     .getByRole('button', { name: new RegExp(`^${city} `) })
     .first()

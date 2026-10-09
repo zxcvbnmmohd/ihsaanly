@@ -33,7 +33,7 @@ test('browse, filter and search the Library', async ({ page, errors }) => {
   await all.click()
   await expect(main.getByRole('link', { name: /Waking up/ }).first()).toBeVisible()
 
-  const search = main.getByRole('textbox', { name: en.library.search })
+  const search = main.getByRole('textbox', { name: en.library.searchLabel })
   await search.fill('sleep')
   await expect(main.getByRole('button', { name: /^All · 3$/ })).toBeVisible()
   await expect(main.getByRole('link', { name: new RegExp(`^${SLEEP}`) }).first()).toBeVisible()
@@ -49,7 +49,7 @@ test('browse, filter and search the Library', async ({ page, errors }) => {
 
 test('open an item: its text, why, how and source', async ({ page, errors }) => {
   await page.goto('/library')
-  await page.getByRole('main').getByRole('textbox', { name: en.library.search }).fill('sleep')
+  await page.getByRole('main').getByRole('textbox', { name: en.library.searchLabel }).fill('sleep')
   await page
     .getByRole('link', { name: new RegExp(`^${SLEEP}`) })
     .first()

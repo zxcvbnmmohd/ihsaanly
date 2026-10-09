@@ -1,7 +1,7 @@
-// axe (WCAG 2.0–2.2 A and AA): no serious or critical violations on the home
+// axe (WCAG 2.0–2.2 A and AA): no violations of any impact on the home
 // page, the legal pages in English and Arabic, and the 404 page.
 import { expect, test } from '@playwright/test'
-import { seriousViolations } from '../support/axe.ts'
+import { axeViolations } from '../support/axe.ts'
 import { FIXED_NOW } from '../support/clock.ts'
 
 const PAGES = [
@@ -22,7 +22,7 @@ for (const path of PAGES) {
     await page.goto(path)
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
     await page.waitForLoadState('networkidle')
-    expect(await seriousViolations(page)).toEqual([])
+    expect(await axeViolations(page)).toEqual([])
   })
 }
 
@@ -31,5 +31,5 @@ test('axe: the home page in dark mode', async ({ page }) => {
   await page.goto('/?theme=dark')
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
   await page.waitForLoadState('networkidle')
-  expect(await seriousViolations(page)).toEqual([])
+  expect(await axeViolations(page)).toEqual([])
 })

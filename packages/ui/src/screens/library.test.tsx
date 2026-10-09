@@ -32,14 +32,17 @@ describe.each(['compact', 'regular', 'wide'] as const)('LibraryScreen at %s', (l
 
   it('hosts the search field', async () => {
     const onQueryChange = mock((_query: string) => {})
-    const { user } = renderScreen(
+    const { user, strings } = renderScreen(
       <LibraryScreen
         {...libraryFixture}
         searchable={{ query: '', onQueryChange, placeholder: 'Search by name' }}
       />,
       { layout },
     )
-    await user.type(screen.getByPlaceholderText('Search by name'), 'z')
+    // Named apart from the placeholder, which is only a hint.
+    const field = screen.getByRole('textbox', { name: strings.library.searchLabel })
+    expect(field).toHaveAttribute('placeholder', 'Search by name')
+    await user.type(field, 'z')
     expect(onQueryChange).toHaveBeenCalledWith('z')
   })
 

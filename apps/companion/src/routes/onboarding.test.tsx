@@ -42,6 +42,19 @@ describe('the steps', () => {
     await waitFor(() => expect(path(app)).toBe('/onboarding/location'))
   })
 
+  it('links the privacy policy from the first step, in a new tab', async () => {
+    const original = window.open
+    const opened: unknown[][] = []
+    window.open = ((...args: unknown[]) => void opened.push(args)) as unknown as typeof window.open
+    try {
+      const app = await renderApp('/onboarding/welcome')
+      await app.user.click(await screen.findByRole('link', { name: en.about.privacyPolicy }))
+      expect(opened).toEqual([['https://ihsaanly.app/legal/privacy', '_blank', 'noopener']])
+    } finally {
+      window.open = original
+    }
+  })
+
   it('changes the theme and the language on the first step', async () => {
     const app = await renderApp('/onboarding/welcome')
     await app.user.click(await screen.findByRole('button', { name: 'Dark' }))

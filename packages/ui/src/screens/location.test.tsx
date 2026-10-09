@@ -14,7 +14,7 @@ describe('LocationScreen', () => {
     )
     expect(screen.getByText(strings.location.explanation)).toBeInTheDocument()
     expect(screen.getByText(strings.location.attribution)).toBeInTheDocument()
-    await user.type(screen.getByPlaceholderText(strings.location.search), 'o')
+    await user.type(screen.getByRole('textbox', { name: strings.location.searchLabel }), 'o')
     expect(onQueryChange).toHaveBeenCalledWith('torono')
     await user.click(screen.getByRole('button', { name: 'Toronto, Ontario, Canada' }))
     expect(onSelect).toHaveBeenCalledWith(locationFixture.results[0])

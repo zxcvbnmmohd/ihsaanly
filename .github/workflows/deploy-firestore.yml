@@ -29,6 +29,10 @@ concurrency:
   group: deploy-firestore-${{ github.ref_name }}
   cancel-in-progress: false
 
+# Least privilege: every step only reads the repository.
+permissions:
+  contents: read
+
 jobs:
   deploy:
     runs-on: ubuntu-latest

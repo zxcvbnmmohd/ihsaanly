@@ -2,13 +2,15 @@ import { getCrashReports, setCrashReports } from '@ihsaanly/state/opt-ins/store'
 import type { FailureEntry } from '@ihsaanly/state/storage/log'
 import { onFailure } from '@ihsaanly/state/storage/log'
 
+import { redactMessage } from './redact'
+
 type CrashlyticsModule = typeof import('@react-native-firebase/crashlytics')
 
 /** The seam over Crashlytics, so tests never load the native module. */
 export interface CrashReporter {
   /** Collection on or off. Off also drops anything captured but not yet sent. */
   setCollection: (on: boolean, dropCached: boolean) => Promise<void>
-  /** One logged failure, as a non-fatal error: its label and message, nothing else. */
+  /** One logged failure, as a non-fatal error: its label and redacted message, nothing else. */
   report: (entry: FailureEntry) => void
 }
 
@@ -20,7 +22,7 @@ function reporter(module: CrashlyticsModule): CrashReporter {
       await module.setCrashlyticsCollectionEnabled(crashlytics, on)
     },
     report: (entry) => {
-      const error = new Error(entry.message)
+      const error = new Error(redactMessage(entry.message))
       error.name = entry.label
       module.recordError(crashlytics, error, entry.label)
     },
@@ -44,7 +46,7 @@ let stopForwarding: (() => void) | null = null
  * Collection follows the switch, and while it is on every failure the app
  * already logs for the diagnostic report is also sent as a non-fatal. A user
  * id is never set and nothing about the person's practice or account is
- * attached: a report is the label, the message, the device model and the app
+ * attached: a report is the label, the redacted message, the device model and the app
  * version Crashlytics adds itself.
  *
  * `dropCached` deletes reports captured while it was off, so turning it on

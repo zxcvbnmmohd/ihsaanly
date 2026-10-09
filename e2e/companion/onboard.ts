@@ -20,7 +20,7 @@ export async function onboardWithCity(page: Page, strings: Strings = en): Promis
   await expect(page).toHaveURL(/\/onboarding\/location$/)
   await expect(page.getByText(s.locationStep)).toBeVisible()
   await expect(next).toBeDisabled()
-  await page.getByRole('textbox', { name: strings.location.search }).fill('London')
+  await page.getByRole('textbox', { name: strings.location.searchLabel }).fill('London')
   await page.getByRole('button', { name: /^London Westminster, United Kingdom/ }).click()
   await expect(page.getByText(strings.location.follows)).toBeVisible()
   await next.click()

@@ -197,7 +197,7 @@ export const en = {
     terms: 'Terms',
     privacy: 'Privacy Policy',
     notice:
-      'Your practice record, settings and approximate location are stored with Google Firebase (US) so they sync, together with your name and email from Apple or Google. You must be 13 or older. Delete your account at any time.',
+      'Your practice record, settings and approximate location are stored with Google Firebase (US) so they sync, together with your name and email from Apple or Google. You must be 13 or older, or the age your country requires (up to 16). Delete your account at any time.',
     signingIn: 'Signing in…',
     signInFailed: 'Sign-in did not finish. Nothing on this device has changed.',
     errors: {
@@ -382,7 +382,7 @@ export const en = {
     termsOfUse: 'Terms of use',
     privacyTitle: 'Your data stays on this device',
     privacyBody:
-      'No analytics and no ads. Your location is used on this device to work out prayer times, and your practice record and settings are kept here. Nothing leaves this device unless you export or share it yourself, or sign in to sync. Signing in with Apple or Google is optional: your name and email, practice record, progress, settings and approximate location (to about 1 km) are then stored with Google Firebase in the US, so they sync across your devices. Delete your account at any time from Account. Donate opens your browser, and that page is not part of Ihsaanly.',
+      'No analytics and no ads. Your location is used on this device to work out prayer times, and your practice record and settings are kept here. The app checks ihsaanly.app for content updates, without sending anything about you. Otherwise nothing leaves this device unless you choose it: exporting or sharing, sending feedback, turning on crash reports or announcements (iOS and Android app), or signing in to sync. Signing in with Apple or Google is optional: your name and email, practice record, progress, settings and approximate location (to about 1 km) are then stored with Google Firebase in the US, so they sync across your devices. Delete your account at any time from Account. On Android, Donate opens your browser, and that page is not part of Ihsaanly.',
     licences: 'Built with',
     licencesBody:
       'Expo and React Native, the adhan library for prayer times, Umm al-Qura calendar tables, city data from city-timezones (built on GeoNames), and Natural Earth for the map. Each is used under its own open licence, listed in the source repository.',
@@ -520,6 +520,7 @@ export const en = {
     title: 'Library',
     empty: 'Adhkar, duas and sunnah actions will be listed here.',
     search: 'Search by name or situation',
+    searchLabel: 'Search the library',
     noResults: 'Nothing matches that.',
     filterAll: 'All',
     filterOnToday: 'On Today',
@@ -592,6 +593,7 @@ export const en = {
   more: {
     title: 'More',
     search: 'Search settings',
+    searchLabel: 'Search More',
     prayer: 'Prayer',
     app: 'App',
     practice: 'Your practice',
@@ -664,6 +666,7 @@ export const en = {
     orSearch: 'or search for a city',
     follows: 'Prayer windows will follow this place.',
     search: 'Search for a city',
+    searchLabel: 'Search cities',
     noResults: 'No cities match that.',
     unavailable:
       'Location services are switched off on this device. Turn them on, or search for your city instead.',

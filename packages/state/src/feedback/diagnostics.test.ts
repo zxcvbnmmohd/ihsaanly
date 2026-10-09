@@ -32,6 +32,7 @@ describe('buildFeedbackDiagnostics', () => {
     backend.writePreferenceRow('hijriOffset', '1')
     backend.writePreferenceRow('theme', '{"mode":"dark"}')
     backend.writePreferenceRow('feedbackOutbox', '[]')
+    backend.writePreferenceRow('progress:duha', '{"count":1,"parts":[]}')
 
     const full = buildDiagnostics(app, reminders)
     const trimmed = buildFeedbackDiagnostics(app, reminders)
@@ -47,12 +48,14 @@ describe('buildFeedbackDiagnostics', () => {
       data: {
         eventCounts: { 'prayer-performed': 2, 'item-completed': 1 },
         days: 2,
-        preferenceKeys: ['hijriOffset', 'theme'],
+        preferences: 3,
+        trackedItems: 1,
       },
     })
     const json = JSON.stringify(trimmed)
     expect(json).not.toContain('fajr')
     expect(json).not.toContain('dark')
+    expect(json).not.toContain('progress:')
     expect(Object.keys(trimmed)).toHaveLength(12)
   })
 

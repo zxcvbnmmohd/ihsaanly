@@ -267,8 +267,10 @@ export interface FeedbackDiagnostics {
     eventCounts: Record<string, number>
     /** Distinct log days with at least one event. */
     days: number
-    /** The names of the preferences set, never their values. */
-    preferenceKeys: string[]
+    /** How many preferences are set: never their names or values. */
+    preferences: number
+    /** How many items have progress (`progress:<itemId>`), not which. */
+    trackedItems: number
   }
 }
 

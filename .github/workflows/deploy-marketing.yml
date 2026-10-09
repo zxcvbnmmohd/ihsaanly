@@ -26,6 +26,10 @@ concurrency:
   group: deploy-marketing-${{ github.ref_name }}
   cancel-in-progress: false
 
+# Least privilege: every step only reads the repository.
+permissions:
+  contents: read
+
 jobs:
   deploy:
     if: github.ref_name == 'development' || github.ref_name == 'production'

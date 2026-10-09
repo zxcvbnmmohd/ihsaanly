@@ -1,5 +1,6 @@
 import type { FeedbackDiagnostics } from '@ihsaanly/cloud/ports'
 
+import { PROGRESS_PREFIX } from '../cloud/keys'
 import { roundCoordinate } from '../cloud/local-store'
 import {
   buildDiagnostics,
@@ -20,8 +21,9 @@ const clip = (text: string, limit = FEEDBACK_MESSAGE_LIMIT): string =>
 /**
  * The share-sheet diagnostics cut down to what travels with feedback: the
  * context a bug needs, and only a summary of the user's data — counts per
- * event kind, how many days, which preferences are set — never the events or
- * the values. `place` is the raw place, rounded here to ~1 km (the synced
+ * event kind, how many days, how many preferences and tracked items — never
+ * the events, the values or even the preference names (`progress:<itemId>`
+ * would say which practices the person tracks). `place` is the raw place, rounded here to ~1 km (the synced
  * place's precision), not the ~100 m the share-sheet report uses.
  */
 export function trimDiagnostics(
@@ -31,6 +33,7 @@ export function trimDiagnostics(
   const eventCounts: Record<string, number> = {}
   for (const event of full.data.events) eventCounts[event.kind] = (eventCounts[event.kind] ?? 0) + 1
   const { perItem, ...notifications } = full.notifications
+  const preferenceKeys = Object.keys(full.data.preferences)
 
   return {
     generatedAt: full.generatedAt,
@@ -51,7 +54,8 @@ export function trimDiagnostics(
     data: {
       eventCounts,
       days: new Set(full.data.events.map((event) => event.logDay)).size,
-      preferenceKeys: Object.keys(full.data.preferences).sort(),
+      preferences: preferenceKeys.length,
+      trackedItems: preferenceKeys.filter((key) => key.startsWith(PROGRESS_PREFIX)).length,
     },
   }
 }

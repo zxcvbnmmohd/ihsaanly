@@ -211,7 +211,7 @@ export const fr: Strings = {
     terms: 'Conditions d’utilisation',
     privacy: 'Politique de confidentialité',
     notice:
-      'L’historique de votre pratique, vos réglages et votre position approximative sont stockés chez Google Firebase (États-Unis) pour être synchronisés, avec votre nom et votre adresse e-mail fournis par Apple ou Google. Vous devez avoir au moins 13 ans. Vous pouvez supprimer votre compte à tout moment.',
+      'L’historique de votre pratique, vos réglages et votre position approximative sont stockés chez Google Firebase (États-Unis) pour être synchronisés, avec votre nom et votre adresse e-mail fournis par Apple ou Google. Vous devez avoir au moins 13 ans, ou l’âge exigé dans votre pays (jusqu’à 16 ans). Vous pouvez supprimer votre compte à tout moment.',
     signingIn: 'Connexion…',
     signInFailed: 'La connexion n’a pas abouti. Rien n’a changé sur cet appareil.',
     errors: {
@@ -399,7 +399,7 @@ export const fr: Strings = {
     termsOfUse: 'Conditions d’utilisation',
     privacyTitle: 'Vos données restent sur cet appareil',
     privacyBody:
-      'Aucune mesure d’audience, aucune publicité. Votre position est utilisée sur cet appareil pour calculer les heures de prière, et l’historique de votre pratique ainsi que vos réglages sont conservés ici. Rien ne quitte cet appareil, sauf si vous l’exportez ou le partagez vous-même, ou si vous vous connectez pour synchroniser. La connexion avec Apple ou Google est facultative : votre nom et votre adresse e-mail, l’historique de votre pratique, votre progression, vos réglages et votre position approximative (à environ 1 km près) sont alors stockés chez Google Firebase, aux États-Unis, pour être synchronisés entre vos appareils. Supprimez votre compte à tout moment depuis Compte. Faire un don ouvre votre navigateur, et cette page ne fait pas partie d’Ihsaanly.',
+      'Aucune mesure d’audience, aucune publicité. Votre position est utilisée sur cet appareil pour calculer les heures de prière, et l’historique de votre pratique ainsi que vos réglages sont conservés ici. L’application vérifie sur ihsaanly.app les mises à jour du contenu, sans rien envoyer vous concernant. Sinon, rien ne quitte cet appareil sans que vous le choisissiez : exporter ou partager, envoyer un retour, activer les rapports de plantage ou les annonces (app iOS et Android), ou vous connecter pour synchroniser. La connexion avec Apple ou Google est facultative : votre nom et votre adresse e-mail, l’historique de votre pratique, votre progression, vos réglages et votre position approximative (à environ 1 km près) sont alors stockés chez Google Firebase, aux États-Unis, pour être synchronisés entre vos appareils. Supprimez votre compte à tout moment depuis Compte. Sur Android, Faire un don ouvre votre navigateur, et cette page ne fait pas partie d’Ihsaanly.',
     licences: 'Réalisé avec',
     licencesBody:
       'Expo et React Native, la bibliothèque adhan pour les heures de prière, les tables du calendrier Umm al-Qura, les données de villes de city-timezones (fondées sur GeoNames), et Natural Earth pour la carte. Chacun est utilisé sous sa propre licence libre, indiquée dans le dépôt du code source.',
@@ -539,6 +539,7 @@ export const fr: Strings = {
     title: 'Bibliothèque',
     empty: 'Les adhkar, les du’as et les sunnas apparaîtront ici.',
     search: 'Rechercher par nom ou par situation',
+    searchLabel: 'Rechercher dans la bibliothèque',
     noResults: 'Aucun résultat.',
     filterAll: 'Tous',
     filterOnToday: 'Sur Aujourd’hui',
@@ -612,6 +613,7 @@ export const fr: Strings = {
   more: {
     title: 'Plus',
     search: 'Rechercher dans les réglages',
+    searchLabel: 'Rechercher dans Plus',
     prayer: 'Prière',
     app: 'Application',
     practice: 'Votre pratique',
@@ -686,6 +688,7 @@ export const fr: Strings = {
     orSearch: 'ou recherchez une ville',
     follows: 'Les plages de prière suivront ce lieu.',
     search: 'Rechercher une ville',
+    searchLabel: 'Rechercher des villes',
     noResults: 'Aucune ville ne correspond.',
     unavailable:
       'Les services de localisation sont désactivés sur cet appareil. Activez-les, ou recherchez plutôt votre ville.',

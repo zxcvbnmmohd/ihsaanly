@@ -36,6 +36,7 @@ export function MoreScreen({ groups, searchable, selectedHref }: MoreScreenProps
           value={searchable.query}
           onChangeText={searchable.onQueryChange}
           placeholder={searchable.placeholder}
+          label={strings.more.searchLabel}
           kind="search"
           accent={colors.accent}
           autoCapitalize="none"

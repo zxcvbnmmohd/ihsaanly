@@ -85,6 +85,7 @@ export function LocationScreen({
         value={query}
         onChangeText={onQueryChange}
         placeholder={strings.location.search}
+        label={strings.location.searchLabel}
         kind="search"
         returnKeyType="search"
       />

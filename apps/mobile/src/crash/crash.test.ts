@@ -25,12 +25,12 @@ describe('the crash reporting switch', () => {
   it('forwards logged failures as non-fatals only while on, and never names the person', async () => {
     noteFailure('beforeOn', new Error('not sent'))
     await setCrashReporting(true)
-    noteFailure('rollover', new Error('database is locked'))
+    noteFailure('rollover', new Error('database is locked for a@b.co'))
     await setCrashReporting(false)
     noteFailure('afterOff', new Error('not sent either'))
 
     expect(crash.recorded).toEqual([
-      { name: 'rollover', message: 'database is locked', jsErrorName: 'rollover' },
+      { name: 'rollover', message: 'database is locked for <email>', jsErrorName: 'rollover' },
     ])
     expect(crash.userIds).toEqual([])
     expect(crash.collection).toBe(false)

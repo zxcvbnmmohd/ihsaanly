@@ -36,6 +36,10 @@ on:
         required: true
         type: string
 
+# Least privilege: every step only reads the repository.
+permissions:
+  contents: read
+
 jobs:
   deploy:
     runs-on: ubuntu-latest

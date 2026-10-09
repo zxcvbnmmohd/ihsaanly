@@ -84,7 +84,7 @@ test('a signed-in report lands in Firestore; a second within a minute is refused
   const diagnostics = sent.diagnostics as Record<string, unknown>
   expect(diagnostics.app).toMatchObject({ platform: 'web' })
   const data = diagnostics.data as Record<string, unknown>
-  expect(Object.keys(data).sort()).toEqual(['days', 'eventCounts', 'preferenceKeys'])
+  expect(Object.keys(data).sort()).toEqual(['days', 'eventCounts', 'preferences', 'trackedItems'])
   expect(JSON.stringify(diagnostics)).not.toContain('"events"')
 
   // Straight away again: the rules' one-minute limit, shown as a wait.

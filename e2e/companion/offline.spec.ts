@@ -38,6 +38,6 @@ test('after the first load, the app opens offline', async ({ page, context }) =>
 
   // Another route's code split chunk comes from the precache too.
   await page.getByRole('navigation').getByRole('link', { name: en.library.title }).first().click()
-  await expect(page.getByRole('textbox', { name: en.library.search })).toBeVisible()
+  await expect(page.getByRole('textbox', { name: en.library.searchLabel })).toBeVisible()
   await context.setOffline(false)
 })

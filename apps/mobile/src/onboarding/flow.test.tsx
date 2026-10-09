@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, mock, spyOn } from 'bun:te
 import * as restore from '@ihsaanly/state/cloud/restore'
 import { act, render } from '@testing-library/react'
 import type { ReactElement } from 'react'
-import { BackHandler } from 'react-native'
+import { BackHandler, Linking } from 'react-native'
 import { installProviderButtons, installSafeArea, screens } from '../../test/accounts'
 import { run, settle } from '../../test/act'
 import { installLocation, location, resetLocation } from '../../test/location'
@@ -46,6 +46,7 @@ interface Screen {
   onSelectTheme: (theme: string) => void
   onUseDevice: () => void
   onRestore: (() => void) | undefined
+  onOpenPrivacy: () => void
   onToggleReminders: (on: boolean) => void
   announcements: { on: boolean; onChange: (on: boolean) => void } | undefined
 }
@@ -124,6 +125,14 @@ describe('OnboardingFlow steps', () => {
     expect(getThemePreference()).toBe('dark')
     expect(appearance.set).toContain('dark')
     expect(screen().theme).toBe('dark')
+  })
+
+  it('opens the privacy policy in the browser', () => {
+    const open = spyOn(Linking, 'openURL').mockResolvedValue(true as never)
+    spies.push(open)
+    mount()
+    screen().onOpenPrivacy()
+    expect(open).toHaveBeenCalledWith('https://ihsaanly.app/legal/privacy')
   })
 
   it('moves through the steps', () => {

@@ -32,7 +32,7 @@ test('the restore link opens Account and "Back to setup" returns', async ({ page
 
 test('after onboarding, More has an Account row', async ({ page }) => {
   await page.goto('/onboarding/location')
-  await page.getByRole('textbox', { name: en.location.search }).fill('London')
+  await page.getByRole('textbox', { name: en.location.searchLabel }).fill('London')
   await page.getByRole('button', { name: /^London Westminster, United Kingdom/ }).click()
   await page.getByRole('button', { name: en.onboarding.continue }).click()
   await page.getByRole('button', { name: en.onboarding.continue }).click()

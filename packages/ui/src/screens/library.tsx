@@ -100,6 +100,7 @@ export function LibraryScreen({
       value={searchable.query}
       onChangeText={searchable.onQueryChange}
       placeholder={searchable.placeholder}
+      label={strings.library.searchLabel}
       accent={palette.accent}
     />
   ) : null

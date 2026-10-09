@@ -297,8 +297,14 @@ else using your quota.
 - [ ] **Browser key:** allow only the HTTP referrers `companion.ihsaanly.app`,
   `dev.companion.ihsaanly.app`, `localhost` and `chrome-extension://<ids>`,
   and only the Identity Toolkit, Token Service and Firestore APIs.
-- [ ] **iOS key:** allow only the bundle IDs. **Android key:** allow only the
-  package and SHA-1s.
+- [x] **iOS key:** allow only the bundle IDs. **Android key:** allow only the
+  package and SHA-1s. Done 2026-10-09 in both projects (dev: debug + upload
+  SHA-1; prod: upload SHA-1), after GitHub secret scanning flagged the keys in
+  `apps/mobile/firebase/*`; those alerts are resolved as "won't fix" (public
+  client keys).
+  - [ ] When Play App Signing gives its SHA-1 (step 6.5), add it to the
+    production **Android key** too, or the Play-installed app's push and crash
+    reports are rejected.
 - Claude can do this with `gcloud services api-keys update`. Best done after
   step 8 gives the extension IDs.
 

@@ -12,7 +12,10 @@ import { useNavigate } from '@tanstack/react-router'
 import type { ReactElement } from 'react'
 import { cloudEnabled } from '~/cloud'
 import { requestDeviceLocation } from '~/platform/location'
+import { openUrl } from '~/platform/open-url'
 import { setThemePreference, useThemePreference } from '~/theme/store'
+
+const PRIVACY_URL = 'https://ihsaanly.app/legal/privacy'
 
 interface OnboardingFlowProps {
   step: OnboardingStep
@@ -39,5 +42,11 @@ export function OnboardingFlow({ step }: OnboardingFlowProps): ReactElement {
   // Someone with an account signs in instead; their synced setup replaces this flow.
   const restore = (): void => void navigate({ to: '/account', search: { from: 'onboarding' } })
 
-  return <OnboardingScreen {...props} onRestore={cloudEnabled ? restore : undefined} />
+  return (
+    <OnboardingScreen
+      {...props}
+      onRestore={cloudEnabled ? restore : undefined}
+      onOpenPrivacy={() => openUrl(PRIVACY_URL)}
+    />
+  )
 }

@@ -1,5 +1,5 @@
-// Accessibility checks with axe-core: WCAG 2.0/2.1/2.2 A and AA rules, and only
-// the violations that block someone (impact serious or critical) fail a test.
+// Accessibility checks with axe-core: WCAG 2.0/2.1/2.2 A and AA rules. Every
+// violation fails a test, whatever its impact (minor to critical).
 import AxeBuilder from '@axe-core/playwright'
 import type { Page } from '@playwright/test'
 
@@ -31,8 +31,8 @@ export async function settled(page: Page): Promise<void> {
   )
 }
 
-/** The serious and critical WCAG violations on the page as it is now, one line each. */
-export async function seriousViolations(
+/** Every WCAG violation on the page as it is now, one line each. */
+export async function axeViolations(
   page: Page,
   options: { exclude?: string[]; disableRules?: string[] } = {},
 ): Promise<AxeFinding[]> {
@@ -41,12 +41,10 @@ export async function seriousViolations(
   for (const selector of options.exclude ?? []) builder = builder.exclude(selector)
   if (options.disableRules?.length) builder = builder.disableRules(options.disableRules)
   const { violations } = await builder.analyze()
-  return violations
-    .filter((violation) => violation.impact === 'serious' || violation.impact === 'critical')
-    .map((violation) => ({
-      id: violation.id,
-      impact: violation.impact,
-      help: violation.help,
-      targets: violation.nodes.slice(0, 5).map((node) => node.target.join(' ')),
-    }))
+  return violations.map((violation) => ({
+    id: violation.id,
+    impact: violation.impact,
+    help: violation.help,
+    targets: violation.nodes.slice(0, 5).map((node) => node.target.join(' ')),
+  }))
 }

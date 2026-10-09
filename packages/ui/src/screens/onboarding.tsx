@@ -88,6 +88,8 @@ export interface OnboardingScreenProps {
    * can receive push offers it; the others leave it out and show no switch.
    */
   announcements?: OptIn | undefined
+  /** Opens the published privacy policy, linked from the first step. Omitted, no link shows. */
+  onOpenPrivacy?: () => void
 }
 
 function remindersOn(notifications: NotificationPreferences): boolean {
@@ -436,6 +438,20 @@ function StepBody(props: StepBodyProps): ReactElement {
               {strings.language.restart}
             </Text>
           ) : null}
+          {props.onOpenPrivacy ? (
+            <Pressable
+              accessibilityRole="link"
+              onPress={props.onOpenPrivacy}
+              className="justify-center self-start"
+              // A 44pt target, so a one-line link still clears WCAG 2.5.8.
+              style={{ minHeight: 44 }}>
+              <Text
+                className="text-sm"
+                style={{ color: palette.accent, textDecorationLine: 'underline' }}>
+                {strings.about.privacyPolicy}
+              </Text>
+            </Pressable>
+          ) : null}
         </>
       )
 
@@ -477,6 +493,7 @@ function StepBody(props: StepBodyProps): ReactElement {
             value={props.query}
             onChangeText={props.onQueryChange}
             placeholder={strings.location.search}
+            label={strings.location.searchLabel}
             kind="search"
             returnKeyType="search"
             accent={palette.accent}

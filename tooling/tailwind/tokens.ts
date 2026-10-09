@@ -34,8 +34,8 @@ export const brand = {
   rule: { light: 'rgba(43, 31, 26, 0.14)', dark: 'rgba(247, 236, 230, 0.16)' },
   /** The outline of an interactive control on the wash: 3:1 (WCAG 1.4.11), which `rule` is not. */
   'rule-strong': { light: '#7d6d63', dark: '#8c766c' },
-  /** A text field's resting border, and an unmarked checkbox ring: 3:1 on the app's surfaces. */
-  'field-border': { light: '#7c7c82', dark: '#6b6b70' },
+  /** A text field's resting border, and an unmarked checkbox ring: 3:1 on the app's surfaces and the wash's deepest point. */
+  'field-border': { light: '#717177', dark: '#85858a' },
   tint: { light: 'rgba(169, 74, 50, 0.1)', dark: 'rgba(226, 140, 111, 0.14)' },
 } satisfies Record<string, PerScheme>
 

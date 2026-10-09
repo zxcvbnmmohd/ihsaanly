@@ -209,7 +209,7 @@ export const it: Strings = {
     terms: 'Termini',
     privacy: 'Informativa sulla privacy',
     notice:
-      'Il registro della tua pratica, le impostazioni e la posizione approssimativa sono conservati su Google Firebase (Stati Uniti) per la sincronizzazione, insieme a nome ed email forniti da Apple o Google. Devi avere almeno 13 anni. Puoi eliminare l’account in qualsiasi momento.',
+      'Il registro della tua pratica, le impostazioni e la posizione approssimativa sono conservati su Google Firebase (Stati Uniti) per la sincronizzazione, insieme a nome ed email forniti da Apple o Google. Devi avere almeno 13 anni, o l’età richiesta nel tuo Paese (fino a 16). Puoi eliminare l’account in qualsiasi momento.',
     signingIn: 'Accesso in corso…',
     signInFailed: 'L’accesso non è stato completato. Nulla è cambiato su questo dispositivo.',
     errors: {
@@ -403,7 +403,7 @@ export const it: Strings = {
     termsOfUse: 'Termini di utilizzo',
     privacyTitle: 'I tuoi dati restano su questo dispositivo',
     privacyBody:
-      'Nessuna statistica d’uso e nessuna pubblicità. La tua posizione è usata su questo dispositivo per calcolare gli orari di preghiera, e il registro della tua pratica e le impostazioni restano qui. Niente esce da questo dispositivo, a meno che tu non lo esporti o condivida, o non acceda per sincronizzare. L’accesso con Apple o Google è facoltativo: in quel caso nome ed email, registro della pratica, progressi, impostazioni e posizione approssimativa (a circa 1 km) sono conservati su Google Firebase negli Stati Uniti, per sincronizzarsi tra i tuoi dispositivi. Puoi eliminare l’account in qualsiasi momento da Account. Dona apre il browser, e quella pagina non fa parte di Ihsaanly.',
+      'Nessuna statistica d’uso e nessuna pubblicità. La tua posizione è usata su questo dispositivo per calcolare gli orari di preghiera, e il registro della tua pratica e le impostazioni restano qui. L’app controlla ihsaanly.app per gli aggiornamenti dei contenuti, senza inviare nulla su di te. Per il resto, niente esce da questo dispositivo se non lo scegli tu: esportare o condividere, inviare un feedback, attivare i rapporti sugli arresti anomali o gli annunci (app iOS e Android), o accedere per sincronizzare. L’accesso con Apple o Google è facoltativo: in quel caso nome ed email, registro della pratica, progressi, impostazioni e posizione approssimativa (a circa 1 km) sono conservati su Google Firebase negli Stati Uniti, per sincronizzarsi tra i tuoi dispositivi. Puoi eliminare l’account in qualsiasi momento da Account. Su Android, Dona apre il browser, e quella pagina non fa parte di Ihsaanly.',
     licences: 'Realizzata con',
     licencesBody:
       'Expo e React Native, la libreria adhan per gli orari di preghiera, le tabelle del calendario Umm al-Qura, i dati delle città da city-timezones (basati su GeoNames) e Natural Earth per la mappa. Ognuno è usato secondo la propria licenza open source, elencata nel repository del codice.',
@@ -542,6 +542,7 @@ export const it: Strings = {
     title: 'Biblioteca',
     empty: 'Qui saranno elencati adhkar, du’a e pratiche della sunna.',
     search: 'Cerca per nome o situazione',
+    searchLabel: 'Cerca nella biblioteca',
     noResults: 'Nessun risultato.',
     filterAll: 'Tutte',
     filterOnToday: 'In Oggi',
@@ -615,6 +616,7 @@ export const it: Strings = {
   more: {
     title: 'Altro',
     search: 'Cerca nelle impostazioni',
+    searchLabel: 'Cerca in Altro',
     prayer: 'Preghiera',
     app: 'App',
     practice: 'La tua pratica',
@@ -689,6 +691,7 @@ export const it: Strings = {
     orSearch: 'oppure cerca una città',
     follows: 'Le fasce di preghiera seguiranno questo luogo.',
     search: 'Cerca una città',
+    searchLabel: 'Cerca città',
     noResults: 'Nessuna città corrisponde.',
     unavailable:
       'I servizi di localizzazione sono disattivati su questo dispositivo. Attivali, oppure cerca la tua città.',

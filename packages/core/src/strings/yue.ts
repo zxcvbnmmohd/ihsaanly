@@ -199,7 +199,7 @@ export const yue: Strings = {
     terms: '使用條款',
     privacy: '私隱政策',
     notice:
-      '為咗同步，你嘅功課紀錄、設定同大概位置，會連同 Apple 或 Google 提供嘅名同電郵，一齊儲存喺 Google Firebase（美國）。你一定要年滿 13 歲。你隨時可以刪除帳戶。',
+      '為咗同步，你嘅功課紀錄、設定同大概位置，會連同 Apple 或 Google 提供嘅名同電郵，一齊儲存喺 Google Firebase（美國）。你一定要年滿 13 歲，或者你所在國家要求嘅年齡（最高 16 歲）。你隨時可以刪除帳戶。',
     signingIn: '登入緊…',
     signInFailed: '登入未完成。呢部裝置上嘅嘢一啲都冇變。',
     errors: {
@@ -372,7 +372,7 @@ export const yue: Strings = {
     termsOfUse: '使用條款',
     privacyTitle: '你嘅資料留喺呢部裝置',
     privacyBody:
-      '冇數據分析，亦冇廣告。你嘅位置喺呢部裝置上用嚟計禮拜時間，你嘅功課紀錄同設定都儲存喺度。除非你自己匯出或者分享，或者登入同步，否則乜都唔會離開呢部裝置。用 Apple 或 Google 登入係可選嘅：登入之後，你嘅名同電郵、功課紀錄、進度、設定同大概位置（準確到大約 1 公里）會儲存喺美國嘅 Google Firebase，等佢哋喺你嘅裝置之間同步。你隨時可以喺「帳戶」刪除帳戶。捐款會打開你嘅瀏覽器，嗰個網頁唔屬於 Ihsaanly。',
+      '冇數據分析，亦冇廣告。你嘅位置喺呢部裝置上用嚟計禮拜時間，你嘅功課紀錄同設定都儲存喺度。App 會去 ihsaanly.app 檢查內容更新，但唔會傳送任何關於你嘅資料。除此之外，除非你自己揀，否則乜都唔會離開呢部裝置：匯出或者分享、傳送意見、開啟當機報告或者公告（iOS 同 Android app），或者登入同步。用 Apple 或 Google 登入係可選嘅：登入之後，你嘅名同電郵、功課紀錄、進度、設定同大概位置（準確到大約 1 公里）會儲存喺美國嘅 Google Firebase，等佢哋喺你嘅裝置之間同步。你隨時可以喺「帳戶」刪除帳戶。喺 Android 上，捐款會打開你嘅瀏覽器，嗰個網頁唔屬於 Ihsaanly。',
     licences: '採用技術',
     licencesBody:
       'Expo 同 React Native、計算禮拜時間嘅 adhan 程式庫、烏姆庫拉曆法表、來自 city-timezones 嘅城市資料（以 GeoNames 為基礎），以及地圖用嘅 Natural Earth。每一樣都按照佢自己嘅開源授權使用，詳列於原始碼庫。',
@@ -503,6 +503,7 @@ export const yue: Strings = {
     title: '資料庫',
     empty: '記念、祈禱詞同聖行會喺呢度列出。',
     search: '用名稱或者情況搜尋',
+    searchLabel: '搜尋資料庫',
     noResults: '冇相符嘅結果。',
     filterAll: '全部',
     filterOnToday: '喺今日',
@@ -575,6 +576,7 @@ export const yue: Strings = {
   more: {
     title: '更多',
     search: '搜尋設定',
+    searchLabel: '搜尋「更多」',
     prayer: '禮拜',
     app: 'App',
     practice: '你嘅功課',
@@ -642,6 +644,7 @@ export const yue: Strings = {
     orSearch: '或者搜尋城市',
     follows: '禮拜時段會跟隨呢個地方。',
     search: '搜尋城市',
+    searchLabel: '城市搜尋',
     noResults: '冇相符嘅城市。',
     unavailable: '呢部裝置嘅定位服務已經關閉。請開啟佢，或者改為搜尋你嘅城市。',
     declined: '你拒絕咗位置存取。請改為搜尋你嘅城市——所有功能照樣用得。',

@@ -12,7 +12,7 @@ Store-listing detail for the mobile app stays in
 [`docs/store-privacy-forms.md`](docs/store-privacy-forms.md), and how it all
 fits together is in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 
-_Last updated 2026-10-01._
+_Last updated 2026-10-09._
 
 ## Already done
 
@@ -78,13 +78,18 @@ From the Corporations Canada profile (kept local, git-ignored):
 
 ## 4. First real sign-in test on dev (You, 10 min, after step 1)
 
-- [ ] Open <https://dev.companion.ihsaanly.app> → More → Account → **Sign in
+Checked 2026-10-09: `users/{uid}` (schema 2), a `2026-10` events document
+with the Fajr mark, and the preferences document with the place rounded to
+~1 km.
+
+
+- [x] Open <https://dev.companion.ihsaanly.app> → More → Account → **Sign in
   with Google**.
-- [ ] Mark a prayer, wait about 5 s, then check Firebase console →
+- [x] Mark a prayer, wait about 5 s, then check Firebase console →
   `ihsaanly-development` → Firestore → `users/{uid}/sync/<this month>`.
-- [ ] Open dev.companion in a second browser and sign in with the same
+- [x] Open dev.companion in a second browser and sign in with the same
   account. The mark should appear.
-- [ ] Try **Sign out → Remove from this device**, then sign back in. The data
+- [x] Try **Sign out → Remove from this device**, then sign back in. The data
   should come back from the cloud.
 - [ ] **Delete account.** `users/{uid}` should disappear from Firestore.
 - Report anything odd, with a screenshot or console error, and Claude fixes

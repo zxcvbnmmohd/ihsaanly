@@ -80,7 +80,8 @@ From the Corporations Canada profile (kept local, git-ignored):
 
 Checked 2026-10-09: `users/{uid}` (schema 2), a `2026-10` events document
 with the Fajr mark, and the preferences document with the place rounded to
-~1 km.
+~1 km. After Delete account: the user, its sync documents and the Firebase
+Auth user are all gone (404), and no user documents remain.
 
 
 - [x] Open <https://dev.companion.ihsaanly.app> → More → Account → **Sign in
@@ -91,7 +92,7 @@ with the Fajr mark, and the preferences document with the place rounded to
   account. The mark should appear.
 - [x] Try **Sign out → Remove from this device**, then sign back in. The data
   should come back from the cloud.
-- [ ] **Delete account.** `users/{uid}` should disappear from Firestore.
+- [x] **Delete account.** `users/{uid}` should disappear from Firestore.
 - Report anything odd, with a screenshot or console error, and Claude fixes
   it.
 

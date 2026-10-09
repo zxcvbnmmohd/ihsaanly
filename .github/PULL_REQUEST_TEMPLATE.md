@@ -1,4 +1,5 @@
-<!-- Thanks for contributing! Target the `development` branch.
+<!-- Thanks for contributing! Branch from `production` and target `production`;
+     a maintainer tries it on `development` first.
      Guide: CONTRIBUTING.md. Security issues: SECURITY.md, not a PR. -->
 
 ## What changed

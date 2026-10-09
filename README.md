@@ -131,6 +131,10 @@ Testing in depth: [docs/TESTING.md](docs/TESTING.md).
 | `development` | dev.ihsaanly.app, dev.companion.ihsaanly.app and the `ihsaanly-development` Firebase project. |
 | `production` | ihsaanly.app, companion.ihsaanly.app and `ihsaanly-production`, after a maintainer approves the deploy. |
 
+Each change is branched from `production`, merged into `development` by hand
+to test on the dev sites, then sent to `production` as a pull request. See
+[CONTRIBUTING.md](CONTRIBUTING.md#branches-and-releases).
+
 | Workflow | When | What |
 | --- | --- | --- |
 | [`check`](.github/workflows/check.yml) | Every pull request, and pushes to either branch | Lint, knip, typecheck, unit tests, the verified web builds, content validation and the Firestore rules tests. |

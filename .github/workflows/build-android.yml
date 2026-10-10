@@ -1,0 +1,122 @@
+# Builds the Android app whenever something it is built from changes on
+# development or production, signed with the Play upload key.
+#
+# development → an installable .apk (Ihsaanly Development), as a run artifact.
+# production  → an .aab for Play Console (Ihsaanly), as a run artifact.
+#
+# Secrets and variables come from the GitHub environment named after the
+# branch: ANDROID_UPLOAD_* (the keystore is in 1Password, "Ihsaanly Android
+# upload keystore") and the EXPO_PUBLIC_* app config. See TODO.md step 6.
+name: build-android
+
+on:
+  push:
+    branches: [development, production]
+    paths:
+      - 'apps/mobile/**'
+      - 'packages/**'
+      - 'tooling/**'
+      - 'bun.lock'
+      - '.github/workflows/build-android.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: build-android-${{ github.ref_name }}
+  cancel-in-progress: true
+
+# Least privilege: every step only reads the repository.
+permissions:
+  contents: read
+
+jobs:
+  build:
+    if: github.ref_name == 'development' || github.ref_name == 'production'
+    runs-on: ubuntu-latest
+    # The GitHub environment is named after the branch.
+    environment: ${{ github.ref_name }}
+    defaults:
+      run:
+        working-directory: apps/mobile
+    env:
+      APP_VARIANT: ${{ github.ref_name }}
+      # Counts up across every run, so each upload to Play has a higher code.
+      ANDROID_VERSION_CODE: ${{ github.run_number }}
+      # Config comes from the environment's variables, never a .env file.
+      EXPO_NO_DOTENV: '1'
+      EXPO_PUBLIC_FIREBASE_API_KEY: ${{ vars.EXPO_PUBLIC_FIREBASE_API_KEY }}
+      EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN: ${{ vars.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN }}
+      EXPO_PUBLIC_FIREBASE_PROJECT_ID: ${{ vars.EXPO_PUBLIC_FIREBASE_PROJECT_ID }}
+      EXPO_PUBLIC_FIREBASE_APP_ID: ${{ vars.EXPO_PUBLIC_FIREBASE_APP_ID }}
+      EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID: ${{ vars.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID }}
+      EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID: ${{ vars.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID }}
+      EXPO_PUBLIC_CONTENT_URL: ${{ vars.EXPO_PUBLIC_CONTENT_URL }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: package.json
+
+      # Metro bundles the JS inside the Gradle build and needs Node 22.13+.
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - run: bun install --frozen-lockfile
+        working-directory: .
+
+      - name: Generate the native project
+        run: bunx expo prebuild -p android --clean --no-install
+
+      - name: Write the upload keystore
+        env:
+          ANDROID_UPLOAD_KEYSTORE: ${{ secrets.ANDROID_UPLOAD_KEYSTORE }}
+        run: echo "$ANDROID_UPLOAD_KEYSTORE" | base64 --decode > "$RUNNER_TEMP/upload.jks"
+
+      # ponytail: the generated build.gradle signs release with the debug key;
+      # the injected signing properties (what Android Studio's "Generate Signed
+      # Bundle" passes) override that without a config plugin.
+      - name: Build
+        working-directory: apps/mobile/android
+        env:
+          STORE_PASSWORD: ${{ secrets.ANDROID_UPLOAD_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_UPLOAD_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_UPLOAD_KEY_PASSWORD }}
+          TASK: ${{ github.ref_name == 'production' && 'bundleRelease' || 'assembleRelease' }}
+        run: >-
+          ./gradlew "$TASK" --no-daemon
+          -Pandroid.injected.signing.store.file="$RUNNER_TEMP/upload.jks"
+          -Pandroid.injected.signing.store.password="$STORE_PASSWORD"
+          -Pandroid.injected.signing.key.alias="$KEY_ALIAS"
+          -Pandroid.injected.signing.key.password="$KEY_PASSWORD"
+
+      # Fails the run unless the output is signed with the upload key, whose
+      # SHA-1 is registered in both Firebase projects (TODO.md step 6.1).
+      - name: Check the signature
+        env:
+          UPLOAD_SHA1: '2F:7B:80:AC:43:D7:9D:A5:D8:06:E4:BD:B7:C2:74:54:9F:8D:22:D7'
+        run: |
+          out=$(find android/app/build/outputs \( -name '*-release.aab' -o -name '*-release.apk' \) | head -1)
+          echo "OUTPUT=apps/mobile/$out" >> "$GITHUB_ENV"
+          sha1=$(keytool -printcert -jarfile "$out" | awk '/SHA1:/ {print $2; exit}')
+          echo "$out: SHA-1 ${sha1:-none}"
+          if [ "$sha1" != "$UPLOAD_SHA1" ]; then
+            echo "::error::$out is not signed with the upload key"
+            exit 1
+          fi
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: ihsaanly-${{ github.ref_name }}-${{ github.run_number }}
+          path: ${{ env.OUTPUT }}
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Remove the keystore
+        if: always()
+        run: rm -f "$RUNNER_TEMP/upload.jks"

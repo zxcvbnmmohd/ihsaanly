@@ -170,10 +170,10 @@ Free on this public repo, and it replaces EAS.
 
 1. [x] **Upload key and CI secrets.** The keystore lives only in 1Password:
    **Private** → "Ihsaanly Android upload keystore" (the `.jks` attached, alias
-   `upload`, one password for the store and the key). `ANDROID_UPLOAD_KEYSTORE`
-   (base64), `ANDROID_UPLOAD_KEYSTORE_PASSWORD`, `ANDROID_UPLOAD_KEY_ALIAS` and
-   `ANDROID_UPLOAD_KEY_PASSWORD` are set in **both** environments; dev CI
-   builds use the same key.
+   `upload`, one password for the store and the key). The secrets
+   `ANDROID_UPLOAD_KEYSTORE` (base64), `ANDROID_UPLOAD_KEYSTORE_PASSWORD` and
+   `ANDROID_UPLOAD_KEY_PASSWORD`, and the variable `ANDROID_UPLOAD_KEY_ALIAS`,
+   are set in **both** environments; dev CI builds use the same key.
 
    Current upload key SHA-1
    `2F:7B:80:AC:43:D7:9D:A5:D8:06:E4:BD:B7:C2:74:54:9F:8D:22:D7`, in both
@@ -182,23 +182,16 @@ Free on this public repo, and it replaces EAS.
    (`4227a8b`); its replacement (`D4:E6:…`) was lost with the old Mac. Both are
    removed everywhere, and neither reached Play. Keystores (`*.jks`,
    `*.keystore`) are git-ignored.
-2. [ ] **You:** add the mobile env as GitHub **variables** in each
-   environment, copying the values from `apps/mobile/.env.<branch>`:
-   - `EXPO_PUBLIC_FIREBASE_API_KEY`
-   - `EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN`
-   - `EXPO_PUBLIC_FIREBASE_PROJECT_ID`
-   - `EXPO_PUBLIC_FIREBASE_APP_ID`
-   - `EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID`
-   - `EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID`
-
-   Claude can do this with `gh`, since none of these are secrets.
-3. [ ] **Claude:** write `build-android.yml`.
-   - **Triggers:** push to `development` or `production` touching
-     `apps/mobile/**` or `packages/**`, plus manual runs.
-   - **Steps:** `expo prebuild -p android` with the branch's variant, write
-     the env file from the variables, decode the keystore, then build. The
-     `development` branch produces an installable `.apk` as a workflow
-     artifact; the `production` branch produces an `.aab`.
+2. [x] **Mobile env as GitHub variables** (2026-10-10): the seven
+   `EXPO_PUBLIC_*` values from `apps/mobile/.env.<branch>` are set in each
+   environment. After changing an env file, re-run
+   `gh variable set --env <branch> -f apps/mobile/.env.<branch>`.
+3. [x] **`build-android.yml`:** runs on pushes to `development` or
+   `production` that touch the app or what it is built from, and by hand.
+   It prebuilds with the branch's variant, signs with the upload key, checks
+   the output's SHA-1 against it, and attaches the result to the run:
+   `development` an installable `.apk`, `production` an `.aab`. The run
+   number is the `versionCode`, so every build counts up.
 4. [ ] **You:** (the Play developer account exists) create the app in **Play Console**
    (<https://play.google.com/console>) and upload the first `.aab` to
    **Internal testing** by hand. Play needs a manual first upload before it

@@ -170,10 +170,10 @@ Free on this public repo, and it replaces EAS.
 
 1. [x] **Upload key and CI secrets.** The keystore lives only in 1Password:
    **Private** → "Ihsaanly Android upload keystore" (the `.jks` attached, alias
-   `upload`, one password for the store and the key). `ANDROID_UPLOAD_KEYSTORE`
-   (base64), `ANDROID_UPLOAD_KEYSTORE_PASSWORD`, `ANDROID_UPLOAD_KEY_ALIAS` and
-   `ANDROID_UPLOAD_KEY_PASSWORD` are set in **both** environments; dev CI
-   builds use the same key.
+   `upload`, one password for the store and the key). The secrets
+   `ANDROID_UPLOAD_KEYSTORE` (base64), `ANDROID_UPLOAD_KEYSTORE_PASSWORD` and
+   `ANDROID_UPLOAD_KEY_PASSWORD`, and the variable `ANDROID_UPLOAD_KEY_ALIAS`,
+   are set in **both** environments; dev CI builds use the same key.
 
    Current upload key SHA-1
    `2F:7B:80:AC:43:D7:9D:A5:D8:06:E4:BD:B7:C2:74:54:9F:8D:22:D7`, in both

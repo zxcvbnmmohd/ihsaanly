@@ -9,6 +9,7 @@ const KEYS = [
   'EXPO_PUBLIC_FIREBASE_PROJECT_ID',
   'EXPO_PUBLIC_FIREBASE_APP_ID',
   'EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID',
+  'BUILD_NUMBER',
 ] as const
 const CLOUD = {
   EXPO_PUBLIC_FIREBASE_API_KEY: 'key',
@@ -111,6 +112,29 @@ describe('variants', () => {
     expect(config.ios?.entitlements).toEqual({
       'com.apple.security.application-groups': ['group.app.ihsaanly.companion.development'],
     })
+  })
+})
+
+describe('build number', () => {
+  it('takes a positive whole BUILD_NUMBER for both stores, else keeps the config values', () => {
+    expect(run().ios?.buildNumber).toBeUndefined()
+    expect(run().android?.versionCode).toBeUndefined()
+    const numbered = { ...base, ios: { buildNumber: '3' }, android: { versionCode: 3 } }
+    process.env.BUILD_NUMBER = '42'
+    expect(run(numbered).ios?.buildNumber).toBe('42')
+    expect(run(numbered).android?.versionCode).toBe(42)
+    for (const bad of ['', '0', '-1', '1.5', 'abc']) {
+      process.env.BUILD_NUMBER = bad
+      expect(run(numbered).ios?.buildNumber).toBe('3')
+      expect(run(numbered).android?.versionCode).toBe(3)
+    }
+  })
+
+  it('ships a semver marketing version, the same as package.json', async () => {
+    const json = await Bun.file(`${import.meta.dir}/app.json`).json()
+    const pkg = await Bun.file(`${import.meta.dir}/package.json`).json()
+    expect(json.expo.version).toMatch(/^\d+\.\d+\.\d+$/)
+    expect(json.expo.version).toBe(pkg.version)
   })
 })
 

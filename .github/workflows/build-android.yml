@@ -85,7 +85,8 @@ jobs:
         working-directory: apps/mobile/android
         env:
           STORE_PASSWORD: ${{ secrets.ANDROID_UPLOAD_KEYSTORE_PASSWORD }}
-          KEY_ALIAS: ${{ secrets.ANDROID_UPLOAD_KEY_ALIAS }}
+          # A variable, not a secret: a secret "upload" would be masked in every log line.
+          KEY_ALIAS: ${{ vars.ANDROID_UPLOAD_KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.ANDROID_UPLOAD_KEY_PASSWORD }}
           TASK: ${{ github.ref_name == 'production' && 'bundleRelease' || 'assembleRelease' }}
         run: >-
@@ -100,10 +101,17 @@ jobs:
       - name: Check the signature
         env:
           UPLOAD_SHA1: '2F:7B:80:AC:43:D7:9D:A5:D8:06:E4:BD:B7:C2:74:54:9F:8D:22:D7'
+        # An .aab carries a JAR signature (keytool reads it); an .apk for this
+        # minSdk only has the v2+ APK signature, which only apksigner reads.
         run: |
           out=$(find android/app/build/outputs \( -name '*-release.aab' -o -name '*-release.apk' \) | head -1)
           echo "OUTPUT=apps/mobile/$out" >> "$GITHUB_ENV"
-          sha1=$(keytool -printcert -jarfile "$out" | awk '/SHA1:/ {print $2; exit}')
+          if [ "${out##*.}" = apk ]; then
+            apksigner=$(ls "$ANDROID_HOME"/build-tools/*/apksigner | sort -V | tail -1)
+            sha1=$("$apksigner" verify --print-certs "$out" | awk '/certificate SHA-1 digest:/ {print toupper($NF); exit}' | sed 's/../&:/g; s/:$//')
+          else
+            sha1=$(keytool -printcert -jarfile "$out" | awk '/SHA1:/ {print $2; exit}')
+          fi
           echo "$out: SHA-1 ${sha1:-none}"
           if [ "$sha1" != "$UPLOAD_SHA1" ]; then
             echo "::error::$out is not signed with the upload key"

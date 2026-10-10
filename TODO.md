@@ -190,8 +190,9 @@ Free on this public repo, and it replaces EAS.
    `production` that touch the app or what it is built from, and by hand.
    It prebuilds with the branch's variant, signs with the upload key, checks
    the output's SHA-1 against it, and attaches the result to the run:
-   `development` an installable `.apk`, `production` an `.aab`. The run
-   number is the `versionCode`, so every build counts up.
+   `development` an installable `.apk`, `production` an `.aab`. Each run's
+   build number (from 1, counting up) is the `versionCode`; the marketing
+   version is `app.json` `version`, bumped by hand per release.
 4. [ ] **You:** (the Play developer account exists) create the app in **Play Console**
    (<https://play.google.com/console>) and upload the first `.aab` to
    **Internal testing** by hand. Play needs a manual first upload before it

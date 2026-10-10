@@ -168,26 +168,20 @@ Register it (and the iOS one), then re-download the files:
 
 Free on this public repo, and it replaces EAS.
 
-1. [ ] **You:** add these secrets to **both** environments (`development` and
-   `production`). Dev CI builds use the same upload key, whose SHA-1 is
-   already in both Firebase projects.
-   - `ANDROID_UPLOAD_KEYSTORE`:
-     `base64 -i ~/.config/ihsaanly/android-upload/ihsaanly-upload.jks | pbcopy`
-   - `ANDROID_UPLOAD_KEYSTORE_PASSWORD`
-   - `ANDROID_UPLOAD_KEY_ALIAS` (e.g. `upload`)
-   - `ANDROID_UPLOAD_KEY_PASSWORD`
+1. [x] **Upload key and CI secrets.** The keystore lives only in 1Password:
+   **Private** → "Ihsaanly Android upload keystore" (the `.jks` attached, alias
+   `upload`, one password for the store and the key). `ANDROID_UPLOAD_KEYSTORE`
+   (base64), `ANDROID_UPLOAD_KEYSTORE_PASSWORD`, `ANDROID_UPLOAD_KEY_ALIAS` and
+   `ANDROID_UPLOAD_KEY_PASSWORD` are set in **both** environments; dev CI
+   builds use the same key.
 
-   Keep the `.jks` file and the passwords in your password manager. The
-   passwords are in `~/.config/ihsaanly/android-upload/CREDENTIALS.txt`: move
-   them into 1Password, then delete that file.
-
-   **Rotated 2026-10-09.** The first upload keystore was committed by mistake
-   (`4227a8b`) and is public, so it was replaced before anything reached Play.
-   New upload key SHA-1 `D4:E6:7A:B9:A4:F0:2F:2B:3F:E0:3C:41:EB:D4:E8:ED:70:16:3F:FC`,
-   now in both Firebase projects, both `google-services.json` files and the
-   Android API key restrictions; the old `9C:7C:59:…` fingerprint is removed
-   everywhere. Keystores (`*.jks`, `*.keystore`) are git-ignored. Never use
-   `ihsaanly-upload.LEAKED-do-not-use.jks`.
+   Current upload key SHA-1
+   `2F:7B:80:AC:43:D7:9D:A5:D8:06:E4:BD:B7:C2:74:54:9F:8D:22:D7`, in both
+   Firebase projects, both `google-services.json` files and the Android API key
+   restrictions. History: the first key (`9C:7C:59:…`) was committed by mistake
+   (`4227a8b`); its replacement (`D4:E6:…`) was lost with the old Mac. Both are
+   removed everywhere, and neither reached Play. Keystores (`*.jks`,
+   `*.keystore`) are git-ignored.
 2. [ ] **You:** add the mobile env as GitHub **variables** in each
    environment, copying the values from `apps/mobile/.env.<branch>`:
    - `EXPO_PUBLIC_FIREBASE_API_KEY`

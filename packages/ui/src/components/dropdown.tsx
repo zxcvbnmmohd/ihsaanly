@@ -6,6 +6,7 @@ import { useColors } from '../colors'
 import { serif } from '../fonts'
 import { useUi } from '../provider'
 import { ChoiceRow } from './choice-row'
+import { useRecede } from './recede'
 import { Sheet } from './sheet'
 
 interface DropdownOption<T extends string> {
@@ -49,14 +50,15 @@ interface OptionsProps {
 }
 
 /**
- * iOS's own page sheet: the app behind it steps back as a card and stays in
- * view, and a swipe down closes it. Android has no such presentation, so it
- * keeps the shared Sheet.
+ * iOS's own page sheet, which a swipe down closes; Android has no such
+ * presentation, so it keeps the shared Sheet. On both the app behind steps
+ * back as a card (RecedeProvider) and stays in view.
  */
 function Options({ title, onClose, children }: OptionsProps): ReactElement {
   const colors = useColors()
   const { strings } = useUi()
   const insets = useSafeAreaInsets()
+  useRecede()
 
   if (process.env.EXPO_OS !== 'ios') {
     return (

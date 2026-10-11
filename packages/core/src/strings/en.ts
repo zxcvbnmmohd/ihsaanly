@@ -650,7 +650,8 @@ export const en = {
     allowNotifications: 'Allow notifications',
     notNow: 'Not now',
     done: 'Start',
-    restore: 'Already use Ihsaanly? Sign in to restore your data',
+    restorePrompt: 'Already using Ihsaanly?',
+    restoreAction: 'Sign in',
   },
   location: {
     title: 'Location',

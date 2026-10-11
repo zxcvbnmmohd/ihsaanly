@@ -675,7 +675,8 @@ export const it: Strings = {
     allowNotifications: 'Consenti le notifiche',
     notNow: 'Non ora',
     done: 'Inizia',
-    restore: 'Usi già Ihsaanly? Accedi per ripristinare i tuoi dati',
+    restorePrompt: 'Usi già Ihsaanly?',
+    restoreAction: 'Accedi',
   },
   location: {
     title: 'Posizione',

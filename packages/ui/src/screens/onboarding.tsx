@@ -57,10 +57,6 @@ export interface OnboardingScreenProps {
   gender: Gender
   notifications: NotificationPreferences
   preset: StarterPreset | null
-  enabledTitles: string[]
-  itemCount: number
-  essentialCount: number
-  startingCount: number
   onSelectLanguage: (language: SupportedLanguage) => void
   onSelectTheme: (theme: ThemePreference) => void
   onQueryChange: (query: string) => void
@@ -458,7 +454,12 @@ function StepBody(props: StepBodyProps): ReactElement {
       return (
         <>
           <View className="flex-1 items-center justify-center py-6">
-            <OnboardingArt variant="how" color={palette.accent} onColor={palette.onAccent} />
+            <OnboardingArt
+              variant="how"
+              color={palette.accent}
+              onColor={palette.onAccent}
+              checkLabel={strings.onboarding.howExample}
+            />
           </View>
           <Text
             className="text-center text-3xl leading-tight"
@@ -522,7 +523,13 @@ function StepBody(props: StepBodyProps): ReactElement {
     case 'you':
       return (
         <>
-          <Heading title={strings.onboarding.genderStep} body={strings.onboarding.genderWhy} />
+          {/* The privacy line sits with the heading, before anything is chosen. */}
+          <View className="gap-3">
+            <Heading title={strings.onboarding.genderStep} body={strings.onboarding.genderWhy} />
+            <Text className="text-xs leading-snug" style={{ color: colors.secondaryLabel }}>
+              {strings.onboarding.genderPrivacy}
+            </Text>
+          </View>
           <View className="flex-row gap-3">
             <ChoiceTile
               variant="brother"
@@ -548,9 +555,6 @@ function StepBody(props: StepBodyProps): ReactElement {
             accent={palette.accent}
             onPress={() => props.onSelectGender('unspecified')}
           />
-          <Text className="pt-1 text-xs leading-snug" style={{ color: colors.secondaryLabel }}>
-            {strings.onboarding.genderPrivacy}
-          </Text>
         </>
       )
 
@@ -585,77 +589,42 @@ function StepBody(props: StepBodyProps): ReactElement {
               track={palette.wash[1]}
             />
           ) : null}
-          {daily ? (
+          {daily && quiet ? (
             <Text className="pt-1 text-xs leading-snug" style={{ color: colors.secondaryLabel }}>
-              {quiet
-                ? strings.onboarding.reminderPolicy(
-                    props.notifications.maxPerDay,
-                    quiet.from,
-                    quiet.to,
-                  )
-                : strings.onboarding.reminderCap(props.notifications.maxPerDay)}
+              {strings.onboarding.reminderQuiet(quiet.from, quiet.to)}
             </Text>
           ) : null}
         </>
       )
     }
 
-    case 'start': {
-      const preview = props.enabledTitles.slice(0, 5)
-      const rest = props.enabledTitles.length - preview.length
-
+    case 'start':
       return (
         <>
           <Heading title={strings.onboarding.startStep} body={strings.onboarding.startWhy} />
           <ChoiceRow
             title={strings.onboarding.starting}
-            detail={strings.onboarding.startingDetail(props.startingCount)}
+            detail={strings.onboarding.startingDetail}
             selected={props.preset === 'starting'}
             accent={palette.accent}
             onPress={() => props.onSelectPreset('starting')}
           />
           <ChoiceRow
             title={strings.onboarding.essentials}
-            detail={strings.onboarding.essentialsDetail(props.essentialCount)}
+            detail={strings.onboarding.essentialsDetail}
             selected={props.preset === 'essentials'}
             accent={palette.accent}
             onPress={() => props.onSelectPreset('essentials')}
           />
           <ChoiceRow
             title={strings.onboarding.everything}
-            detail={strings.onboarding.everythingDetail(props.itemCount)}
+            detail={strings.onboarding.everythingDetail}
             selected={props.preset === 'everything'}
             accent={palette.accent}
             onPress={() => props.onSelectPreset('everything')}
           />
-          <View className="gap-2 pt-2">
-            <Text
-              accessibilityRole="header"
-              aria-level={2}
-              className="font-semibold text-xs uppercase tracking-wide"
-              style={{ color: colors.secondaryLabel }}>
-              {strings.onboarding.included}
-            </Text>
-            {preview.map((title) => (
-              <View key={title} className="flex-row items-center gap-3">
-                <View
-                  className="rounded-full"
-                  style={{ backgroundColor: palette.accent, width: 5, height: 5 }}
-                />
-                <Text className="flex-1 text-sm" style={{ color: colors.label }}>
-                  {title}
-                </Text>
-              </View>
-            ))}
-            {rest > 0 ? (
-              <Text className="ps-8 text-sm" style={{ color: colors.secondaryLabel }}>
-                {strings.onboarding.andMore(rest)}
-              </Text>
-            ) : null}
-          </View>
         </>
       )
-    }
 
     default:
       return assertNever(step)

@@ -43,11 +43,11 @@ export function EntryCard({
   const card = (state: WebPressableState): ReactElement => (
     <Surface
       interactive
+      ring={hero ? colors.accent : colors.rule}
+      ringWidth={1}
       style={[
         {
           borderRadius: hero ? 24 : 16,
-          borderWidth: 1,
-          borderColor: hero ? colors.accent : colors.rule,
           padding,
           paddingStart: entry.mark ? CIRCLE_ROOM : padding + 4,
           opacity: state.pressed ? 0.85 : 1,

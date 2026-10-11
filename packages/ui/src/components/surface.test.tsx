@@ -35,6 +35,20 @@ describe('Surface (web)', () => {
   })
 })
 
+describe('Surface (web) ring', () => {
+  it('draws the ring beside the veil and reserves its space either way', () => {
+    renderScreen(
+      <Surface ring="transparent" style={{ borderRadius: 16 }}>
+        <Text>Inside</Text>
+      </Surface>,
+    )
+    const ring = screen.getByTestId('surface-ring')
+    expect(ring.style.borderColor).toBe('rgba(0, 0, 0, 0.00)')
+    expect(ring.style.borderWidth).toBe('2px')
+    expect(ring).not.toHaveTextContent('Inside')
+  })
+})
+
 describe('webInteractiveStyle', () => {
   function styleFor(state: {
     pressed: boolean
@@ -106,6 +120,23 @@ describe('Surface (native)', () => {
     )
     await settle()
     expect(screen.getByTestId('glass')).toHaveTextContent('In')
+  })
+
+  it('draws a ring beside the glass, never as its border', async () => {
+    const Native = await load()
+    process.env.EXPO_OS = 'ios'
+    glassAvailable = true
+    renderScreen(
+      <Native interactive ring="#ff0000" style={{ borderRadius: 20 }}>
+        <Text>In</Text>
+      </Native>,
+    )
+    await settle()
+    const ring = screen.getByTestId('surface-ring')
+    expect(ring.style.borderColor).toBe('rgba(255, 0, 0, 1.00)')
+    expect(ring.style.borderRadius).toBe('20px')
+    expect(screen.getByTestId('glass')).not.toContainElement(ring)
+    expect(ring.parentElement).toContainElement(screen.getByTestId('glass'))
   })
 
   it('is a system material blur on older iOS', async () => {

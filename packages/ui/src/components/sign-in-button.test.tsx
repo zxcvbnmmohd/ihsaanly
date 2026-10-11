@@ -41,6 +41,17 @@ describe.each(variants)('SignInButton (%s)', (_name, load) => {
     },
   )
 
+  it.each(['apple', 'google'] as const)(
+    'is a full pill at the height it is given (%s)',
+    async (provider) => {
+      const Button = await load()
+      renderScreen(<Button provider={provider} onPress={() => {}} height={48} />)
+      const button = screen.getByRole('button')
+      expect(button.style.height).toBe('48px')
+      expect(button.style.borderRadius).toBe('24px')
+    },
+  )
+
   it('is localised', async () => {
     const Button = await load()
     const { strings } = renderScreen(<Button provider="google" onPress={() => {}} />, {
@@ -49,5 +60,16 @@ describe.each(variants)('SignInButton (%s)', (_name, load) => {
     expect(
       screen.getByRole('button', { name: strings.account.signInWithGoogle }),
     ).toBeInTheDocument()
+  })
+})
+
+describe('SignInButton (native only)', () => {
+  it("draws Google's logo beside the title, 48 tall by default", async () => {
+    const Native = await variants[1][1]()
+    const { strings } = renderScreen(<Native provider="google" onPress={() => {}} />)
+    const button = screen.getByRole('button', { name: strings.account.signInWithGoogle })
+    expect(button.style.height).toBe('48px')
+    expect(button.style.borderRadius).toBe('24px')
+    expect(button.querySelector('img')).not.toBeNull()
   })
 })

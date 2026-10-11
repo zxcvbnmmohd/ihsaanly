@@ -7,6 +7,8 @@ export interface SignInButtonProps {
   provider: SignInProvider
   onPress: () => void
   disabled?: boolean
+  /** The button's height in pixels; the corners are always a full pill. Defaults to 40. */
+  height?: number
 }
 
 /**
@@ -91,6 +93,7 @@ export function SignInButton({
   provider,
   onPress,
   disabled = false,
+  height = HEIGHT,
 }: SignInButtonProps): ReactElement {
   const { strings, scheme } = useUi()
   const apple = provider === 'apple'
@@ -103,10 +106,10 @@ export function SignInButton({
     justifyContent: 'center',
     gap: apple ? 4 : 10,
     width: '100%',
-    height: HEIGHT,
+    height,
     paddingBlock: 0,
     paddingInline: 12,
-    borderRadius: HEIGHT / 2,
+    borderRadius: height / 2,
     border: `1px solid ${colors.stroke}`,
     backgroundColor: colors.fill,
     color: colors.text,

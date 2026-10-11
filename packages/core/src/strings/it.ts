@@ -447,6 +447,20 @@ export const it: Strings = {
     dark: 'Scuro',
     note: 'I colori vengono comunque dal sistema, quindi le sue impostazioni di contrasto valgono in ogni caso.',
   },
+  startingPoint: {
+    title: 'Punto di partenza',
+    why: 'Scegli da dove parte la tua giornata. Aggiungi o togli qualsiasi cosa nella Biblioteca quando vuoi. La tua cronologia resta com’è.',
+    startingDetail: 'Per chi è all’inizio.',
+    essentialsDetail: 'Per chi vuole qualcosa in più.',
+    everythingDetail: 'Per chi vuole tutto.',
+    custom: 'Scelta tua',
+    customNote: 'Hai scelto tu gli elementi nella Biblioteca. Sceglierne uno qui li sostituisce.',
+    confirmTitle: 'Sostituire i tuoi elementi?',
+    confirmBody:
+      'Gli elementi scelti nella Biblioteca vengono sostituiti da questo punto di partenza. La tua cronologia resta.',
+    confirm: 'Sostituisci',
+    cancel: 'Annulla',
+  },
   moonSighting: {
     title: 'Avvistamento della luna',
     explanation:

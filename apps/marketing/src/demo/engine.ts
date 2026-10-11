@@ -369,6 +369,7 @@ export function buildMore(
     language,
     theme: 'system',
     qadaOwed: 0,
+    startingPoint: 'essentials',
   })
 }
 

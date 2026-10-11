@@ -1,11 +1,11 @@
 import type { ReactElement, ReactNode } from 'react'
-import { type ColorValue, StyleSheet, View, type ViewProps, type ViewStyle } from 'react-native'
+import { type ColorValue, StyleSheet, View, type ViewProps } from 'react-native'
 
 /** The selection ring's default width, reserved whether or not the ring is showing. */
 export const RING_WIDTH = 2
 
 /** The space a ringed surface keeps for its ring, so selecting it never shifts its content. */
-export function ringSpace(width = RING_WIDTH): ViewStyle {
+export function ringSpace(width = RING_WIDTH): { borderWidth: number; borderColor: string } {
   return { borderWidth: width, borderColor: 'transparent' }
 }
 

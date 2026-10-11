@@ -87,11 +87,13 @@ test('device A signs in and uploads its marks; device B restores them', async ({
   expect(String(place.longitude).split('.')[1]?.length ?? 0).toBeLessThanOrEqual(2)
   expect(a.errors).toEqual([])
 
-  // Device B: welcome → "Already use Ihsaanly?" → same account → Today, no setup.
+  // Device B: welcome → "Already using Ihsaanly? Sign in" → same account → Today, no setup.
   const b = await device()
   await b.page.goto('/')
   await expect(b.page).toHaveURL(/\/onboarding\/welcome$/)
-  await b.page.getByRole('button', { name: en.onboarding.restore }).click()
+  await b.page
+    .getByRole('button', { name: `${en.onboarding.restorePrompt} ${en.onboarding.restoreAction}` })
+    .click()
   await expect(b.page).toHaveURL(/\/account\?from=onboarding$/)
   await expect(b.page.getByText(en.account.restore.intro)).toBeVisible()
   await signIn(b.page, A)

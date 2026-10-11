@@ -1,10 +1,15 @@
 import { describe, expect, it, mock } from 'bun:test'
 import { SUPPORTED_LANGUAGES } from '@ihsaanly/core/i18n/locale'
 import type { Place } from '@ihsaanly/core/location/place'
-import { screen } from '@testing-library/react'
-import { named, renderScreen } from '../../test/render'
+import type { Strings } from '@ihsaanly/core/strings/en'
+import { screen, within } from '@testing-library/react'
+import { fireLayout, named, renderScreen } from '../../test/render'
+import { THEME_PREFERENCES } from '../types'
 import { onboardingFixture } from './fixtures'
 import { OnboardingScreen, type OnboardingScreenProps } from './onboarding'
+
+const restoreName = (strings: Strings): string =>
+  `${strings.onboarding.restorePrompt} ${strings.onboarding.restoreAction}`
 
 const welcome = { ...onboardingFixture, step: 'welcome', stepIndex: 0 } as const
 
@@ -42,23 +47,36 @@ function at(step: Step, change: Partial<OnboardingScreenProps> = {}): Onboarding
 const toronto = onboardingFixture.results[0] as Place
 
 describe('OnboardingScreen, welcome step options', () => {
-  it('offers every language and theme, reporting the choice', async () => {
+  it('offers every language and theme in a dropdown each, reporting the choice', async () => {
     const onSelectLanguage = mock((_language: string) => {})
     const onSelectTheme = mock((_theme: string) => {})
     const { user, strings } = renderScreen(
       <OnboardingScreen
-        {...at('welcome')}
+        {...at('welcome', { theme: 'light' })}
         onSelectLanguage={onSelectLanguage}
         onSelectTheme={onSelectTheme}
       />,
     )
-    for (const language of SUPPORTED_LANGUAGES) {
-      expect(
-        screen.getByRole('button', { name: strings.language.names[language] }),
-      ).toBeInTheDocument()
-    }
-    await user.click(screen.getByRole('button', { name: strings.language.names.fr }))
-    await user.click(screen.getByRole('button', { name: strings.appearance.dark }))
+    const language = screen.getByRole('combobox', { name: strings.onboarding.language })
+    const theme = screen.getByRole('combobox', { name: strings.onboarding.appearance })
+    expect(language).toHaveValue('en')
+    expect(theme).toHaveValue('light')
+    expect(
+      screen.getByRole('option', { name: strings.language.names.en, selected: true }),
+    ).toBeInTheDocument()
+    expect(
+      within(language)
+        .getAllByRole('option')
+        .map((option) => option.textContent),
+    ).toEqual(SUPPORTED_LANGUAGES.map((option) => strings.language.names[option]))
+    expect(
+      within(theme)
+        .getAllByRole('option')
+        .map((option) => option.textContent),
+    ).toEqual(THEME_PREFERENCES.map((option) => strings.appearance[option]))
+
+    await user.selectOptions(language, 'fr')
+    await user.selectOptions(theme, 'dark')
     expect(onSelectLanguage).toHaveBeenCalledWith('fr')
     expect(onSelectTheme).toHaveBeenCalledWith('dark')
     expect(screen.queryByText(strings.language.restart)).toBeNull()
@@ -69,36 +87,59 @@ describe('OnboardingScreen, welcome step options', () => {
     expect(screen.getByText(strings.language.restart)).toBeInTheDocument()
   })
 
-  it('skips the intro and restores an account when the build offers it', async () => {
+  it('skips the intro and restores an account from the top bar when the build offers it', async () => {
     const onSkipIntro = mock(() => {})
     const onRestore = mock(() => {})
     const { user, strings } = renderScreen(
       <OnboardingScreen {...at('welcome')} onSkipIntro={onSkipIntro} onRestore={onRestore} />,
     )
-    await user.click(screen.getByRole('button', { name: strings.onboarding.skipIntro }))
-    await user.click(screen.getByRole('button', { name: strings.onboarding.restore }))
+    const restore = screen.getByRole('button', { name: restoreName(strings) })
+    // In the top bar, before Skip, and not in the footer under Continue.
+    const skip = screen.getByRole('button', { name: strings.onboarding.skipIntro })
+    expect(restore.parentElement).toBe(skip.parentElement)
+    expect(restore.compareDocumentPosition(skip) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    const proceed = screen.getByRole('button', { name: strings.onboarding.continue })
+    expect(proceed.parentElement?.contains(restore)).toBe(false)
+    expect(within(restore).getByText(strings.onboarding.restoreAction)).toBeInTheDocument()
+
+    await user.click(skip)
+    await user.click(restore)
     expect(onSkipIntro).toHaveBeenCalledTimes(1)
     expect(onRestore).toHaveBeenCalledTimes(1)
   })
 
-  it('hides restore in a local-only build and on later steps', () => {
+  it('hides restore in a local-only build, and gives its place to Back on later steps', () => {
     const { strings, unmount } = renderScreen(<OnboardingScreen {...at('welcome')} />)
-    expect(screen.queryByRole('button', { name: strings.onboarding.restore })).toBeNull()
+    expect(screen.queryByRole('button', { name: restoreName(strings) })).toBeNull()
     unmount()
     renderScreen(<OnboardingScreen {...at('how')} onRestore={() => {}} />)
-    expect(screen.queryByRole('button', { name: strings.onboarding.restore })).toBeNull()
+    expect(screen.queryByRole('button', { name: restoreName(strings) })).toBeNull()
+    expect(screen.getByRole('button', { name: strings.onboarding.back })).toBeInTheDocument()
   })
 
-  it('links the privacy policy on the first step only, when the host offers it', async () => {
-    const onOpenPrivacy = mock(() => {})
-    const { user, strings, unmount } = renderScreen(
-      <OnboardingScreen {...at('welcome')} onOpenPrivacy={onOpenPrivacy} />,
-    )
-    await user.click(screen.getByRole('link', { name: strings.about.privacyPolicy }))
-    expect(onOpenPrivacy).toHaveBeenCalledTimes(1)
-    unmount()
-    renderScreen(<OnboardingScreen {...at('how')} onOpenPrivacy={onOpenPrivacy} />)
-    expect(screen.queryByRole('link', { name: strings.about.privacyPolicy })).toBeNull()
+  it('has no privacy policy link; that lives in About', () => {
+    const { strings } = renderScreen(<OnboardingScreen {...at('welcome')} onRestore={() => {}} />)
+    expect(screen.queryByRole('link')).toBeNull()
+    expect(screen.queryByText(strings.about.privacyPolicy)).toBeNull()
+  })
+
+  it('fits the art to the height left over, so a small phone does not scroll', () => {
+    renderScreen(<OnboardingScreen {...at('welcome')} />)
+    const slot = screen.getByTestId('welcome-art')
+    // The centring frame, then the grid inside it.
+    const width = (): string => {
+      const grid = slot.firstElementChild?.firstElementChild
+      return grid ? getComputedStyle(grid).width : ''
+    }
+    // Nothing until measured, then the space it has, up to the full 228pt.
+    expect(slot.childElementCount).toBe(0)
+    fireLayout(slot, 327, 150)
+    expect(width()).toBe('150px')
+    fireLayout(slot, 327, 600)
+    expect(width()).toBe('228px')
+    // Too small to read as stars: left out rather than squeezed.
+    fireLayout(slot, 327, 40)
+    expect(slot.childElementCount).toBe(0)
   })
 
   it('has no Back on the first step', () => {

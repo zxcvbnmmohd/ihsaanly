@@ -669,7 +669,8 @@ export const so: Strings = {
     allowNotifications: 'Oggolow fariimaha',
     notNow: 'Hadda maya',
     done: 'Bilow',
-    restore: 'Horey ma u isticmaashaa Ihsaanly? Gal si aad xogtaada u soo celiso',
+    restorePrompt: 'Horey ma u isticmaashaa Ihsaanly?',
+    restoreAction: 'Gal',
   },
   location: {
     title: 'Goobta',

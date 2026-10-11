@@ -645,7 +645,8 @@ export const hi: Strings = {
     allowNotifications: 'नोटिफ़िकेशन की इजाज़त दें',
     notNow: 'अभी नहीं',
     done: 'शुरू करें',
-    restore: 'पहले से Ihsaanly इस्तेमाल करते हैं? अपना डेटा वापस लाने के लिए साइन इन करें',
+    restorePrompt: 'पहले से Ihsaanly इस्तेमाल करते हैं?',
+    restoreAction: 'साइन इन करें',
   },
   location: {
     title: 'जगह',

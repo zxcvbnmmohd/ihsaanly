@@ -658,7 +658,8 @@ export const ja: Strings = {
     allowNotifications: '通知を許可',
     notNow: '今はしない',
     done: 'はじめる',
-    restore: 'すでにIhsaanlyをお使いですか？サインインしてデータを復元',
+    restorePrompt: 'すでにIhsaanlyをお使いですか？',
+    restoreAction: 'サインイン',
   },
   location: {
     title: '位置',

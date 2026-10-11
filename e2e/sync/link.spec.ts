@@ -21,7 +21,9 @@ test('signing in with Apple for a Google account links Apple to it', async ({ de
 
   const two = await device()
   await two.page.goto('/')
-  await two.page.getByRole('button', { name: en.onboarding.restore }).click()
+  await two.page
+    .getByRole('button', { name: `${en.onboarding.restorePrompt} ${en.onboarding.restoreAction}` })
+    .click()
   await signIn(two.page, A, 'Apple', { emailVerified: false })
   await expect(two.page.getByText(en.account.linkTitle)).toBeVisible()
   await expect(two.page.getByText(en.account.linkBody('Google', 'Apple'))).toBeVisible()

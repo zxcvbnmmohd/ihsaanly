@@ -634,7 +634,8 @@ export const zh: Strings = {
     allowNotifications: '允许通知',
     notNow: '暂不',
     done: '开始',
-    restore: '已经在用 Ihsaanly？登录以恢复你的数据',
+    restorePrompt: '已经在用 Ihsaanly？',
+    restoreAction: '登录',
   },
   location: {
     title: '位置',

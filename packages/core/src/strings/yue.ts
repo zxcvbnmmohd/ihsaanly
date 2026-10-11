@@ -632,7 +632,8 @@ export const yue: Strings = {
     allowNotifications: '允許通知',
     notNow: '遲啲先',
     done: '開始',
-    restore: '已經用緊 Ihsaanly？登入嚟還原你嘅資料',
+    restorePrompt: '已經用緊 Ihsaanly？',
+    restoreAction: '登入',
   },
   location: {
     title: '位置',

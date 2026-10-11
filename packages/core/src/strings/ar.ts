@@ -662,7 +662,8 @@ export const ar: Strings = {
     allowNotifications: 'السماح بالإشعارات',
     notNow: 'ليس الآن',
     done: 'ابدأ',
-    restore: 'تستخدم Ihsaanly من قبل؟ سجّل الدخول لاستعادة بياناتك',
+    restorePrompt: 'تستخدم Ihsaanly من قبل؟',
+    restoreAction: 'سجّل الدخول',
   },
   location: {
     title: 'الموقع',

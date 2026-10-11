@@ -41,11 +41,21 @@ interface OnboardingArtProps {
   variant: 'welcome' | 'how'
   color: string
   onColor: string
+  /** The welcome grid's width and height, so it can shrink to the space it has. */
+  size?: number
 }
+
+/** The welcome grid at full size: three 64pt stars a row, 6pt around each. */
+const WELCOME_SIZE = 228
 
 const GRID = [0.3, 0.55, 0.3, 0.55, 1, 0.55, 0.3, 0.55, 0.3]
 
-export function OnboardingArt({ variant, color, onColor }: OnboardingArtProps): ReactElement {
+export function OnboardingArt({
+  variant,
+  color,
+  onColor,
+  size = WELCOME_SIZE,
+}: OnboardingArtProps): ReactElement {
   if (variant === 'how') {
     return (
       <View className="items-center justify-center" style={{ width: 208, height: 208 }}>
@@ -67,11 +77,17 @@ export function OnboardingArt({ variant, color, onColor }: OnboardingArtProps): 
     )
   }
 
+  const scale = size / WELCOME_SIZE
   return (
-    <View className="flex-row flex-wrap justify-center" style={{ width: 228 }}>
+    <View className="flex-row flex-wrap justify-center" style={{ width: size }}>
       {GRID.map((opacity, index) => (
-        <View key={index} style={{ padding: 6 }}>
-          <Star size={64} color={color} hollow={index % 2 === 0 && index !== 4} opacity={opacity} />
+        <View key={index} style={{ padding: 6 * scale }}>
+          <Star
+            size={64 * scale}
+            color={color}
+            hollow={index % 2 === 0 && index !== 4}
+            opacity={opacity}
+          />
         </View>
       ))}
     </View>

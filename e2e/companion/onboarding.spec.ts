@@ -12,7 +12,11 @@ test('a first visit lands on the onboarding welcome', async ({ page, errors }) =
   await expect(page).toHaveURL(/\/onboarding\/welcome$/)
   await expect(page.getByText(en.onboarding.welcomeTitle)).toBeVisible()
   // The local-only build has no cloud, so no restore link.
-  await expect(page.getByRole('button', { name: en.onboarding.restore })).toHaveCount(0)
+  await expect(
+    page.getByRole('button', {
+      name: `${en.onboarding.restorePrompt} ${en.onboarding.restoreAction}`,
+    }),
+  ).toHaveCount(0)
   expect(errors).toEqual([])
 })
 
@@ -33,16 +37,11 @@ test('choose a theme, step through with a city, land on Today; a reload keeps it
   await page.goto('/')
   const html = page.locator('html')
 
-  await page.getByRole('button', { name: 'Dark', exact: true }).click()
-  await expect(page.getByRole('button', { name: 'Dark', exact: true })).toHaveAttribute(
-    'aria-pressed',
-    'true',
-  )
+  const theme = page.getByRole('combobox', { name: en.onboarding.appearance })
+  await theme.selectOption('dark')
+  await expect(theme).toHaveValue('dark')
   await expect(html).toHaveAttribute('data-theme', 'dark')
-  await expect(page.getByRole('button', { name: 'English', exact: true })).toHaveAttribute(
-    'aria-pressed',
-    'true',
-  )
+  await expect(page.getByRole('combobox', { name: en.onboarding.language })).toHaveValue('en')
 
   await onboardWithCity(page)
   await expect(page.getByText(/London/).first()).toBeVisible()
@@ -85,7 +84,7 @@ test('Back walks the steps in reverse, keeping what was chosen', async ({ page }
 
 test('Arabic: the whole flow runs right to left', async ({ page, errors }) => {
   await page.goto('/')
-  await page.getByRole('button', { name: en.language.names.ar, exact: true }).click()
+  await page.getByRole('combobox', { name: en.onboarding.language }).selectOption('ar')
   const html = page.locator('html')
   await expect(html).toHaveAttribute('dir', 'rtl')
   await expect(html).toHaveAttribute('lang', 'ar')

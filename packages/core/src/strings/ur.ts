@@ -660,7 +660,8 @@ export const ur: Strings = {
     allowNotifications: 'اطلاعات کی اجازت دیں',
     notNow: 'ابھی نہیں',
     done: 'شروع کریں',
-    restore: 'پہلے سے Ihsaanly استعمال کرتے ہیں؟ اپنا ڈیٹا بحال کرنے کے لیے سائن اِن کریں',
+    restorePrompt: 'پہلے سے Ihsaanly استعمال کرتے ہیں؟',
+    restoreAction: 'سائن اِن کریں',
   },
   location: {
     title: 'مقام',

@@ -1,15 +1,18 @@
 import type { ReactElement, ReactNode } from 'react'
-import { type ColorValue, StyleSheet, View, type ViewProps } from 'react-native'
+import { type ColorValue, StyleSheet, View, type ViewProps, type ViewStyle } from 'react-native'
 
-/** The selection ring's width, reserved whether or not the ring is showing. */
+/** The selection ring's default width, reserved whether or not the ring is showing. */
 export const RING_WIDTH = 2
 
 /** The space a ringed surface keeps for its ring, so selecting it never shifts its content. */
-export const ringSpace = { borderWidth: RING_WIDTH, borderColor: 'transparent' } as const
+export function ringSpace(width = RING_WIDTH): ViewStyle {
+  return { borderWidth: width, borderColor: 'transparent' }
+}
 
 interface RingedProps {
   children: ReactNode
   ring: ColorValue
+  width?: number
   /** The surface's own style, read only for its corner radius. */
   style?: ViewProps['style']
 }
@@ -20,7 +23,7 @@ interface RingedProps {
  * UIVisualEffectView that covers React Native's border layer, so a border on
  * the glass never shows.
  */
-export function Ringed({ children, ring, style }: RingedProps): ReactElement {
+export function Ringed({ children, ring, width = RING_WIDTH, style }: RingedProps): ReactElement {
   const borderRadius = StyleSheet.flatten(style)?.borderRadius
 
   return (
@@ -33,7 +36,7 @@ export function Ringed({ children, ring, style }: RingedProps): ReactElement {
           {
             borderRadius,
             borderCurve: 'continuous',
-            borderWidth: RING_WIDTH,
+            borderWidth: width,
             borderColor: ring,
             pointerEvents: 'none',
           },

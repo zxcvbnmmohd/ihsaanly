@@ -38,6 +38,8 @@ interface SurfaceProps {
    * `style` as a border: liquid glass covers its own border.
    */
   ring?: ColorValue
+  /** The ring's width in points; 2 by default. */
+  ringWidth?: number
 }
 
 export function Surface({
@@ -45,16 +47,19 @@ export function Surface({
   style,
   interactive = false,
   ring,
+  ringWidth,
 }: SurfaceProps): ReactElement {
   const material = (
-    <Material style={ring === undefined ? style : [style, ringSpace]} interactive={interactive}>
+    <Material
+      style={ring === undefined ? style : [style, ringSpace(ringWidth)]}
+      interactive={interactive}>
       {children}
     </Material>
   )
   return ring === undefined ? (
     material
   ) : (
-    <Ringed ring={ring} style={style}>
+    <Ringed ring={ring} width={ringWidth} style={style}>
       {material}
     </Ringed>
   )

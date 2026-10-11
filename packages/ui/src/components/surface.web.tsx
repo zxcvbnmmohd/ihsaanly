@@ -36,6 +36,7 @@ interface SurfaceProps {
   interactive?: boolean
   /** A selection ring around the surface; see the native `Surface`. */
   ring?: ColorValue
+  ringWidth?: number
 }
 
 /**
@@ -46,15 +47,17 @@ interface SurfaceProps {
  * stays a prop only so a `<Surface interactive>` call site reads the same
  * on every platform.
  */
-export function Surface({ children, style, ring }: SurfaceProps): ReactElement {
+export function Surface({ children, style, ring, ringWidth }: SurfaceProps): ReactElement {
   const colors = useColors()
 
   if (ring === undefined) {
     return <View style={[{ backgroundColor: colors.surface }, style]}>{children}</View>
   }
   return (
-    <Ringed ring={ring} style={style}>
-      <View style={[{ backgroundColor: colors.surface }, style, ringSpace]}>{children}</View>
+    <Ringed ring={ring} width={ringWidth} style={style}>
+      <View style={[{ backgroundColor: colors.surface }, style, ringSpace(ringWidth)]}>
+        {children}
+      </View>
     </Ringed>
   )
 }

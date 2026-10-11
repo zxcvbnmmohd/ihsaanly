@@ -392,10 +392,8 @@ export const yue: Strings = {
   },
   language: {
     title: '語言',
-    restart: '阿拉伯文由右向左閱讀。轉去或者轉走阿拉伯文，app 會重新啟動，或者請你重新打開。',
+    restart: '阿拉伯文由右向左閱讀。轉去或者轉走阿拉伯文，app 會重新啟動。',
     incomplete: '英文係原文。其他所有語言都係草稿，仲等緊合資格嘅母語人士審閱。',
-    reopenTitle: '重新打開 Ihsaanly',
-    reopenBody: '呢種語言由右向左閱讀。請關閉 Ihsaanly 再打開，改動先會完成。',
     names: {
       en: 'English',
       ar: 'العربية',

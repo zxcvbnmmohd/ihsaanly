@@ -418,12 +418,9 @@ export const so: Strings = {
   language: {
     title: 'Luqadda',
     restart:
-      'Carabigu wuxuu ka akhrismaa midig ilaa bidix. U beddelidda ama ka beddelidda waxay dib u bilaabaysaa abka, ama waxay kaa codsanaysaa inaad dib u furto.',
+      'Carabigu wuxuu ka akhrismaa midig ilaa bidix. U beddelidda ama ka beddelidda waxay dib u bilaabaysaa abka.',
     incomplete:
       'Ingiriisigu waa asalka. Luqad kasta oo kale waa qabyo weli sugaysa dib u eegis qof si fiican u yaqaan.',
-    reopenTitle: 'Dib u fur Ihsaanly',
-    reopenBody:
-      'Luqaddan waxay ka akhrismaa midig ilaa bidix. Xir Ihsaanly oo mar kale fur si isbeddelku u dhammaado.',
     names: {
       en: 'English',
       ar: 'العربية',

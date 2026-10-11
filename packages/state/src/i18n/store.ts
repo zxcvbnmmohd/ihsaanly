@@ -35,12 +35,10 @@ function chooseLocale(locale: SupportedLocale): void {
 
 /**
  * The user picks a language; the device decides which region's English.
- * Returns true when the change needs the app reopened by hand — see
- * `applyDirection`, which decides that and, on platforms that can, reloads
- * for it.
+ * A change of layout direction reloads the app (see `applyDirection`).
  */
-export function chooseLanguage(language: SupportedLanguage): boolean {
+export function chooseLanguage(language: SupportedLanguage): void {
   const locale = localeForLanguage(language, deviceLocaleTags())
   chooseLocale(locale)
-  return applyDirection(locale)
+  applyDirection(locale)
 }

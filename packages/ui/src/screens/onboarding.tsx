@@ -4,7 +4,7 @@ import {
   SUPPORTED_LANGUAGES,
   type SupportedLanguage,
 } from '@ihsaanly/core/i18n/locale'
-import type { Place } from '@ihsaanly/core/location/place'
+import { cityOf, type Place } from '@ihsaanly/core/location/place'
 import type { NotificationPreferences } from '@ihsaanly/core/plan/notification-preferences'
 import { type Palette, palettes } from '@ihsaanly/tailwind/tokens'
 import { LinearGradient } from 'expo-linear-gradient'
@@ -165,11 +165,6 @@ function Dots({ count, index }: DotsProps): ReactElement {
       ))}
     </View>
   )
-}
-
-/** City labels arrive as "Toronto, Ontario, Canada"; the first part is the city. */
-function cityOf(label: string): string {
-  return label.split(',')[0]?.trim() ?? label
 }
 
 function regionOf(label: string): string | null {

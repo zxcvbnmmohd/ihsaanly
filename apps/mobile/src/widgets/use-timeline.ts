@@ -6,9 +6,17 @@ import { useLocale } from '@ihsaanly/state/i18n/store'
 import { useQada } from '@ihsaanly/state/prayer/marks'
 import { useStrings } from '@ihsaanly/state/strings'
 import { useEffect } from 'react'
+import { AppState } from 'react-native'
 
+import { takeWidgetTaps, useWidgetTapsThrough } from './drain'
 import { widgetTimeline } from './model'
 import { publishTimeline } from './publish'
+import { onWidgetTap } from './taps'
+
+/** Never throws: a widget tap that cannot be read now is read on the next launch. */
+function take(): void {
+  void takeWidgetTaps().catch(() => {})
+}
 
 /**
  * Republishes the widgets' day whenever something they show could have
@@ -25,11 +33,29 @@ export function useWidgetTimeline(
   const hijriOffset = useHijriOffset()
   const qada = useQada()
   const fastsOwed = useFastsOutstanding()
+  const tapsThrough = useWidgetTapsThrough()
+
+  // Done taps on the Right now widget wait in its timeline until the app runs:
+  // taken in on launch, on every return to the foreground, and on a press
+  // heard while the app is open. Each one moves the cursor, which republishes.
+  useEffect(() => {
+    take()
+    const foreground = AppState.addEventListener('change', (state) => {
+      if (state === 'active') take()
+    })
+    const unsubscribe = onWidgetTap(take)
+    return (): void => {
+      foreground.remove()
+      unsubscribe()
+    }
+  }, [])
 
   const key = JSON.stringify([
     planned?.today.rightNow?.itemId ?? null,
     planned?.today.window ?? null,
     signals ? Object.keys(signals.prayedToday) : null,
+    signals ? Object.keys(signals.completedToday) : null,
+    tapsThrough,
     signals?.userState.trackingPaused ?? null,
     qada,
     fastsOwed,

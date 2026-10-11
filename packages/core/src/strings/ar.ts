@@ -701,6 +701,13 @@ export const ar: Strings = {
     duaOfTheDay: 'دعاء اليوم',
     nothingNow: 'لا شيء مطلوب منك الآن',
     openApp: 'افتح إحسانلي لتحديث هذا',
+    closingSoon: 'ينتهي الوقت قريبًا',
+    openAboutAnHour: 'يبقى الوقت نحو ساعة',
+    openAboutHours: (hours: number): string =>
+      `يبقى الوقت نحو ${count(hours, 'ساعة', 'ساعتين', 'ساعات', 'ساعة')}`,
+    moreNow: (n: number): string => `+${n} أيضًا الآن`,
+    markDone: 'ضع علامة «تم»',
+    markedDone: 'تم التسجيل',
   },
   web: {
     remindersUnavailable:

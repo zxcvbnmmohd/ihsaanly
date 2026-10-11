@@ -41,8 +41,24 @@ const EXPECTED: Record<Name, Record<Shape, Drawn>> = {
   RightNowWidget: {
     square: { texts: ['Morning', 'Morning adhkar'], uris: ['ihsaanly://item/morning-adhkar'] },
     strip: { texts: ['Morning', 'Morning adhkar'], uris: ['ihsaanly://item/morning-adhkar'] },
-    medium: { texts: ['Morning', 'Morning adhkar'], uris: ['ihsaanly://item/morning-adhkar'] },
-    large: { texts: ['Morning', 'Morning adhkar'], uris: ['ihsaanly://item/morning-adhkar'] },
+    medium: {
+      texts: [
+        'Morning',
+        'Morning adhkar',
+        'Open for about 3 more hours',
+        '12 Rabi’ ath-Thani 1448',
+      ],
+      uris: ['ihsaanly://item/morning-adhkar'],
+    },
+    large: {
+      texts: [
+        'Morning',
+        'Morning adhkar',
+        'Open for about 3 more hours',
+        '12 Rabi’ ath-Thani 1448',
+      ],
+      uris: ['ihsaanly://item/morning-adhkar'],
+    },
   },
   NextPrayerWidget: {
     square: { texts: ['Up next', 'Dhuhr', 'In about 3 hours'], uris: [] },
@@ -345,7 +361,8 @@ describe('Android widgets with nothing to show', () => {
 
   it('RightNowWidget keeps the window caption and says nothing is asked', () => {
     const root = light('RightNowWidget', { ...none, window: null }, 'large')
-    expect(texts(root)).toEqual([none.labels.rightNow, nothing])
+    // How long the moment stays open is left out when it asks nothing.
+    expect(texts(root)).toEqual([none.labels.rightNow, nothing, none.date.hijri])
     expect(clicks(root)).toEqual([{ action: 'OPEN_APP', uri: null }])
   })
 
@@ -415,8 +432,9 @@ describe('Android widgets with nothing to show', () => {
 describe('Android widgets with a full day', () => {
   const links = [link(1, 'In 2 days'), link(2, 'In 3 days'), link(3), link(4), link(5), link(6)]
   const busy = model({
-    rightNow: { title: 'Dhuha', detail: 'Two rak’ah', url: 'ihsaanly://item/dhuha' },
+    rightNow: { id: 'dhuha', title: 'Dhuha', detail: 'Two rak’ah', url: 'ihsaanly://item/dhuha' },
     alsoNow: links.slice(0, 5),
+    moreNow: '+5 more now',
     allDay: links,
     comingUp: links,
     quickDuas: links.slice(0, 5),
@@ -443,17 +461,22 @@ describe('Android widgets with a full day', () => {
       'Morning',
       'Dhuha',
       'Two rak’ah',
+      'Open for about 3 more hours',
+      '+5 more now',
+      '12 Rabi’ ath-Thani 1448',
     ])
     const large = light('RightNowWidget', busy, 'large')
     expect(texts(large)).toEqual([
       'Morning',
       'Dhuha',
       'Two rak’ah',
+      'Open for about 3 more hours',
       'Item 1',
       'Item 2',
       'Item 3',
       'Item 4',
       'Item 5',
+      '12 Rabi’ ath-Thani 1448',
     ])
     expect(uris(large)).toEqual([
       'ihsaanly://item/dhuha',

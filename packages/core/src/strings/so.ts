@@ -719,6 +719,13 @@ export const so: Strings = {
     duaOfTheDay: 'Ducada maanta',
     nothingNow: 'Hadda waxba lagaa rabo ma jiraan',
     openApp: 'Fur Ihsaanly si aad u cusboonaysiiso',
+    closingSoon: 'Dhawaan ayuu dhammaanayaa',
+    openAboutAnHour: 'Qiyaastii saacad kale ayaa haray',
+    openAboutHours: (hours: number): string =>
+      `Qiyaastii ${count(hours, 'saacad', 'saacadood')} kale ayaa haray`,
+    moreNow: (n: number): string => `+${n} kale hadda`,
+    markDone: 'Calaamadi inay dhammaatay',
+    markedDone: 'Waa la calaamadeeyey',
   },
   web: {
     remindersUnavailable:

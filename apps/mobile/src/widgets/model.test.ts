@@ -8,9 +8,10 @@ import type { Signals } from '@ihsaanly/core/plan/signals'
 import { DEFAULT_USER_STATE } from '@ihsaanly/core/plan/user-state'
 import { DEFAULT_CALCULATION_PREFERENCES } from '@ihsaanly/core/prayer/calculation'
 import { prayerTimesAcross } from '@ihsaanly/core/prayer/times'
+import { buildWindows } from '@ihsaanly/core/prayer/windows'
 import { en } from '@ihsaanly/core/strings/en'
 
-import { type WidgetInput, widgetTimeline } from './model'
+import { distanceLabel, remainingLabel, type WidgetInput, widgetTimeline } from './model'
 
 const london: Place = {
   label: 'London',
@@ -158,5 +159,85 @@ describe('the widget timeline across a Friday', () => {
       expect(entry.prayers.map((prayer) => prayer.name)).toContain('Dhuhr')
     })
     expect(timeline.some((entry) => entry.window === 'After Dhuhr')).toBe(true)
+  })
+})
+
+describe('how long the moment stays open', () => {
+  const timeline = widgetTimeline(input())
+  const live = timeline.filter((entry) => !entry.stale)
+  const windows = buildWindows(input().signals.prayerTimes)
+
+  it('says it in rough words on every entry, never a clock time', () => {
+    expect(live[0]?.remaining).toBe('Open for about 3 more hours')
+    live.forEach((entry) => {
+      expect(entry.remaining).toBeString()
+      expect(entry.remaining).not.toMatch(/\d{1,2}:\d{2}/)
+    })
+    expect(live.some((entry) => entry.remaining === 'Open for about another hour')).toBe(true)
+    expect(live.some((entry) => entry.remaining === 'Closing soon')).toBe(true)
+  })
+
+  it('names when the moment opened, so a widget can tell this occasion from the last', () => {
+    const morning = windows.find((window) => window.startsAt <= now && now < window.endsAt)
+    expect(live[0]?.openedAt).toBe(morning?.startsAt.getTime() ?? -1)
+  })
+
+  it('never goes stale within an entry, nor does the distance to the next prayer', () => {
+    live.forEach((entry, index) => {
+      const following = timeline[index + 1]
+      if (!following) return
+      // The last instant this entry is on screen must still say what it says.
+      const last = new Date(following.at - 1)
+      const window = windows.find(
+        (candidate) => candidate.startsAt <= last && last < candidate.endsAt,
+      )
+      const left = window ? (window.endsAt.getTime() - last.getTime()) / 60_000 : -1
+      expect(remainingLabel(left, en), last.toISOString()).toBe(entry.remaining ?? '')
+      const next = windows.find(
+        (candidate) => candidate.startsAt > last && candidate.name !== 'sunrise',
+      )
+      if (!next || !entry.next) return
+      const until = (next.startsAt.getTime() - last.getTime()) / 60_000
+      expect(distanceLabel(until, en), last.toISOString()).toBe(entry.next.distance)
+    })
+  })
+
+  it('turns each phrase at its boundary, not before', () => {
+    expect(remainingLabel(46, en)).toBe('Open for about another hour')
+    expect(remainingLabel(45, en)).toBe('Closing soon')
+    expect(remainingLabel(91, en)).toBe('Open for about 2 more hours')
+    expect(remainingLabel(90, en)).toBe('Open for about another hour')
+    expect(remainingLabel(150, en)).toBe('Open for about 2 more hours')
+    expect(remainingLabel(151, en)).toBe('Open for about 3 more hours')
+    expect(distanceLabel(45, en)).toBe('Soon')
+    expect(distanceLabel(60, en)).toBe('In about an hour')
+    expect(distanceLabel(200, en)).toBe('In about 3 hours')
+  })
+})
+
+describe('what else is open, and the done button', () => {
+  it('counts the others beside the headline and names the headline by id', () => {
+    // Dhuhr marked a few minutes ago: the after-prayer items join the window's.
+    const at = new Date('2026-09-23T12:20:00Z')
+    const [first] = widgetTimeline(
+      input({ prayedToday: { fajr: now, dhuhr: new Date('2026-09-23T12:10:00Z') } }, at),
+    )
+    expect(first?.rightNow?.id).toBeString()
+    expect(first?.rightNow?.url).toBe(`ihsaanly://item/${first?.rightNow?.id}`)
+    expect(first?.alsoNow.length).toBeGreaterThan(0)
+    expect(first?.moreNow).toBe(`+${first?.alsoNow.length} more now`)
+  })
+
+  it('says nothing more when the headline is all there is', () => {
+    const [first] = widgetTimeline(input())
+    expect(first?.alsoNow).toEqual([])
+    expect(first?.moreNow).toBeNull()
+  })
+
+  it('starts every entry with no taps and labels the button', () => {
+    const timeline = widgetTimeline(input())
+    expect(timeline.every((entry) => entry.taps.length === 0)).toBe(true)
+    expect(timeline[0]?.labels.markDone).toBe('Mark done')
+    expect(timeline[0]?.labels.markedDone).toBe('Marked done')
   })
 })

@@ -692,6 +692,12 @@ export const hi: Strings = {
     duaOfTheDay: 'आज की दुआ',
     nothingNow: 'अभी आपसे कुछ नहीं माँगा गया',
     openApp: 'इसे ताज़ा करने के लिए Ihsaanly खोलें',
+    closingSoon: 'जल्द ख़त्म होगा',
+    openAboutAnHour: 'लगभग एक घंटा और बाक़ी',
+    openAboutHours: (hours: number): string => `लगभग ${hours} घंटे और बाक़ी`,
+    moreNow: (n: number): string => `अभी +${n} और`,
+    markDone: 'पूरा चिह्नित करें',
+    markedDone: 'पूरा चिह्नित',
   },
   web: {
     remindersUnavailable: 'रिमाइंडर के लिए फ़ोन ऐप चाहिए। पेज बंद होने पर ब्राउज़र याद नहीं दिला सकता।',

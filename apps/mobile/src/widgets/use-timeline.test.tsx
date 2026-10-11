@@ -8,7 +8,9 @@ import { DEFAULT_USER_STATE } from '@ihsaanly/core/plan/user-state'
 import { DEFAULT_CALCULATION_PREFERENCES } from '@ihsaanly/core/prayer/calculation'
 import { prayerTimesAcross } from '@ihsaanly/core/prayer/times'
 import { renderHook } from '@testing-library/react'
+import { AppState } from 'react-native'
 
+import * as drain from './drain'
 import * as publish from './publish'
 import { useWidgetTimeline } from './use-timeline'
 
@@ -51,11 +53,27 @@ function planned(itemId: string | null): Plan {
 }
 
 let published: ReturnType<typeof spyOn>
+let taken: ReturnType<typeof spyOn>
+let appState: ReturnType<typeof spyOn>
+let listeners: ((state: string) => void)[] = []
 
 beforeEach(() => {
   published = spyOn(publish, 'publishTimeline').mockResolvedValue()
+  taken = spyOn(drain, 'takeWidgetTaps').mockResolvedValue(0)
+  listeners = []
+  appState = spyOn(AppState, 'addEventListener').mockImplementation(((
+    _type: string,
+    listener: (state: string) => void,
+  ) => {
+    listeners.push(listener)
+    return { remove: () => {} }
+  }) as never)
 })
-afterEach(() => published.mockRestore())
+afterEach(() => {
+  published.mockRestore()
+  taken.mockRestore()
+  appState.mockRestore()
+})
 
 describe('useWidgetTimeline', () => {
   it('publishes nothing until there are signals', () => {
@@ -122,5 +140,30 @@ describe('useWidgetTimeline', () => {
     const broken = signals({ prayerTimes: null as never })
     expect(() => renderHook(() => useWidgetTimeline(broken, planned(null), 'London'))).not.toThrow()
     expect(published).not.toHaveBeenCalled()
+  })
+
+  it('republishes when an item is marked done', () => {
+    const view = renderHook(({ s }) => useWidgetTimeline(s, planned(null), 'London'), {
+      initialProps: { s: signals() },
+    })
+    view.rerender({ s: signals({ completedToday: { 'morning-adhkar': now } }) })
+    expect(published).toHaveBeenCalledTimes(2)
+  })
+
+  it('takes in widget taps on launch and on every return to the foreground', () => {
+    renderHook(() => useWidgetTimeline(signals(), planned(null), 'London'))
+    expect(taken).toHaveBeenCalledTimes(1)
+    listeners.forEach((listener) => listener('background'))
+    expect(taken).toHaveBeenCalledTimes(1)
+    listeners.forEach((listener) => listener('active'))
+    expect(taken).toHaveBeenCalledTimes(2)
+  })
+
+  it('never breaks Today when the widget taps cannot be read', async () => {
+    taken.mockRejectedValue(new Error('no app group'))
+    expect(() =>
+      renderHook(() => useWidgetTimeline(signals(), planned(null), 'London')),
+    ).not.toThrow()
+    await Promise.resolve()
   })
 })

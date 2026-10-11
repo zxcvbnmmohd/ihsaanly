@@ -673,6 +673,12 @@ export const yue: Strings = {
     duaOfTheDay: '今日祈禱詞',
     nothingNow: '而家冇嘢要做',
     openApp: '打開 Ihsaanly 更新',
+    closingSoon: '就快完',
+    openAboutAnHour: '仲有大約一個鐘',
+    openAboutHours: (hours: number): string => `仲有大約 ${hours} 個鐘`,
+    moreNow: (n: number): string => `而家仲有 ${n} 樣`,
+    markDone: '標記完成',
+    markedDone: '已標記完成',
   },
   web: {
     remindersUnavailable: '提醒需要手機App。網頁關咗瀏覽器就冇辦法提醒你。',

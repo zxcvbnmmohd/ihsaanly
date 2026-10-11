@@ -5,7 +5,7 @@ import { prayerName, windowName } from '@ihsaanly/core/plan/jumuah'
 import { plan } from '@ihsaanly/core/plan/plan'
 import type { PlannedItem, Signals } from '@ihsaanly/core/plan/signals'
 import { PRAYERS, type Prayer } from '@ihsaanly/core/prayer/qada'
-import { buildWindows } from '@ihsaanly/core/prayer/windows'
+import { buildWindows, windowAt } from '@ihsaanly/core/prayer/windows'
 import type { Strings } from '@ihsaanly/core/strings/en'
 import { palettes } from '@/theme/palettes'
 
@@ -21,6 +21,21 @@ export interface WidgetLink {
   title: string
   detail: string | null
   url: string
+}
+
+/** The moment's headline item: a link, plus the id a done tap is filed under. */
+export interface WidgetItem extends WidgetLink {
+  id: string
+}
+
+/**
+ * A done tap on the Right now widget, kept in the widget's own timeline (the
+ * App Group) until the app takes it into its log. `at` is the tap's epoch ms,
+ * from which the app files it under the right day, as any mark is.
+ */
+export interface WidgetTap {
+  id: string
+  at: number
 }
 
 export interface WidgetInk {
@@ -56,13 +71,27 @@ export interface WidgetModel {
     openApp: string
     before: string
     after: string
+    markDone: string
+    markedDone: string
   }
   /** "Morning", "After Maghrib"; null before the first prayer is calculable. */
   window: string | null
+  /** "Open for about 2 more hours", "Closing soon": never a clock time. Null outside a window. */
+  remaining: string | null
+  /**
+   * When this moment opened, epoch ms. Never shown: a widget compares a tap
+   * against it, so a tap for an earlier occasion of the same item (the tasbih
+   * after Dhuhr, seen again after Asr) does not read as done.
+   */
+  openedAt: number | null
   /** `hijriDay` is the bare number, for a circle too small for the formatted date. */
   date: { gregorian: string; hijri: string; hijriDay: number; place: string | null }
-  rightNow: WidgetLink | null
+  rightNow: WidgetItem | null
   alsoNow: WidgetLink[]
+  /** "+2 more now": what else is open beside the headline; null when nothing is. */
+  moreNow: string | null
+  /** Done taps the app has not taken in yet. Always empty from the app; the widget appends. */
+  taps: WidgetTap[]
   next: { prayer: string; distance: string; before: WidgetLink[]; after: WidgetLink[] } | null
   /** Empty when tracking is paused. */
   prayers: { name: string; short: string; done: boolean; passed: boolean }[]
@@ -113,11 +142,36 @@ function inkFor(scheme: 'light' | 'dark'): WidgetInk {
   }
 }
 
+type Rough = { kind: 'soon' } | { kind: 'hour' } | { kind: 'hours'; hours: number }
+
+/**
+ * Minutes to a rough distance. Each phrase holds until its boundary is reached
+ * (45 minutes left is already "soon"), so a timeline entry placed exactly on a
+ * boundary shows the phrase that follows it: see `ROUGH_TURNS`.
+ */
+function rough(minutes: number): Rough {
+  if (minutes <= 45) return { kind: 'soon' }
+  if (minutes <= 90) return { kind: 'hour' }
+  return { kind: 'hours', hours: Math.ceil(minutes / 60 - 0.5) }
+}
+
+/** Minutes before a moment at which `rough` turns to its next phrase: 45, 90, 150, 210… */
+const ROUGH_TURNS = [45, 90, ...Array.from({ length: 23 }, (_, index) => (index + 2) * 60 + 30)]
+
 /** A rough distance, never a clock time: the app says how the day feels, not when it ticks. */
 export function distanceLabel(minutes: number, strings: Strings): string {
-  if (minutes < 45) return strings.plan.soon
-  if (minutes < 90) return strings.plan.inAboutAnHour
-  return strings.plan.inAboutHours(Math.round(minutes / 60))
+  const distance = rough(minutes)
+  if (distance.kind === 'soon') return strings.plan.soon
+  if (distance.kind === 'hour') return strings.plan.inAboutAnHour
+  return strings.plan.inAboutHours(distance.hours)
+}
+
+/** How long the moment stays open, in the same rough words. */
+export function remainingLabel(minutes: number, strings: Strings): string {
+  const distance = rough(minutes)
+  if (distance.kind === 'soon') return strings.widgets.closingSoon
+  if (distance.kind === 'hour') return strings.widgets.openAboutAnHour
+  return strings.widgets.openAboutHours(distance.hours)
 }
 
 function whenLabel(planned: PlannedItem, strings: Strings): string | null {
@@ -183,6 +237,10 @@ function modelAt(input: WidgetInput, at: Date): WidgetModel {
   ].filter((part): part is string => part !== null)
 
   const hijri = planned.hijri
+  const current = windowAt(at, windows)
+  const headlineLink = head ? link(head.itemId) : null
+  const headline = head && headlineLink ? { ...headlineLink, id: head.itemId } : null
+  const alsoNow = rest.flatMap((entry) => link(entry.itemId) ?? [])
 
   return {
     at: at.getTime(),
@@ -205,8 +263,14 @@ function modelAt(input: WidgetInput, at: Date): WidgetModel {
       openApp: strings.widgets.openApp,
       before: strings.plan.before,
       after: strings.plan.after,
+      markDone: strings.widgets.markDone,
+      markedDone: strings.widgets.markedDone,
     },
     window: planned.window ? windowName(strings, planned.window, planned.jumuah) : null,
+    remaining: current
+      ? remainingLabel((current.endsAt.getTime() - at.getTime()) / 60_000, strings)
+      : null,
+    openedAt: current?.startsAt.getTime() ?? null,
     date: {
       gregorian: new Intl.DateTimeFormat(input.locale, {
         weekday: 'short',
@@ -218,8 +282,10 @@ function modelAt(input: WidgetInput, at: Date): WidgetModel {
       hijriDay: hijri.day,
       place: input.placeLabel,
     },
-    rightNow: head ? link(head.itemId) : null,
-    alsoNow: rest.flatMap((entry) => link(entry.itemId) ?? []),
+    rightNow: headline,
+    alsoNow,
+    moreNow: headline && alsoNow.length > 0 ? strings.widgets.moreNow(alsoNow.length) : null,
+    taps: [],
     next: planned.next
       ? {
           prayer: prayerName(strings, planned.next.prayer, planned.next.jumuah),
@@ -264,19 +330,42 @@ function modelAt(input: WidgetInput, at: Date): WidgetModel {
 }
 
 /**
+ * The instants at which a rough distance to `target`, counted from within
+ * `from`..`target`, turns to its next phrase.
+ */
+function turnsBefore(target: Date, from: Date | null): number[] {
+  return ROUGH_TURNS.map((minutes) => target.getTime() - minutes * 60_000).filter(
+    (at) => from === null || at > from.getTime(),
+  )
+}
+
+/**
  * Entries every half hour for a day, plus one at each window's start so the
- * headline turns exactly when the window does. The last entry is stale: a
- * widget left a day without the app opening asks to be opened rather than
- * guessing.
+ * headline turns exactly when the window does, plus one wherever a rough
+ * distance turns ("about 2 more hours" to "about an hour", "In about an hour"
+ * to "Soon"), so no entry carries a phrase that has gone stale. The last entry
+ * is stale: a widget left a day without the app opening asks to be opened
+ * rather than guessing.
  */
 export function widgetTimeline(input: WidgetInput): WidgetModel[] {
   const start = input.signals.now.getTime()
   const end = start + HORIZON_MS
-  const boundaries = buildWindows(input.signals.prayerTimes)
-    .map((window) => window.startsAt.getTime())
-    .filter((at) => at > start && at < end)
+  const windows = buildWindows(input.signals.prayerTimes)
+  const prayerWindows = windows.filter((window) => window.name !== 'sunrise')
+  const boundaries = windows.map((window) => window.startsAt.getTime())
+  // How long the moment stays open counts to its window's end…
+  const closing = windows.flatMap((window) => turnsBefore(window.endsAt, window.startsAt))
+  // …and Up next counts to the next prayer, from the prayer before it.
+  const nearing = prayerWindows.flatMap((window, index) =>
+    turnsBefore(window.startsAt, prayerWindows[index - 1]?.startsAt ?? null),
+  )
   const steps = Array.from({ length: HORIZON_MS / STEP_MS }, (_, index) => start + index * STEP_MS)
-  const moments = [...new Set([...steps, ...boundaries])].sort((a, b) => a - b)
+  const moments = [
+    ...new Set([
+      ...steps,
+      ...[...boundaries, ...closing, ...nearing].filter((at) => at > start && at < end),
+    ]),
+  ].sort((a, b) => a - b)
 
   const entries = moments.map((at) => modelAt(input, new Date(at)))
   const last = entries.at(-1)

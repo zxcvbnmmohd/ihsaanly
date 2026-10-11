@@ -700,6 +700,12 @@ export const en = {
     duaOfTheDay: 'Dua of the day',
     nothingNow: 'Nothing asked of you right now',
     openApp: 'Open Ihsaanly to bring this up to date',
+    closingSoon: 'Closing soon',
+    openAboutAnHour: 'Open for about another hour',
+    openAboutHours: (hours: number): string => `Open for about ${hours} more hours`,
+    moreNow: (count: number): string => `+${count} more now`,
+    markDone: 'Mark done',
+    markedDone: 'Marked done',
   },
   web: {
     remindersUnavailable:

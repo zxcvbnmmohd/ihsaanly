@@ -6,8 +6,7 @@
  */
 import { isRightToLeft, type SupportedLocale } from '@ihsaanly/core/i18n/locale'
 
-export function applyDirection(locale: SupportedLocale): boolean {
+export function applyDirection(locale: SupportedLocale): void {
   document.documentElement.lang = locale
   document.documentElement.dir = isRightToLeft(locale) ? 'rtl' : 'ltr'
-  return false
 }

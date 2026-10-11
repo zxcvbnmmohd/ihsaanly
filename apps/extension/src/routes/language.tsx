@@ -10,8 +10,7 @@ export const Route = createFileRoute('/language')({ component: LanguageRoute })
 
 /**
  * The web's `applyDirection` (packages/state/src/i18n/direction.web.ts) sets
- * `<html dir>`/`lang` directly and never needs a reload, unlike native, so
- * there is nothing here to ask the user to reopen for.
+ * `<html dir>`/`lang` directly, so the page turns in place; native reloads.
  */
 function LanguageRoute(): ReactElement {
   const strings = useStrings()

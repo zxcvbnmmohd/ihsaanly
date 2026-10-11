@@ -12,12 +12,12 @@ afterEach(() => {
   delete (globalThis as { document?: unknown }).document
 })
 
-it('sets lang and a right-to-left dir on the page for Arabic, and asks for no reopen', () => {
-  expect(applyDirection('ar')).toBe(false)
+it('sets lang and a right-to-left dir on the page for Arabic', () => {
+  applyDirection('ar')
   expect(root).toEqual({ lang: 'ar', dir: 'rtl' })
 })
 
 it('sets left-to-right for a left-to-right locale', () => {
-  expect(applyDirection('en-GB')).toBe(false)
+  applyDirection('en-GB')
   expect(root).toEqual({ lang: 'en-GB', dir: 'ltr' })
 })

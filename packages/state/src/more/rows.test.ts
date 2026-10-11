@@ -90,6 +90,7 @@ describe('useMoreGroups', () => {
 
     expect(rowAt(result.current, '/location')?.detail).toBe(en.location.notSet)
     expect(rowAt(result.current, '/qada')?.detail).toBe(en.qada.none)
+    expect(rowAt(result.current, '/starting-point')?.detail).toBe(en.onboarding.essentials)
   })
 
   it('follows the stores as they change', () => {

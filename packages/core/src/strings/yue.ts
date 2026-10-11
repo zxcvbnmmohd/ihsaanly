@@ -414,6 +414,19 @@ export const yue: Strings = {
     dark: '深色',
     note: '顏色始終來自系統，所以無論點揀，系統嘅對比度設定都照樣適用。',
   },
+  startingPoint: {
+    title: '起步點',
+    why: '揀你一日由邊度開始。之後隨時都可以喺資料庫加減任何項目。你嘅紀錄唔會變。',
+    startingDetail: '畀啱啱開始嘅人。',
+    essentialsDetail: '畀想多少少嘅人。',
+    everythingDetail: '畀乜都想要嘅人。',
+    custom: '自訂',
+    customNote: '你喺資料庫揀咗自己嘅項目。喺度揀一個就會取代佢哋。',
+    confirmTitle: '取代你嘅項目？',
+    confirmBody: '你喺資料庫揀嘅項目會換成呢個起步點。你嘅紀錄會保留。',
+    confirm: '取代',
+    cancel: '取消',
+  },
   moonSighting: {
     title: '觀月',
     explanation:

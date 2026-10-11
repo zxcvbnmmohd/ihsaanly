@@ -2,14 +2,16 @@
 // these check the wiring (what it reads, what a tap writes) through the real
 // route tree, stores and strings.
 import { afterEach, beforeEach, describe, expect, it, setSystemTime } from 'bun:test'
+import { items } from '@ihsaanly/core/content'
 import { supportedLanguageOf } from '@ihsaanly/core/i18n/locale'
+import { idsForPreset } from '@ihsaanly/core/plan/presets'
 import { en } from '@ihsaanly/core/strings/en'
 import { getEventSettings } from '@ihsaanly/state/events/store'
 import { getHijriOffset } from '@ihsaanly/state/hijri/store'
 import { getLocale } from '@ihsaanly/state/i18n/store'
 import { getNotificationPreferences } from '@ihsaanly/state/notifications/store'
 import { setOnboarding } from '@ihsaanly/state/onboarding/store'
-import { setEnabledItems } from '@ihsaanly/state/plan/enabled-store'
+import { getEnabledItems, setEnabledItems } from '@ihsaanly/state/plan/enabled-store'
 import { getUserState } from '@ihsaanly/state/plan/user-state-store'
 import { getCalculationPreferences } from '@ihsaanly/state/prayer/store'
 import { screen, waitFor, within } from '@testing-library/react'
@@ -43,6 +45,50 @@ describe('Language', () => {
     expect(document.documentElement.lang).toBe('fr')
     await app.user.click(screen.getByRole('radio', { name: 'English' }))
     expect(supportedLanguageOf(getLocale())).toBe('en')
+  })
+})
+
+describe('Starting point', () => {
+  const realConfirm = window.confirm
+  afterEach(() => {
+    window.confirm = realConfirm
+  })
+  const sorted = (ids: string[]): string[] => [...ids].sort()
+  const radio = (name: string): Promise<HTMLElement> =>
+    screen.findByRole('radio', { name: new RegExp(name) })
+
+  it('marks the current preset and switches to another without asking', async () => {
+    const asked: string[] = []
+    window.confirm = (message?: string) => {
+      asked.push(message ?? '')
+      return true
+    }
+    setEnabledItems(idsForPreset('starting', items))
+    const app = await renderApp('/starting-point')
+    expect(await radio(en.onboarding.starting)).toBeChecked()
+    await app.user.click(await radio(en.onboarding.everything))
+    expect(sorted(getEnabledItems())).toEqual(sorted(idsForPreset('everything', items)))
+    expect(asked).toEqual([])
+  })
+
+  it('asks before replacing a hand-made set, and keeps it on "cancel"', async () => {
+    const asked: string[] = []
+    let answer = false
+    window.confirm = (message?: string) => {
+      asked.push(message ?? '')
+      return answer
+    }
+    const own = [...idsForPreset('starting', items), 'witr']
+    setEnabledItems(own)
+    const app = await renderApp('/starting-point')
+    expect(await screen.findByText(en.startingPoint.customNote)).toBeInTheDocument()
+    await app.user.click(await radio(en.onboarding.essentials))
+    expect(asked).toEqual([`${en.startingPoint.confirmTitle}\n\n${en.startingPoint.confirmBody}`])
+    expect(sorted(getEnabledItems())).toEqual(sorted(own))
+
+    answer = true
+    await app.user.click(await radio(en.onboarding.essentials))
+    expect(sorted(getEnabledItems())).toEqual(sorted(idsForPreset('essentials', items)))
   })
 })
 

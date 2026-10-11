@@ -425,6 +425,21 @@ export const en = {
     dark: 'Dark',
     note: 'Colours still come from the system, so its contrast settings apply either way.',
   },
+  startingPoint: {
+    title: 'Starting point',
+    why: 'Choose what your day begins from. Add or remove anything in the Library whenever you like. Your history stays as it is.',
+    startingDetail: 'For someone new.',
+    essentialsDetail: 'For someone who wants a little more.',
+    everythingDetail: 'For someone who wants it all.',
+    custom: 'Your own',
+    customNote:
+      'You have chosen your own items in the Library. Picking one of these replaces them.',
+    confirmTitle: 'Replace your items?',
+    confirmBody:
+      'The items you chose in the Library are replaced with this starting point. Your history is kept.',
+    confirm: 'Replace',
+    cancel: 'Cancel',
+  },
   moonSighting: {
     title: 'Moon sighting',
     explanation:

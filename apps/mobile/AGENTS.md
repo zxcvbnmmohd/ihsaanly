@@ -583,6 +583,16 @@ platform like any iOS-only module.
   helpers. `Group` does not render; the system font is used, not Amiri. Every
   widget declares all seven families. The App Group `group.app.ihsaanly.companion`
   is required, so device builds wait for the Apple account.
+  The extension loads `ExpoWidgets.bundle` (expo-widgets' runtime plus
+  `@expo/ui/swift-ui`) into JavaScriptCore with a stub in place of React. In
+  expo-widgets 58.0.7 that stub has no `memo`, which `@expo/ui` calls when the
+  module loads, so the bundle threw and every widget, gallery previews
+  included, showed a RedBox in Debug and nothing in Release.
+  `patches/expo-widgets@58.0.7.patch` (root `patchedDependencies`) backports
+  the 58.0.10 stub, and `src/widgets/ios/runtime-stub.test.ts` fails if it is
+  lost. Drop the patch when expo-widgets reaches 58.0.10 or later. The widget
+  tests render layouts in Bun with real React, so they cannot catch a failure
+  in the JavaScriptCore runtime.
 - **Android** (`src/widgets/android/`, `react-native-android-widget`): the task
   handler registered from `index.ts` (via `register.android.ts`; the library
   throws at import on iOS) reads `widget-timeline.json` from `Paths.document`

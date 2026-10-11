@@ -393,11 +393,8 @@ export const zh: Strings = {
   },
   language: {
     title: '语言',
-    restart:
-      '阿拉伯语从右向左书写。切换到阿拉伯语或从阿拉伯语切换回来时，应用会重新启动，或请你重新打开它。',
+    restart: '阿拉伯语从右向左书写。切换到阿拉伯语或从阿拉伯语切换回来时，应用会重新启动。',
     incomplete: '英语是原文。其他所有语言都是草稿，仍在等待合格的母语者审阅。',
-    reopenTitle: '重新打开 Ihsaanly',
-    reopenBody: '这种语言从右向左书写。请关闭 Ihsaanly 后再重新打开，以完成切换。',
     names: {
       en: 'English',
       ar: 'العربية',

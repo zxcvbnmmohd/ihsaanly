@@ -420,12 +420,9 @@ export const fr: Strings = {
   language: {
     title: 'Langue',
     restart:
-      'L’arabe se lit de droite à gauche. Passer à l’arabe ou le quitter redémarre l’application, ou vous demande de la rouvrir.',
+      'L’arabe se lit de droite à gauche. Passer à l’arabe ou le quitter redémarre l’application.',
     incomplete:
       'L’anglais est la version originale. Toutes les autres langues sont des brouillons encore en attente de relecture par un locuteur qualifié.',
-    reopenTitle: 'Rouvrez Ihsaanly',
-    reopenBody:
-      'Cette langue se lit de droite à gauche. Fermez Ihsaanly puis rouvrez-la pour terminer le changement.',
     names: {
       en: 'English',
       ar: 'العربية',

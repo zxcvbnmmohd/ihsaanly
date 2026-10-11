@@ -2,7 +2,7 @@ import '../../test/more'
 import { afterAll, afterEach, beforeEach, describe, expect, it, mock } from 'bun:test'
 import { act, cleanup, render } from '@testing-library/react'
 import type { ReactElement, ReactNode } from 'react'
-import { AppState, Platform } from 'react-native'
+import { AppState, I18nManager, Platform } from 'react-native'
 import { type Metrics, SafeAreaProvider } from 'react-native-safe-area-context'
 import { last, mockScreen } from '../../test/more'
 import { nativeTabs } from '../../test/router'
@@ -206,6 +206,20 @@ describe('root layout', () => {
       ;(Platform as { OS: string }).OS = 'android'
       render(app())
       expect(last(tabs.props).backgroundColor).toBeTruthy()
+    })
+
+    it('tells the native tab bar the layout direction rather than letting UIKit guess', () => {
+      const real = I18nManager.getConstants
+      try {
+        render(app())
+        expect(last(tabs.props).unstable_nativeProps).toEqual({ direction: 'ltr' })
+        cleanup()
+        I18nManager.getConstants = () => ({ ...real(), isRTL: true })
+        render(app())
+        expect(last(tabs.props).unstable_nativeProps).toEqual({ direction: 'rtl' })
+      } finally {
+        I18nManager.getConstants = real
+      }
     })
   })
 

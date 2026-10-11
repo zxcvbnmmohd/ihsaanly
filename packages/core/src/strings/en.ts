@@ -402,13 +402,9 @@ export const en = {
   },
   language: {
     title: 'Language',
-    restart:
-      'Arabic and Urdu read right to left. Switching to or from them restarts the app, or asks you to reopen it.',
+    restart: 'Arabic and Urdu read right to left. Switching to or from them restarts the app.',
     incomplete:
       'English is the original. Every other language is a draft still awaiting review by a qualified speaker.',
-    reopenTitle: 'Reopen Ihsaanly',
-    reopenBody:
-      'This language reads right to left. Close Ihsaanly and open it again for the change to finish.',
     names: {
       en: 'English',
       ar: 'العربية',

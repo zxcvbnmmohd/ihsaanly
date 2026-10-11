@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'bun:test'
 import { en } from '@ihsaanly/core/strings/en'
+import type { MoreGroup } from '../types'
 import { filterGroups, type MoreGroupsInput, moreGroups, SHOW_ME_AROUND_HREF } from './more'
 
 const baseInput: MoreGroupsInput = {
@@ -12,6 +13,7 @@ const baseInput: MoreGroupsInput = {
   language: 'en',
   theme: 'system',
   qadaOwed: 0,
+  startingPoint: 'essentials',
 }
 
 describe('moreGroups', () => {
@@ -54,6 +56,18 @@ describe('the Help group', () => {
       { href: SHOW_ME_AROUND_HREF, title: en.more.showMeAround, detail: null },
     ])
     expect(SHOW_ME_AROUND_HREF).toBe('/today?tour=1')
+  })
+})
+
+describe('the Starting point row', () => {
+  it("names the current starting point, or says it is the person's own", () => {
+    const row = (input: MoreGroupsInput): MoreGroup['rows'][number] | undefined =>
+      moreGroups(input)
+        .flatMap((group) => group.rows)
+        .find((entry) => entry.href === '/starting-point')
+    expect(row(baseInput)?.title).toBe(en.startingPoint.title)
+    expect(row(baseInput)?.detail).toBe(en.onboarding.essentials)
+    expect(row({ ...baseInput, startingPoint: null })?.detail).toBe(en.startingPoint.custom)
   })
 })
 

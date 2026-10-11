@@ -418,6 +418,19 @@ export const zh: Strings = {
     dark: '深色',
     note: '颜色仍然来自系统，因此无论哪种设置，系统的对比度选项都会生效。',
   },
+  startingPoint: {
+    title: '起点',
+    why: '选择一天从哪里开始。之后随时可以在资料库中添加或移除任何内容。你的记录保持不变。',
+    startingDetail: '适合刚开始的人。',
+    essentialsDetail: '适合想多做一点的人。',
+    everythingDetail: '适合想要全部的人。',
+    custom: '自定义',
+    customNote: '你已在资料库中自行选择了项目。在这里选择会替换它们。',
+    confirmTitle: '替换你的项目？',
+    confirmBody: '你在资料库中选择的项目将替换为这个起点。你的记录会保留。',
+    confirm: '替换',
+    cancel: '取消',
+  },
   moonSighting: {
     title: '观月',
     explanation:

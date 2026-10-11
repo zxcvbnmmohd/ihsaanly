@@ -444,6 +444,20 @@ export const so: Strings = {
     dark: 'Mugdi',
     note: 'Midabbadu weli nidaamka ayey ka yimaadaan, sidaa darteed dejintiisa kala-soocidda midabka way shaqeysaa labada xaaladoodba.',
   },
+  startingPoint: {
+    title: 'Meel laga bilaabo',
+    why: 'Dooro meesha maalintaadu ka bilaabato. Wax kasta Maktabadda ku dar ama ka saar goorta aad rabto. Taariikhdaadu sideeda ayay ahaanaysaa.',
+    startingDetail: 'Qof cusub.',
+    essentialsDetail: 'Qof wax yar oo dheeraad ah raba.',
+    everythingDetail: 'Qof wax walba raba.',
+    custom: 'Doorashadaada',
+    customNote: 'Waxyaabahaaga Maktabadda adigaa doortay. Mid halkan laga doorto ayaa beddelaya.',
+    confirmTitle: 'Ma beddeshaa waxyaabahaaga?',
+    confirmBody:
+      'Waxyaabaha aad Maktabadda ku dooratay waxaa lagu beddelayaa meeshan laga bilaabo. Taariikhdaadu way sii jiraysaa.',
+    confirm: 'Beddel',
+    cancel: 'Jooji',
+  },
   moonSighting: {
     title: 'Muuqashada bisha',
     explanation:

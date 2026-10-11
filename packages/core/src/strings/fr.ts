@@ -446,6 +446,21 @@ export const fr: Strings = {
     dark: 'Sombre',
     note: 'Les couleurs viennent toujours du système : ses réglages de contraste s’appliquent dans tous les cas.',
   },
+  startingPoint: {
+    title: 'Point de départ',
+    why: 'Choisissez de quoi part votre journée. Ajoutez ou retirez ce que vous voulez dans la Bibliothèque, quand vous voulez. Votre historique reste tel quel.',
+    startingDetail: 'Pour qui débute.',
+    essentialsDetail: 'Pour qui veut un peu plus.',
+    everythingDetail: 'Pour qui veut tout.',
+    custom: 'Votre choix',
+    customNote:
+      'Vous avez choisi vos propres éléments dans la Bibliothèque. En choisir un ici les remplace.',
+    confirmTitle: 'Remplacer vos éléments ?',
+    confirmBody:
+      'Les éléments choisis dans la Bibliothèque sont remplacés par ce point de départ. Votre historique est conservé.',
+    confirm: 'Remplacer',
+    cancel: 'Annuler',
+  },
   moonSighting: {
     title: 'Observation de la lune',
     explanation:

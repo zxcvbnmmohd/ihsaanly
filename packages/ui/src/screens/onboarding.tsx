@@ -364,12 +364,11 @@ function ChoiceTile({
       className="flex-1">
       <Surface
         interactive
+        ring={selected ? palette.accent : 'transparent'}
         style={{
           borderRadius: 20,
           paddingVertical: 20,
           paddingHorizontal: 12,
-          borderWidth: 2,
-          borderColor: selected ? palette.accent : 'transparent',
         }}>
         <View className="items-center gap-3">
           <PersonGlyph

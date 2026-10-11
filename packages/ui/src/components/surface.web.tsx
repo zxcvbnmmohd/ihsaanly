@@ -1,8 +1,9 @@
 import type { ReactElement, ReactNode } from 'react'
-import { View, type ViewProps, type ViewStyle } from 'react-native'
+import { type ColorValue, View, type ViewProps, type ViewStyle } from 'react-native'
 
 import type { Colors } from '../colors'
 import { useColors } from '../colors'
+import { Ringed, ringSpace } from './ring'
 
 /**
  * The slice of react-native-web's `Pressable` render-prop state a web-only
@@ -33,6 +34,9 @@ interface SurfaceProps {
   children?: ReactNode
   style?: ViewProps['style']
   interactive?: boolean
+  /** A selection ring around the surface; see the native `Surface`. */
+  ring?: ColorValue
+  ringWidth?: number
 }
 
 /**
@@ -43,8 +47,17 @@ interface SurfaceProps {
  * stays a prop only so a `<Surface interactive>` call site reads the same
  * on every platform.
  */
-export function Surface({ children, style }: SurfaceProps): ReactElement {
+export function Surface({ children, style, ring, ringWidth }: SurfaceProps): ReactElement {
   const colors = useColors()
 
-  return <View style={[{ backgroundColor: colors.surface }, style]}>{children}</View>
+  if (ring === undefined) {
+    return <View style={[{ backgroundColor: colors.surface }, style]}>{children}</View>
+  }
+  return (
+    <Ringed ring={ring} width={ringWidth} style={style}>
+      <View style={[{ backgroundColor: colors.surface }, style, ringSpace(ringWidth)]}>
+        {children}
+      </View>
+    </Ringed>
+  )
 }

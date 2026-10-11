@@ -33,6 +33,7 @@ const registry = new Map<string, WidgetFunction>()
 
 const SWIFT_UI = [
   'AccessoryWidgetBackground',
+  'Button',
   'Circle',
   'Gauge',
   'HStack',
@@ -44,17 +45,22 @@ const SWIFT_UI = [
   'ZStack',
 ]
 const MODIFIERS = [
+  'buttonBorderShape',
+  'buttonStyle',
   'containerBackground',
+  'controlSize',
   'font',
   'foregroundStyle',
   'frame',
   'gaugeStyle',
+  'labelStyle',
   'lineLimit',
   'minimumScaleFactor',
   'multilineTextAlignment',
   'opacity',
   'padding',
   'strokeBorder',
+  'tint',
   'widgetURL',
 ]
 

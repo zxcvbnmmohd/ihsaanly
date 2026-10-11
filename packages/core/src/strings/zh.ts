@@ -674,6 +674,12 @@ export const zh: Strings = {
     duaOfTheDay: '每日杜阿',
     nothingNow: '此刻没有要做的',
     openApp: '打开 Ihsaanly 以更新',
+    closingSoon: '即将结束',
+    openAboutAnHour: '还有大约一小时',
+    openAboutHours: (hours: number): string => `还有大约 ${hours} 小时`,
+    moreNow: (n: number): string => `此刻还有 ${n} 项`,
+    markDone: '标记完成',
+    markedDone: '已标记完成',
   },
   web: {
     remindersUnavailable: '提醒需要手机 App。网页关闭后浏览器无法提醒你。',

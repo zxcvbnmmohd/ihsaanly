@@ -706,6 +706,12 @@ export const ur: Strings = {
     duaOfTheDay: 'آج کی دعا',
     nothingNow: 'اس وقت آپ سے کچھ مطلوب نہیں',
     openApp: 'تازہ کرنے کے لیے احسانلی کھولیں',
+    closingSoon: 'جلد ختم ہو رہا ہے',
+    openAboutAnHour: 'تقریباً ایک گھنٹہ اور باقی',
+    openAboutHours: (hours: number): string => `تقریباً ${hours} گھنٹے اور باقی`,
+    moreNow: (n: number): string => `ابھی +${n} اور`,
+    markDone: 'مکمل نشان زد کریں',
+    markedDone: 'مکمل نشان زد',
   },
   web: {
     remindersUnavailable:

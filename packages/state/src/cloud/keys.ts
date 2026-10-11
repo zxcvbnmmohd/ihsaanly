@@ -80,6 +80,13 @@ export const CRASH_REPORTS_KEY = 'crashReports'
  */
 export const TODAY_HINTS_KEY = 'todayHints'
 
+/**
+ * The latest Right now widget tap this device has taken into its log (epoch
+ * ms). The taps live in this device's App Group, so the cursor is this
+ * device's; the completions it wrote are the shared record.
+ */
+export const WIDGET_TAPS_KEY = 'widgetTapsThrough'
+
 /** Device bookkeeping that never belongs in an export either. */
 export const DEVICE_ONLY_KEYS: ReadonlySet<string> = new Set([
   SYNC_META_KEY,
@@ -88,4 +95,5 @@ export const DEVICE_ONLY_KEYS: ReadonlySet<string> = new Set([
   ANNOUNCEMENTS_KEY,
   CRASH_REPORTS_KEY,
   TODAY_HINTS_KEY,
+  WIDGET_TAPS_KEY,
 ])

@@ -86,3 +86,29 @@ index dc78634f06d13b7272197056d0f829ab9e0f793f..16be27cd7aae097fc59e8f1c9d8ad4ff
 +  }
 +  return resource.status === 'fulfilled' ? resource.value : undefined;
 +}
+diff --git a/ios/Widgets/AppIntent.swift b/ios/Widgets/AppIntent.swift
+index 1730fffee8dd7992c09457e88542cd743be741e1..8b5e3e2be5857587ebf9c757a1a8c8d28e076236 100644
+--- a/ios/Widgets/AppIntent.swift
++++ b/ios/Widgets/AppIntent.swift
+@@ -78,14 +78,16 @@ struct WidgetUserInteraction: AppIntent {
+     }
+ 
+     if let newProps {
+-      var newEntry = entry
+-      if let originalProps = entry["props"] as? [String: Any] {
+-        newEntry["props"] = originalProps.merging(newProps) { _, new in new }
+-      }
+       guard var newTimeline = timeline as? [[String: Any]] else {
+         return .result()
+       }
+-      newTimeline[entryIndex] = newEntry
++      // The pressed entry and every later one take the new props, so what a
++      // press recorded survives the timeline moving on to its next entry.
++      for index in entryIndex..<newTimeline.count {
++        if let originalProps = newTimeline[index]["props"] as? [String: Any] {
++          newTimeline[index]["props"] = originalProps.merging(newProps) { _, new in new }
++        }
++      }
+       WidgetsStorage.set(newTimeline, forKey: "__expo_widgets_\(source)_timeline")
+     }
+ 

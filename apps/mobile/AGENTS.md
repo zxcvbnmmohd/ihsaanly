@@ -577,7 +577,8 @@ resulting stylesheet.
 
 Ten widgets exist on both platforms (`WIDGET_NAMES` in `src/widgets/names.ts`).
 `widgetTimeline` in `src/widgets/model.ts` is pure: it runs `plan()` for every
-half hour of the next day plus each window start and resolves every string and
+half hour of the next day, each window start and each instant a rough distance
+turns ("about 2 more hours" to "about an hour"), and resolves every string and
 colour, so no widget ever thinks. `useWidgetTimeline` republishes it from Today
 when something shown could have changed; `publish.ts` is the no-op base split by
 platform like any iOS-only module.
@@ -595,9 +596,24 @@ platform like any iOS-only module.
   included, showed a RedBox in Debug and nothing in Release.
   `patches/expo-widgets@58.0.7.patch` (root `patchedDependencies`) backports
   the 58.0.10 stub, and `src/widgets/ios/runtime-stub.test.ts` fails if it is
-  lost. Drop the patch when expo-widgets reaches 58.0.10 or later. The widget
-  tests render layouts in Bun with real React, so they cannot catch a failure
-  in the JavaScriptCore runtime.
+  lost. The widget tests render layouts in Bun with real React, so they cannot
+  catch a failure in the JavaScriptCore runtime.
+- **Done from the Right now widget** (iOS 17+): its `Button` runs expo-widgets'
+  `WidgetUserInteraction` intent, which re-renders the layout, calls the
+  button's `onPress` and merges what it returns into the stored timeline. The
+  press appends `{ id, at }` to the entry's `taps`, so the widget shows the
+  item done at once; the app never hears about it unless it happens to be
+  running, so nothing depends on the event. The same patch makes the intent
+  merge into the pressed entry **and every later one** (upstream merges into
+  the pressed entry only, which would show the item undone again at the next
+  entry); the stub test checks that too, so keep that hunk when the stub part
+  can be dropped at 58.0.10. The app takes taps in (`src/widgets/drain.ts`)
+  on launch, on every return to the foreground and on a press it hears: it
+  reads them back from `RightNowWidget.getTimeline()` (the App Group), files
+  each with `completeItem` at the tap's own moment and window, and moves the
+  device-only `widgetTapsThrough` cursor past them, so none is filed twice.
+  `publishTimeline` carries taps not yet taken in into the new timeline, so a
+  republish never drops one. Android widgets only open links.
 - **Android** (`src/widgets/android/`, `react-native-android-widget`): the task
   handler registered from `index.ts` (via `register.android.ts`; the library
   throws at import on iOS) reads `widget-timeline.json` from `Paths.document`

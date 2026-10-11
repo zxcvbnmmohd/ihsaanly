@@ -26,11 +26,14 @@ const quiet: TodayScreenProps = {
 describe.each(['compact', 'regular', 'wide'] as const)('TodayScreen at %s', (layout) => {
   it('shows the date line, the strip, right now and the rest of the day', () => {
     const { strings } = renderScreen(<TodayScreen {...todayFixture} />, { layout })
-    expect(
-      screen.getByText(
-        `Wed 23 Sep · ${strings.hijri.format(6, strings.hijriMonth[4] ?? '', 1448)} · Toronto`,
-      ),
-    ).toBeInTheDocument()
+    const hijri = screen.getByText(strings.hijri.format(6, strings.hijriMonth[4] ?? '', 1448))
+    const gregorian = screen.getByText('Wed 23 Sep')
+    const city = screen.getByText('Toronto')
+    // Three lines in order: Hijri, then the civil date, then the city.
+    expect(hijri.compareDocumentPosition(gregorian) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    expect(gregorian.compareDocumentPosition(city) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    expect(hijri.parentElement).toBe(gregorian.parentElement)
+    expect(city.parentElement).toBe(gregorian.parentElement)
     expect(screen.getAllByRole('checkbox')).toHaveLength(5)
     expect(screen.getByRole('heading', { name: strings.plan.rightNow })).toBeInTheDocument()
     expect(
@@ -94,6 +97,25 @@ describe.each(['compact', 'regular', 'wide'] as const)('TodayScreen at %s', (lay
     ).toBeInTheDocument()
     expect(screen.getByText('Tomorrow thing')).toBeInTheDocument()
     expect(screen.getByText('Later thing')).toBeInTheDocument()
+  })
+
+  it('leaves out the city line when no place is set', () => {
+    const { strings } = renderScreen(<TodayScreen {...todayFixture} placeLabel={null} />, {
+      layout,
+    })
+    expect(
+      screen.getByText(strings.hijri.format(6, strings.hijriMonth[4] ?? '', 1448)),
+    ).toBeInTheDocument()
+    expect(screen.getByText('Wed 23 Sep')).toBeInTheDocument()
+    expect(screen.queryByText('Toronto')).toBeNull()
+  })
+
+  it('stacks the date lines in Arabic too', () => {
+    const { strings } = renderScreen(<TodayScreen {...todayFixture} />, { layout, locale: 'ar' })
+    expect(
+      screen.getByText(strings.hijri.format(6, strings.hijriMonth[4] ?? '', 1448)),
+    ).toBeInTheDocument()
+    expect(screen.getByText('Toronto')).toBeInTheDocument()
   })
 
   it('leaves out the date line without a Hijri date and the strip without prayers', () => {

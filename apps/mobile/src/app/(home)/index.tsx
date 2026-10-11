@@ -1,6 +1,7 @@
 import { itemById, resolveText } from '@ihsaanly/core/content'
 import { civilDateIn, civilDateKey } from '@ihsaanly/core/day/boundaries'
 import { isRamadanDay } from '@ihsaanly/core/fasting/ledger'
+import { cityOf } from '@ihsaanly/core/location/place'
 import { windowName } from '@ihsaanly/core/plan/jumuah'
 import { plan } from '@ihsaanly/core/plan/plan'
 import { type Phase, SUGGESTION_INTERVAL_MS, suggest } from '@ihsaanly/core/plan/suggest'
@@ -53,11 +54,7 @@ export default function TodayRoute(): ReactElement {
   const signals = useSignals()
   const planned = signals ? plan(signals) : null
   useNotificationSync(planned)
-  useWidgetTimeline(
-    signals,
-    planned,
-    place ? (place.label.split(',')[0]?.trim() ?? place.label) : null,
-  )
+  useWidgetTimeline(signals, planned, place ? cityOf(place.label) : null)
   const marks = useTodayMarks(place?.timeZone ?? 'UTC', now)
   const qada = useQada()
   const strings = useStrings()
@@ -172,7 +169,7 @@ export default function TodayRoute(): ReactElement {
           timeZone,
         }).format(now)}
         hijri={planned?.today.hijri ?? null}
-        placeLabel={place ? (place.label.split(',')[0]?.trim() ?? place.label) : null}
+        placeLabel={place ? cityOf(place.label) : null}
         {...sunnah}
         prayers={
           place && !signals?.userState.trackingPaused

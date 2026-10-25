@@ -11,33 +11,31 @@ describe('applyDirection', () => {
   })
 
   it('does nothing when the direction already matches', async () => {
-    expect(applyDirection('en-GB')).toBe(false)
+    applyDirection('en-GB')
     await wait(350)
     expect(reactNative.forced).toEqual([])
     expect(reactNative.reloads).toEqual([])
   })
 
-  it('on iOS flips the flags and asks for a manual reopen instead of reloading', async () => {
-    expect(applyDirection('ar')).toBe(true)
-    expect(reactNative.allowed).toEqual([true])
-    expect(reactNative.forced).toEqual([true])
-    await wait(350)
-    expect(reactNative.reloads).toEqual([])
-  })
+  for (const os of ['ios', 'android']) {
+    it(`on ${os} flips the flags and reloads after the writes settle`, async () => {
+      reactNative.os = os
 
-  it('on Android flips the flags and reloads after the writes settle', async () => {
-    reactNative.os = 'android'
+      applyDirection('ar')
+      expect(reactNative.allowed).toEqual([true])
+      expect(reactNative.forced).toEqual([true])
+      expect(reactNative.reloads).toEqual([])
+      await wait(350)
+      expect(reactNative.reloads).toEqual(['layout direction changed'])
+    })
+  }
 
-    expect(applyDirection('ar')).toBe(false)
-    expect(reactNative.forced).toEqual([true])
-    expect(reactNative.reloads).toEqual([])
+  it('flips back from right-to-left, and reloads for that too', async () => {
+    reactNative.isRTL = true
+    applyDirection('en-GB')
+    expect(reactNative.allowed).toEqual([false])
+    expect(reactNative.forced).toEqual([false])
     await wait(350)
     expect(reactNative.reloads).toEqual(['layout direction changed'])
-  })
-
-  it('flips back from right-to-left', () => {
-    reactNative.isRTL = true
-    expect(applyDirection('en-GB')).toBe(true)
-    expect(reactNative.forced).toEqual([false])
   })
 })

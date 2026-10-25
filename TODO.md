@@ -102,36 +102,36 @@ Sign in with Apple, the iOS release and iOS CI all need this.
 
 1. [x] **Enrol** at <https://developer.apple.com/programs/> as an organisation
    (Mohd Inc.). Done: the Apple Developer account exists.
-2. [ ] **App IDs:** Certificates, IDs & Profiles → Identifiers → **+** → App
-   IDs. Create `app.ihsaanly.companion` and
-   `app.ihsaanly.companion.development`, and tick **Sign in with Apple** on
-   both. Widgets also need the App Group capability; see
-   `apps/mobile/TODO.md`.
-3. [ ] **Services ID** (for web sign-in on companion): Identifiers → **+** →
-   Services IDs, e.g. `app.ihsaanly.companion.web`. Enable Sign in with Apple
-   → Configure, then:
-   - **Domains:** `ihsaanly-production.firebaseapp.com`,
-     `ihsaanly-development.firebaseapp.com`, `companion.ihsaanly.app`,
-     `dev.companion.ihsaanly.app`.
-   - **Return URLs:**
-     `https://ihsaanly-production.firebaseapp.com/__/auth/handler` and
-     `https://ihsaanly-development.firebaseapp.com/__/auth/handler`.
-4. [ ] **Key:** Keys → **+** → enable Sign in with Apple, linked to the
-   primary App ID. Download the `.p8`, which can't be downloaded again. Note
-   the **Key ID** and your **Team ID**.
-5. [ ] **Firebase,** in both projects: Authentication → Sign-in method →
-   **Apple** → Enable. Fill in the Services ID, the Apple team ID, the key ID
-   and the private key (the `.p8` contents).
+Team ID `97J332WV6P`. Dev and prod are kept apart: each has its own App ID,
+Services ID and Sign in with Apple key, all in 1Password → **Private** →
+"Ihsaanly Sign in with Apple keys".
+
+| | Development | Production |
+| --- | --- | --- |
+| App ID | `app.ihsaanly.companion.development` | `app.ihsaanly.companion` |
+| Widgets | `….development.ExpoWidgetsTarget` | `….ExpoWidgetsTarget` |
+| App Group | `group.app.ihsaanly.companion.development` | `group.app.ihsaanly.companion` |
+| Services ID | `app.ihsaanly.companion.development.web` | `app.ihsaanly.companion.web` |
+| Sign in with Apple key | `G63FSF5V79` | `3LK67TRLK7` |
+
+2. [x] **App IDs** (2026-10-10), registered by Xcode's automatic signing
+   from a fresh `expo prebuild`: Sign in with Apple, Push Notifications, App
+   Groups and (production) Associated Domains, plus the widget targets.
+3. [x] **Services IDs**, each grouped under its own App ID. Domains: the
+   project's `firebaseapp.com` and its companion domain (`dev.companion…` or
+   `companion…`). Return URL: `https://<project>.firebaseapp.com/__/auth/handler`.
+4. [x] **Sign in with Apple keys**, one per App ID (the dev project needs its
+   own to revoke Apple tokens when an account is deleted).
+5. [x] **Firebase:** Apple sign-in in each project has its Services ID, team,
+   key and bundle ID (set through the Identity Toolkit admin API).
 6. [ ] Tell Claude, who then tests account linking (Apple ↔ Google) and the
    iOS build path.
-7. [ ] **Push (Announcements):** tick **Push Notifications** on both App IDs
-   too. Then Keys → **+** → enable **Apple Push Notifications service
-   (APNs)** (one key serves sandbox and production, and both App IDs). Upload
-   that `.p8` to Firebase in **both** projects: Project settings → **Cloud
-   Messaging** → Apple app configuration → **APNs Authentication Key** →
-   Upload, with the Key ID and Team ID. Until this is done the iOS app still
-   subscribes to the topics, but Firebase cannot deliver to it; Android works
-   without it.
+7. [x] **Push (Announcements):** one APNs key, `YZ2L8727SH` (Sandbox &
+   Production, every App ID on the team), in 1Password → **Private** →
+   "Ihsaanly APNs key". Uploaded 2026-10-10 to both Firebase projects, in the
+   development and production slots of Project settings → **Cloud
+   Messaging** → Apple app configuration. To rotate: create the new key and
+   upload it to all four slots before revoking the old one.
 
 ### Sending an announcement (once the app is out)
 
@@ -170,10 +170,10 @@ Free on this public repo, and it replaces EAS.
 
 1. [x] **Upload key and CI secrets.** The keystore lives only in 1Password:
    **Private** → "Ihsaanly Android upload keystore" (the `.jks` attached, alias
-   `upload`, one password for the store and the key). `ANDROID_UPLOAD_KEYSTORE`
-   (base64), `ANDROID_UPLOAD_KEYSTORE_PASSWORD`, `ANDROID_UPLOAD_KEY_ALIAS` and
-   `ANDROID_UPLOAD_KEY_PASSWORD` are set in **both** environments; dev CI
-   builds use the same key.
+   `upload`, one password for the store and the key). The secrets
+   `ANDROID_UPLOAD_KEYSTORE` (base64), `ANDROID_UPLOAD_KEYSTORE_PASSWORD` and
+   `ANDROID_UPLOAD_KEY_PASSWORD`, and the variable `ANDROID_UPLOAD_KEY_ALIAS`,
+   are set in **both** environments; dev CI builds use the same key.
 
    Current upload key SHA-1
    `2F:7B:80:AC:43:D7:9D:A5:D8:06:E4:BD:B7:C2:74:54:9F:8D:22:D7`, in both
@@ -182,23 +182,17 @@ Free on this public repo, and it replaces EAS.
    (`4227a8b`); its replacement (`D4:E6:…`) was lost with the old Mac. Both are
    removed everywhere, and neither reached Play. Keystores (`*.jks`,
    `*.keystore`) are git-ignored.
-2. [ ] **You:** add the mobile env as GitHub **variables** in each
-   environment, copying the values from `apps/mobile/.env.<branch>`:
-   - `EXPO_PUBLIC_FIREBASE_API_KEY`
-   - `EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN`
-   - `EXPO_PUBLIC_FIREBASE_PROJECT_ID`
-   - `EXPO_PUBLIC_FIREBASE_APP_ID`
-   - `EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID`
-   - `EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID`
-
-   Claude can do this with `gh`, since none of these are secrets.
-3. [ ] **Claude:** write `build-android.yml`.
-   - **Triggers:** push to `development` or `production` touching
-     `apps/mobile/**` or `packages/**`, plus manual runs.
-   - **Steps:** `expo prebuild -p android` with the branch's variant, write
-     the env file from the variables, decode the keystore, then build. The
-     `development` branch produces an installable `.apk` as a workflow
-     artifact; the `production` branch produces an `.aab`.
+2. [x] **Mobile env as GitHub variables** (2026-10-10): the seven
+   `EXPO_PUBLIC_*` values from `apps/mobile/.env.<branch>` are set in each
+   environment. After changing an env file, re-run
+   `gh variable set --env <branch> -f apps/mobile/.env.<branch>`.
+3. [x] **`build-android.yml`:** runs on pushes to `development` or
+   `production` that touch the app or what it is built from, and by hand.
+   It prebuilds with the branch's variant, signs with the upload key, checks
+   the output's SHA-1 against it, and attaches the result to the run:
+   `development` an installable `.apk`, `production` an `.aab`. Each run's
+   build number (from 1, counting up) is the `versionCode`; the marketing
+   version is `app.json` `version`, bumped by hand per release.
 4. [ ] **You:** (the Play developer account exists) create the app in **Play Console**
    (<https://play.google.com/console>) and upload the first `.aab` to
    **Internal testing** by hand. Play needs a manual first upload before it

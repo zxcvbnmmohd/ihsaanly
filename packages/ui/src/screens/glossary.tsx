@@ -34,13 +34,8 @@ export function GlossaryScreen({ entries, highlighted }: GlossaryScreenProps): R
       {ordered.map((entry) => (
         <Surface
           key={entry.id}
-          style={{
-            borderRadius: 20,
-            padding: 18,
-            borderWidth: entry.id === highlighted ? 2 : 0,
-            // Surface has no className, so the accent border stays a raw value here.
-            borderColor: palette.accent,
-          }}>
+          ring={entry.id === highlighted ? palette.accent : undefined}
+          style={{ borderRadius: 20, padding: 18 }}>
           <View className="gap-1.5">
             <Text
               className="text-xl leading-tight"

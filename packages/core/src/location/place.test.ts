@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test'
 
-import { Place } from './place'
+import { cityOf, Place } from './place'
 
 const valid = {
   label: 'Toronto',
@@ -27,5 +27,17 @@ describe('Place', () => {
     expect(Place.safeParse({ ...valid, label: '' }).success).toBe(false)
     expect(Place.safeParse({ ...valid, timeZone: '' }).success).toBe(false)
     expect(Place.safeParse({ ...valid, source: 'gps' }).success).toBe(false)
+  })
+})
+
+describe('cityOf', () => {
+  it('takes the first part of a label, trimmed', () => {
+    expect(cityOf('Toronto, Ontario, Canada')).toBe('Toronto')
+    expect(cityOf('  London , United Kingdom')).toBe('London')
+  })
+
+  it('keeps a label with no comma, or nothing before its first comma, whole', () => {
+    expect(cityOf('Makkah')).toBe('Makkah')
+    expect(cityOf(', Somewhere')).toBe(', Somewhere')
   })
 })

@@ -96,6 +96,7 @@ export interface TodayScreenProps {
   /** Weekday, day and month in the reader's calendar, e.g. "Wed 23 Sep". */
   gregorian: string | null
   hijri: HijriDate | null
+  /** The city of the chosen place, e.g. "Toronto"; null when no place is set. */
   placeLabel: string | null
   /** Everything open right now, best first. The head is the hero. */
   now: TodayEntry[]
@@ -419,17 +420,24 @@ export function TodayScreen({
     </Text>
   )
 
-  // The window is the navigation title, so this line carries only the date and place.
+  // The window is the navigation title, so these lines carry only the date and
+  // place, stacked: the Hijri date first, the civil date under it, the city last.
   const metaLine = hijri ? (
-    <Text className="text-base" style={{ color: colors.secondaryLabel }}>
-      {[
-        gregorian,
-        strings.hijri.format(hijri.day, strings.hijriMonth[hijri.month] ?? '', hijri.year),
-        placeLabel,
-      ]
-        .filter(Boolean)
-        .join(' · ')}
-    </Text>
+    <View className="gap-0.5">
+      <Text className="text-base" style={{ color: colors.secondaryLabel }}>
+        {strings.hijri.format(hijri.day, strings.hijriMonth[hijri.month] ?? '', hijri.year)}
+      </Text>
+      {gregorian ? (
+        <Text className="text-sm" style={{ color: colors.secondaryLabel }}>
+          {gregorian}
+        </Text>
+      ) : null}
+      {placeLabel ? (
+        <Text className="text-sm" style={{ color: colors.secondaryLabel }}>
+          {placeLabel}
+        </Text>
+      ) : null}
+    </View>
   ) : null
 
   // Room under the last card so the undo bar never covers it.

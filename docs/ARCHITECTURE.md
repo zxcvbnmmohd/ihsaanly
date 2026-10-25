@@ -456,12 +456,12 @@ the console uses IAM and bypasses the rules, which give clients no update.
 ```
 
 Someone who already has an account can sign in from onboarding's welcome step
-instead of setting up again ("Already use Ihsaanly? Sign in to restore your
-data", shown only in a build with the cloud). Their synced setup, `onboarding`
+instead of setting up again ("Already using Ihsaanly? Sign in", in the top bar
+where Back sits on later steps, shown only in a build with the cloud). Their synced setup, `onboarding`
 included, arrives with the first sync, and that is what opens the gate.
 
 ```text
- welcome ─► "Sign in to restore" ─► Account (restore mode: "Back to setup", no tabs)
+ welcome ─► "Sign in" ──────────► Account (restore mode: "Back to setup", no tabs)
                                         │ sign in ─► first sync round ─► useRestoreOutcome()
                                         ▼
          'restoring'   "Restoring your data…" (polite live region)

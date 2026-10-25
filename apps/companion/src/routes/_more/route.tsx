@@ -52,6 +52,8 @@ function titleFor(path: MorePath, strings: Strings): string {
       return strings.notifications.title
     case '/qada':
       return strings.qada.title
+    case '/starting-point':
+      return strings.startingPoint.title
     case '/tracking':
       return strings.tracking.title
   }

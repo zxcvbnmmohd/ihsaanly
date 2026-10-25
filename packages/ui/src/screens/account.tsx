@@ -73,8 +73,9 @@ export interface AccountScreenProps {
   legal?: AccountLegalLinks
   /**
    * The providers' own buttons, where the host has them (the mobile app passes
-   * AppleAuthenticationButton and GoogleSigninButton). Without it the screen
-   * draws `SignInButton`, which on the web follows each brand's guidelines.
+   * AppleAuthenticationButton, and `SignInButton` for Google at Apple's height,
+   * since Google's SDK button takes no corner radius). Without it the screen
+   * draws `SignInButton`, which follows each brand's guidelines.
    */
   renderSignInButton?: (
     provider: SignInProvider,

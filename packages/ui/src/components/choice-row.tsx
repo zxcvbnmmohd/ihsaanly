@@ -35,12 +35,8 @@ export function ChoiceRow({
       onPress={onPress}>
       <Surface
         interactive
-        style={{
-          borderRadius: 20,
-          padding: 18,
-          borderWidth: 2,
-          borderColor: selected ? ring : 'transparent',
-        }}>
+        ring={selected ? ring : 'transparent'}
+        style={{ borderRadius: 20, padding: 18 }}>
         <View className="gap-1">
           <Text className="font-semibold text-base" style={{ color: colors.label }}>
             {title}

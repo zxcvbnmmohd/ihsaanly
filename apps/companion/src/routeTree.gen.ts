@@ -30,6 +30,7 @@ import { Route as MoreLocationRouteImport } from './routes/_more/location'
 import { Route as MoreMoreRouteImport } from './routes/_more/more'
 import { Route as MoreNotificationsRouteImport } from './routes/_more/notifications'
 import { Route as MoreQadaRouteImport } from './routes/_more/qada'
+import { Route as MoreStartingPointRouteImport } from './routes/_more/starting-point'
 import { Route as MoreTrackingRouteImport } from './routes/_more/tracking'
 import { Route as OnboardingIndexRouteImport } from './routes/onboarding/index'
 import { Route as OnboardingStepRouteImport } from './routes/onboarding/$step'
@@ -139,6 +140,11 @@ const MoreQadaRoute = MoreQadaRouteImport.update({
   path: '/qada',
   getParentRoute: () => MoreRouteRoute,
 } as any)
+const MoreStartingPointRoute = MoreStartingPointRouteImport.update({
+  id: '/starting-point',
+  path: '/starting-point',
+  getParentRoute: () => MoreRouteRoute,
+} as any)
 const MoreTrackingRoute = MoreTrackingRouteImport.update({
   id: '/tracking',
   path: '/tracking',
@@ -185,6 +191,7 @@ export interface FileRoutesByFullPath {
   '/more': typeof MoreMoreRoute
   '/notifications': typeof MoreNotificationsRoute
   '/qada': typeof MoreQadaRoute
+  '/starting-point': typeof MoreStartingPointRoute
   '/tracking': typeof MoreTrackingRoute
   '/onboarding/$step': typeof OnboardingStepRoute
   '/onboarding/': typeof OnboardingIndexRoute
@@ -211,6 +218,7 @@ export interface FileRoutesByTo {
   '/more': typeof MoreMoreRoute
   '/notifications': typeof MoreNotificationsRoute
   '/qada': typeof MoreQadaRoute
+  '/starting-point': typeof MoreStartingPointRoute
   '/tracking': typeof MoreTrackingRoute
   '/onboarding/$step': typeof OnboardingStepRoute
   '/onboarding': typeof OnboardingIndexRoute
@@ -240,6 +248,7 @@ export interface FileRoutesById {
   '/_more/more': typeof MoreMoreRoute
   '/_more/notifications': typeof MoreNotificationsRoute
   '/_more/qada': typeof MoreQadaRoute
+  '/_more/starting-point': typeof MoreStartingPointRoute
   '/_more/tracking': typeof MoreTrackingRoute
   '/onboarding/$step': typeof OnboardingStepRoute
   '/onboarding/': typeof OnboardingIndexRoute
@@ -268,6 +277,7 @@ export interface FileRouteTypes {
     | '/more'
     | '/notifications'
     | '/qada'
+    | '/starting-point'
     | '/tracking'
     | '/onboarding/$step'
     | '/onboarding/'
@@ -294,6 +304,7 @@ export interface FileRouteTypes {
     | '/more'
     | '/notifications'
     | '/qada'
+    | '/starting-point'
     | '/tracking'
     | '/onboarding/$step'
     | '/onboarding'
@@ -322,6 +333,7 @@ export interface FileRouteTypes {
     | '/_more/more'
     | '/_more/notifications'
     | '/_more/qada'
+    | '/_more/starting-point'
     | '/_more/tracking'
     | '/onboarding/$step'
     | '/onboarding/'
@@ -487,6 +499,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MoreQadaRouteImport
       parentRoute: typeof MoreRouteRoute
     }
+    '/_more/starting-point': {
+      id: '/_more/starting-point'
+      path: '/starting-point'
+      fullPath: '/starting-point'
+      preLoaderRoute: typeof MoreStartingPointRouteImport
+      parentRoute: typeof MoreRouteRoute
+    }
     '/_more/tracking': {
       id: '/_more/tracking'
       path: '/tracking'
@@ -559,6 +578,7 @@ interface MoreRouteRouteChildren {
   MoreMoreRoute: typeof MoreMoreRoute
   MoreNotificationsRoute: typeof MoreNotificationsRoute
   MoreQadaRoute: typeof MoreQadaRoute
+  MoreStartingPointRoute: typeof MoreStartingPointRoute
   MoreTrackingRoute: typeof MoreTrackingRoute
 }
 
@@ -578,6 +598,7 @@ const MoreRouteRouteChildren: MoreRouteRouteChildren = {
   MoreMoreRoute: MoreMoreRoute,
   MoreNotificationsRoute: MoreNotificationsRoute,
   MoreQadaRoute: MoreQadaRoute,
+  MoreStartingPointRoute: MoreStartingPointRoute,
   MoreTrackingRoute: MoreTrackingRoute,
 }
 

@@ -5,6 +5,7 @@ import { useAccount } from '../cloud/session'
 import { useHijriOffset } from '../hijri/store'
 import { useLocale } from '../i18n/store'
 import { usePlace } from '../location/store'
+import { useStartingPoint } from '../plan/starting-point'
 import { useUserState } from '../plan/user-state-store'
 import { useQada } from '../prayer/marks'
 import { useCalculationPreferences } from '../prayer/store'
@@ -25,6 +26,7 @@ export function useMoreGroups(theme: ThemePreference, cloud = false): MoreGroup[
   const userState = useUserState()
   const locale = useLocale()
   const account = useAccount().account
+  const startingPoint = useStartingPoint()
   const owed = Object.values(useQada()).reduce((sum, count) => sum + (count ?? 0), 0)
 
   return moreGroups({
@@ -37,6 +39,7 @@ export function useMoreGroups(theme: ThemePreference, cloud = false): MoreGroup[
     language: supportedLanguageOf(locale),
     theme,
     qadaOwed: owed,
+    startingPoint,
     accountDetail: cloud
       ? (account?.email ??
         account?.displayName ??

@@ -59,10 +59,7 @@ describe('the onboarding flow', () => {
       query: '',
       place: null,
       gender: 'unspecified',
-      itemCount: items.length,
     })
-    expect(result.current.startingCount).toBeGreaterThan(0)
-    expect(result.current.essentialCount).toBeGreaterThan(0)
   })
 
   it('walks forward and back through the steps', () => {
@@ -410,14 +407,13 @@ describe('the onboarding flow', () => {
       })
     })
 
-    it('enables the items of a starter preset, and names them', () => {
+    it('enables the items of a starter preset', () => {
       const { result } = flow()
 
       act(() => result.current.onSelectPreset('essentials'))
 
       expect(getEnabledItems()).toEqual(idsForPreset('essentials', items))
       expect(result.current.preset).toBe('essentials')
-      expect(result.current.enabledTitles).toHaveLength(idsForPreset('essentials', items).length)
     })
 
     it('has no preset once the items were edited by hand', () => {

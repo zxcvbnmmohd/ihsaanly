@@ -1,38 +1,31 @@
 import { isRightToLeft, type SupportedLocale } from '@ihsaanly/core/i18n/locale'
 import { reloadAppAsync } from 'expo'
-import { I18nManager, Platform } from 'react-native'
+import { I18nManager } from 'react-native'
 
 const RELOAD_DELAY_MS = 300
 
 /**
  * Layout direction is a native setting that takes effect when the tree is
- * next built, so a real change needs a reload to become visible. Every style
- * already uses logical directions, so nothing else has to move.
+ * next built, so a real change reloads the app, on iOS and Android alike.
+ * Every style already uses logical directions, so nothing else has to move.
  *
- * Returns true when the change needs the app reopened by hand, which is iOS
- * only. Android recreates the activity on a reload, so the new direction is
- * picked up there. UIKit reads layout direction once, when the process
- * starts, so a JavaScript reload flips the content and leaves the navigation
- * bar mirrored the old way — a half-turned screen that looks like a bug,
- * because it is one. An app cannot relaunch itself on iOS, so the caller says
- * so instead.
+ * The native chrome follows on the reload because it is told the direction
+ * rather than left to guess it: expo-router's NavigationContainer reads
+ * `I18nManager` for the stack headers, which react-native-screens then forces
+ * onto the navigation bar, and the root layout passes the same answer to the
+ * native tab bar. Left alone, UIKit would keep the direction the process
+ * started with, which is why this used to ask iOS users to reopen by hand.
  */
-export function applyDirection(locale: SupportedLocale): boolean {
+export function applyDirection(locale: SupportedLocale): void {
   const shouldBeRtl = isRightToLeft(locale)
-  const directionChanges = shouldBeRtl !== I18nManager.isRTL
+  if (shouldBeRtl === I18nManager.isRTL) return
 
-  if (directionChanges) {
-    I18nManager.allowRTL(shouldBeRtl)
-    I18nManager.forceRTL(shouldBeRtl)
-  }
-
-  if (!directionChanges) return false
-  if (Platform.OS === 'ios') return true
+  I18nManager.allowRTL(shouldBeRtl)
+  I18nManager.forceRTL(shouldBeRtl)
 
   // The RTL flags are written by native calls that are still in flight when
   // this returns; reloading at once has been seen to lose the second write.
   // ponytail: a fixed delay rather than a completion signal, which the API
   // does not offer.
   setTimeout(() => void reloadAppAsync('layout direction changed'), RELOAD_DELAY_MS)
-  return false
 }

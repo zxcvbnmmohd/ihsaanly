@@ -523,7 +523,12 @@ and dev-only (`useLinking.native.js` returns early in production).
 `chooseLanguage` in `src/i18n/store.ts` writes the RTL flags through
 `I18nManager` and then calls `reloadAppAsync` from `expo`, after a short
 delay so the native writes land first. React reads the flags when it builds
-the tree, so a reload is what makes them visible.
+the tree, so a reload is what makes them visible. iOS reloads too: the native
+chrome is told the direction instead of inheriting UIKit's (which follows the
+device language and ignores `forceRTL`). Stack headers get it from
+expo-router's NavigationContainer, which reads `I18nManager`; the root layout
+passes it to `NativeTabs` through `unstable_nativeProps.direction`. Remove
+either and a reload leaves that bar facing the old way.
 
 `expo-localization` is deliberately **not installed**. Verified on a device:
 its module re-applies `allowRTL`/`forceRTL` from static string resources in

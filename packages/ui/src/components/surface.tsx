@@ -2,9 +2,10 @@ import { BlurView } from 'expo-blur'
 import { GlassView, isGlassEffectAPIAvailable, isLiquidGlassAvailable } from 'expo-glass-effect'
 import type { ReactElement } from 'react'
 import { type ReactNode, useEffect, useState } from 'react'
-import { AccessibilityInfo, View, type ViewProps } from 'react-native'
+import { AccessibilityInfo, type ColorValue, View, type ViewProps } from 'react-native'
 
 import { useColors } from '../colors'
+import { Ringed, ringSpace } from './ring'
 
 const noop = (): void => {}
 
@@ -31,9 +32,40 @@ interface SurfaceProps {
   children?: ReactNode
   style?: ViewProps['style']
   interactive?: boolean
+  /**
+   * A selection ring drawn around the surface — pass `'transparent'` when
+   * unselected so the ring's space stays reserved. Never put the ring in
+   * `style` as a border: liquid glass covers its own border.
+   */
+  ring?: ColorValue
+  /** The ring's width in points; 2 by default. */
+  ringWidth?: number
 }
 
-export function Surface({ children, style, interactive = false }: SurfaceProps): ReactElement {
+export function Surface({
+  children,
+  style,
+  interactive = false,
+  ring,
+  ringWidth,
+}: SurfaceProps): ReactElement {
+  const material = (
+    <Material
+      style={ring === undefined ? style : [style, ringSpace(ringWidth)]}
+      interactive={interactive}>
+      {children}
+    </Material>
+  )
+  return ring === undefined ? (
+    material
+  ) : (
+    <Ringed ring={ring} width={ringWidth} style={style}>
+      {material}
+    </Ringed>
+  )
+}
+
+function Material({ children, style, interactive = false }: SurfaceProps): ReactElement {
   const [thing, setThing] = useState<Thing>({ reduceTransparency: false })
   const colors = useColors()
 

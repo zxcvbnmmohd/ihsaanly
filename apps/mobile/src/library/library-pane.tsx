@@ -91,6 +91,9 @@ export function LibraryPane(): ReactElement {
           placeholder={strings.library.search}
           placement="integratedButton"
           allowToolbarIntegration={false}
+          // Left to UIKit, opening the field starts the "hide the bar" presentation
+          // and the large title loses its inset, snapping to the screen edge.
+          hideNavigationBar={false}
           autoCapitalize="none"
           tintColor={palette.accent}
           textColor={colors.label}

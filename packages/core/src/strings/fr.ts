@@ -671,7 +671,8 @@ export const fr: Strings = {
     allowNotifications: 'Autoriser les notifications',
     notNow: 'Pas maintenant',
     done: 'Commencer',
-    restore: 'Vous utilisez déjà Ihsaanly ? Connectez-vous pour restaurer vos données',
+    restorePrompt: 'Vous utilisez déjà Ihsaanly ?',
+    restoreAction: 'Se connecter',
   },
   location: {
     title: 'Position',

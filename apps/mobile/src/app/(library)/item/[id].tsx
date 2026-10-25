@@ -1,3 +1,4 @@
+import { useAccent } from '@ihsaanly/state/theme/accent-store'
 import { itemById, resolveText } from '@ihsaanly/core/content'
 import { formatShareText, sourceFor } from '@ihsaanly/core/content/share-text'
 import { prayerTimesAcross } from '@ihsaanly/core/prayer/times'
@@ -32,7 +33,7 @@ import { type ComponentRef, type ReactElement, useRef, useState } from 'react'
 // expo-clipboard when the next native build goes out anyway.
 import { Clipboard, Share, View } from 'react-native'
 import { captureRef } from 'react-native-view-shot'
-import { palettes } from '@/theme/palettes'
+import { paletteFor } from '@/theme/colors'
 import { usePalette } from '@/theme/store'
 
 interface Thing {
@@ -54,6 +55,7 @@ export default function ItemRoute(): ReactElement {
   const cardRef = useRef<ComponentRef<typeof View>>(null)
   const strings = useStrings()
   const palette = usePalette()
+  const accent = useAccent()
   const { id } = useLocalSearchParams<{ id: string }>()
   const item = itemById(id)
   const place = usePlace()
@@ -150,7 +152,11 @@ export default function ItemRoute(): ReactElement {
     }
   }
 
-  const sharePalettes = { light: palettes.light, dark: palettes.dark, current: palette }
+  const sharePalettes = {
+    light: paletteFor('light', accent),
+    dark: paletteFor('dark', accent),
+    current: palette,
+  }
 
   return (
     <>

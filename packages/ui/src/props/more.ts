@@ -4,6 +4,7 @@
 // the values over; this module only decides what each row says.
 
 import type { SupportedLanguage } from '@ihsaanly/core/i18n/locale'
+import type { StarterPreset } from '@ihsaanly/core/plan/presets'
 import type { CalculationPreferences } from '@ihsaanly/core/prayer/calculation'
 import type { Strings } from '@ihsaanly/core/strings/en'
 import type { MoreGroup, ThemePreference } from '../types'
@@ -24,6 +25,8 @@ export interface MoreGroupsInput {
   language: SupportedLanguage
   theme: ThemePreference
   qadaOwed: number
+  /** The preset the enabled items equal, or null once edited by hand. */
+  startingPoint: StarterPreset | null
   /**
    * The Account row's current value. Left out when the build has no cloud
    * config, and then there is no Account or Send feedback row: a local-only build never mentions accounts.
@@ -47,6 +50,7 @@ export function moreGroups(input: MoreGroupsInput): MoreGroup[] {
     language,
     theme,
     qadaOwed,
+    startingPoint,
     accountDetail,
   } = input
 
@@ -101,6 +105,11 @@ export function moreGroups(input: MoreGroupsInput): MoreGroup[] {
     {
       title: strings.more.practice,
       rows: [
+        {
+          href: '/starting-point',
+          title: strings.startingPoint.title,
+          detail: startingPoint ? strings.onboarding[startingPoint] : strings.startingPoint.custom,
+        },
         { href: '/history', title: strings.history.title, detail: null },
         {
           href: '/qada',

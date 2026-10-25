@@ -432,6 +432,20 @@ export const ja: Strings = {
     dark: 'ダーク',
     note: '色はシステムから取得するため、どちらを選んでもシステムのコントラスト設定が適用されます。',
   },
+  startingPoint: {
+    title: 'はじめの一歩',
+    why: '一日のはじまりを選んでください。ライブラリでいつでも追加したり外したりできます。記録はそのまま残ります。',
+    startingDetail: 'はじめての方に。',
+    essentialsDetail: 'もう少し取り組みたい方に。',
+    everythingDetail: 'すべてに取り組みたい方に。',
+    custom: 'カスタム',
+    customNote: 'ライブラリで項目を自分で選んでいます。ここで選ぶと置き換わります。',
+    confirmTitle: '項目を置き換えますか？',
+    confirmBody:
+      'ライブラリで選んだ項目がこのはじめの一歩に置き換わります。記録はそのまま残ります。',
+    confirm: '置き換える',
+    cancel: 'キャンセル',
+  },
   moonSighting: {
     title: '新月の目視',
     explanation:

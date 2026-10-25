@@ -34,6 +34,7 @@ const SCREEN: Record<string, (strings: Strings) => string> = {
   '/_more/location': (s) => s.location.title,
   '/_more/notifications': (s) => s.notifications.title,
   '/_more/qada': (s) => s.qada.title,
+  '/_more/starting-point': (s) => s.startingPoint.title,
   '/_more/tracking': (s) => s.tracking.title,
 }
 

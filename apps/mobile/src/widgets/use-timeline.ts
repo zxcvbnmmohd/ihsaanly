@@ -5,6 +5,7 @@ import { useHijriOffset } from '@ihsaanly/state/hijri/store'
 import { useLocale } from '@ihsaanly/state/i18n/store'
 import { useQada } from '@ihsaanly/state/prayer/marks'
 import { useStrings } from '@ihsaanly/state/strings'
+import { useAccent } from '@ihsaanly/state/theme/accent-store'
 import { useEffect } from 'react'
 import { AppState } from 'react-native'
 
@@ -20,7 +21,7 @@ function take(): void {
 
 /**
  * Republishes the widgets' day whenever something they show could have
- * changed: the moment's item, a mark, what is owed, the language. Not every
+ * changed: the moment's item, a mark, what is owed, the language, the accent. Not every
  * minute — the timeline already carries the day forward on its own.
  */
 export function useWidgetTimeline(
@@ -34,6 +35,7 @@ export function useWidgetTimeline(
   const qada = useQada()
   const fastsOwed = useFastsOutstanding()
   const tapsThrough = useWidgetTapsThrough()
+  const accent = useAccent()
 
   // Done taps on the Right now widget wait in its timeline until the app runs:
   // taken in on launch, on every return to the foreground, and on a press
@@ -62,6 +64,7 @@ export function useWidgetTimeline(
     locale,
     placeLabel,
     hijriOffset,
+    accent,
   ])
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: `key` fingerprints every input the timeline reads, so the widgets refresh only when one of them changes.
@@ -78,6 +81,7 @@ export function useWidgetTimeline(
         hijriOffset,
         qada,
         fastsOwed,
+        accent,
       })
       void publishTimeline(timeline).catch(() => {})
     } catch {

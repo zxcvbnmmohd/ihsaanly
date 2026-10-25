@@ -16,6 +16,7 @@ import {
 installColors()
 const { MobileUiProvider } = await import('./ui-provider')
 const { setThemePreference } = await import('./store')
+const { setAccent } = await import('@ihsaanly/state/theme/accent-store')
 
 let seen: ReturnType<typeof useUi> | null = null
 
@@ -45,6 +46,18 @@ afterAll(() => {
 })
 
 describe('MobileUiProvider', () => {
+  it('hands screens the chosen accent and follows a change at once', () => {
+    render(
+      <MobileUiProvider>
+        <Probe />
+      </MobileUiProvider>,
+    )
+    expect(seen?.accent).toBe('terracotta')
+    act(() => setAccent('amber'))
+    expect(seen?.accent).toBe('amber')
+    act(() => setAccent('terracotta'))
+  })
+
   it('feeds the UI package the strings, scheme, OS colours and router Link', () => {
     render(
       <MobileUiProvider>

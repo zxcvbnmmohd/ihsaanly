@@ -67,8 +67,10 @@ export const colors = {
 
 export { type Palette, palettes } from './palettes'
 
-import { type Palette, palettes } from './palettes'
+import { type AccentName, paletteFor as tokenPalette } from '@ihsaanly/tailwind/tokens'
+import type { Palette } from './palettes'
 
-export function paletteFor(scheme: ColorSchemeName | null): Palette {
-  return palettes[scheme === 'dark' ? 'dark' : 'light']
+/** The brand palette for a scheme (light when unknown) under the chosen accent. */
+export function paletteFor(scheme: ColorSchemeName | null, accent?: AccentName): Palette {
+  return tokenPalette(scheme === 'dark' ? 'dark' : 'light', accent)
 }

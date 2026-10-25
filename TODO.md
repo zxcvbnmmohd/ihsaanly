@@ -102,36 +102,36 @@ Sign in with Apple, the iOS release and iOS CI all need this.
 
 1. [x] **Enrol** at <https://developer.apple.com/programs/> as an organisation
    (Mohd Inc.). Done: the Apple Developer account exists.
-2. [ ] **App IDs:** Certificates, IDs & Profiles → Identifiers → **+** → App
-   IDs. Create `app.ihsaanly.companion` and
-   `app.ihsaanly.companion.development`, and tick **Sign in with Apple** on
-   both. Widgets also need the App Group capability; see
-   `apps/mobile/TODO.md`.
-3. [ ] **Services ID** (for web sign-in on companion): Identifiers → **+** →
-   Services IDs, e.g. `app.ihsaanly.companion.web`. Enable Sign in with Apple
-   → Configure, then:
-   - **Domains:** `ihsaanly-production.firebaseapp.com`,
-     `ihsaanly-development.firebaseapp.com`, `companion.ihsaanly.app`,
-     `dev.companion.ihsaanly.app`.
-   - **Return URLs:**
-     `https://ihsaanly-production.firebaseapp.com/__/auth/handler` and
-     `https://ihsaanly-development.firebaseapp.com/__/auth/handler`.
-4. [ ] **Key:** Keys → **+** → enable Sign in with Apple, linked to the
-   primary App ID. Download the `.p8`, which can't be downloaded again. Note
-   the **Key ID** and your **Team ID**.
-5. [ ] **Firebase,** in both projects: Authentication → Sign-in method →
-   **Apple** → Enable. Fill in the Services ID, the Apple team ID, the key ID
-   and the private key (the `.p8` contents).
+Team ID `97J332WV6P`. Dev and prod are kept apart: each has its own App ID,
+Services ID and Sign in with Apple key, all in 1Password → **Private** →
+"Ihsaanly Sign in with Apple keys".
+
+| | Development | Production |
+| --- | --- | --- |
+| App ID | `app.ihsaanly.companion.development` | `app.ihsaanly.companion` |
+| Widgets | `….development.ExpoWidgetsTarget` | `….ExpoWidgetsTarget` |
+| App Group | `group.app.ihsaanly.companion.development` | `group.app.ihsaanly.companion` |
+| Services ID | `app.ihsaanly.companion.development.web` | `app.ihsaanly.companion.web` |
+| Sign in with Apple key | `G63FSF5V79` | `3LK67TRLK7` |
+
+2. [x] **App IDs** (2026-10-10), registered by Xcode's automatic signing
+   from a fresh `expo prebuild`: Sign in with Apple, Push Notifications, App
+   Groups and (production) Associated Domains, plus the widget targets.
+3. [x] **Services IDs**, each grouped under its own App ID. Domains: the
+   project's `firebaseapp.com` and its companion domain (`dev.companion…` or
+   `companion…`). Return URL: `https://<project>.firebaseapp.com/__/auth/handler`.
+4. [x] **Sign in with Apple keys**, one per App ID (the dev project needs its
+   own to revoke Apple tokens when an account is deleted).
+5. [x] **Firebase:** Apple sign-in in each project has its Services ID, team,
+   key and bundle ID (set through the Identity Toolkit admin API).
 6. [ ] Tell Claude, who then tests account linking (Apple ↔ Google) and the
    iOS build path.
-7. [ ] **Push (Announcements):** tick **Push Notifications** on both App IDs
-   too. Then Keys → **+** → enable **Apple Push Notifications service
-   (APNs)** (one key serves sandbox and production, and both App IDs). Upload
-   that `.p8` to Firebase in **both** projects: Project settings → **Cloud
-   Messaging** → Apple app configuration → **APNs Authentication Key** →
-   Upload, with the Key ID and Team ID. Until this is done the iOS app still
-   subscribes to the topics, but Firebase cannot deliver to it; Android works
-   without it.
+7. [x] **Push (Announcements):** one APNs key, `YZ2L8727SH` (Sandbox &
+   Production, every App ID on the team), in 1Password → **Private** →
+   "Ihsaanly APNs key". Uploaded 2026-10-10 to both Firebase projects, in the
+   development and production slots of Project settings → **Cloud
+   Messaging** → Apple app configuration. To rotate: create the new key and
+   upload it to all four slots before revoking the old one.
 
 ### Sending an announcement (once the app is out)
 

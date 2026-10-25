@@ -698,6 +698,10 @@ export const hi: Strings = {
     moreNow: (n: number): string => `अभी +${n} और`,
     markDone: 'पूरा चिह्नित करें',
     markedDone: 'पूरा चिह्नित',
+    saidIt: 'पढ़ ली',
+    marked: 'चिह्नित',
+    addOne: '+1',
+    countOf: '{total} में से {count}',
   },
   web: {
     remindersUnavailable: 'रिमाइंडर के लिए फ़ोन ऐप चाहिए। पेज बंद होने पर ब्राउज़र याद नहीं दिला सकता।',

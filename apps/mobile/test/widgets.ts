@@ -31,6 +31,9 @@ type WidgetFunction = (props: WidgetModel, environment: Env) => ReactNode
 
 const registry = new Map<string, WidgetFunction>()
 
+/** Who listens for widget button presses (expo-widgets' `addUserInteractionListener`). */
+export const interactions = { listeners: [] as (() => void)[], removed: 0 }
+
 const SWIFT_UI = [
   'AccessoryWidgetBackground',
   'Button',
@@ -93,6 +96,14 @@ export function installWidgetMocks(): void {
     createWidget: (name: string, fn: WidgetFunction) => {
       registry.set(name, fn)
       return { name }
+    },
+    addUserInteractionListener: (listener: () => void) => {
+      interactions.listeners.push(listener)
+      return {
+        remove: () => {
+          interactions.removed += 1
+        },
+      }
     },
   }))
   mock.module('react-native-android-widget', () => androidWidgetModule())

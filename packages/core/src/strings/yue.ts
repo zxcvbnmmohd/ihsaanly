@@ -679,6 +679,10 @@ export const yue: Strings = {
     moreNow: (n: number): string => `而家仲有 ${n} 樣`,
     markDone: '標記完成',
     markedDone: '已標記完成',
+    saidIt: '唸咗喇',
+    marked: '已標記',
+    addOne: '+1',
+    countOf: '{count} / {total}',
   },
   web: {
     remindersUnavailable: '提醒需要手機App。網頁關咗瀏覽器就冇辦法提醒你。',

@@ -399,6 +399,17 @@ export const en = {
     play: 'Play',
     stop: 'Stop',
     loop: 'Repeat',
+    speed: 'Speed',
+    rate: (rate: number): string => `${rate}×`,
+    repeatOff: 'Off',
+    repeatTimes: (times: number): string => `×${times}`,
+    repeatAlways: '∞',
+  },
+  reader: {
+    more: 'More about this',
+    previous: 'Previous',
+    next: 'Next',
+    page: (page: number, total: number): string => `${page} of ${total}`,
   },
   language: {
     title: 'Language',

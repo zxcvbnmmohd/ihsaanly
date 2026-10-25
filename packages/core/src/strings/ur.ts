@@ -406,6 +406,17 @@ export const ur: Strings = {
     play: 'چلائیں',
     stop: 'روکیں',
     loop: 'دہرائیں',
+    speed: 'رفتار',
+    rate: (rate: number): string => `${rate}×`,
+    repeatOff: 'بند',
+    repeatTimes: (times: number): string => `×${times}`,
+    repeatAlways: '∞',
+  },
+  reader: {
+    more: 'اس کے بارے میں مزید',
+    previous: 'پچھلا',
+    next: 'اگلا',
+    page: (page: number, total: number): string => `${total} میں سے ${page}`,
   },
   language: {
     title: 'زبان',

@@ -253,6 +253,35 @@ describe('what else is open, and the done button', () => {
     expect(first?.moreNow).toBeNull()
   })
 
+  it('offers the undetectable moments’ duas until the user chooses their own', () => {
+    const [base] = widgetTimeline(input())
+    expect(base?.quickDuas.length).toBeGreaterThan(0)
+    expect(base?.quickDuas.every((entry) => entry.url.startsWith('ihsaanly://item/'))).toBe(true)
+    const empty = widgetTimeline({ ...input(), myDuas: { pinned: [], own: [] } })[0]
+    expect(empty?.quickDuas).toEqual(base?.quickDuas ?? [])
+  })
+
+  it('lists pinned items, then own duas, when the user has chosen some', () => {
+    const chosen = widgetTimeline({
+      ...input(),
+      myDuas: {
+        pinned: ['evening-adhkar', 'no-such-item'],
+        own: [{ id: 'mine-parents', title: 'For my parents' }],
+      },
+    })
+    const entry = chosen[0]
+    expect(entry?.quickDuas.map((link) => link.url)).toEqual([
+      'ihsaanly://item/evening-adhkar',
+      'ihsaanly://item/mine-parents',
+    ])
+    expect(entry?.quickDuas[1]).toEqual({
+      title: 'For my parents',
+      detail: null,
+      url: 'ihsaanly://item/mine-parents',
+    })
+    expect(chosen.at(-1)?.quickDuas).toEqual(entry?.quickDuas ?? [])
+  })
+
   it('starts every entry with no taps and labels the button', () => {
     const timeline = widgetTimeline(input())
     expect(timeline.every((entry) => entry.taps.length === 0)).toBe(true)

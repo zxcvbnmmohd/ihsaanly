@@ -7,6 +7,7 @@ import type { Plan, Signals } from '@ihsaanly/core/plan/signals'
 import { DEFAULT_USER_STATE } from '@ihsaanly/core/plan/user-state'
 import { DEFAULT_CALCULATION_PREFERENCES } from '@ihsaanly/core/prayer/calculation'
 import { prayerTimesAcross } from '@ihsaanly/core/prayer/times'
+import { deleteOwnDua, saveOwnDua, togglePinned } from '@ihsaanly/state/my-duas/store'
 import { setAccent } from '@ihsaanly/state/theme/accent-store'
 import { act, renderHook } from '@testing-library/react'
 import { AppState } from 'react-native'
@@ -159,6 +160,36 @@ describe('useWidgetTimeline', () => {
     })
     view.rerender({ s: signals({ completedToday: { 'morning-adhkar': now } }) })
     expect(published).toHaveBeenCalledTimes(2)
+  })
+
+  it('republishes the Quick duas when a dua is pinned or written', () => {
+    renderHook(() => useWidgetTimeline(signals(), planned(null), 'London'))
+    try {
+      act(() => togglePinned('evening-adhkar'))
+      expect(published).toHaveBeenCalledTimes(2)
+      act(() => {
+        saveOwnDua({
+          id: 'mine-widget',
+          title: 'Mine',
+          arabic: null,
+          transliteration: null,
+          text: 'Words',
+          repeat: 1,
+          moment: null,
+        })
+      })
+      expect(published).toHaveBeenCalledTimes(3)
+      const timeline = published.mock.calls[2]?.[0] as { quickDuas: { url: string }[] }[]
+      expect(timeline[0]?.quickDuas.map((link) => link.url)).toEqual([
+        'ihsaanly://item/evening-adhkar',
+        'ihsaanly://item/mine-widget',
+      ])
+    } finally {
+      act(() => {
+        togglePinned('evening-adhkar')
+        deleteOwnDua('mine-widget')
+      })
+    }
   })
 
   it('takes in widget taps on launch and on every return to the foreground', () => {

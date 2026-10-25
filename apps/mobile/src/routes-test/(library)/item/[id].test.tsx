@@ -32,6 +32,14 @@ mock.module('@ihsaanly/ui/components/share-studio', () => ({
   },
 }))
 
+const ownProps: unknown[] = []
+mock.module('@ihsaanly/ui/screens/own-dua', () => ({
+  OwnDuaScreen: (props: unknown): ReactElement => {
+    ownProps.push(props)
+    return <div data-testid="own-dua-screen" />
+  },
+}))
+
 const haptics: string[] = []
 mock.module('expo-haptics', () => ({
   NotificationFeedbackType: { Success: 'success' },
@@ -120,6 +128,31 @@ afterEach(() => {
     for (const id of [TASBIH, MORNING, SIWAK]) uncompleteItem(id, new Date(), 'UTC')
   })
   mock.restore()
+})
+
+describe('pinning to My duas', () => {
+  it('pins and unpins the item', () => {
+    open(MORNING)
+    expect(last().pin?.value).toBe(false)
+    act(() => last().pin?.onToggle())
+    expect(last().pin?.value).toBe(true)
+    act(() => last().pin?.onToggle())
+    expect(last().pin?.value).toBe(false)
+  })
+
+  it('offers no pin for an unknown item', () => {
+    open('no-such-item')
+    expect(last().pin).toBeUndefined()
+  })
+})
+
+describe('an own dua', () => {
+  it('opens in the own-dua reader rather than as content', () => {
+    ownProps.length = 0
+    open('mine-anything')
+    expect(itemProps).toHaveLength(0)
+    expect(ownProps.length).toBeGreaterThan(0)
+  })
 })
 
 describe('an unknown item', () => {

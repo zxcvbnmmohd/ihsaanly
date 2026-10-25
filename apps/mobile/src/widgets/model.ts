@@ -113,6 +113,12 @@ export interface WidgetInput {
   fastsOwed: number
   /** The chosen accent; widgets cannot read the app's preferences, so it is resolved here. */
   accent?: AccentName
+  /**
+   * What the user chose for the Quick duas widget: pinned library items, then
+   * their own duas. Absent or empty, the widget offers the duas for the
+   * moments a phone cannot detect.
+   */
+  myDuas?: { pinned: string[]; own: { id: string; title: string }[] }
 }
 
 const STEP_MS = 30 * 60_000
@@ -129,6 +135,17 @@ function link(id: string, detail: string | null = null): WidgetLink | null {
   const item = itemById(id)
   if (!item) return null
   return { title: resolveText(item.title) ?? id, detail, url: itemUrl(id) }
+}
+
+function quickDuas(chosen: WidgetInput['myDuas']): WidgetLink[] {
+  const mine = [
+    ...(chosen?.pinned ?? []).flatMap((id) => link(id) ?? []),
+    ...(chosen?.own ?? []).map((dua) => ({ title: dua.title, detail: null, url: itemUrl(dua.id) })),
+  ]
+  if (mine.length > 0) return mine
+  return items
+    .filter((item) => item.trigger.kind === 'event' && UNDETECTABLE.includes(item.trigger.event))
+    .flatMap((item) => link(item.id) ?? [])
 }
 
 function inkFor(scheme: 'light' | 'dark', accent: AccentName | undefined): WidgetInk {
@@ -318,9 +335,7 @@ function modelAt(input: WidgetInput, at: Date): WidgetModel {
         (entry, index, all) => all.findIndex((other) => other.itemId === entry.itemId) === index,
       )
       .flatMap((entry) => link(entry.itemId, whenLabel(entry, strings)) ?? []),
-    quickDuas: items
-      .filter((item) => item.trigger.kind === 'event' && UNDETECTABLE.includes(item.trigger.event))
-      .flatMap((item) => link(item.id) ?? []),
+    quickDuas: quickDuas(input.myDuas),
     duaOfTheDay: duaOfTheDay(dayKey),
     makeUp: {
       prayers: qadaTotal,

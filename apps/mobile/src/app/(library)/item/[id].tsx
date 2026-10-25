@@ -1,10 +1,12 @@
 import { useAccent } from '@ihsaanly/state/theme/accent-store'
 import { itemById, resolveText } from '@ihsaanly/core/content'
+import { isOwnDuaId } from '@ihsaanly/core/content/my-duas'
 import { formatShareText, sourceFor } from '@ihsaanly/core/content/share-text'
 import { prayerTimesAcross } from '@ihsaanly/core/prayer/times'
 import { buildWindows, windowAt } from '@ihsaanly/core/prayer/windows'
 import { usePlace } from '@ihsaanly/state/location/store'
 import { useKnownItems } from '@ihsaanly/state/memorise/store'
+import { togglePinned, usePinnedItems } from '@ihsaanly/state/my-duas/store'
 import {
   setNotificationPreferences,
   useNotificationPreferences,
@@ -34,6 +36,7 @@ import { type ComponentRef, type ReactElement, useRef, useState } from 'react'
 import { Clipboard, Share, View } from 'react-native'
 import { captureRef } from 'react-native-view-shot'
 import { paletteFor } from '@/theme/colors'
+import { OwnDuaRoute } from '@/library/own-dua-route'
 import { usePalette } from '@/theme/store'
 
 interface Thing {
@@ -45,7 +48,17 @@ interface Thing {
   notice: string | null
 }
 
+interface ContentItemRouteProps {
+  id: string
+}
+
+/** `/item/<id>` opens content, or one of the user's own duas (`mine-…`). */
 export default function ItemRoute(): ReactElement {
+  const { id } = useLocalSearchParams<{ id: string }>()
+  return isOwnDuaId(id) ? <OwnDuaRoute id={id} /> : <ContentItemRoute id={id} />
+}
+
+function ContentItemRoute({ id }: ContentItemRouteProps): ReactElement {
   const [thing, setThing] = useState<Thing>({
     count: 0,
     studio: false,
@@ -56,7 +69,6 @@ export default function ItemRoute(): ReactElement {
   const strings = useStrings()
   const palette = usePalette()
   const accent = useAccent()
-  const { id } = useLocalSearchParams<{ id: string }>()
   const item = itemById(id)
   const place = usePlace()
   const calculation = useCalculationPreferences()
@@ -66,6 +78,7 @@ export default function ItemRoute(): ReactElement {
   const enabled = useEnabledItems()
   const known = useKnownItems()
   const notifications = useNotificationPreferences()
+  const pinned = usePinnedItems()
 
   const title = item ? resolveText(item.title) : null
   const timeZone = place?.timeZone ?? 'UTC'
@@ -216,6 +229,11 @@ export default function ItemRoute(): ReactElement {
         onShareImage={() => {
           if (item) setThing((current) => ({ ...current, studio: true, notice: null }))
         }}
+        pin={
+          item
+            ? { value: pinned.includes(item.id), onToggle: () => togglePinned(item.id) }
+            : undefined
+        }
       />
       {item && thing.studio ? (
         <>

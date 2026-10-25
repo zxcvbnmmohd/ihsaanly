@@ -54,4 +54,23 @@ describe('history route', () => {
     expect(labelFor('fajr')).toBe(getStrings().prayer.fajr)
     expect(labelFor('no-such-subject')).toBe('no-such-subject')
   })
+
+  it('names an own dua by its title, even one with no moment', async () => {
+    const { deleteOwnDua, saveOwnDua } = await import('@ihsaanly/state/my-duas/store')
+    saveOwnDua({
+      id: 'mine-history',
+      title: 'For my parents',
+      arabic: null,
+      transliteration: null,
+      text: 'Words',
+      repeat: 1,
+      moment: null,
+    })
+    try {
+      render(<HistoryRoute />)
+      expect(last(renders).labelFor('mine-history')).toBe('For my parents')
+    } finally {
+      deleteOwnDua('mine-history')
+    }
+  })
 })

@@ -3,6 +3,7 @@ import type { Plan, Signals } from '@ihsaanly/core/plan/signals'
 import { useFastsOutstanding } from '@ihsaanly/state/fasting/store'
 import { useHijriOffset } from '@ihsaanly/state/hijri/store'
 import { useLocale } from '@ihsaanly/state/i18n/store'
+import { useOwnDuas, usePinnedItems } from '@ihsaanly/state/my-duas/store'
 import { useQada } from '@ihsaanly/state/prayer/marks'
 import { useStrings } from '@ihsaanly/state/strings'
 import { useAccent } from '@ihsaanly/state/theme/accent-store'
@@ -36,6 +37,8 @@ export function useWidgetTimeline(
   const fastsOwed = useFastsOutstanding()
   const tapsThrough = useWidgetTapsThrough()
   const accent = useAccent()
+  const pinned = usePinnedItems()
+  const myDuas = { pinned, own: useOwnDuas().map(({ id, title }) => ({ id, title })) }
 
   // Done taps on the Right now widget wait in its timeline until the app runs:
   // taken in on launch, on every return to the foreground, and on a press
@@ -65,6 +68,7 @@ export function useWidgetTimeline(
     placeLabel,
     hijriOffset,
     accent,
+    myDuas,
   ])
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: `key` fingerprints every input the timeline reads, so the widgets refresh only when one of them changes.
@@ -82,6 +86,7 @@ export function useWidgetTimeline(
         qada,
         fastsOwed,
         accent,
+        myDuas,
       })
       void publishTimeline(timeline).catch(() => {})
     } catch {

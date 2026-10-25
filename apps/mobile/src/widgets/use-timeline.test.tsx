@@ -7,7 +7,8 @@ import type { Plan, Signals } from '@ihsaanly/core/plan/signals'
 import { DEFAULT_USER_STATE } from '@ihsaanly/core/plan/user-state'
 import { DEFAULT_CALCULATION_PREFERENCES } from '@ihsaanly/core/prayer/calculation'
 import { prayerTimesAcross } from '@ihsaanly/core/prayer/times'
-import { renderHook } from '@testing-library/react'
+import { setAccent } from '@ihsaanly/state/theme/accent-store'
+import { act, renderHook } from '@testing-library/react'
 import { AppState } from 'react-native'
 
 import * as drain from './drain'
@@ -111,6 +112,16 @@ describe('useWidgetTimeline', () => {
     expect(published).toHaveBeenCalledTimes(2)
     view.rerender({ label: 'Paris', plan: planned('some-item') })
     expect(published).toHaveBeenCalledTimes(3)
+  })
+
+  it('republishes in the new colours when the accent changes', () => {
+    renderHook(() => useWidgetTimeline(signals(), planned(null), 'London'))
+    expect(published).toHaveBeenCalledTimes(1)
+    act(() => setAccent('plum'))
+    expect(published).toHaveBeenCalledTimes(2)
+    const [timeline] = published.mock.calls.at(-1) as [{ ink: { light: { accent: string } } }[]]
+    expect(timeline[0]?.ink.light.accent).toBe('#7d3f73')
+    act(() => setAccent('terracotta'))
   })
 
   it('republishes when a prayer is marked or tracking is paused', () => {

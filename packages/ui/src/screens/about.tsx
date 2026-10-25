@@ -1,7 +1,6 @@
-import { palettes } from '@ihsaanly/tailwind/tokens'
 import type { ReactElement, ReactNode } from 'react'
 import { Text, View } from 'react-native'
-import { useColors } from '../colors'
+import { useColors, usePalette } from '../colors'
 import { Row } from '../components/row'
 import { Screen } from '../components/screen'
 import { serif } from '../fonts'
@@ -51,8 +50,8 @@ export function AboutScreen({
   terms,
 }: AboutScreenProps): ReactElement {
   const colors = useColors()
-  const { strings, scheme } = useUi()
-  const palette = palettes[scheme]
+  const { strings } = useUi()
+  const palette = usePalette()
 
   return (
     <Screen palette={palette} className="gap-8 p-4">

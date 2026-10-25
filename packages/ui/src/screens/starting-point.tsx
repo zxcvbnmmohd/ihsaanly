@@ -1,8 +1,7 @@
 import { STARTER_PRESETS, type StarterPreset } from '@ihsaanly/core/plan/presets'
-import { palettes } from '@ihsaanly/tailwind/tokens'
 import type { ReactElement } from 'react'
 import { Text } from 'react-native'
-import { useColors } from '../colors'
+import { useColors, usePalette } from '../colors'
 import { ChoiceRow } from '../components/choice-row'
 import { Screen } from '../components/screen'
 import { useUi } from '../provider'
@@ -16,8 +15,8 @@ export interface StartingPointScreenProps {
 /** Onboarding's last step, offered again from More. */
 export function StartingPointScreen({ current, onSelect }: StartingPointScreenProps): ReactElement {
   const colors = useColors()
-  const { strings, scheme } = useUi()
-  const palette = palettes[scheme]
+  const { strings } = useUi()
+  const palette = usePalette()
   const copy = strings.startingPoint
   const detail: Record<StarterPreset, string> = {
     starting: copy.startingDetail,

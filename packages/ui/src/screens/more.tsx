@@ -1,7 +1,6 @@
-import { palettes } from '@ihsaanly/tailwind/tokens'
 import type { ReactElement } from 'react'
 import { Text, View } from 'react-native'
-import { useColors } from '../colors'
+import { useColors, usePalette } from '../colors'
 import { EmptyState } from '../components/empty-state'
 import { Row } from '../components/row'
 import { Screen } from '../components/screen'
@@ -26,8 +25,8 @@ export interface MoreScreenProps {
 
 export function MoreScreen({ groups, searchable, selectedHref }: MoreScreenProps): ReactElement {
   const colors = useColors()
-  const { strings, scheme } = useUi()
-  const palette = palettes[scheme]
+  const { strings } = useUi()
+  const palette = usePalette()
 
   return (
     <Screen palette={palette} className="gap-6 p-4">

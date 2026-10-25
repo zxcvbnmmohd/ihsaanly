@@ -449,6 +449,8 @@ export const onboardingFixture: OnboardingScreenProps = {
 export const appearanceFixture: AppearanceScreenProps = {
   preference: 'system',
   onSelect: noop,
+  accent: 'terracotta',
+  onSelectAccent: noop,
 }
 
 export const startingPointFixture: StartingPointScreenProps = {

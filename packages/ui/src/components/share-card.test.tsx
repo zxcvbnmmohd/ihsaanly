@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { palettes } from '@ihsaanly/tailwind/tokens'
+import { paletteFor, palettes } from '@ihsaanly/tailwind/tokens'
 import { screen } from '@testing-library/react'
 import { renderScreen } from '../../test/render'
 import { shareCardTheme } from '../props/share-card'
@@ -72,5 +72,25 @@ describe('ShareCard', () => {
     expect(screen.getByText('Plain')).toBeInTheDocument()
     expect(screen.queryByText('Bismillah')).toBeNull()
     expect(screen.getByText(SHARE_WATERMARK)).toBeInTheDocument()
+  })
+
+  it('signs the card in the chosen accent', () => {
+    const plum = paletteFor('dark', 'plum')
+    renderScreen(
+      <ShareCard
+        palette={plum}
+        card={{
+          title: 'Plain',
+          arabic: null,
+          transliteration: null,
+          translation: null,
+          source: null,
+        }}
+      />,
+      { scheme: 'dark', accent: 'plum' },
+    )
+    // #d79acb, the plum accent in the dark scheme.
+    expect(plum.accent).toBe('#d79acb')
+    expect(screen.getByText('Ihsaanly').style.color).toBe('rgba(215, 154, 203, 1.00)')
   })
 })

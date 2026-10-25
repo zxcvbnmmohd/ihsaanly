@@ -726,6 +726,26 @@ export const en = {
     progress: (count: number, target: number): string => `${count} of ${target}`,
     tapToCount: 'Tap to count',
   },
+  share: {
+    title: 'Share',
+    preview: 'Preview of the picture',
+    style: 'Style',
+    styleLight: 'Light',
+    styleDark: 'Dark',
+    styleAccent: 'Accent',
+    background: 'Background',
+    solid: 'Solid',
+    transparent: 'Transparent',
+    size: 'Size',
+    story: 'Story',
+    square: 'Square',
+    saveImage: 'Save image',
+    shareImage: 'Share image',
+    saveOrShare: 'Save or share image',
+    copyText: 'Copy text',
+    copied: 'Copied',
+    unavailable: 'Sharing is not available on this device.',
+  },
 }
 
 export type Strings = typeof en

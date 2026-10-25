@@ -12,6 +12,7 @@ import { completeItem, uncompleteItem, useCompletedToday } from '@ihsaanly/state
 import { toggleEnabled, useEnabledItems } from '@ihsaanly/state/plan/enabled-store'
 import { usePlan } from '@ihsaanly/state/plan/use-plan'
 import { useCalculationPreferences } from '@ihsaanly/state/prayer/store'
+import { updateReaderPreferences, useReaderPreferences } from '@ihsaanly/state/reader/store'
 import { useStrings } from '@ihsaanly/state/strings'
 import { useNow } from '@ihsaanly/state/time/use-now'
 import { ShareCard } from '@ihsaanly/ui/components/share-card'
@@ -44,6 +45,7 @@ export default function ItemRoute(): ReactElement {
   const enabled = useEnabledItems()
   const known = useKnownItems()
   const notifications = useNotificationPreferences()
+  const reader = useReaderPreferences()
 
   const title = item ? resolveText(item.title) : null
   const timeZone = place?.timeZone ?? 'UTC'
@@ -165,6 +167,9 @@ export default function ItemRoute(): ReactElement {
             : null
         }
         onToggleRemind={toggleRemind}
+        reading={{ arabicFirst: reader.arabicFirst, align: reader.align }}
+        detail={reader.detail}
+        onDetail={(detail) => updateReaderPreferences({ detail })}
         onShareText={shareText}
         onShareImage={() => void shareImage()}
       />

@@ -144,18 +144,36 @@ function DuaOfTheDayWidget(props: WidgetModel, environment: WidgetEnvironment): 
     return panel(heading(props.labels.duaOfTheDay), home)
   }
 
-  // Arabic always reads right to left and sits centred, whatever the app's language.
+  // The reader's preference; a timeline published before it existed has none.
+  const reading = props.reading ?? { arabicFirst: true, centred: true }
+  const centred = reading.centred
+  // Arabic always reads right to left, whatever the app's language: its start
+  // is the right edge, which is the trailing side of a left-to-right layout.
+  const arabicSide = centred ? 'center' : props.rtl ? 'leading' : 'trailing'
   const arabic = (size: Size, limit: number): ReactElement => (
     <Text
       modifiers={[
         font({ textStyle: size }),
         paint('label'),
         lineLimit(limit),
-        multilineTextAlignment('center'),
+        multilineTextAlignment(arabicSide),
         minimumScaleFactor(0.5),
-        frame({ maxWidth: Infinity, alignment: 'center' }),
+        frame({ maxWidth: Infinity, alignment: arabicSide }),
       ]}>
       {dua.arabic}
+    </Text>
+  )
+  const meaning = (value: string): ReactElement => (
+    <Text
+      modifiers={[
+        font({ textStyle: 'body' }),
+        paint('secondary'),
+        lineLimit(4),
+        multilineTextAlignment(centred ? 'center' : align),
+        minimumScaleFactor(0.7),
+        frame({ maxWidth: Infinity, alignment: centred ? 'center' : align }),
+      ]}>
+      {value}
     </Text>
   )
 
@@ -208,14 +226,30 @@ function DuaOfTheDayWidget(props: WidgetModel, environment: WidgetEnvironment): 
       dua.url,
     )
   }
+  const big = arabic('largeTitle', family === 'systemExtraLarge' ? 5 : 4)
+  // With the meaning first it leads the Arabic it translates; otherwise it
+  // follows the title, as it always has.
+  if (!reading.arabicFirst && dua.translation) {
+    return panel(
+      <>
+        {heading(props.labels.duaOfTheDay)}
+        <Spacer />
+        {meaning(dua.translation)}
+        {big}
+        <Spacer />
+        {say(dua.title, 'headline', 'label', 1)}
+      </>,
+      dua.url,
+    )
+  }
   return panel(
     <>
       {heading(props.labels.duaOfTheDay)}
       <Spacer />
-      {arabic('largeTitle', family === 'systemExtraLarge' ? 5 : 4)}
+      {big}
       <Spacer />
       {say(dua.title, 'headline', 'label', 1)}
-      {dua.translation ? say(dua.translation, 'body', 'secondary', 4) : null}
+      {dua.translation ? meaning(dua.translation) : null}
     </>,
     dua.url,
   )

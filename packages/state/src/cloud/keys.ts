@@ -24,6 +24,10 @@ export const SYNCED_KEYS: ReadonlySet<string> = new Set([
   'locale',
   'notifications',
   'onboarding',
+  // My duas: the pins and the user's own words. Small by construction (30
+  // each, see core content/my-duas.ts), so the one preferences doc stays light.
+  'ownDuas',
+  'pinnedItems',
   'place',
   'qadaBacklog',
   'suggestion',

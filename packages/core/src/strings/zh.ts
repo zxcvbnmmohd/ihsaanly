@@ -115,6 +115,7 @@ export const zh: Strings = {
     testTitle: '测试提醒',
     testBody: '这就是 Ihsaanly 提醒的样子。',
     pausedRemembrance: '记念的时刻到了',
+    askPrayed: (title: string): string => `${title}礼了吗？`,
     checkIn: '来自 Ihsaanly 的简短问候',
     action: {
       done: '完成',
@@ -123,6 +124,7 @@ export const zh: Strings = {
     body: {
       window: '就是现在，直到这个时段结束。',
       windowUntil: (closes: string): string => `开放至 ${closes}。`,
+      until: (closes: string): string => `至 ${closes}。`,
       tomorrow: '明天。',
       prayerWindow: '礼拜时间已到。这个时段一直开放到下一番礼拜。',
     },

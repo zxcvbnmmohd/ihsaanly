@@ -127,6 +127,7 @@ export const ar: Strings = {
     testTitle: 'تنبيه تجريبي',
     testBody: 'هكذا يبدو التنبيه من إحسانلي.',
     pausedRemembrance: 'حان وقت الذكر',
+    askPrayed: (title: string): string => `هل صلّيت ${title}؟`,
     checkIn: 'اطمئنان سريع من إحسانلي',
     action: {
       done: 'تم',
@@ -135,6 +136,7 @@ export const ar: Strings = {
     body: {
       window: 'الآن، حتى ينتهي الوقت.',
       windowUntil: (closes: string): string => `مفتوح حتى ${closes}.`,
+      until: (closes: string): string => `حتى ${closes}.`,
       tomorrow: 'غدًا.',
       prayerWindow: 'دخل الوقت. تبقى النافذة مفتوحة حتى الصلاة التالية.',
     },

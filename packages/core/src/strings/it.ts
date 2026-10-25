@@ -121,6 +121,7 @@ export const it: Strings = {
     testTitle: 'Un promemoria di prova',
     testBody: 'Ecco come appare un promemoria di Ihsaanly.',
     pausedRemembrance: 'È il momento del dhikr',
+    askPrayed: (title: string): string => `Hai pregato ${title}?`,
     checkIn: 'Un breve saluto da Ihsaanly',
     action: {
       done: 'Fatto',
@@ -129,6 +130,7 @@ export const it: Strings = {
     body: {
       window: 'Adesso, finché la fascia non si chiude.',
       windowUntil: (closes: string): string => `Aperta fino alle ${closes}.`,
+      until: (closes: string): string => `Fino a ${closes}.`,
       tomorrow: 'Domani.',
       prayerWindow: 'È entrato il tempo. La fascia resta aperta fino alla preghiera successiva.',
     },

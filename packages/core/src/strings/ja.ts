@@ -116,6 +116,7 @@ export const ja: Strings = {
     testTitle: 'テストのリマインダー',
     testBody: 'Ihsaanlyのリマインダーはこのように届きます。',
     pausedRemembrance: 'ズィクルの時間です',
+    askPrayed: (title: string): string => `${title}は礼拝しましたか？`,
     checkIn: 'Ihsaanlyからのひとこと',
     action: {
       done: '完了',
@@ -124,6 +125,7 @@ export const ja: Strings = {
     body: {
       window: '今です。時間帯が終わるまで。',
       windowUntil: (closes: string): string => `${closes}まで開いています。`,
+      until: (closes: string): string => `${closes}まで。`,
       tomorrow: '明日です。',
       prayerWindow: '礼拝の時間に入りました。次の礼拝まで時間帯は続きます。',
     },

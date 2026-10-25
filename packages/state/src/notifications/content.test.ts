@@ -56,7 +56,85 @@ describe('notification words', () => {
       en,
     )
 
-    expect(content?.body).toBe('The evening remembrance, from Asr until the light goes.')
+    expect(content?.body).toBe(
+      'The evening remembrance, from Asr until the light goes. Open until Maghrib.',
+    )
+  })
+
+  it('ends a window reminder on a rough cue, never a clock time, in every language', () => {
+    const duha: Item = { ...item, id: 'duha', reminder: { en: 'Charity for every joint.' } }
+    const entry = {
+      kind: 'item' as const,
+      itemId: 'duha',
+      at,
+      reason: 'current-window' as const,
+      window: { closes: 'dhuhr' as const, endsAt, jumuah: false },
+    }
+    expect(notificationContent(entry, [duha], en)?.body).toBe(
+      'Charity for every joint. Open until Dhuhr.',
+    )
+    for (const strings of [en, ar, fr, hi, italian, ja, so, ur, yue, zh]) {
+      const body = notificationContent(entry, [duha], strings)?.body ?? ''
+      expect(body).toContain(strings.notifications.body.windowUntil(strings.prayer.dhuhr))
+      expect(body).not.toMatch(/[0-9]/)
+    }
+  })
+
+  it('adds no cue to a sentence that already names the end of its window', () => {
+    const lastHour: Item = { ...item, reminder: { en: 'Ask for what you need before Maghrib.' } }
+    const content = notificationContent(
+      {
+        kind: 'item',
+        itemId: 'evening-adhkar',
+        at,
+        reason: 'current-window',
+        window: { closes: 'maghrib', endsAt, jumuah: false },
+      },
+      [lastHour],
+      en,
+    )
+    expect(content?.body).toBe('Ask for what you need before Maghrib.')
+  })
+
+  it('leaves the look-ahead without a window cue', () => {
+    const fast: Item = { ...item, reminder: { en: 'Tomorrow is Monday.' } }
+    const content = notificationContent(
+      { kind: 'item', itemId: 'evening-adhkar', at, reason: 'upcoming', window: null },
+      [fast],
+      en,
+    )
+    expect(content?.body).toBe('Tomorrow is Monday.')
+  })
+
+  it('asks about Witr at night, until Fajr', () => {
+    const witr: Item = {
+      ...item,
+      id: 'witr',
+      title: { en: 'Witr', ar: 'الوتر' },
+      trigger: { kind: 'prayer', prayer: 'isha', when: 'after' },
+      reminder: { en: 'The last prayer of the night.' },
+      isPrayer: true,
+    }
+    const entry = {
+      kind: 'item' as const,
+      itemId: 'witr',
+      at,
+      reason: 'after-prayer' as const,
+      window: { closes: 'fajr' as const, endsAt, jumuah: false },
+    }
+    const content = notificationContent(entry, [witr], en)
+    expect(content?.title).toBe('Have you prayed Witr?')
+    expect(content?.body).toBe('The last prayer of the night. Until Fajr.')
+    expect(content?.categoryIdentifier).toBe('reminder')
+    expect(content?.data).toEqual({
+      v: 1,
+      kind: 'item',
+      itemId: 'witr',
+      endsAt: endsAt.getTime(),
+      reason: 'current-window',
+    })
+    // Without the item's sentence in the reader's language, the cue alone.
+    expect(notificationContent(entry, [{ ...witr, reminder: null }], en)?.body).toBe('Until Fajr.')
   })
 
   it('falls back to the status line for a language the content lacks', () => {

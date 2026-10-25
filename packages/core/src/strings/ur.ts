@@ -121,6 +121,7 @@ export const ur: Strings = {
     testTitle: 'ایک آزمائشی یاد دہانی',
     testBody: 'احسانلی کی یاد دہانی ایسی دکھتی ہے۔',
     pausedRemembrance: 'اذکار کا وقت',
+    askPrayed: (title: string): string => `کیا آپ نے ${title} پڑھ لی؟`,
     checkIn: 'Ihsaanly کی طرف سے ایک مختصر پیغام',
     action: {
       done: 'ہو گیا',
@@ -129,6 +130,7 @@ export const ur: Strings = {
     body: {
       window: 'ابھی، جب تک وقت باقی ہے۔',
       windowUntil: (closes: string): string => `${closes} تک کھلا ہے۔`,
+      until: (closes: string): string => `${closes} تک۔`,
       tomorrow: 'کل۔',
       prayerWindow: 'وقت داخل ہو گیا ہے۔ اگلی نماز تک وقت باقی رہتا ہے۔',
     },

@@ -111,6 +111,7 @@ export const en = {
     testTitle: 'A test reminder',
     testBody: 'This is what a reminder from Ihsaanly looks like.',
     pausedRemembrance: 'Time for remembrance',
+    askPrayed: (title: string): string => `Have you prayed ${title}?`,
     checkIn: 'A quick check-in from Ihsaanly',
     action: {
       done: 'Done',
@@ -119,6 +120,7 @@ export const en = {
     body: {
       window: 'Now, until the window closes.',
       windowUntil: (closes: string): string => `Open until ${closes}.`,
+      until: (closes: string): string => `Until ${closes}.`,
       tomorrow: 'Tomorrow.',
       prayerWindow: 'The time has entered. The window stays open until the next prayer.',
     },

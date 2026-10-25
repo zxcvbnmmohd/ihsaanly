@@ -121,6 +121,7 @@ export const fr: Strings = {
     testTitle: 'Un rappel test',
     testBody: 'Voici à quoi ressemble un rappel d’Ihsaanly.',
     pausedRemembrance: 'Un moment pour le dhikr',
+    askPrayed: (title: string): string => `Avez-vous prié ${title} ?`,
     checkIn: 'Un petit mot d’Ihsaanly',
     action: {
       done: 'Fait',
@@ -129,6 +130,7 @@ export const fr: Strings = {
     body: {
       window: 'Maintenant, jusqu’à la fin de la plage.',
       windowUntil: (closes: string): string => `Ouvert jusqu’à ${closes}.`,
+      until: (closes: string): string => `Jusqu’à ${closes}.`,
       tomorrow: 'Demain.',
       prayerWindow: 'L’heure est entrée. La plage reste ouverte jusqu’à la prière suivante.',
     },

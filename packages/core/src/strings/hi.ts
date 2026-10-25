@@ -122,6 +122,7 @@ export const hi: Strings = {
     testTitle: 'एक टेस्ट रिमाइंडर',
     testBody: 'इहसानली का रिमाइंडर कुछ ऐसा दिखता है।',
     pausedRemembrance: 'अज़कार का समय',
+    askPrayed: (title: string): string => `क्या आपने ${title} पढ़ ली?`,
     checkIn: 'इहसानली की ओर से एक छोटा-सा संदेश',
     action: {
       done: 'हो गया',
@@ -130,6 +131,7 @@ export const hi: Strings = {
     body: {
       window: 'अभी, वक़्त ख़त्म होने तक।',
       windowUntil: (closes: string): string => `${closes} तक खुला है।`,
+      until: (closes: string): string => `${closes} तक।`,
       tomorrow: 'कल।',
       prayerWindow: 'वक़्त शुरू हो गया है। यह अगली नमाज़ तक रहता है।',
     },

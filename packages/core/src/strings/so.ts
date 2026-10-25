@@ -123,6 +123,7 @@ export const so: Strings = {
     testTitle: 'Xusuusiye tijaabo ah',
     testBody: 'Sidan ayuu u eg yahay xusuusiye ka yimaada Ihsaanly.',
     pausedRemembrance: 'Waa waqtigii adkaarta',
+    askPrayed: (title: string): string => `Ma tukatay ${title}?`,
     checkIn: 'Salaan kooban oo ka yimid Ihsaanly',
     action: {
       done: 'Waa la sameeyey',
@@ -131,6 +132,7 @@ export const so: Strings = {
     body: {
       window: 'Hadda, ilaa waqtigu ka dhammaanayo.',
       windowUntil: (closes: string): string => `Furan ilaa ${closes}.`,
+      until: (closes: string): string => `Ilaa ${closes}.`,
       tomorrow: 'Berri.',
       prayerWindow: 'Waqtigii waa galay. Wuu furnaanayaa ilaa salaadda xigta.',
     },

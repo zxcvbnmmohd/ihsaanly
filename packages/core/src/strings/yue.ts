@@ -114,6 +114,7 @@ export const yue: Strings = {
     testTitle: '測試提醒',
     testBody: 'Ihsaanly 嘅提醒就係咁嘅樣。',
     pausedRemembrance: '記念嘅時間到',
+    askPrayed: (title: string): string => `禮咗${title}未？`,
     checkIn: 'Ihsaanly 嘅簡短問候',
     action: {
       done: '完成',
@@ -122,6 +123,7 @@ export const yue: Strings = {
     body: {
       window: '而家開始，直到呢個時段完結。',
       windowUntil: (closes: string): string => `開放到${closes}。`,
+      until: (closes: string): string => `到${closes}為止。`,
       tomorrow: '聽日。',
       prayerWindow: '時間已經到咗。呢個時段會一直開放到下一個禮拜。',
     },

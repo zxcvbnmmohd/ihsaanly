@@ -9,3 +9,9 @@ export const Place = z.object({
 })
 
 export type Place = z.infer<typeof Place>
+
+/** Place labels arrive as "Toronto, Ontario, Canada"; the first part is the city. */
+export function cityOf(label: string): string {
+  const city = label.split(',')[0]?.trim()
+  return city ? city : label
+}

@@ -11,7 +11,7 @@ import { DarkTheme, DefaultTheme, ThemeProvider } from 'expo-router/react-naviga
 import { StatusBar } from 'expo-status-bar'
 import type { ReactElement } from 'react'
 import { useCallback, useEffect, useState } from 'react'
-import { AppState, Platform, Text, View } from 'react-native'
+import { AppState, I18nManager, Platform, Text, View } from 'react-native'
 import { cloudEnabled, startMobileCloud } from '@/cloud'
 import { startMobileContentUpdates } from '@/content/updates'
 import { startCrashReporting } from '@/crash/crash'
@@ -143,12 +143,20 @@ export default function RootLayout(): ReactElement {
         different one, so it takes the top of the wash. The indicator and ripple
         are a tint of the accent rather than the accent itself — filling the
         Material pill with a solid accent swallows the icon inside it.
+
+        The direction is stated, not inherited: left as `inherit`, the iOS tab
+        bar follows UIKit's own direction, which comes from the device language
+        and ignores `forceRTL` (react-native-screens' `TabsHostProps.direction`
+        says so). RTL is read the way expo-router's NavigationContainer reads it
+        for the stack headers, and it only changes across `applyDirection`'s
+        reload, so reading it at render is enough.
       */}
           <NativeTabs
             tintColor={palette.accent}
             backgroundColor={Platform.OS === 'android' ? palette.wash[0] : undefined}
             indicatorColor={palette.indicator}
-            rippleColor={palette.indicator}>
+            rippleColor={palette.indicator}
+            unstable_nativeProps={{ direction: I18nManager.getConstants().isRTL ? 'rtl' : 'ltr' }}>
             <NativeTabs.Trigger name="(home)">
               <NativeTabs.Trigger.Icon sf="sun.max.fill" md="today" />
               <NativeTabs.Trigger.Label>{strings.tabs.today}</NativeTabs.Trigger.Label>

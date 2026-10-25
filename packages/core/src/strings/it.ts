@@ -424,12 +424,9 @@ export const it: Strings = {
   language: {
     title: 'Lingua',
     restart:
-      'L’arabo si legge da destra a sinistra. Passare all’arabo o tornare indietro riavvia l’app, oppure ti chiede di riaprirla.',
+      'L’arabo si legge da destra a sinistra. Passare all’arabo o tornare indietro riavvia l’app.',
     incomplete:
       'L’inglese è l’originale. Ogni altra lingua è una bozza ancora in attesa di revisione da parte di un madrelingua qualificato.',
-    reopenTitle: 'Riapri Ihsaanly',
-    reopenBody:
-      'Questa lingua si legge da destra a sinistra. Chiudi Ihsaanly e riaprilo per completare il cambio.',
     names: {
       en: 'English',
       ar: 'العربية',

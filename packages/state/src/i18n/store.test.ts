@@ -31,15 +31,15 @@ describe('the locale', () => {
   })
 
   it('choosing a language stores a locale of it and switches the content language', () => {
-    expect(chooseLanguage('fr')).toBe(false)
+    chooseLanguage('fr')
 
     expect(getLocale()).toBe('fr')
     expect(resolveText({ en: 'Hello', fr: 'Bonjour' })).toBe('Bonjour')
     expect(reactNative.forced).toEqual([])
   })
 
-  it('choosing a right-to-left language flips the layout and says when to reopen (iOS)', () => {
-    expect(chooseLanguage('ar')).toBe(true)
+  it('choosing a right-to-left language flips the layout', () => {
+    chooseLanguage('ar')
 
     expect(getLocale()).toBe('ar')
     expect(reactNative.forced).toEqual([true])

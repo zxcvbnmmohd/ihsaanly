@@ -10,14 +10,18 @@ function Receding(): null {
   return null
 }
 
+interface Thing {
+  open: boolean
+}
+
 function Host(): ReactElement {
-  const [open, setOpen] = useState(false)
+  const [thing, setThing] = useState<Thing>({ open: false })
   return (
     <>
-      <Pressable accessibilityRole="button" onPress={() => setOpen(!open)}>
+      <Pressable accessibilityRole="button" onPress={() => setThing({ open: !thing.open })}>
         <Text>Toggle</Text>
       </Pressable>
-      {open ? <Receding /> : null}
+      {thing.open ? <Receding /> : null}
     </>
   )
 }

@@ -39,8 +39,6 @@ jobs:
         working-directory: apps/mobile
     env:
       APP_VARIANT: ${{ github.ref_name }}
-      # Counts up across every run, so each upload to Play has a higher code.
-      ANDROID_VERSION_CODE: ${{ github.run_number }}
       # Config comes from the environment's variables, never a .env file.
       EXPO_NO_DOTENV: '1'
       EXPO_PUBLIC_FIREBASE_API_KEY: ${{ vars.EXPO_PUBLIC_FIREBASE_API_KEY }}
@@ -52,6 +50,12 @@ jobs:
       EXPO_PUBLIC_CONTENT_URL: ${{ vars.EXPO_PUBLIC_CONTENT_URL }}
     steps:
       - uses: actions/checkout@v7
+
+      # The versionCode: counts up from 1 across every run, so each upload to
+      # Play is higher than the last. Runs 1 and 2 came before build numbers.
+      # (Expressions have no arithmetic, hence the shell.)
+      - name: Number the build
+        run: echo "BUILD_NUMBER=$((GITHUB_RUN_NUMBER - 2))" >> "$GITHUB_ENV"
 
       - uses: oven-sh/setup-bun@v2
         with:
@@ -120,7 +124,7 @@ jobs:
 
       - uses: actions/upload-artifact@v7
         with:
-          name: ihsaanly-${{ github.ref_name }}-${{ github.run_number }}
+          name: ihsaanly-${{ github.ref_name }}-${{ env.BUILD_NUMBER }}
           path: ${{ env.OUTPUT }}
           if-no-files-found: error
           retention-days: 30

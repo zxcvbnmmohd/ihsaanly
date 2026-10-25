@@ -32,10 +32,14 @@ function variant(): Variant {
   throw new Error(`APP_VARIANT must be development, staging or production, not "${value}"`)
 }
 
-/** CI sets ANDROID_VERSION_CODE (the run number) so every upload to Play counts up. */
-function versionCode(fallback: number | undefined): number | undefined {
-  const value = Number(process.env.ANDROID_VERSION_CODE)
-  return Number.isInteger(value) && value > 0 ? value : fallback
+/**
+ * CI sets BUILD_NUMBER, counting up from 1, as both the iOS build number and
+ * the Android versionCode, so every store upload is higher than the last. The
+ * marketing version (`app.json` `version`) is semver, bumped by hand per release.
+ */
+function buildNumber(): number | undefined {
+  const value = Number(process.env.BUILD_NUMBER)
+  return Number.isInteger(value) && value > 0 ? value : undefined
 }
 
 /** Points the expo-widgets plugin at this variant's App Group. */
@@ -205,6 +209,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
   const firebase = firebaseFiles(current)
   const id = `${BASE_ID}${suffix}`
   const group = `group.${id}`
+  const build = buildNumber()
 
   return {
     ...config,
@@ -213,6 +218,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     ios: {
       ...config.ios,
       bundleIdentifier: id,
+      buildNumber: build === undefined ? config.ios?.buildNumber : String(build),
       googleServicesFile: firebase.ios,
       privacyManifests: PRIVACY_MANIFESTS,
       ...(hasCloud() ? { usesAppleSignIn: true } : {}),
@@ -225,7 +231,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       ...config.android,
       package: id,
       googleServicesFile: firebase.android,
-      versionCode: versionCode(config.android?.versionCode),
+      versionCode: build ?? config.android?.versionCode,
     },
     plugins: [...(withSignIn(withGroup(config.plugins, group)) ?? []), ...FIREBASE_PLUGINS],
     extra: { ...config.extra, appGroup: group },

@@ -1,10 +1,10 @@
 import { afterEach, beforeEach, describe, expect, test } from 'bun:test'
 import { en } from '@ihsaanly/core/strings/en'
-import { system } from '@ihsaanly/tailwind/tokens'
+import { accents, system } from '@ihsaanly/tailwind/tokens'
 import { useUi } from '@ihsaanly/ui/provider'
 import { act, cleanup, render, renderHook, screen, waitFor } from '@testing-library/react'
 import type { ReactElement, ReactNode } from 'react'
-import { usePageScheme, WebUiProvider } from './ui-provider.tsx'
+import { applyAccent, usePageScheme, WebUiProvider } from './ui-provider.tsx'
 
 interface FakeMedia {
   matches: boolean
@@ -99,5 +99,59 @@ describe('WebUiProvider', () => {
         screen.getByText(`dark|${system['system-tint'].web.dark}|${en.onboarding.continue}`),
       ).toBeInTheDocument(),
     )
+  })
+
+  const variable = (name: string): string =>
+    document.documentElement.style.getPropertyValue(`--color-${name}`)
+
+  function AccentProbe(): ReactElement {
+    return <p>{`accent:${useUi().accent ?? 'none'}`}</p>
+  }
+
+  test('hands screens the accent and lays its colours over the stylesheet for the scheme', async () => {
+    const view = render(
+      <WebUiProvider strings={en} Link={Link} accent="indigo">
+        <AccentProbe />
+      </WebUiProvider>,
+    )
+    expect(screen.getByText('accent:indigo')).toBeInTheDocument()
+    expect(variable('accent')).toBe(accents.indigo.accent.light)
+    expect(variable('accent-ink')).toBe(accents.indigo['accent-ink'].light)
+    expect(variable('on-accent')).toBe(accents.indigo['on-accent'].light)
+    expect(variable('indicator')).toBe(accents.indigo.indicator.light)
+    expect(variable('tint')).toBe(accents.indigo.tint.light)
+
+    document.documentElement.dataset.theme = 'dark'
+    await waitFor(() => expect(variable('accent')).toBe(accents.indigo.accent.dark))
+
+    // Back to the default: the stylesheet's own values show through again.
+    view.rerender(
+      <WebUiProvider strings={en} Link={Link} accent="terracotta">
+        <AccentProbe />
+      </WebUiProvider>,
+    )
+    expect(variable('accent')).toBe('')
+    expect(variable('tint')).toBe('')
+  })
+
+  test('leaves the page alone when the host names no accent', () => {
+    render(
+      <WebUiProvider strings={en} Link={Link}>
+        <AccentProbe />
+      </WebUiProvider>,
+    )
+    expect(screen.getByText('accent:none')).toBeInTheDocument()
+    expect(variable('accent')).toBe('')
+  })
+})
+
+describe('applyAccent', () => {
+  test('writes every accent colour for one scheme, and clears them for the default', () => {
+    applyAccent('graphite', 'dark')
+    expect(document.documentElement.style.getPropertyValue('--color-accent')).toBe(
+      accents.graphite.accent.dark,
+    )
+    applyAccent('terracotta', 'dark')
+    expect(document.documentElement.style.getPropertyValue('--color-accent')).toBe('')
   })
 })

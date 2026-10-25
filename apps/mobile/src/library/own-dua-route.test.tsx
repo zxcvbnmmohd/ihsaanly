@@ -113,11 +113,16 @@ describe('OwnDuaRoute', () => {
     expect(haptics).toEqual(['impact:light', 'impact:light', 'notification:success'])
     expect(last().done).toBe(true)
 
+    // Each mark a second apart: two in the same millisecond would tie in the record.
+    const at = Date.now()
+    setSystemTime(new Date(at + 1000))
     act(() => last().onToggleDone())
     expect(last().done).toBe(false)
     expect(last().counter).toEqual({ count: 0, target: 2 })
+    setSystemTime(new Date(at + 2000))
     act(() => last().onToggleDone())
     expect(last().done).toBe(true)
+    setSystemTime()
   })
 
   it('is open on Today in its window, and done once marked there', () => {

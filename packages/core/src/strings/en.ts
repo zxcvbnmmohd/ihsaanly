@@ -763,6 +763,11 @@ export const en = {
     moreNow: (count: number): string => `+${count} more now`,
     markDone: 'Mark done',
     markedDone: 'Marked done',
+    saidIt: 'Said it',
+    marked: 'Marked',
+    addOne: '+1',
+    /** Filled in on the widget, which counts taps itself: `{count}` and `{total}`. */
+    countOf: '{count} of {total}',
   },
   web: {
     remindersUnavailable:

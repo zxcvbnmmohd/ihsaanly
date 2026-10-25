@@ -8,11 +8,13 @@ import { DEFAULT_USER_STATE } from '@ihsaanly/core/plan/user-state'
 import { DEFAULT_CALCULATION_PREFERENCES } from '@ihsaanly/core/prayer/calculation'
 import { prayerTimesAcross } from '@ihsaanly/core/prayer/times'
 import { deleteOwnDua, saveOwnDua, togglePinned } from '@ihsaanly/state/my-duas/store'
+import * as progress from '@ihsaanly/state/progress/store'
 import { setAccent } from '@ihsaanly/state/theme/accent-store'
 import { act, renderHook } from '@testing-library/react'
 import { AppState } from 'react-native'
 
 import * as drain from './drain'
+import * as model from './model'
 import * as publish from './publish'
 import { useWidgetTimeline } from './use-timeline'
 
@@ -199,6 +201,21 @@ describe('useWidgetTimeline', () => {
     expect(taken).toHaveBeenCalledTimes(1)
     listeners.forEach((listener) => listener('active'))
     expect(taken).toHaveBeenCalledTimes(2)
+  })
+
+  it('hands the widgets what counted items have counted, for +1 to count on top of', () => {
+    const read = spyOn(progress, 'getItemProgress').mockImplementation((id: string) => ({
+      count: id === 'tasbih-after-prayer' ? 7 : 0,
+      parts: [],
+    }))
+    const built = spyOn(model, 'widgetTimeline')
+    try {
+      renderHook(() => useWidgetTimeline(signals(), planned(null), 'London'))
+      expect(built.mock.calls[0]?.[0].counts).toEqual({ 'tasbih-after-prayer': 7 })
+    } finally {
+      read.mockRestore()
+      built.mockRestore()
+    }
   })
 
   it('never breaks Today when the widget taps cannot be read', async () => {

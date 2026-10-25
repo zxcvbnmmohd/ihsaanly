@@ -787,6 +787,10 @@ export const it: Strings = {
     moreNow: (n: number): string => (n === 1 ? '+1 altro adesso' : `+${n} altri adesso`),
     markDone: 'Segna come fatto',
     markedDone: 'Segnato come fatto',
+    saidIt: 'L’ho detta',
+    marked: 'Segnato',
+    addOne: '+1',
+    countOf: '{count} di {total}',
   },
   web: {
     remindersUnavailable:

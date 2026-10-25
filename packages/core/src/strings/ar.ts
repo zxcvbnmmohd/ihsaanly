@@ -764,6 +764,10 @@ export const ar: Strings = {
     moreNow: (n: number): string => `+${n} أيضًا الآن`,
     markDone: 'ضع علامة «تم»',
     markedDone: 'تم التسجيل',
+    saidIt: 'قلتُه',
+    marked: 'تم',
+    addOne: '+1',
+    countOf: '{count} من {total}',
   },
   web: {
     remindersUnavailable:

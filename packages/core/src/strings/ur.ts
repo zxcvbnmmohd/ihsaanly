@@ -768,6 +768,10 @@ export const ur: Strings = {
     moreNow: (n: number): string => `ابھی +${n} اور`,
     markDone: 'مکمل نشان زد کریں',
     markedDone: 'مکمل نشان زد',
+    saidIt: 'پڑھ لی',
+    marked: 'نشان زد',
+    addOne: '+1',
+    countOf: '{total} میں سے {count}',
   },
   web: {
     remindersUnavailable:

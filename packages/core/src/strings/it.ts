@@ -424,12 +424,9 @@ export const it: Strings = {
   language: {
     title: 'Lingua',
     restart:
-      'L’arabo si legge da destra a sinistra. Passare all’arabo o tornare indietro riavvia l’app, oppure ti chiede di riaprirla.',
+      'L’arabo si legge da destra a sinistra. Passare all’arabo o tornare indietro riavvia l’app.',
     incomplete:
       'L’inglese è l’originale. Ogni altra lingua è una bozza ancora in attesa di revisione da parte di un madrelingua qualificato.',
-    reopenTitle: 'Riapri Ihsaanly',
-    reopenBody:
-      'Questa lingua si legge da destra a sinistra. Chiudi Ihsaanly e riaprilo per completare il cambio.',
     names: {
       en: 'English',
       ar: 'العربية',
@@ -642,7 +639,9 @@ export const it: Strings = {
     welcomeTitle: 'Il momento, non l’orologio.',
     welcomeBody:
       'Ihsaanly ti dice quando è il momento degli adhkar della sera. Mai un orario. Mai un punteggio.',
-    howTitle: 'Ihsaanly mostra ciò che si addice al momento. Tocca un cerchio quando l’hai fatto.',
+    howTitle:
+      'Ihsaanly suggerisce le pratiche della sunna adatte a questa parte della giornata. Tocca il cerchio quando ne hai fatta una.',
+    howExample: 'Esempio di sunna',
     language: 'Lingua',
     appearance: 'Aspetto',
     locationStep: 'Dove ti trovi?',
@@ -650,7 +649,7 @@ export const it: Strings = {
       'Usata su questo dispositivo per calcolare le parti della giornata. Resta lì, a meno che tu non acceda per sincronizzare.',
     genderStep: 'La sospensione della registrazione',
     genderWhy:
-      'In alcuni giorni la registrazione delle preghiere dovrebbe fermarsi, senza che si accumuli nulla da recuperare. Questo dice all’app se proportela.',
+      'Le sorelle non pregano durante il ciclo mestruale né dopo il parto. In quei giorni Ihsaanly può sospendere la registrazione delle preghiere, così nulla viene contato come mancato.',
     brother: 'Fratello',
     brotherDetail: 'Nessuna sospensione',
     sister: 'Sorella',
@@ -672,28 +671,23 @@ export const it: Strings = {
     startWhy:
       'Scegli con quanto cominciare. Aggiungi o togli qualsiasi cosa nella Biblioteca quando vuoi.',
     starting: 'Agli inizi',
-    startingDetail: (n: number): string =>
-      `${n} ${count(n, 'cosa', 'cose')} che puoi portare con te dal primo giorno: due fasce, un dhikr, due du’a. Per chi è nuovo a tutto questo.`,
+    startingDetail: 'Per chi è alle prime armi.',
     essentials: 'L’essenziale',
-    essentialsDetail: (n: number): string =>
-      `${n} ${count(n, 'voce', 'voci')}, una giornata ragionevole più che completa. Per chi prega già e vuole la sunna che le sta intorno.`,
+    essentialsDetail: 'Per chi vuole qualcosa in più.',
     everything: 'Tutto',
-    everythingDetail: (n: number): string =>
-      `Tutte le ${n} voci. Per chi conosce i contenuti e vuole l’intero calendario.`,
+    everythingDetail: 'Per chi vuole tutto.',
     skipIntro: 'Salta',
     skipLocation: 'Salta per ora',
-    reminderPolicy: (perDay: number, from: number, to: number): string =>
-      `Al massimo ${perDay} al giorno, e niente tra le ${from}:00 e le ${to}:00.`,
-    reminderCap: (perDay: number): string => `Al massimo ${perDay} al giorno.`,
-    included: 'Incluse',
-    andMore: (n: number): string => `e ${count(n, 'un’altra', `altre ${n}`)}`,
+    reminderQuiet: (from: number, to: number): string =>
+      `Nessun promemoria tra le ${from}:00 e le ${to}:00.`,
     back: 'Indietro',
     continue: 'Continua',
     allowReminders: 'Consenti i promemoria',
     allowNotifications: 'Consenti le notifiche',
     notNow: 'Non ora',
     done: 'Inizia',
-    restore: 'Usi già Ihsaanly? Accedi per ripristinare i tuoi dati',
+    restorePrompt: 'Usi già Ihsaanly?',
+    restoreAction: 'Accedi',
   },
   location: {
     title: 'Posizione',

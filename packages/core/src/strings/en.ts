@@ -402,13 +402,9 @@ export const en = {
   },
   language: {
     title: 'Language',
-    restart:
-      'Arabic and Urdu read right to left. Switching to or from them restarts the app, or asks you to reopen it.',
+    restart: 'Arabic and Urdu read right to left. Switching to or from them restarts the app.',
     incomplete:
       'English is the original. Every other language is a draft still awaiting review by a qualified speaker.',
-    reopenTitle: 'Reopen Ihsaanly',
-    reopenBody:
-      'This language reads right to left. Close Ihsaanly and open it again for the change to finish.',
     names: {
       en: 'English',
       ar: 'العربية',
@@ -620,7 +616,9 @@ export const en = {
     welcomeTitle: 'The moment, not the clock.',
     welcomeBody:
       'Ihsaanly tells you when the evening adhkar are open. Never a time. Never a score.',
-    howTitle: "Ihsaanly shows what fits the moment. Tap a circle when you've done it.",
+    howTitle:
+      "Ihsaanly suggests the sunnah acts that fit this part of the day. Tap the circle when you've done one.",
+    howExample: 'Example sunnah act',
     language: 'Language',
     appearance: 'Appearance',
     locationStep: 'Where are you?',
@@ -628,7 +626,7 @@ export const en = {
       'Used on this device to work out the parts of the day. It stays there unless you sign in to sync.',
     genderStep: 'The tracking pause',
     genderWhy:
-      'On some days prayer tracking should stop, with nothing accruing to make up. This tells the app whether to offer that.',
+      "Sisters don't pray during their monthly period or after childbirth. On those days Ihsaanly can pause prayer tracking, so nothing is counted as missed.",
     brother: 'Brother',
     brotherDetail: 'No pause',
     sister: 'Sister',
@@ -648,28 +646,23 @@ export const en = {
     startWhy:
       'Choose a size to begin with. Add or remove anything in the Library whenever you like.',
     starting: 'Just starting',
-    startingDetail: (count: number): string =>
-      `${count} things you can carry from day one: two windows, one dhikr, two duas. For someone new to all of this.`,
+    startingDetail: 'For someone new.',
     essentials: 'Essentials',
-    essentialsDetail: (count: number): string =>
-      `${count} items, a reasonable day rather than a complete one. For someone who already prays and wants the sunnah around it.`,
+    essentialsDetail: 'For someone who wants a little more.',
     everything: 'Everything',
-    everythingDetail: (count: number): string =>
-      `All ${count} items. For someone who knows the content and wants the whole calendar.`,
+    everythingDetail: 'For someone who wants it all.',
     skipIntro: 'Skip',
     skipLocation: 'Skip for now',
-    reminderPolicy: (perDay: number, from: number, to: number): string =>
-      `At most ${perDay} a day, and nothing between ${from}:00 and ${to}:00.`,
-    reminderCap: (perDay: number): string => `At most ${perDay} a day.`,
-    included: 'Included',
-    andMore: (count: number): string => `and ${count} more`,
+    reminderQuiet: (from: number, to: number): string =>
+      `No reminders between ${from}:00 and ${to}:00.`,
     back: 'Back',
     continue: 'Continue',
     allowReminders: 'Allow reminders',
     allowNotifications: 'Allow notifications',
     notNow: 'Not now',
     done: 'Start',
-    restore: 'Already use Ihsaanly? Sign in to restore your data',
+    restorePrompt: 'Already using Ihsaanly?',
+    restoreAction: 'Sign in',
   },
   location: {
     title: 'Location',

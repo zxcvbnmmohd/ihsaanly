@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it } from 'bun:test'
 import { supportedLanguageOf } from '@ihsaanly/core/i18n/locale'
 import { en } from '@ihsaanly/core/strings/en'
+import { fr } from '@ihsaanly/core/strings/fr'
 import { getLocale } from '@ihsaanly/state/i18n/store'
 import { getPlace } from '@ihsaanly/state/location/store'
 import { getNotificationPreferences } from '@ihsaanly/state/notifications/store'
@@ -42,28 +43,28 @@ describe('the steps', () => {
     await waitFor(() => expect(path(app)).toBe('/onboarding/location'))
   })
 
-  it('links the privacy policy from the first step, in a new tab', async () => {
-    const original = window.open
-    const opened: unknown[][] = []
-    window.open = ((...args: unknown[]) => void opened.push(args)) as unknown as typeof window.open
-    try {
-      const app = await renderApp('/onboarding/welcome')
-      await app.user.click(await screen.findByRole('link', { name: en.about.privacyPolicy }))
-      expect(opened).toEqual([['https://ihsaanly.app/legal/privacy', '_blank', 'noopener']])
-    } finally {
-      window.open = original
-    }
+  it('leaves the privacy policy to About', async () => {
+    await renderApp('/onboarding/welcome')
+    await screen.findByText(en.onboarding.welcomeTitle)
+    expect(screen.queryByRole('link', { name: en.about.privacyPolicy })).toBeNull()
   })
 
   it('changes the theme and the language on the first step', async () => {
     const app = await renderApp('/onboarding/welcome')
-    await app.user.click(await screen.findByRole('button', { name: 'Dark' }))
+    const theme = await screen.findByRole('combobox', { name: en.onboarding.appearance })
+    await app.user.selectOptions(theme, 'dark')
     expect(getThemePreference()).toBe('dark')
     setThemePreference('system')
 
-    await app.user.click(screen.getByRole('button', { name: 'Français' }))
+    await app.user.selectOptions(
+      screen.getByRole('combobox', { name: en.onboarding.language }),
+      'fr',
+    )
     expect(supportedLanguageOf(getLocale())).toBe('fr')
-    await app.user.click(screen.getByRole('button', { name: 'English' }))
+    await app.user.selectOptions(
+      await screen.findByRole('combobox', { name: fr.onboarding.language }),
+      'en',
+    )
     expect(supportedLanguageOf(getLocale())).toBe('en')
   })
 })
@@ -143,7 +144,11 @@ describe('finishing', () => {
 describe('signing in to restore', () => {
   it('offers it on the first step, and goes to Account as the restore flow', async () => {
     const app = await renderApp('/onboarding/welcome')
-    await app.user.click(await screen.findByRole('button', { name: en.onboarding.restore }))
+    await app.user.click(
+      await screen.findByRole('button', {
+        name: `${en.onboarding.restorePrompt} ${en.onboarding.restoreAction}`,
+      }),
+    )
     await waitFor(() => expect(path(app)).toBe('/account'))
     expect(app.router.state.location.search).toEqual({ from: 'onboarding' })
   })

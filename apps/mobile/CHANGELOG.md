@@ -4,8 +4,9 @@ All notable changes to Ihsaanly are recorded here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-`package.json` carries the development version recorded here. `app.json` carries the
-store-facing version, which stays at `1.0.0` until first submission.
+`app.json` carries the store-facing version, semver, bumped by hand per release and
+kept equal to `package.json`. CI sets the build number (iOS `buildNumber`, Android
+`versionCode`), which counts up from 1 across every build.
 
 ## [Unreleased]
 

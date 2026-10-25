@@ -30,12 +30,11 @@ export function LibraryCard({ entry, selected = false, href }: LibraryCardProps)
     return (
       <Surface
         interactive
+        ring={selected ? palette.accent : 'transparent'}
         style={[
           {
             borderRadius: 16,
-            padding: selected ? 14 : 16,
-            borderWidth: selected ? 2 : 0,
-            borderColor: palette.accent,
+            padding: 14,
           },
           state ? webInteractiveStyle(state, colors) : null,
         ]}>

@@ -16,4 +16,13 @@ describe('ArabicText', () => {
     renderScreen(<ArabicText variant="hero">الْحَمْدُ لِلَّهِ</ArabicText>)
     expect(screen.getByText('الْحَمْدُ لِلَّهِ')).toHaveStyle({ textAlign: 'center' })
   })
+
+  it('takes a colour and a size from a host that paints its own', () => {
+    renderScreen(
+      <ArabicText color="rgb(1, 2, 3)" className="text-xl">
+        سُبْحَانَ اللَّهِ
+      </ArabicText>,
+    )
+    expect(screen.getByText('سُبْحَانَ اللَّهِ').style.color).toBe('rgba(1, 2, 3, 1.00)')
+  })
 })

@@ -722,6 +722,13 @@ export const fr: Strings = {
     duaOfTheDay: "Du'a du jour",
     nothingNow: "Rien ne vous est demandé pour l'instant",
     openApp: 'Ouvrez Ihsaanly pour mettre à jour',
+    closingSoon: 'Se termine bientôt',
+    openAboutAnHour: 'Encore une heure environ',
+    openAboutHours: (hours: number): string => `Encore ${hours} heures environ`,
+    moreNow: (n: number): string =>
+      n === 1 ? '+1 autre en ce moment' : `+${n} autres en ce moment`,
+    markDone: 'Marquer comme fait',
+    markedDone: 'Marqué comme fait',
   },
   web: {
     remindersUnavailable:

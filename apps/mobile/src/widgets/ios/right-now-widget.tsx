@@ -1,12 +1,27 @@
-import { AccessoryWidgetBackground, Image, Link, Text, VStack, ZStack } from '@expo/ui/swift-ui'
 import {
+  AccessoryWidgetBackground,
+  Button,
+  HStack,
+  Image,
+  Link,
+  Spacer,
+  Text,
+  VStack,
+  ZStack,
+} from '@expo/ui/swift-ui'
+import {
+  buttonBorderShape,
+  buttonStyle,
   containerBackground,
+  controlSize,
   font,
   foregroundStyle,
   frame,
+  labelStyle,
   lineLimit,
   minimumScaleFactor,
   multilineTextAlignment,
+  tint,
   type ViewModifier,
   widgetURL,
 } from '@expo/ui/swift-ui/modifiers'
@@ -156,6 +171,12 @@ function RightNowWidget(props: WidgetModel, environment: WidgetEnvironment): Rea
   const url = item?.url ?? home
   const title = item?.title ?? props.labels.nothingNow
   const caption = props.window ?? props.labels.rightNow
+  // Taps the app has not taken in yet. A tap from an earlier occasion of the
+  // same item (the tasbih after Dhuhr, seen again after Asr) does not count.
+  const taps = props.taps ?? []
+  const done = item
+    ? taps.some((tap) => tap.id === item.id && tap.at >= (props.openedAt ?? 0))
+    : false
 
   if (family === 'accessoryInline') return inline(title, url)
   if (family === 'accessoryCircular') {
@@ -178,21 +199,82 @@ function RightNowWidget(props: WidgetModel, environment: WidgetEnvironment): Rea
       url,
     )
   }
+
+  // The tap is kept in this widget's own timeline, which the app reads and
+  // files under the day it was made; until then the widget shows it done.
+  const markDone = (compact: boolean): ReactElement | null => {
+    if (!item) return null
+    if (done) {
+      return (
+        <HStack spacing={4}>
+          <Image
+            systemName="checkmark.circle.fill"
+            size={compact ? 22 : 15}
+            modifiers={[paint('accent')]}
+          />
+          {compact ? null : say(props.labels.markedDone, 'caption', 'secondary', 1, 'semibold')}
+        </HStack>
+      )
+    }
+    return (
+      <Button
+        target="mark-done"
+        label={props.labels.markDone}
+        systemImage="checkmark"
+        onPress={() => ({ taps: [...taps, { id: item.id, at: Date.now() }] })}
+        modifiers={[
+          buttonStyle(plain ? 'bordered' : 'borderedProminent'),
+          buttonBorderShape(compact ? 'circle' : 'capsule'),
+          controlSize('small'),
+          ...(plain ? [] : [tint(ink.accent)]),
+          ...(compact ? [labelStyle('iconOnly')] : []),
+        ]}
+      />
+    )
+  }
+  // The Hijri date sits in the bottom corner on the reading side, the tap on the far one.
+  const footer = (compact: boolean): ReactElement => {
+    // Beside the round button on a small widget a long month name takes two lines.
+    const date = say(props.date.hijri, 'caption2', 'secondary', compact ? 2 : 1)
+    const action = markDone(compact)
+    return (
+      <HStack spacing={6} modifiers={[frame({ maxWidth: Infinity })]}>
+        {props.rtl ? action : date}
+        <Spacer />
+        {props.rtl ? date : action}
+      </HStack>
+    )
+  }
+  // How long the moment stays open matters only while it asks something.
+  const left = item ? props.remaining : undefined
+  const remaining = left ? say(left, 'caption', 'secondary', 1) : null
+  const more = props.moreNow ? say(props.moreNow, 'caption', 'accent', 1, 'medium') : null
+
   if (family === 'systemSmall') {
     return panel(
       <>
         {heading(caption)}
-        {say(title, 'headline', 'label', 4)}
+        {say(title, 'headline', 'label', 3)}
+        {remaining}
+        <Spacer />
+        {more}
+        {footer(true)}
       </>,
       url,
     )
   }
   if (family === 'systemMedium') {
+    // One other item fits as its own row; more than that is a count, which
+    // opens Today, where they are all listed.
+    const [only] = props.alsoNow
     return panel(
       <>
-        {heading(caption)}
+        {heading(left ? `${caption} · ${left}` : caption)}
         {say(title, 'headline', 'label', 2)}
-        {props.alsoNow.slice(0, 2).map((entry) => row(entry, true))}
+        {props.alsoNow.length === 1 && only ? row(only, true) : null}
+        {props.alsoNow.length > 1 && more ? <Link destination={home}>{more}</Link> : null}
+        <Spacer />
+        {footer(false)}
       </>,
       url,
     )
@@ -205,9 +287,12 @@ function RightNowWidget(props: WidgetModel, environment: WidgetEnvironment): Rea
       {heading(props.labels.rightNow)}
       {props.window ? say(props.window, 'subheadline', 'secondary', 1) : null}
       {say(title, 'title2', 'label', 3, 'semibold')}
+      {remaining}
       {props.alsoNow.slice(0, limit).map((entry) => row(entry, true))}
       {next ? heading(props.labels.upNext) : null}
       {next ? say(`${next.prayer} · ${next.distance}`, 'subheadline', 'label', 1) : null}
+      <Spacer />
+      {footer(false)}
     </>,
     url,
   )

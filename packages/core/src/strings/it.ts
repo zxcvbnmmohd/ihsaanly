@@ -725,6 +725,12 @@ export const it: Strings = {
     duaOfTheDay: "Du'a del giorno",
     nothingNow: 'Niente da fare in questo momento',
     openApp: 'Apri Ihsaanly per aggiornare',
+    closingSoon: 'Sta per finire',
+    openAboutAnHour: 'Ancora un’ora circa',
+    openAboutHours: (hours: number): string => `Ancora ${hours} ore circa`,
+    moreNow: (n: number): string => (n === 1 ? '+1 altro adesso' : `+${n} altri adesso`),
+    markDone: 'Segna come fatto',
+    markedDone: 'Segnato come fatto',
   },
   web: {
     remindersUnavailable:

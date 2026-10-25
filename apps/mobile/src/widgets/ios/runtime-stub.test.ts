@@ -22,3 +22,17 @@ describe('expo-widgets runtime React stub', () => {
     expect(stub.memo(component)).toBe(component)
   })
 })
+
+// A widget button press merges what its handler returns into the timeline.
+// Upstream merges into the pressed entry only, so a done tap on Right now
+// would be forgotten (and the item shown undone again) as soon as the
+// timeline moved to its next entry. The same patch merges into every later
+// entry too; this fails if an upgrade or reinstall drops that.
+describe('expo-widgets button press intent', () => {
+  it('merges a press into the pressed entry and every later one', async () => {
+    const intent = await Bun.file(
+      join(dirname(require.resolve('expo-widgets/package.json')), 'ios/Widgets/AppIntent.swift'),
+    ).text()
+    expect(intent).toContain('for index in entryIndex..<newTimeline.count')
+  })
+})

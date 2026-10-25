@@ -704,6 +704,12 @@ export const ja: Strings = {
     duaOfTheDay: '今日のドゥアー',
     nothingNow: '今はお勤めがありません',
     openApp: 'Ihsaanly を開いて更新してください',
+    closingSoon: 'まもなく終わります',
+    openAboutAnHour: 'あと1時間ほど続きます',
+    openAboutHours: (hours: number): string => `あと${hours}時間ほど続きます`,
+    moreNow: (n: number): string => `ほかに今${n}件`,
+    markDone: '完了にする',
+    markedDone: '完了にしました',
   },
   web: {
     remindersUnavailable:

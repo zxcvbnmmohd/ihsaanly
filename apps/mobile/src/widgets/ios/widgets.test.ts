@@ -67,14 +67,36 @@ describe('iOS widgets on the sample entry', () => {
       accessoryInline: [['Morning adhkar'], 'ihsaanly://item/morning-adhkar'],
       accessoryCircular: [['1'], 'ihsaanly://item/morning-adhkar'],
       accessoryRectangular: [['Morning', 'Morning adhkar'], 'ihsaanly://item/morning-adhkar'],
-      systemSmall: [['Morning', 'Morning adhkar'], 'ihsaanly://item/morning-adhkar'],
-      systemMedium: [['Morning', 'Morning adhkar'], 'ihsaanly://item/morning-adhkar'],
+      systemSmall: [
+        ['Morning', 'Morning adhkar', 'Open for about 3 more hours', '12 Rabi’ ath-Thani 1448'],
+        'ihsaanly://item/morning-adhkar',
+      ],
+      systemMedium: [
+        ['Morning · Open for about 3 more hours', 'Morning adhkar', '12 Rabi’ ath-Thani 1448'],
+        'ihsaanly://item/morning-adhkar',
+      ],
       systemLarge: [
-        ['Right now', 'Morning', 'Morning adhkar', 'Up next', 'Dhuhr · In about 3 hours'],
+        [
+          'Right now',
+          'Morning',
+          'Morning adhkar',
+          'Open for about 3 more hours',
+          'Up next',
+          'Dhuhr · In about 3 hours',
+          '12 Rabi’ ath-Thani 1448',
+        ],
         'ihsaanly://item/morning-adhkar',
       ],
       systemExtraLarge: [
-        ['Right now', 'Morning', 'Morning adhkar', 'Up next', 'Dhuhr · In about 3 hours'],
+        [
+          'Right now',
+          'Morning',
+          'Morning adhkar',
+          'Open for about 3 more hours',
+          'Up next',
+          'Dhuhr · In about 3 hours',
+          '12 Rabi’ ath-Thani 1448',
+        ],
         'ihsaanly://item/morning-adhkar',
       ],
     },
@@ -457,7 +479,7 @@ describe('iOS widgets with a full day', () => {
     link(7),
   ]
   const busy = model({
-    rightNow: { title: 'Dhuha', detail: 'Two rak’ah', url: 'ihsaanly://item/dhuha' },
+    rightNow: { id: 'dhuha', title: 'Dhuha', detail: 'Two rak’ah', url: 'ihsaanly://item/dhuha' },
     alsoNow: links.slice(0, 3),
     allDay: links,
     comingUp: links,
@@ -594,5 +616,126 @@ describe('iOS widgets by layout direction and rendering mode', () => {
         }),
       ),
     ).toBe(entry.ink.light.background)
+  })
+})
+
+describe('RightNowWidget, marking done from the widget', () => {
+  const button = (root: Node): Node | undefined => nodes(root).find((n) => n.type === 'Button')
+  const press = (root: Node): Partial<WidgetModel> => {
+    const onPress = button(root)?.props.onPress
+    if (typeof onPress !== 'function') throw new Error('no button')
+    return onPress() as Partial<WidgetModel>
+  }
+
+  for (const family of ['systemSmall', 'systemMedium', 'systemLarge'] as const) {
+    it(`${family} offers the button, and a press appends a tap for the headline item`, () => {
+      const root = draw('RightNowWidget', model(), { widgetFamily: family })
+      expect(button(root)?.props.label).toBe('Mark done')
+      expect(button(root)?.props.target).toBe('mark-done')
+      const before = Date.now()
+      const { taps } = press(root)
+      expect(taps).toHaveLength(1)
+      expect(taps?.[0]?.id).toBe('morning-adhkar')
+      expect(taps?.[0]?.at).toBeGreaterThanOrEqual(before)
+    })
+  }
+
+  it('keeps earlier taps when another is made', () => {
+    const earlier = { id: 'other', at: 5 }
+    const { taps } = press(
+      draw('RightNowWidget', model({ taps: [earlier] }), { widgetFamily: 'systemSmall' }),
+    )
+    expect(taps?.[0]).toEqual(earlier)
+    expect(taps).toHaveLength(2)
+  })
+
+  it('shows the icon alone on a small widget and the words on larger ones', () => {
+    const small = button(draw('RightNowWidget', model(), { widgetFamily: 'systemSmall' }))
+    const medium = button(draw('RightNowWidget', model(), { widgetFamily: 'systemMedium' }))
+    const styles = (node: Node | undefined): unknown[] =>
+      node
+        ? modifiers(node)
+            .filter((m) => m.modifier === 'labelStyle')
+            .map((m) => m.args[0])
+        : []
+    expect(styles(small)).toEqual(['iconOnly'])
+    expect(styles(medium)).toEqual([])
+  })
+
+  it('shows the item done, without a button, once tapped in this occasion', () => {
+    const tapped = model({ taps: [{ id: 'morning-adhkar', at: (model().openedAt ?? 0) + 60_000 }] })
+    const medium = draw('RightNowWidget', tapped, { widgetFamily: 'systemMedium' })
+    expect(button(medium)).toBeUndefined()
+    expect(texts(medium)).toContain('Marked done')
+    const small = draw('RightNowWidget', tapped, { widgetFamily: 'systemSmall' })
+    expect(button(small)).toBeUndefined()
+    expect(nodes(small).some((n) => n.props.systemName === 'checkmark.circle.fill')).toBe(true)
+  })
+
+  it('does not count a tap from an earlier occasion of the same item, or another item', () => {
+    const opened = model().openedAt ?? 0
+    const earlier = model({
+      taps: [
+        { id: 'morning-adhkar', at: opened - 1 },
+        { id: 'evening-adhkar', at: opened + 1 },
+      ],
+    })
+    expect(button(draw('RightNowWidget', earlier, { widgetFamily: 'systemSmall' }))).toBeDefined()
+  })
+
+  it('offers no button when nothing is asked, nor on the Lock Screen', () => {
+    for (const family of FAMILIES) {
+      expect(button(draw('RightNowWidget', model(empty), { widgetFamily: family }))).toBeUndefined()
+    }
+    for (const family of ['accessoryInline', 'accessoryCircular', 'accessoryRectangular']) {
+      expect(button(draw('RightNowWidget', model(), { widgetFamily: family }))).toBeUndefined()
+    }
+  })
+
+  it('leaves out how long the moment stays open when it asks nothing', () => {
+    const root = draw('RightNowWidget', model(empty), { widgetFamily: 'systemSmall' })
+    expect(texts(root)).not.toContain('Open for about 3 more hours')
+  })
+})
+
+describe('RightNowWidget, what else is open and the date', () => {
+  const others = [link(1), link(2)]
+
+  it('small says how many more are open', () => {
+    const root = draw('RightNowWidget', model({ alsoNow: others, moreNow: '+2 more now' }), {
+      widgetFamily: 'systemSmall',
+    })
+    expect(texts(root)).toContain('+2 more now')
+    expect(texts(root)).not.toContain('Item 1')
+  })
+
+  it('medium lists a single other as a row, and several as a count that opens Today', () => {
+    const one = draw(
+      'RightNowWidget',
+      model({ alsoNow: others.slice(0, 1), moreNow: '+1 more now' }),
+      { widgetFamily: 'systemMedium' },
+    )
+    expect(texts(one)).toContain('Item 1')
+    expect(texts(one)).not.toContain('+1 more now')
+    const two = draw('RightNowWidget', model({ alsoNow: others, moreNow: '+2 more now' }), {
+      widgetFamily: 'systemMedium',
+    })
+    expect(texts(two)).toContain('+2 more now')
+    const more = nodes(two).find((n) => n.type === 'Link' && texts(n).includes('+2 more now'))
+    expect(more?.props.destination).toBe('ihsaanly://')
+  })
+
+  it('puts the Hijri date on the reading side and the button on the far side', () => {
+    const footer = (rtl: boolean): string[] => {
+      const root = draw('RightNowWidget', model({ rtl }), { widgetFamily: 'systemSmall' })
+      const row = nodes(root).find(
+        (n) =>
+          n.type === 'HStack' &&
+          n.children.some((child) => typeof child !== 'string' && child.type === 'Button'),
+      )
+      return (row?.children ?? []).map((child) => (typeof child === 'string' ? child : child.type))
+    }
+    expect(footer(false)).toEqual(['Text', 'Spacer', 'Button'])
+    expect(footer(true)).toEqual(['Button', 'Spacer', 'Text'])
   })
 })

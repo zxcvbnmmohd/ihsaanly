@@ -37,9 +37,13 @@
     "nothingOwed": "Nothing owed",
     "openApp": "Open Ihsaanly to bring this up to date",
     "before": "Before",
-    "after": "After"
+    "after": "After",
+    "markDone": "Mark done",
+    "markedDone": "Marked done"
   },
   "window": "Morning",
+  "remaining": "Open for about 3 more hours",
+  "openedAt": 1790142480000,
   "date": {
     "gregorian": "Wed 23 Sep",
     "hijri": "12 Rabi’ ath-Thani 1448",
@@ -49,9 +53,12 @@
   "rightNow": {
     "title": "Morning adhkar",
     "detail": null,
-    "url": "ihsaanly://item/morning-adhkar"
+    "url": "ihsaanly://item/morning-adhkar",
+    "id": "morning-adhkar"
   },
   "alsoNow": [],
+  "moreNow": null,
+  "taps": [],
   "next": {
     "prayer": "Dhuhr",
     "distance": "In about 3 hours",

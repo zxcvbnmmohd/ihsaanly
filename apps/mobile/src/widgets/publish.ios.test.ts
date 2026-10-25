@@ -1,5 +1,6 @@
-import { beforeEach, describe, expect, it, mock } from 'bun:test'
+import { afterEach, beforeEach, describe, expect, it, mock, spyOn } from 'bun:test'
 
+import * as drain from './drain'
 import type { WidgetModel } from './model'
 
 const NAMES = [
@@ -42,10 +43,14 @@ const entry = (at: number): WidgetModel =>
     labels: { app: 'Ihsaanly' },
   }) as unknown as WidgetModel
 
+let waiting: ReturnType<typeof spyOn>
+
 beforeEach(() => {
   failing.clear()
   for (const name of NAMES) received[name] = []
+  waiting = spyOn(drain, 'waitingTaps').mockResolvedValue([])
 })
+afterEach(() => waiting.mockRestore())
 
 describe('publishTimeline (iOS)', () => {
   it('gives every widget the same entries, dated and without nulls', async () => {
@@ -68,5 +73,19 @@ describe('publishTimeline (iOS)', () => {
     expect(received['right-now']).toHaveLength(1)
     expect(received['coming-up']).toHaveLength(1)
     expect(received.prayers).toHaveLength(0)
+  })
+
+  it('carries the taps still waiting into every new entry, so a republish drops none', async () => {
+    const taps = [{ id: 'morning-adhkar', at: 1_500 }]
+    waiting.mockResolvedValue(taps)
+    await publishTimeline([entry(1_000), entry(2_000)])
+    const [entries] = (received['right-now'] ?? []) as { props: { taps?: unknown } }[][]
+    expect(entries?.map((each) => each.props.taps)).toEqual([taps, taps])
+  })
+
+  it('still publishes when the waiting taps cannot be read', async () => {
+    waiting.mockRejectedValue(new Error('no app group'))
+    await publishTimeline([entry(1_000)])
+    expect(received['right-now']).toHaveLength(1)
   })
 })

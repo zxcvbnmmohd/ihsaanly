@@ -608,7 +608,9 @@ export const ur: Strings = {
     welcomeTitle: 'لمحہ، گھڑی نہیں۔',
     welcomeBody:
       'احسانلی آپ کو بتاتی ہے کہ شام کے اذکار کا وقت کب ہے۔ کبھی گھڑی کا وقت نہیں۔ کبھی نمبر نہیں۔',
-    howTitle: 'Ihsaanly وہ دکھاتا ہے جو اس لمحے کے مطابق ہو۔ ادا کر لینے پر دائرے پر ٹیپ کریں۔',
+    howTitle:
+      'Ihsaanly دن کے اس حصے کے مطابق سنت اعمال تجویز کرتا ہے۔ کوئی عمل ادا کر لیں تو دائرے پر ٹیپ کریں۔',
+    howExample: 'سنت کی مثال',
     language: 'زبان',
     appearance: 'ظاہری شکل',
     locationStep: 'آپ کہاں ہیں؟',
@@ -616,7 +618,7 @@ export const ur: Strings = {
       'دن کے حصے معلوم کرنے کے لیے اسی آلے پر استعمال ہوتا ہے۔ وہیں رہتا ہے، جب تک آپ ہم آہنگی کے لیے سائن اِن نہ کریں۔',
     genderStep: 'ریکارڈ میں وقفہ',
     genderWhy:
-      'کچھ دنوں میں نماز کا ریکارڈ رک جانا چاہیے، اور کوئی قضا جمع نہ ہو۔ اس سے ایپ کو معلوم ہوتا ہے کہ یہ پیشکش کرے یا نہیں۔',
+      'بہنیں حیض اور نفاس کے دنوں میں نماز نہیں پڑھتیں۔ ان دنوں Ihsaanly نماز کا ریکارڈ روک سکتا ہے، تاکہ کوئی نماز چھوٹی ہوئی شمار نہ ہو۔',
     brother: 'بھائی',
     brotherDetail: 'کوئی وقفہ نہیں',
     sister: 'بہن',
@@ -636,28 +638,23 @@ export const ur: Strings = {
     startStep: 'آغاز کی جگہ',
     startWhy: 'شروع کرنے کے لیے ایک مقدار چنیں۔ کتب خانے میں جب چاہیں کچھ بھی شامل کریں یا ہٹائیں۔',
     starting: 'بس شروعات',
-    startingDetail: (n: number): string =>
-      `${count(n, 'چیز', 'چیزیں')} جو آپ پہلے دن سے نبھا سکیں: دو اوقات، ایک ذکر، دو دعائیں۔ اس کے لیے جس کے لیے یہ سب نیا ہے۔`,
+    startingDetail: 'نئے لوگوں کے لیے۔',
     essentials: 'بنیادی',
-    essentialsDetail: (n: number): string =>
-      `${count(n, 'عمل', 'اعمال')}، ایک معقول دن، مکمل نہیں۔ اس کے لیے جو پہلے سے نماز پڑھتا ہے اور اس کے ساتھ کی سنتیں چاہتا ہے۔`,
+    essentialsDetail: 'ان کے لیے جو تھوڑا اور چاہتے ہیں۔',
     everything: 'سب کچھ',
-    everythingDetail: (n: number): string =>
-      `تمام ${count(n, 'عمل', 'اعمال')}۔ اس کے لیے جو مواد جانتا ہے اور پورا کیلنڈر چاہتا ہے۔`,
+    everythingDetail: 'ان کے لیے جو سب کچھ چاہتے ہیں۔',
     skipIntro: 'چھوڑیں',
     skipLocation: 'ابھی چھوڑ دیں',
-    reminderPolicy: (perDay: number, from: number, to: number): string =>
-      `دن میں زیادہ سے زیادہ ${perDay}، اور ${from}:00 سے ${to}:00 کے درمیان کچھ نہیں۔`,
-    reminderCap: (perDay: number): string => `دن میں زیادہ سے زیادہ ${perDay}۔`,
-    included: 'شامل',
-    andMore: (n: number): string => `اور ${n} مزید`,
+    reminderQuiet: (from: number, to: number): string =>
+      `${from}:00 سے ${to}:00 کے درمیان کوئی یاد دہانی نہیں۔`,
     back: 'واپس',
     continue: 'جاری رکھیں',
     allowReminders: 'یاد دہانیوں کی اجازت دیں',
     allowNotifications: 'اطلاعات کی اجازت دیں',
     notNow: 'ابھی نہیں',
     done: 'شروع کریں',
-    restore: 'پہلے سے Ihsaanly استعمال کرتے ہیں؟ اپنا ڈیٹا بحال کرنے کے لیے سائن اِن کریں',
+    restorePrompt: 'پہلے سے Ihsaanly استعمال کرتے ہیں؟',
+    restoreAction: 'سائن اِن کریں',
   },
   location: {
     title: 'مقام',

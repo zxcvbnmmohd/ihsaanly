@@ -612,14 +612,16 @@ export const ar: Strings = {
   onboarding: {
     welcomeTitle: 'اللحظة، لا الساعة.',
     welcomeBody: 'يخبرك إحسانلي حين يحين وقت أذكار المساء. لا وقتًا بالساعة، ولا درجات.',
-    howTitle: 'يعرض إحسانلي ما يناسب اللحظة. انقر على الدائرة حين تؤدّيه.',
+    howTitle:
+      'يقترح إحسانلي من السنن ما يناسب هذا الجزء من اليوم. انقر على الدائرة حين تؤدّي واحدة منها.',
+    howExample: 'مثال على سنة',
     language: 'اللغة',
     appearance: 'المظهر',
     locationStep: 'أين أنت؟',
     locationWhy: 'يُستخدم على هذا الجهاز لتحديد أجزاء اليوم. يبقى عليه ما لم تسجّل الدخول للمزامنة.',
     genderStep: 'إيقاف التتبع',
     genderWhy:
-      'في بعض الأيام ينبغي أن يتوقف تتبع الصلاة دون أن يتراكم قضاء. هذا يحدد إن كان التطبيق يعرض ذلك.',
+      'لا تصلّي الأخوات في أيام الحيض والنفاس. في تلك الأيام يمكن لإحسانلي إيقاف تتبع الصلاة، فلا يُحتسب شيء فائتًا.',
     brother: 'أخ',
     brotherDetail: 'لا يُعرض الإيقاف',
     sister: 'أخت',
@@ -636,30 +638,22 @@ export const ar: Strings = {
     startStep: 'نقطة بداية',
     startWhy: 'اختر حجمًا تبدأ به. أضِف أو أزِل ما تشاء من المكتبة في أي وقت.',
     starting: 'بداية فقط',
-    startingDetail: (n: number): string =>
-      `${count(n, 'شيء واحد', 'شيئان', 'أشياء', 'شيئًا')} تحملها من أول يوم: وقتان، وذكر، ودعاءان. لمن هذا كله جديد عليه.`,
+    startingDetail: 'لمن هو جديد على هذا.',
     essentials: 'الأساسيات',
-    essentialsDetail: (n: number): string =>
-      `${count(n, 'عنصر واحد', 'عنصران', 'عناصر', 'عنصرًا')}، يوم معقول لا كامل. لمن يصلي ويريد السنن حول صلاته.`,
+    essentialsDetail: 'لمن يريد المزيد قليلًا.',
     everything: 'الكل',
-    everythingDetail: (n: number): string =>
-      `جميع العناصر، ${count(n, 'عنصر', 'عنصران', 'عناصر', 'عنصرًا')}. لمن يعرف المحتوى ويريد التقويم كله.`,
+    everythingDetail: 'لمن يريد كل شيء.',
     skipIntro: 'تخطّي',
     skipLocation: 'تخطّي الآن',
-    reminderPolicy: (perDay: number, from: number, to: number): string =>
-      `${count(perDay, 'تنبيه واحد', 'تنبيهان', 'تنبيهات', 'تنبيهًا')} في اليوم على الأكثر، ولا شيء بين ${from}:00 و${to}:00.`,
-    reminderCap: (perDay: number): string =>
-      `${count(perDay, 'تنبيه واحد', 'تنبيهان', 'تنبيهات', 'تنبيهًا')} في اليوم على الأكثر.`,
-    included: 'المتضمَّن',
-    andMore: (n: number): string =>
-      `و${count(n, 'عنصر آخر', 'عنصران آخران', 'عناصر أخرى', 'عنصرًا آخر')}`,
+    reminderQuiet: (from: number, to: number): string => `لا تذكيرات بين ${from}:00 و${to}:00.`,
     back: 'رجوع',
     continue: 'متابعة',
     allowReminders: 'السماح بالتنبيهات',
     allowNotifications: 'السماح بالإشعارات',
     notNow: 'ليس الآن',
     done: 'ابدأ',
-    restore: 'تستخدم Ihsaanly من قبل؟ سجّل الدخول لاستعادة بياناتك',
+    restorePrompt: 'تستخدم Ihsaanly من قبل؟',
+    restoreAction: 'سجّل الدخول',
   },
   location: {
     title: 'الموقع',

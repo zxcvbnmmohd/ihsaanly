@@ -1,5 +1,5 @@
 import { describe, expect, it, mock } from 'bun:test'
-import { screen } from '@testing-library/react'
+import { screen, within } from '@testing-library/react'
 import { renderScreen } from '../../test/render'
 import type { TodayEntry } from '../screens/today'
 import { EntryCard } from './entry-card'
@@ -14,6 +14,28 @@ const entry: TodayEntry = {
 }
 
 describe('EntryCard', () => {
+  // A border on the surface itself would sit under liquid glass, so it is a 1pt ring beside it.
+  it('draws its 1pt border as a ring beside the surface, accent on the hero', () => {
+    const ringColorOf = (variant: 'hero' | 'row'): string => {
+      const { unmount } = renderScreen(
+        <EntryCard entry={entry} onCircle={() => {}} variant={variant} testID={variant} />,
+      )
+      const ring = within(screen.getByTestId(variant)).getByTestId('surface-ring')
+      expect(ring.style.borderWidth).toBe('1px')
+      // The surface keeps a matching transparent border, so the layout is unchanged.
+      expect((ring.previousElementSibling as HTMLElement).style.borderWidth).toBe('1px')
+      expect(ring).not.toHaveTextContent('Duha prayer')
+      const color = ring.style.borderColor
+      unmount()
+      return color
+    }
+    const hero = ringColorOf('hero')
+    const row = ringColorOf('row')
+    expect(hero).not.toBe(row)
+    expect(hero).not.toBe('rgba(0, 0, 0, 0.00)')
+    expect(row).not.toBe('rgba(0, 0, 0, 0.00)')
+  })
+
   it('opens the item from the card and marks it from the circle, separately', async () => {
     const onCircle = mock((_id: string) => {})
     const { user, navigations, strings } = renderScreen(

@@ -10,7 +10,9 @@ test.use({ baseURL: COMPANION_CLOUD_URL })
 test('the restore link opens Account and "Back to setup" returns', async ({ page, errors }) => {
   await page.goto('/')
   await expect(page).toHaveURL(/\/onboarding\/welcome$/)
-  const restore = page.getByRole('button', { name: en.onboarding.restore })
+  const restore = page.getByRole('button', {
+    name: `${en.onboarding.restorePrompt} ${en.onboarding.restoreAction}`,
+  })
   await expect(restore).toBeVisible()
 
   await restore.click()

@@ -620,7 +620,9 @@ export const so: Strings = {
     welcomeTitle: 'Xilliga, ee maaha saacadda.',
     welcomeBody:
       'Ihsaanly wuxuu kuu sheegaa marka adkaarta galabtu furan yihiin. Marna saacad maaha. Marna dhibco maaha.',
-    howTitle: 'Ihsaanly wuxuu muujiyaa waxa waqtigan ku habboon. Goobo taabo markaad sameyso.',
+    howTitle:
+      'Ihsaanly wuxuu soo jeedinayaa sunnooyinka ku habboon qaybtan maalinta. Taabo goobada markaad mid sameyso.',
+    howExample: 'Tusaale sunno',
     language: 'Luqadda',
     appearance: 'Muuqaalka',
     locationStep: 'Xaggee joogtaa?',
@@ -628,7 +630,7 @@ export const so: Strings = {
       'Qalabkan ayaa loogu isticmaalaa ogaanshaha qaybaha maalinta. Halkaas ayay ku jirtaa ilaa aad gasho si loo iswaafajiyo.',
     genderStep: 'Hakadka diiwaangelinta',
     genderWhy:
-      'Maalmaha qaarkood diiwaangelinta salaadda waa inay joogsato, iyadoo aan qadaa soo kordhin. Tani waxay abka u sheegaysaa inuu taas soo bandhigo iyo in kale.',
+      'Walaalaha dumarku ma tukadaan maalmaha caadada iyo nifaaska. Maalmahaas Ihsaanly wuu hakin karaa diiwaangelinta salaadda, si aan salaad la dhaafay loo tirin.',
     brother: 'Walaal (lab)',
     brotherDetail: 'Hakad ma jiro',
     sister: 'Walaal (dhedig)',
@@ -649,28 +651,23 @@ export const so: Strings = {
     startWhy:
       'Dooro cabbir aad ku bilowdo. Wax kasta Maktabadda ku dar ama ka saar goorta aad rabto.',
     starting: 'Hadda bilaabaya',
-    startingDetail: (n: number): string =>
-      `${n} shay oo aad qaadi karto maalinta koowaad: laba waqti, hal dikri, laba duco. Qof waxan oo dhan ku cusub.`,
+    startingDetail: 'Qof cusub.',
     essentials: 'Aasaasiga',
-    essentialsDetail: (n: number): string =>
-      `${n} qodob, maalin macquul ah ee maaha mid dhammaystiran. Qof horeba tukada oo raba sunnada ku xeeran.`,
+    essentialsDetail: 'Qof raba wax yar oo dheeraad ah.',
     everything: 'Wax walba',
-    everythingDetail: (n: number): string =>
-      `Dhammaan ${n} qodob. Qof yaqaan waxa ku jira oo raba kalandarka oo dhan.`,
+    everythingDetail: 'Qof raba wax walba.',
     skipIntro: 'Ka bood',
     skipLocation: 'Hadda ka bood',
-    reminderPolicy: (perDay: number, from: number, to: number): string =>
-      `Ugu badnaan ${perDay} maalintii, waxbana ${from}:00 iyo ${to}:00 dhexdooda.`,
-    reminderCap: (perDay: number): string => `Ugu badnaan ${perDay} maalintii.`,
-    included: 'Ku jira',
-    andMore: (n: number): string => `iyo ${n} kale`,
+    reminderQuiet: (from: number, to: number): string =>
+      `Xusuusiye ma jiro ${from}:00 iyo ${to}:00 dhexdooda.`,
     back: 'Dib',
     continue: 'Sii wad',
     allowReminders: 'Oggolow xusuusiyeyaasha',
     allowNotifications: 'Oggolow fariimaha',
     notNow: 'Hadda maya',
     done: 'Bilow',
-    restore: 'Horey ma u isticmaashaa Ihsaanly? Gal si aad xogtaada u soo celiso',
+    restorePrompt: 'Horey ma u isticmaashaa Ihsaanly?',
+    restoreAction: 'Gal',
   },
   location: {
     title: 'Goobta',

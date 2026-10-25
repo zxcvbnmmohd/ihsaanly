@@ -606,7 +606,9 @@ export const ja: Strings = {
     welcomeTitle: '時計ではなく、その時を。',
     welcomeBody:
       'Ihsaanlyは、夕べのアズカールの時間が始まったことを知らせます。時刻は表示しません。点数もつけません。',
-    howTitle: 'Ihsaanlyはその時にふさわしいものを表示します。できたら丸をタップしてください。',
+    howTitle:
+      'Ihsaanlyは、一日のこの時間にふさわしいスンナの行いを提案します。行ったら丸をタップしてください。',
+    howExample: 'スンナの例',
     language: '言語',
     appearance: '外観',
     locationStep: 'どちらにいますか？',
@@ -614,7 +616,7 @@ export const ja: Strings = {
       '一日の区切りを計算するために、この端末上で使います。同期のためにサインインしない限り、端末の外には出ません。',
     genderStep: '記録の一時停止',
     genderWhy:
-      '礼拝の記録を止めるべき日があり、その間は補う礼拝も増えません。一時停止を案内するかどうかを、アプリがここで判断します。',
+      '女性は月経中や産後には礼拝をしません。その間はIhsaanlyで礼拝の記録を一時停止でき、逃した礼拝として数えられることはありません。',
     brother: '男性',
     brotherDetail: '一時停止なし',
     sister: '女性',
@@ -634,28 +636,23 @@ export const ja: Strings = {
     startStep: 'はじめの一歩',
     startWhy: 'まずは量を選んでください。ライブラリでいつでも追加したり外したりできます。',
     starting: 'はじめたばかり',
-    startingDetail: (count: number): string =>
-      `初日から続けられる${count}項目。2つの時間帯、1つのズィクル、2つのドゥアーです。すべてが初めての人に。`,
+    startingDetail: '始めたばかりの人に。',
     essentials: '基本',
-    essentialsDetail: (count: number): string =>
-      `${count}項目。すべてではなく、無理のない一日です。すでに礼拝していて、その前後のスンナを加えたい人に。`,
+    essentialsDetail: 'もう少し取り組みたい人に。',
     everything: 'すべて',
-    everythingDetail: (count: number): string =>
-      `全${count}項目。内容をよく知っていて、暦のすべてを使いたい人に。`,
+    everythingDetail: 'すべてを使いたい人に。',
     skipIntro: 'スキップ',
     skipLocation: '今はスキップ',
-    reminderPolicy: (perDay: number, from: number, to: number): string =>
-      `1日に最大${perDay}回、${from}:00〜${to}:00には届きません。`,
-    reminderCap: (perDay: number): string => `1日に最大${perDay}回。`,
-    included: '含まれるもの',
-    andMore: (count: number): string => `ほか${count}件`,
+    reminderQuiet: (from: number, to: number): string =>
+      `${from}:00〜${to}:00にはリマインダーは届きません。`,
     back: '戻る',
     continue: '続ける',
     allowReminders: 'リマインダーを許可',
     allowNotifications: '通知を許可',
     notNow: '今はしない',
     done: 'はじめる',
-    restore: 'すでにIhsaanlyをお使いですか？サインインしてデータを復元',
+    restorePrompt: 'すでにIhsaanlyをお使いですか？',
+    restoreAction: 'サインイン',
   },
   location: {
     title: '位置',

@@ -622,7 +622,9 @@ export const fr: Strings = {
     welcomeTitle: 'Le moment, pas l’horloge.',
     welcomeBody:
       'Ihsaanly vous dit quand les adhkar du soir sont ouverts. Jamais une heure. Jamais un score.',
-    howTitle: 'Ihsaanly montre ce qui convient à l’instant. Touchez un cercle quand c’est fait.',
+    howTitle:
+      'Ihsaanly propose les sunnas qui conviennent à ce moment de la journée. Touchez le cercle quand vous en avez fait une.',
+    howExample: 'Exemple de sunna',
     language: 'Langue',
     appearance: 'Apparence',
     locationStep: 'Où êtes-vous ?',
@@ -630,7 +632,7 @@ export const fr: Strings = {
       'Utilisée sur cet appareil pour déterminer les parties de la journée. Elle y reste, sauf si vous vous connectez pour synchroniser.',
     genderStep: 'La pause du suivi',
     genderWhy:
-      'Certains jours, le suivi des prières doit s’arrêter, sans que rien ne s’accumule à rattraper. Ceci indique à l’application s’il faut le proposer.',
+      'Les sœurs ne prient pas pendant leurs règles ni après l’accouchement. Ces jours-là, Ihsaanly peut suspendre le suivi des prières, et rien n’est compté comme manqué.',
     brother: 'Frère',
     brotherDetail: 'Pas de pause',
     sister: 'Sœur',
@@ -652,28 +654,22 @@ export const fr: Strings = {
     startWhy:
       'Choisissez une taille pour commencer. Ajoutez ou retirez ce que vous voulez dans la Bibliothèque, quand vous voulez.',
     starting: 'Premiers pas',
-    startingDetail: (count: number): string =>
-      `${count} choses que vous pouvez tenir dès le premier jour : deux plages, un dhikr, deux du’as. Pour qui découvre tout cela.`,
+    startingDetail: 'Pour qui débute.',
     essentials: 'L’essentiel',
-    essentialsDetail: (count: number): string =>
-      `${count} éléments, une journée raisonnable plutôt que complète. Pour qui prie déjà et veut la sunna qui l’entoure.`,
+    essentialsDetail: 'Pour qui veut un peu plus.',
     everything: 'Tout',
-    everythingDetail: (count: number): string =>
-      `Les ${count} éléments. Pour qui connaît le contenu et veut le calendrier complet.`,
+    everythingDetail: 'Pour qui veut tout.',
     skipIntro: 'Passer',
     skipLocation: 'Passer pour l’instant',
-    reminderPolicy: (perDay: number, from: number, to: number): string =>
-      `Au plus ${perDay} par jour, et rien entre ${from} h et ${to} h.`,
-    reminderCap: (perDay: number): string => `Au plus ${perDay} par jour.`,
-    included: 'Inclus',
-    andMore: (count: number): string => `et ${count} de plus`,
+    reminderQuiet: (from: number, to: number): string => `Aucun rappel entre ${from} h et ${to} h.`,
     back: 'Retour',
     continue: 'Continuer',
     allowReminders: 'Autoriser les rappels',
     allowNotifications: 'Autoriser les notifications',
     notNow: 'Pas maintenant',
     done: 'Commencer',
-    restore: 'Vous utilisez déjà Ihsaanly ? Connectez-vous pour restaurer vos données',
+    restorePrompt: 'Vous utilisez déjà Ihsaanly ?',
+    restoreAction: 'Se connecter',
   },
   location: {
     title: 'Position',

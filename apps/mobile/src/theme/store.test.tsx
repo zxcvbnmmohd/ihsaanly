@@ -30,6 +30,7 @@ const useNative = (value: typeof fakeModule | null): void => {
 useNative(fakeModule)
 const store = await import('./store')
 const { palettes } = await import('./colors')
+const { setAccent } = await import('@ihsaanly/state/theme/accent-store')
 
 beforeEach(() => {
   installAppearance()
@@ -140,5 +141,15 @@ describe('usePalette', () => {
     expect(renderHook(() => store.usePalette()).result.current).toBe(palettes.dark)
     act(() => store.setThemePreference('light'))
     expect(renderHook(() => store.usePalette()).result.current).toBe(palettes.light)
+  })
+
+  it('recolours with the chosen accent, keeping the scheme', () => {
+    store.setThemePreference('dark')
+    const view = renderHook(() => store.usePalette())
+    act(() => setAccent('sage'))
+    expect(view.result.current.accent).toBe('#a3c293')
+    expect(view.result.current.wash).toEqual(palettes.dark.wash)
+    act(() => setAccent('terracotta'))
+    expect(view.result.current).toBe(palettes.dark)
   })
 })

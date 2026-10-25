@@ -1,9 +1,8 @@
 import type { Ruling } from '@ihsaanly/core/content/schema'
 import type { Strings } from '@ihsaanly/core/strings/en'
-import { palettes } from '@ihsaanly/tailwind/tokens'
 import type { ReactElement } from 'react'
 import { Text, View } from 'react-native'
-import { useColors } from '../colors'
+import { useColors, usePalette } from '../colors'
 import { Chip } from '../components/chip'
 import { EmptyState } from '../components/empty-state'
 import { LibraryCard } from '../components/library-card'
@@ -77,8 +76,8 @@ export function LibraryScreen({
   selectedId = null,
 }: LibraryScreenProps): ReactElement {
   const colors = useColors()
-  const { strings, scheme } = useUi()
-  const palette = palettes[scheme]
+  const { strings } = useUi()
+  const palette = usePalette()
   const layout = useLayout()
   const showTerms = query.trim() === '' && filter === 'all'
   const chips = (

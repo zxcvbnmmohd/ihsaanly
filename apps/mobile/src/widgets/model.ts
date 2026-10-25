@@ -7,7 +7,7 @@ import type { PlannedItem, Signals } from '@ihsaanly/core/plan/signals'
 import { PRAYERS, type Prayer } from '@ihsaanly/core/prayer/qada'
 import { buildWindows, windowAt } from '@ihsaanly/core/prayer/windows'
 import type { Strings } from '@ihsaanly/core/strings/en'
-import { palettes } from '@/theme/palettes'
+import { type AccentName, paletteFor } from '@ihsaanly/tailwind/tokens'
 
 /**
  * Everything every widget can show, resolved to plain strings and hex colours.
@@ -111,6 +111,8 @@ export interface WidgetInput {
   hijriOffset: number
   qada: Partial<Record<Prayer, number>>
   fastsOwed: number
+  /** The chosen accent; widgets cannot read the app's preferences, so it is resolved here. */
+  accent?: AccentName
 }
 
 const STEP_MS = 30 * 60_000
@@ -129,8 +131,8 @@ function link(id: string, detail: string | null = null): WidgetLink | null {
   return { title: resolveText(item.title) ?? id, detail, url: itemUrl(id) }
 }
 
-function inkFor(scheme: 'light' | 'dark'): WidgetInk {
-  const palette = palettes[scheme]
+function inkFor(scheme: 'light' | 'dark', accent: AccentName | undefined): WidgetInk {
+  const palette = paletteFor(scheme, accent)
   return {
     background: palette.wash[0],
     backgroundEnd: palette.wash[1],
@@ -246,7 +248,7 @@ function modelAt(input: WidgetInput, at: Date): WidgetModel {
     at: at.getTime(),
     stale: false,
     rtl: input.rtl,
-    ink: { light: inkFor('light'), dark: inkFor('dark') },
+    ink: { light: inkFor('light', input.accent), dark: inkFor('dark', input.accent) },
     labels: {
       app: 'Ihsaanly',
       rightNow: strings.plan.rightNow,

@@ -13,7 +13,7 @@ import { so } from '@ihsaanly/core/strings/so'
 import { ur } from '@ihsaanly/core/strings/ur'
 import { yue } from '@ihsaanly/core/strings/yue'
 import { zh } from '@ihsaanly/core/strings/zh'
-import { system } from '@ihsaanly/tailwind/tokens'
+import { type AccentName, system } from '@ihsaanly/tailwind/tokens'
 import { act, type RenderResult, render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Children, cloneElement, isValidElement, type ReactElement, type ReactNode } from 'react'
@@ -38,6 +38,8 @@ export interface RenderScreenOptions {
   /** Which string table the screen reads; English by default. */
   locale?: SupportedLanguage
   scheme?: 'light' | 'dark'
+  /** The chosen accent; the host's default (terracotta) when left out. */
+  accent?: AccentName
   /** Forces compact/regular/wide instead of measuring the (zero-sized) window. */
   layout?: Layout
 }
@@ -99,7 +101,7 @@ const NO_INSETS = {
 /** Renders `ui` inside SafeAreaProvider and UiProvider; see RenderScreenOptions. */
 export function renderScreen(
   ui: ReactElement,
-  { locale = 'en', scheme = 'light', layout }: RenderScreenOptions = {},
+  { locale = 'en', scheme = 'light', accent, layout }: RenderScreenOptions = {},
 ): RenderScreenResult {
   const navigations: string[] = []
   const strings = STRINGS[locale]
@@ -108,6 +110,7 @@ export function renderScreen(
     scheme,
     Link: fakeLink(navigations),
     systemColors: systemColorsFor(scheme),
+    accent,
     layout,
   }
   // react-native-web draws a disabled control with pointer-events: none;

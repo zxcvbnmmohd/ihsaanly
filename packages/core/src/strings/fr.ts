@@ -442,6 +442,22 @@ export const fr: Strings = {
     light: 'Clair',
     dark: 'Sombre',
     note: 'Les couleurs viennent toujours du système : ses réglages de contraste s’appliquent dans tous les cas.',
+    accentTitle: 'Couleur d’accent',
+    accentNote:
+      'Pour les coches, les boutons et les liens, ici, dans les widgets et sur les cartes partagées.',
+    accentSample: 'Aa',
+    accents: {
+      terracotta: 'Terre cuite',
+      amber: 'Ambre',
+      sage: 'Sauge',
+      teal: 'Sarcelle',
+      denim: 'Denim',
+      indigo: 'Indigo',
+      plum: 'Prune',
+      rose: 'Rose',
+      clay: 'Argile',
+      graphite: 'Graphite',
+    },
   },
   startingPoint: {
     title: 'Point de départ',

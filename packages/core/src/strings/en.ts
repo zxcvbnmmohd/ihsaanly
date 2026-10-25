@@ -424,6 +424,22 @@ export const en = {
     light: 'Light',
     dark: 'Dark',
     note: 'Colours still come from the system, so its contrast settings apply either way.',
+    accentTitle: 'Accent',
+    accentNote: 'Used for marks, buttons and links, here and on your widgets and share cards.',
+    /** A sample of the script, shown in each accent on its swatch. */
+    accentSample: 'Aa',
+    accents: {
+      terracotta: 'Terracotta',
+      amber: 'Amber',
+      sage: 'Sage',
+      teal: 'Teal',
+      denim: 'Denim',
+      indigo: 'Indigo',
+      plum: 'Plum',
+      rose: 'Rose',
+      clay: 'Clay',
+      graphite: 'Graphite',
+    },
   },
   startingPoint: {
     title: 'Starting point',

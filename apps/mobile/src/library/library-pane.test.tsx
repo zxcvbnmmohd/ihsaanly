@@ -24,6 +24,7 @@ const { LibraryPane, libraryPath } = await import('./library-pane')
 const { items } = await import('@ihsaanly/core/content')
 const { toggleEnabled } = await import('@ihsaanly/state/plan/enabled-store')
 const { toggleKnown } = await import('@ihsaanly/state/memorise/store')
+const { deleteOwnDua, saveOwnDua, togglePinned } = await import('@ihsaanly/state/my-duas/store')
 
 const last = (): LibraryProps => {
   const props = libraryProps.at(-1)
@@ -108,6 +109,64 @@ describe('LibraryPane at compact width', () => {
     // leave the shared stores as found
     act(() => toggleEnabled(id))
     act(() => toggleKnown(id))
+  })
+})
+
+describe('My duas in the Library', () => {
+  it('starts empty, offering to write one', () => {
+    renderScreen(<LibraryPane />, { layout: 'compact' })
+    expect(last().mine).toEqual({ count: 0, own: [], writeHref: '/my-dua' })
+    act(() => last().onFilterChange('mine'))
+    expect(last().filter).toBe('mine')
+    expect(last().sections).toEqual([])
+  })
+
+  it('lists pinned items under the filter and own duas beside them, searched alike', () => {
+    const pinned = items[0]?.id ?? ''
+    act(() => {
+      togglePinned(pinned)
+      togglePinned('no-longer-in-content')
+      saveOwnDua({
+        id: 'mine-a',
+        title: 'For my parents',
+        arabic: 'رب',
+        transliteration: 'Rabbi',
+        text: null,
+        repeat: 1,
+        moment: null,
+      })
+      saveOwnDua({
+        id: 'mine-b',
+        title: 'Before an exam',
+        arabic: null,
+        transliteration: null,
+        text: 'Make it easy',
+        repeat: 1,
+        moment: null,
+      })
+    })
+    try {
+      renderScreen(<LibraryPane />, { layout: 'compact' })
+      act(() => last().onFilterChange('mine'))
+      const props = last()
+      expect(props.mine?.count).toBe(3)
+      expect(props.sections.flatMap((section) => section.entries.map((entry) => entry.id))).toEqual(
+        [pinned],
+      )
+      expect(props.mine?.own).toEqual([
+        { id: 'mine-a', title: 'For my parents', detail: 'Rabbi', href: '/item/mine-a' },
+        { id: 'mine-b', title: 'Before an exam', detail: 'Make it easy', href: '/item/mine-b' },
+      ])
+      act(() => searchBars.at(-1)?.onChangeText({ nativeEvent: { text: 'EXAM' } }))
+      expect(last().mine?.own.map((entry) => entry.id)).toEqual(['mine-b'])
+    } finally {
+      act(() => {
+        togglePinned(pinned)
+        togglePinned('no-longer-in-content')
+        deleteOwnDua('mine-a')
+        deleteOwnDua('mine-b')
+      })
+    }
   })
 })
 

@@ -1,5 +1,7 @@
 import { itemById, resolveText } from '@ihsaanly/core/content'
+import type { OwnDua } from '@ihsaanly/core/content/my-duas'
 import type { Strings } from '@ihsaanly/core/strings/en'
+import { ownDuaById, useOwnDuas } from '@ihsaanly/state/my-duas/store'
 import { useStrings } from '@ihsaanly/state/strings'
 import { Panel } from '@ihsaanly/ui/components/panel'
 import { useLayout } from '@ihsaanly/ui/layout'
@@ -19,11 +21,14 @@ export const unstable_settings = { anchor: 'index' }
  * way `item/[id].tsx` does), or the memorised item's — `null` at the group
  * index, where the panel does not render at all.
  */
-function detailTitle(parts: string[] | null, strings: Strings): string | null {
+function detailTitle(parts: string[] | null, strings: Strings, own: OwnDua[]): string | null {
   if (!parts || parts.length === 0) return null
   if (parts[0] === 'glossary') return strings.glossary.title
+  if (parts[0] === 'my-dua') return strings.myDuas.title
   if (parts[0] === 'item' && parts[1] === 'memorise') return strings.memorise.title
   if (parts[0] === 'item' && parts[1]) {
+    const dua = ownDuaById(own, parts[1])
+    if (dua) return dua.title
     const item = itemById(parts[1])
     return item ? (resolveText(item.title) ?? strings.notFound.title) : strings.notFound.title
   }
@@ -36,6 +41,7 @@ export default function LibraryLayout(): ReactElement {
   const layout = useLayout()
   const segments = useSegments()
   const pathname = usePathname()
+  const own = useOwnDuas()
 
   if (layout === 'compact') {
     return (
@@ -64,7 +70,7 @@ export default function LibraryLayout(): ReactElement {
       <LibraryPane />
       {isIndex ? null : (
         <Panel
-          title={detailTitle(parts, strings) ?? strings.library.title}
+          title={detailTitle(parts, strings, own) ?? strings.library.title}
           onClose={() => router.replace('/(library)')}>
           <Slot />
         </Panel>

@@ -78,4 +78,27 @@ describe('Dropdown (native)', () => {
     expect(onChange).not.toHaveBeenCalled()
     expect(screen.queryByRole('dialog')).toBeNull()
   })
+
+  it('uses the iOS page sheet, closed by a choice or its close button', async () => {
+    const Native = await load()
+    const onChange = mock((_value: string) => {})
+    process.env.EXPO_OS = 'ios'
+    try {
+      const { user, strings } = renderScreen(
+        <Native label="Theme" value="light" options={options} onChange={onChange} />,
+      )
+      await user.click(screen.getByRole('button', { name: 'Theme' }))
+      expect(screen.getByRole('heading', { name: 'Theme' })).toBeInTheDocument()
+      expect(screen.queryByRole('dialog')).toBeNull()
+      await user.click(screen.getByRole('button', { name: strings.panel.close }))
+      expect(screen.queryByRole('heading', { name: 'Theme' })).toBeNull()
+
+      await user.click(screen.getByRole('button', { name: 'Theme' }))
+      await user.click(screen.getByRole('radio', { name: 'Dark' }))
+      expect(onChange).toHaveBeenCalledWith('dark')
+      expect(screen.queryByRole('heading', { name: 'Theme' })).toBeNull()
+    } finally {
+      process.env.EXPO_OS = 'web'
+    }
+  })
 })

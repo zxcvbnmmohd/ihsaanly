@@ -1,7 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, spyOn } from 'bun:test'
 import * as session from '@ihsaanly/state/cloud/session'
-import { act, render, waitFor } from '@testing-library/react'
+import { act, render, screen, waitFor } from '@testing-library/react'
 import { Linking } from 'react-native'
+import { renderScreen } from '../../../../packages/ui/test/render'
 import { buttons, installProviderButtons, screens } from '../../test/accounts'
 import { run } from '../../test/act'
 import { installAppearance, restoreAppearance, restoreOS, setOS } from '../../test/theme'
@@ -137,20 +138,31 @@ describe('the official sign-in buttons', () => {
 
   it("draws Apple's own button, black in light mode and white in dark", () => {
     mount('apple', false)
-    expect(buttons.apple.at(-1)).toMatchObject({ buttonType: 0, buttonStyle: 2, cornerRadius: 24 })
+    expect(buttons.apple.at(-1)).toMatchObject({
+      buttonType: 0,
+      buttonStyle: 2,
+      cornerRadius: 24,
+      style: { width: '100%', height: 48 },
+    })
 
     act(() => setThemePreference('dark'))
     mount('apple', false)
     expect(buttons.apple.at(-1)).toMatchObject({ buttonStyle: 0 })
   })
 
-  it("draws Google's own button in the scheme's colour", () => {
-    mount('google', false)
-    expect(buttons.google.at(-1)).toMatchObject({ size: 1, color: 1, disabled: false })
+  it("draws Google's branded pill at Apple's height, never the SDK's square button", async () => {
+    render(<MobileAccount />)
+    const pressed: string[] = []
+    const { user, strings } = renderScreen(
+      <>{latest().renderSignInButton('google', () => pressed.push('google'), false)}</>,
+    )
+    const button = screen.getByRole('button', { name: strings.account.signInWithGoogle })
+    expect(button.style.height).toBe('48px')
+    expect(button.style.borderRadius).toBe('24px')
+    expect(buttons.google).toEqual([])
 
-    act(() => setThemePreference('dark'))
-    mount('google', false)
-    expect(buttons.google.at(-1)).toMatchObject({ color: 0 })
+    await user.click(button)
+    expect(pressed).toEqual(['google'])
   })
 
   it('passes the press through to the provider button', () => {
@@ -161,13 +173,24 @@ describe('the official sign-in buttons', () => {
   })
 
   it('dims the wrapper and blocks touches while signing in', () => {
-    const idle = mount('google', false).container.firstElementChild as HTMLElement
+    const idle = mount('apple', false).container.firstElementChild as HTMLElement
     expect(idle.style.opacity).toBe('1')
 
-    const busy = mount('google', true).container.firstElementChild as HTMLElement
+    const busy = mount('apple', true).container.firstElementChild as HTMLElement
     expect(busy.style.opacity).toBe('0.6')
     // react-native-web turns pointerEvents into a class: only the busy wrapper swallows touches.
     expect(busy.className).not.toBe(idle.className)
-    expect(buttons.google.at(-1)).toMatchObject({ disabled: true })
+  })
+
+  it("disables Google's button while signing in", async () => {
+    render(<MobileAccount />)
+    const pressed: string[] = []
+    const { user, strings } = renderScreen(
+      <>{latest().renderSignInButton('google', () => pressed.push('google'), true)}</>,
+    )
+    const button = screen.getByRole('button', { name: strings.account.signInWithGoogle })
+    expect(button).toBeDisabled()
+    await user.click(button)
+    expect(pressed).toEqual([])
   })
 })

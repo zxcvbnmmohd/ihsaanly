@@ -35,11 +35,10 @@ export function LibraryCard({ entry, selected = false, href }: LibraryCardProps)
       <Pressable accessibilityRole="link" accessibilityState={{ selected }}>
         <Surface
           interactive
+          ring={selected ? palette.accent : 'transparent'}
           style={{
             borderRadius: 16,
-            padding: selected ? 14 : 16,
-            borderWidth: selected ? 2 : 0,
-            borderColor: palette.accent,
+            padding: 14,
           }}>
           <View className="gap-2">
             <Text className="font-semibold text-base" style={{ color: colors.label }}>

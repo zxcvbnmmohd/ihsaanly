@@ -52,6 +52,7 @@ describe('more layout', () => {
         strings.notifications.title,
         strings.tracking.title,
         strings.events.title,
+        strings.startingPoint.title,
         strings.history.title,
         strings.qada.title,
         strings.data.title,

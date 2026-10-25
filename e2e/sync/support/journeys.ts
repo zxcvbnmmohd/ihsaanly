@@ -28,7 +28,9 @@ export async function firstDevice(
 /** A fresh device restoring `email` from the welcome screen; ends on Today. */
 export async function restoreDevice(device: Device, email: string): Promise<void> {
   await device.page.goto('/')
-  await device.page.getByRole('button', { name: en.onboarding.restore }).click()
+  await device.page
+    .getByRole('button', { name: `${en.onboarding.restorePrompt} ${en.onboarding.restoreAction}` })
+    .click()
   await signIn(device.page, email)
   await expect(device.page).toHaveURL(/\/today$/)
 }

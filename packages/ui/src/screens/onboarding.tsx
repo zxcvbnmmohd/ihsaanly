@@ -8,7 +8,7 @@ import { cityOf, type Place } from '@ihsaanly/core/location/place'
 import type { NotificationPreferences } from '@ihsaanly/core/plan/notification-preferences'
 import { type Palette, palettes } from '@ihsaanly/tailwind/tokens'
 import { LinearGradient } from 'expo-linear-gradient'
-import type { ReactElement, ReactNode } from 'react'
+import { type ReactElement, type ReactNode, useState } from 'react'
 import {
   ActivityIndicator,
   type ColorValue,
@@ -23,8 +23,8 @@ import Animated, { FadeInRight, useReducedMotion } from 'react-native-reanimated
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useColors } from '../colors'
 import { Button } from '../components/button'
-import { Chip } from '../components/chip'
 import { ChoiceRow } from '../components/choice-row'
+import { Dropdown } from '../components/dropdown'
 import { OnboardingArt } from '../components/onboarding-art'
 import { PlaceMap } from '../components/place-map'
 import { Row } from '../components/row'
@@ -57,10 +57,6 @@ export interface OnboardingScreenProps {
   gender: Gender
   notifications: NotificationPreferences
   preset: StarterPreset | null
-  enabledTitles: string[]
-  itemCount: number
-  essentialCount: number
-  startingCount: number
   onSelectLanguage: (language: SupportedLanguage) => void
   onSelectTheme: (theme: ThemePreference) => void
   onQueryChange: (query: string) => void
@@ -88,8 +84,6 @@ export interface OnboardingScreenProps {
    * can receive push offers it; the others leave it out and show no switch.
    */
   announcements?: OptIn | undefined
-  /** Opens the published privacy policy, linked from the first step. Omitted, no link shows. */
-  onOpenPrivacy?: () => void
 }
 
 function remindersOn(notifications: NotificationPreferences): boolean {
@@ -140,6 +134,69 @@ function Field({ label, children }: FieldProps): ReactElement {
       </Text>
       {children}
     </View>
+  )
+}
+
+interface Thing {
+  height: number
+}
+
+interface WelcomeArtProps {
+  palette: Palette
+}
+
+/** Below this the grid is too small to read as stars, so it is left out. */
+const MIN_ART = 72
+
+/**
+ * The welcome grid, sized to the height left over once the rest of the step
+ * is laid out, so a small phone (an iPhone SE) shows a smaller grid rather
+ * than a scrolling step. It is drawn out of the flow, so it never adds height.
+ */
+function WelcomeArt({ palette }: WelcomeArtProps): ReactElement {
+  const [thing, setThing] = useState<Thing>({ height: 0 })
+  const size = Math.min(228, thing.height)
+  return (
+    <View
+      testID="welcome-art"
+      className="flex-1"
+      onLayout={(event) => setThing({ height: event.nativeEvent.layout.height })}>
+      {size >= MIN_ART ? (
+        <View className="absolute start-0 end-0 top-0 bottom-0 items-center justify-center">
+          <OnboardingArt
+            variant="welcome"
+            color={palette.accent}
+            onColor={palette.onAccent}
+            size={size}
+          />
+        </View>
+      ) : null}
+    </View>
+  )
+}
+
+interface RestoreLineProps {
+  palette: Palette
+  onPress: () => void
+}
+
+/** "Already using Ihsaanly? Sign in": one line, one target, read as one name. */
+function RestoreLine({ palette, onPress }: RestoreLineProps): ReactElement {
+  const colors = useColors()
+  const { onboarding } = useUi().strings
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={`${onboarding.restorePrompt} ${onboarding.restoreAction}`}
+      onPress={onPress}
+      className="shrink justify-center py-2"
+      // A 44pt target, so a one-line link still clears WCAG 2.5.8.
+      style={{ minHeight: 44 }}>
+      <Text className="text-sm" style={{ color: colors.label }}>
+        {onboarding.restorePrompt}{' '}
+        <Text style={{ color: palette.accent, fontWeight: '700' }}>{onboarding.restoreAction}</Text>
+      </Text>
+    </Pressable>
   )
 }
 
@@ -359,12 +416,11 @@ function ChoiceTile({
       className="flex-1">
       <Surface
         interactive
+        ring={selected ? palette.accent : 'transparent'}
         style={{
           borderRadius: 20,
           paddingVertical: 20,
           paddingHorizontal: 12,
-          borderWidth: 2,
-          borderColor: selected ? palette.accent : 'transparent',
         }}>
         <View className="items-center gap-3">
           <PersonGlyph
@@ -398,54 +454,42 @@ function StepBody(props: StepBodyProps): ReactElement {
     case 'welcome':
       return (
         <>
-          <View className="flex-1 items-center justify-center py-6">
-            <OnboardingArt variant="welcome" color={palette.accent} onColor={palette.onAccent} />
-          </View>
+          <WelcomeArt palette={palette} />
           <Heading title={strings.onboarding.welcomeTitle} body={strings.onboarding.welcomeBody} />
-          <Field label={strings.onboarding.language}>
-            <View className="flex-row flex-wrap gap-2">
-              {SUPPORTED_LANGUAGES.map((option) => (
-                <Chip
-                  key={option}
-                  label={strings.language.names[option]}
-                  selected={props.language === option}
-                  onPress={() => props.onSelectLanguage(option)}
-                  palette={palette}
+          <View className="w-full flex-row gap-3" style={{ maxWidth: 480 }}>
+            <View className="flex-1">
+              <Field label={strings.onboarding.language}>
+                <Dropdown
+                  label={strings.onboarding.language}
+                  value={props.language}
+                  options={SUPPORTED_LANGUAGES.map((option) => ({
+                    value: option,
+                    label: strings.language.names[option],
+                  }))}
+                  onChange={props.onSelectLanguage}
+                  accent={palette.accent}
                 />
-              ))}
+              </Field>
             </View>
-          </Field>
-          <Field label={strings.onboarding.appearance}>
-            <View className="flex-row gap-2">
-              {THEME_PREFERENCES.map((option) => (
-                <Chip
-                  key={option}
-                  label={strings.appearance[option]}
-                  selected={props.theme === option}
-                  onPress={() => props.onSelectTheme(option)}
-                  palette={palette}
+            <View className="flex-1">
+              <Field label={strings.onboarding.appearance}>
+                <Dropdown
+                  label={strings.onboarding.appearance}
+                  value={props.theme}
+                  options={THEME_PREFERENCES.map((option) => ({
+                    value: option,
+                    label: strings.appearance[option],
+                  }))}
+                  onChange={props.onSelectTheme}
+                  accent={palette.accent}
                 />
-              ))}
+              </Field>
             </View>
-          </Field>
+          </View>
           {isRightToLeft(props.language) ? (
             <Text className="text-xs" style={{ color: colors.secondaryLabel }}>
               {strings.language.restart}
             </Text>
-          ) : null}
-          {props.onOpenPrivacy ? (
-            <Pressable
-              accessibilityRole="link"
-              onPress={props.onOpenPrivacy}
-              className="justify-center self-start"
-              // A 44pt target, so a one-line link still clears WCAG 2.5.8.
-              style={{ minHeight: 44 }}>
-              <Text
-                className="text-sm"
-                style={{ color: palette.accent, textDecorationLine: 'underline' }}>
-                {strings.about.privacyPolicy}
-              </Text>
-            </Pressable>
           ) : null}
         </>
       )
@@ -454,7 +498,12 @@ function StepBody(props: StepBodyProps): ReactElement {
       return (
         <>
           <View className="flex-1 items-center justify-center py-6">
-            <OnboardingArt variant="how" color={palette.accent} onColor={palette.onAccent} />
+            <OnboardingArt
+              variant="how"
+              color={palette.accent}
+              onColor={palette.onAccent}
+              checkLabel={strings.onboarding.howExample}
+            />
           </View>
           <Text
             className="text-center text-3xl leading-tight"
@@ -518,7 +567,13 @@ function StepBody(props: StepBodyProps): ReactElement {
     case 'you':
       return (
         <>
-          <Heading title={strings.onboarding.genderStep} body={strings.onboarding.genderWhy} />
+          {/* The privacy line sits with the heading, before anything is chosen. */}
+          <View className="gap-3">
+            <Heading title={strings.onboarding.genderStep} body={strings.onboarding.genderWhy} />
+            <Text className="text-xs leading-snug" style={{ color: colors.secondaryLabel }}>
+              {strings.onboarding.genderPrivacy}
+            </Text>
+          </View>
           <View className="flex-row gap-3">
             <ChoiceTile
               variant="brother"
@@ -544,9 +599,6 @@ function StepBody(props: StepBodyProps): ReactElement {
             accent={palette.accent}
             onPress={() => props.onSelectGender('unspecified')}
           />
-          <Text className="pt-1 text-xs leading-snug" style={{ color: colors.secondaryLabel }}>
-            {strings.onboarding.genderPrivacy}
-          </Text>
         </>
       )
 
@@ -581,77 +633,42 @@ function StepBody(props: StepBodyProps): ReactElement {
               track={palette.wash[1]}
             />
           ) : null}
-          {daily ? (
+          {daily && quiet ? (
             <Text className="pt-1 text-xs leading-snug" style={{ color: colors.secondaryLabel }}>
-              {quiet
-                ? strings.onboarding.reminderPolicy(
-                    props.notifications.maxPerDay,
-                    quiet.from,
-                    quiet.to,
-                  )
-                : strings.onboarding.reminderCap(props.notifications.maxPerDay)}
+              {strings.onboarding.reminderQuiet(quiet.from, quiet.to)}
             </Text>
           ) : null}
         </>
       )
     }
 
-    case 'start': {
-      const preview = props.enabledTitles.slice(0, 5)
-      const rest = props.enabledTitles.length - preview.length
-
+    case 'start':
       return (
         <>
           <Heading title={strings.onboarding.startStep} body={strings.onboarding.startWhy} />
           <ChoiceRow
             title={strings.onboarding.starting}
-            detail={strings.onboarding.startingDetail(props.startingCount)}
+            detail={strings.onboarding.startingDetail}
             selected={props.preset === 'starting'}
             accent={palette.accent}
             onPress={() => props.onSelectPreset('starting')}
           />
           <ChoiceRow
             title={strings.onboarding.essentials}
-            detail={strings.onboarding.essentialsDetail(props.essentialCount)}
+            detail={strings.onboarding.essentialsDetail}
             selected={props.preset === 'essentials'}
             accent={palette.accent}
             onPress={() => props.onSelectPreset('essentials')}
           />
           <ChoiceRow
             title={strings.onboarding.everything}
-            detail={strings.onboarding.everythingDetail(props.itemCount)}
+            detail={strings.onboarding.everythingDetail}
             selected={props.preset === 'everything'}
             accent={palette.accent}
             onPress={() => props.onSelectPreset('everything')}
           />
-          <View className="gap-2 pt-2">
-            <Text
-              accessibilityRole="header"
-              aria-level={2}
-              className="font-semibold text-xs uppercase tracking-wide"
-              style={{ color: colors.secondaryLabel }}>
-              {strings.onboarding.included}
-            </Text>
-            {preview.map((title) => (
-              <View key={title} className="flex-row items-center gap-3">
-                <View
-                  className="rounded-full"
-                  style={{ backgroundColor: palette.accent, width: 5, height: 5 }}
-                />
-                <Text className="flex-1 text-sm" style={{ color: colors.label }}>
-                  {title}
-                </Text>
-              </View>
-            ))}
-            {rest > 0 ? (
-              <Text className="ps-8 text-sm" style={{ color: colors.secondaryLabel }}>
-                {strings.onboarding.andMore(rest)}
-              </Text>
-            ) : null}
-          </View>
         </>
       )
-    }
 
     default:
       return assertNever(step)
@@ -697,9 +714,12 @@ export function OnboardingScreen(props: OnboardingScreenProps): ReactElement {
       />
 
       <View
-        className="flex-row items-center justify-between px-4"
+        className="flex-row items-center justify-between gap-4 px-4"
         style={{ paddingTop: insets.top, minHeight: insets.top + 48 }}>
-        {props.stepIndex > 0 ? (
+        {/* Restore takes Back's place on the first step, so the footer never shifts. */}
+        {step === 'welcome' && props.onRestore ? (
+          <RestoreLine palette={palette} onPress={props.onRestore} />
+        ) : props.stepIndex > 0 ? (
           <Button
             variant="secondary"
             title={strings.onboarding.back}
@@ -754,14 +774,6 @@ export function OnboardingScreen(props: OnboardingScreenProps): ReactElement {
             onColor={palette.onAccent}
             disabled={needsPlace}
           />
-          {step === 'welcome' && props.onRestore ? (
-            <Button
-              variant="secondary"
-              title={strings.onboarding.restore}
-              onPress={props.onRestore}
-              color={palette.accent}
-            />
-          ) : null}
         </View>
       </View>
     </View>

@@ -9,9 +9,7 @@ import { useOnboardingFlow } from '@ihsaanly/state/onboarding/use-onboarding-flo
 import { getStrings } from '@ihsaanly/state/strings'
 import { OnboardingScreen } from '@ihsaanly/ui/screens/onboarding'
 import type { ReactElement } from 'react'
-import { Linking } from 'react-native'
 import { RestoreAccount } from '@/account/restore'
-import { LEGAL_URLS } from '@/cloud'
 import { requestDeviceLocation } from '@/location/device'
 import { ensurePermission } from '@/notifications/schedule'
 import { setAnnouncementsEnabled } from '@/push/announcements'
@@ -55,11 +53,5 @@ export function OnboardingFlow({
     )
   }
 
-  return (
-    <OnboardingScreen
-      {...props}
-      onRestore={onRestore}
-      onOpenPrivacy={() => void Linking.openURL(LEGAL_URLS.privacy)}
-    />
-  )
+  return <OnboardingScreen {...props} onRestore={onRestore} />
 }

@@ -141,8 +141,9 @@ to test on the dev sites, then sent to `production` as a pull request. See
 | [`deploy-marketing`](.github/workflows/deploy-marketing.yml) | Pushes that touch the website or what it uses | Builds, verifies, uploads over FTPS. |
 | [`deploy-companion`](.github/workflows/deploy-companion.yml) | Pushes that touch the web app or what it uses | Builds, verifies, uploads over FTPS. |
 | [`deploy-firestore`](.github/workflows/deploy-firestore.yml) | Pushes that touch the Firestore rules or indexes | Tests the rules on the emulator, then deploys them. |
+| [`build-android`](.github/workflows/build-android.yml) | Pushes that touch the mobile app or what it uses | Builds the Android app signed with the upload key: an `.apk` on `development`, an `.aab` on `production`, attached to the run. |
 
-Mobile builds and store uploads are moving to GitHub Actions; until then they
+iOS builds and store uploads are moving to GitHub Actions; until then they
 are built locally. See [`apps/mobile/README.md`](apps/mobile/README.md).
 
 ## Docs

@@ -32,6 +32,12 @@ function variant(): Variant {
   throw new Error(`APP_VARIANT must be development, staging or production, not "${value}"`)
 }
 
+/** CI sets ANDROID_VERSION_CODE (the run number) so every upload to Play counts up. */
+function versionCode(fallback: number | undefined): number | undefined {
+  const value = Number(process.env.ANDROID_VERSION_CODE)
+  return Number.isInteger(value) && value > 0 ? value : fallback
+}
+
 /** Points the expo-widgets plugin at this variant's App Group. */
 function withGroup(plugins: ExpoConfig['plugins'], group: string): ExpoConfig['plugins'] {
   return plugins?.map((plugin) => {
@@ -215,7 +221,12 @@ export default ({ config }: ConfigContext): ExpoConfig => {
         'com.apple.security.application-groups': [group],
       },
     },
-    android: { ...config.android, package: id, googleServicesFile: firebase.android },
+    android: {
+      ...config.android,
+      package: id,
+      googleServicesFile: firebase.android,
+      versionCode: versionCode(config.android?.versionCode),
+    },
     plugins: [...(withSignIn(withGroup(config.plugins, group)) ?? []), ...FIREBASE_PLUGINS],
     extra: { ...config.extra, appGroup: group },
   }

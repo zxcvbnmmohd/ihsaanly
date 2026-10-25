@@ -9,6 +9,7 @@ const KEYS = [
   'EXPO_PUBLIC_FIREBASE_PROJECT_ID',
   'EXPO_PUBLIC_FIREBASE_APP_ID',
   'EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID',
+  'ANDROID_VERSION_CODE',
 ] as const
 const CLOUD = {
   EXPO_PUBLIC_FIREBASE_API_KEY: 'key',
@@ -111,6 +112,19 @@ describe('variants', () => {
     expect(config.ios?.entitlements).toEqual({
       'com.apple.security.application-groups': ['group.app.ihsaanly.companion.development'],
     })
+  })
+})
+
+describe('android versionCode', () => {
+  it('takes a positive whole ANDROID_VERSION_CODE, else keeps the config value', () => {
+    expect(run().android?.versionCode).toBeUndefined()
+    expect(run({ ...base, android: { versionCode: 3 } }).android?.versionCode).toBe(3)
+    process.env.ANDROID_VERSION_CODE = '42'
+    expect(run().android?.versionCode).toBe(42)
+    for (const bad of ['', '0', '-1', '1.5', 'abc']) {
+      process.env.ANDROID_VERSION_CODE = bad
+      expect(run({ ...base, android: { versionCode: 3 } }).android?.versionCode).toBe(3)
+    }
   })
 })
 

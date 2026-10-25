@@ -2,6 +2,7 @@ import {
   createContext,
   type ReactElement,
   type ReactNode,
+  useCallback,
   useContext,
   useEffect,
   useState,
@@ -9,6 +10,10 @@ import {
 import { StatusBar, useWindowDimensions, View } from 'react-native'
 import Animated, { useAnimatedStyle, withTiming } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+
+interface Thing {
+  receded: boolean
+}
 
 const RecedeContext = createContext<(receded: boolean) => void>(() => {})
 
@@ -18,7 +23,9 @@ const RecedeContext = createContext<(receded: boolean) => void>(() => {})
  * Android never did either, so both get it from here.
  */
 export function RecedeProvider({ children }: { children: ReactNode }): ReactElement {
-  const [receded, setReceded] = useState(false)
+  const [thing, setThing] = useState<Thing>({ receded: false })
+  const { receded } = thing
+  const recede = useCallback((next: boolean) => setThing({ receded: next }), [])
   const insets = useSafeAreaInsets()
   const { height } = useWindowDimensions()
   const scale = 0.92
@@ -35,7 +42,7 @@ export function RecedeProvider({ children }: { children: ReactNode }): ReactElem
   }))
 
   return (
-    <RecedeContext.Provider value={setReceded}>
+    <RecedeContext.Provider value={recede}>
       <View style={{ flex: 1, backgroundColor: 'black' }}>
         {receded ? <StatusBar barStyle="light-content" animated /> : null}
         <Animated.View style={[{ flex: 1, overflow: 'hidden' }, style]}>{children}</Animated.View>

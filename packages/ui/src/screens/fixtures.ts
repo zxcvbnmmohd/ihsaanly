@@ -19,6 +19,7 @@ import type { MoreScreenProps } from './more'
 import type { NotificationsScreenProps } from './notifications'
 import type { OnboardingScreenProps } from './onboarding'
 import type { QadaScreenProps } from './qada'
+import type { StartingPointScreenProps } from './starting-point'
 import type { TodayScreenProps } from './today'
 import type { TrackingScreenProps } from './tracking'
 
@@ -432,10 +433,6 @@ export const onboardingFixture: OnboardingScreenProps = {
     maxPerDay: 3,
   },
   preset: 'essentials',
-  enabledTitles: ['Leaving home', 'Morning adhkar', 'Evening adhkar'],
-  itemCount: 32,
-  essentialCount: 21,
-  startingCount: 5,
   onSelectLanguage: noop,
   onSelectTheme: noop,
   onUseDevice: noop,
@@ -451,6 +448,11 @@ export const onboardingFixture: OnboardingScreenProps = {
 
 export const appearanceFixture: AppearanceScreenProps = {
   preference: 'system',
+  onSelect: noop,
+}
+
+export const startingPointFixture: StartingPointScreenProps = {
+  current: 'essentials',
   onSelect: noop,
 }
 

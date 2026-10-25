@@ -5,12 +5,13 @@ import { getLocale } from '@ihsaanly/state/i18n/store'
 import { useOnboarding } from '@ihsaanly/state/onboarding/store'
 import { startProgress } from '@ihsaanly/state/progress/configure'
 import { useStrings } from '@ihsaanly/state/strings'
+import { RecedeProvider } from '@ihsaanly/ui/components/recede'
 import { NativeTabs } from 'expo-router/native-tabs'
 import { DarkTheme, DefaultTheme, ThemeProvider } from 'expo-router/react-navigation'
 import { StatusBar } from 'expo-status-bar'
 import type { ReactElement } from 'react'
 import { useCallback, useEffect, useState } from 'react'
-import { AppState, Platform, Text, View } from 'react-native'
+import { AppState, I18nManager, Platform, Text, View } from 'react-native'
 import { cloudEnabled, startMobileCloud } from '@/cloud'
 import { startMobileContentUpdates } from '@/content/updates'
 import { startCrashReporting } from '@/crash/crash'
@@ -117,48 +118,60 @@ export default function RootLayout(): ReactElement {
   if (!onboarding.completed || thing.restoring) {
     return (
       <MobileUiProvider>
-        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-          <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
-          <OnboardingFlow
-            restoring={thing.restoring}
-            onRestore={cloudEnabled ? () => setThing({ restoring: true }) : undefined}
-            onRestoreEnd={endRestore}
-          />
-        </ThemeProvider>
+        <RecedeProvider>
+          <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+            <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
+            <OnboardingFlow
+              restoring={thing.restoring}
+              onRestore={cloudEnabled ? () => setThing({ restoring: true }) : undefined}
+              onRestoreEnd={endRestore}
+            />
+          </ThemeProvider>
+        </RecedeProvider>
       </MobileUiProvider>
     )
   }
 
   return (
     <MobileUiProvider>
-      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
-        {/*
+      <RecedeProvider>
+        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+          <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
+          {/*
         iOS 26 draws its own tab bar background and ignores `backgroundColor`;
         Android's is Material's grey surface, which sat under a warm app like a
         different one, so it takes the top of the wash. The indicator and ripple
         are a tint of the accent rather than the accent itself — filling the
         Material pill with a solid accent swallows the icon inside it.
+
+        The direction is stated, not inherited: left as `inherit`, the iOS tab
+        bar follows UIKit's own direction, which comes from the device language
+        and ignores `forceRTL` (react-native-screens' `TabsHostProps.direction`
+        says so). RTL is read the way expo-router's NavigationContainer reads it
+        for the stack headers, and it only changes across `applyDirection`'s
+        reload, so reading it at render is enough.
       */}
-        <NativeTabs
-          tintColor={palette.accent}
-          backgroundColor={Platform.OS === 'android' ? palette.wash[0] : undefined}
-          indicatorColor={palette.indicator}
-          rippleColor={palette.indicator}>
-          <NativeTabs.Trigger name="(home)">
-            <NativeTabs.Trigger.Icon sf="sun.max.fill" md="today" />
-            <NativeTabs.Trigger.Label>{strings.tabs.today}</NativeTabs.Trigger.Label>
-          </NativeTabs.Trigger>
-          <NativeTabs.Trigger name="(library)">
-            <NativeTabs.Trigger.Icon sf="book.fill" md="menu_book" />
-            <NativeTabs.Trigger.Label>{strings.tabs.library}</NativeTabs.Trigger.Label>
-          </NativeTabs.Trigger>
-          <NativeTabs.Trigger name="(more)">
-            <NativeTabs.Trigger.Icon sf="ellipsis" md="more_horiz" />
-            <NativeTabs.Trigger.Label>{strings.tabs.more}</NativeTabs.Trigger.Label>
-          </NativeTabs.Trigger>
-        </NativeTabs>
-      </ThemeProvider>
+          <NativeTabs
+            tintColor={palette.accent}
+            backgroundColor={Platform.OS === 'android' ? palette.wash[0] : undefined}
+            indicatorColor={palette.indicator}
+            rippleColor={palette.indicator}
+            unstable_nativeProps={{ direction: I18nManager.getConstants().isRTL ? 'rtl' : 'ltr' }}>
+            <NativeTabs.Trigger name="(home)">
+              <NativeTabs.Trigger.Icon sf="sun.max.fill" md="today" />
+              <NativeTabs.Trigger.Label>{strings.tabs.today}</NativeTabs.Trigger.Label>
+            </NativeTabs.Trigger>
+            <NativeTabs.Trigger name="(library)">
+              <NativeTabs.Trigger.Icon sf="book.fill" md="menu_book" />
+              <NativeTabs.Trigger.Label>{strings.tabs.library}</NativeTabs.Trigger.Label>
+            </NativeTabs.Trigger>
+            <NativeTabs.Trigger name="(more)">
+              <NativeTabs.Trigger.Icon sf="ellipsis" md="more_horiz" />
+              <NativeTabs.Trigger.Label>{strings.tabs.more}</NativeTabs.Trigger.Label>
+            </NativeTabs.Trigger>
+          </NativeTabs>
+        </ThemeProvider>
+      </RecedeProvider>
     </MobileUiProvider>
   )
 }

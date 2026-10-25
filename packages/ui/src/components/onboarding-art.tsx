@@ -1,6 +1,8 @@
 import { Image } from 'expo-image'
-import type { ReactElement } from 'react'
-import { Text, View } from 'react-native'
+import { type ReactElement, useState } from 'react'
+import { Pressable, Text, View } from 'react-native'
+import Animated, { useReducedMotion, ZoomIn, ZoomOut } from 'react-native-reanimated'
+import { onSpace } from './space-press'
 
 const OUTLINE = require('../../assets/images/star-outline.png')
 const SOLID = require('../../assets/images/star-solid.png')
@@ -41,6 +43,8 @@ interface OnboardingArtProps {
   variant: 'welcome' | 'how'
   color: string
   onColor: string
+  /** The example circle's name for screen readers, on the 'how' variant. */
+  checkLabel?: string
   /** The welcome grid's width and height, so it can shrink to the space it has. */
   size?: number
 }
@@ -49,11 +53,73 @@ interface OnboardingArtProps {
 const WELCOME_SIZE = 228
 
 const GRID = [0.3, 0.55, 0.3, 0.55, 1, 0.55, 0.3, 0.55, 0.3]
+const CIRCLE = 52
+
+interface Thing {
+  checked: boolean
+}
+
+interface ExampleCheckProps {
+  color: string
+  onColor: string
+  label: string | undefined
+}
+
+/**
+ * The circle the 'how' step talks about, so it can be tried right there: a
+ * tap ticks it or clears it. Local state only; it records nothing.
+ */
+function ExampleCheck({ color, onColor, label }: ExampleCheckProps): ReactElement {
+  const [thing, setThing] = useState<Thing>({ checked: true })
+  const { checked } = thing
+  const reduceMotion = useReducedMotion()
+  const toggle = (): void => setThing((current) => ({ checked: !current.checked }))
+
+  return (
+    <Pressable
+      accessibilityRole="checkbox"
+      accessibilityState={{ checked }}
+      // react-native-web reads only the aria-* form.
+      aria-checked={checked}
+      accessibilityLabel={label}
+      onPress={toggle}
+      // A checkbox toggles on Space; react-native-web only answers Enter here.
+      onKeyDown={onSpace(toggle)}
+      hitSlop={12}
+      className="items-center justify-center rounded-full"
+      style={{ width: CIRCLE, height: CIRCLE, borderWidth: 2, borderColor: color }}>
+      {checked ? (
+        <Animated.View
+          entering={reduceMotion ? undefined : ZoomIn.duration(200)}
+          exiting={reduceMotion ? undefined : ZoomOut.duration(150)}
+          className="items-center justify-center rounded-full"
+          // Over the ring, not inside it, so the filled circle is the same size.
+          style={{
+            position: 'absolute',
+            top: -2,
+            start: -2,
+            width: CIRCLE,
+            height: CIRCLE,
+            backgroundColor: color,
+          }}>
+          <Text
+            aria-hidden
+            accessibilityElementsHidden
+            importantForAccessibility="no"
+            style={{ color: onColor, fontSize: 26 }}>
+            ✓
+          </Text>
+        </Animated.View>
+      ) : null}
+    </Pressable>
+  )
+}
 
 export function OnboardingArt({
   variant,
   color,
   onColor,
+  checkLabel,
   size = WELCOME_SIZE,
 }: OnboardingArtProps): ReactElement {
   if (variant === 'how') {
@@ -62,17 +128,7 @@ export function OnboardingArt({
         <View style={{ position: 'absolute' }}>
           <Star size={208} color={color} hollow />
         </View>
-        <View
-          className="items-center justify-center rounded-full"
-          style={{ width: 52, height: 52, backgroundColor: color }}>
-          <Text
-            aria-hidden
-            accessibilityElementsHidden
-            importantForAccessibility="no"
-            style={{ color: onColor, fontSize: 26 }}>
-            ✓
-          </Text>
-        </View>
+        <ExampleCheck color={color} onColor={onColor} label={checkLabel} />
       </View>
     )
   }

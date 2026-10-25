@@ -587,14 +587,15 @@ export const yue: Strings = {
   onboarding: {
     welcomeTitle: '重要嘅係時刻，唔係鐘點。',
     welcomeBody: 'Ihsaanly 會話你知黃昏記念幾時開始。永遠唔會係一個鐘點，亦永遠唔會有分數。',
-    howTitle: 'Ihsaanly 會顯示適合依家嘅項目。做完就㩒一下個圈。',
+    howTitle: 'Ihsaanly 會建議啱依家呢個時段嘅聖行。做完一樣就㩒一下個圈。',
+    howExample: '聖行例子',
     language: '語言',
     appearance: '外觀',
     locationStep: '你喺邊度？',
     locationWhy: '喺呢部裝置上用嚟計出一日嘅各個部分。除非你登入同步，否則只會留喺呢部裝置。',
     genderStep: '暫停記錄',
     genderWhy:
-      '有啲日子禮拜記錄應該暫停，亦唔會累積任何要補嘅。呢個選擇決定 app 會唔會提供呢個功能。',
+      '姊妹喺經期同產後嗰段日子唔使禮拜。嗰啲日子 Ihsaanly 可以暫停禮拜記錄，唔會當你漏咗任何一次。',
     brother: '兄弟',
     brotherDetail: '冇暫停',
     sister: '姊妹',
@@ -611,21 +612,14 @@ export const yue: Strings = {
     startStep: '起步點',
     startWhy: '揀一個份量開始。之後隨時都可以喺資料庫加減任何項目。',
     starting: '啱啱開始',
-    startingDetail: (count: number): string =>
-      `${count} 樣由第一日就做得到嘅嘢：兩個時段、一個記主、兩篇祈禱詞。適合對呢一切都係新手嘅人。`,
+    startingDetail: '適合新手。',
     essentials: '基本',
-    essentialsDetail: (count: number): string =>
-      `${count} 個項目，合理嘅一日，而唔係完整嘅一日。適合已經有禮拜、想加上周邊聖行嘅人。`,
+    essentialsDetail: '適合想多做少少嘅人。',
     everything: '全部',
-    everythingDetail: (count: number): string =>
-      `全部 ${count} 個項目。適合熟悉內容、想要成個日曆嘅人。`,
+    everythingDetail: '適合想要晒全部嘅人。',
     skipIntro: '略過',
     skipLocation: '暫時略過',
-    reminderPolicy: (perDay: number, from: number, to: number): string =>
-      `每日最多 ${perDay} 個，${from}:00 至 ${to}:00 之間乜都冇。`,
-    reminderCap: (perDay: number): string => `每日最多 ${perDay} 個。`,
-    included: '已包括',
-    andMore: (count: number): string => `仲有 ${count} 個`,
+    reminderQuiet: (from: number, to: number): string => `${from}:00 至 ${to}:00 之間唔會有提醒。`,
     back: '返回',
     continue: '繼續',
     allowReminders: '允許提醒',

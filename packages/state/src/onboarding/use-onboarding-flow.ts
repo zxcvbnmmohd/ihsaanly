@@ -4,7 +4,7 @@
 // screen nor store can supply — asking the device for a location fix, and (on
 // mobile only) asking the OS for notification permission and turning on
 // announcements — so those come in as parameters instead of being read here.
-import { items, resolveText } from '@ihsaanly/core/content'
+import { items } from '@ihsaanly/core/content'
 import { supportedLanguageOf } from '@ihsaanly/core/i18n/locale'
 import { searchCities } from '@ihsaanly/core/location/cities'
 import type { Place } from '@ihsaanly/core/location/place'
@@ -179,12 +179,6 @@ export function useOnboardingFlow(actions: OnboardingFlowActions): OnboardingScr
     gender: onboarding.gender,
     notifications,
     preset: presetFor(enabled, items),
-    enabledTitles: items
-      .filter((item) => enabled.includes(item.id))
-      .map((item) => resolveText(item.title) ?? item.id),
-    itemCount: items.length,
-    essentialCount: idsForPreset('essentials', items).length,
-    startingCount: idsForPreset('starting', items).length,
     onSelectLanguage: chooseLanguage,
     onSelectTheme: actions.onSelectTheme,
     onQueryChange: (query: string) => setThing((current) => ({ ...current, query })),

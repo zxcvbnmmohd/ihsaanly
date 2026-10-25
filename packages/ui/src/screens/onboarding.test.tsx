@@ -161,6 +161,14 @@ describe('OnboardingScreen, how step', () => {
     expect(onBack).toHaveBeenCalledTimes(1)
     expect(onSkipIntro).toHaveBeenCalledTimes(1)
   })
+
+  it('lets the example circle be tried', async () => {
+    const { user, strings } = renderScreen(<OnboardingScreen {...at('how')} />)
+    const circle = screen.getByRole('checkbox', { name: strings.onboarding.howExample })
+    expect(circle).toHaveAttribute('aria-checked', 'true')
+    await user.click(circle)
+    expect(circle).toHaveAttribute('aria-checked', 'false')
+  })
 })
 
 describe('OnboardingScreen, location step', () => {
@@ -298,7 +306,15 @@ describe('OnboardingScreen, you step', () => {
     )
     await user.click(screen.getByRole('radio', { name: named(strings.onboarding.skip) }))
     expect(onSelectGender).toHaveBeenCalledWith('unspecified')
-    expect(screen.getByText(strings.onboarding.genderPrivacy)).toBeInTheDocument()
+  })
+
+  it('says how the answer is kept before asking for it', () => {
+    const { strings } = renderScreen(<OnboardingScreen {...at('you')} />)
+    const privacy = screen.getByText(strings.onboarding.genderPrivacy)
+    const brother = screen.getByRole('radio', { name: named(strings.onboarding.brother) })
+    expect(screen.getByText(strings.onboarding.genderWhy)).toBeInTheDocument()
+    // Earlier in reading order than the tiles.
+    expect(privacy.compareDocumentPosition(brother) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
   })
 
   it('marks the brother tile when male', () => {
@@ -341,8 +357,8 @@ describe('OnboardingScreen, reminders step', () => {
     )
     const daily = screen.getByRole('switch', { name: named(strings.onboarding.dailyReminders) })
     expect(daily).not.toBeChecked()
-    // Nothing to cap when nothing is scheduled.
-    expect(screen.queryByText(strings.onboarding.reminderPolicy(3, 22, 7))).toBeNull()
+    // No quiet hours to mention when nothing is scheduled.
+    expect(screen.queryByText(strings.onboarding.reminderQuiet(22, 7))).toBeNull()
     await user.click(daily)
     expect(onToggleReminders).toHaveBeenCalledWith(true)
   })
@@ -368,20 +384,20 @@ describe('OnboardingScreen, reminders step', () => {
     expect(onChange).toHaveBeenCalledWith(true)
   })
 
-  it('states the policy with quiet hours, and allows or declines', async () => {
+  it('states the quiet hours, and allows or declines', async () => {
     const onNext = mock(() => {})
     const onNotNow = mock(() => {})
     const { user, strings } = renderScreen(
       <OnboardingScreen {...at('reminders')} onNext={onNext} onNotNow={onNotNow} />,
     )
-    expect(screen.getByText(strings.onboarding.reminderPolicy(3, 22, 7))).toBeInTheDocument()
+    expect(screen.getByText(strings.onboarding.reminderQuiet(22, 7))).toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: strings.onboarding.allowNotifications }))
     await user.click(screen.getByRole('button', { name: strings.onboarding.notNow }))
     expect(onNext).toHaveBeenCalledTimes(1)
     expect(onNotNow).toHaveBeenCalledTimes(1)
   })
 
-  it('states only the daily cap without quiet hours', () => {
+  it('states nothing without quiet hours', () => {
     const { strings } = renderScreen(
       <OnboardingScreen
         {...at('reminders', {
@@ -389,7 +405,8 @@ describe('OnboardingScreen, reminders step', () => {
         })}
       />,
     )
-    expect(screen.getByText(strings.onboarding.reminderCap(3))).toBeInTheDocument()
+    expect(screen.queryByText(strings.onboarding.reminderQuiet(22, 7))).toBeNull()
+    expect(screen.queryByText(/:00/)).toBeNull()
   })
 
   it('asks to allow notifications for announcements alone', async () => {
@@ -445,23 +462,14 @@ describe('OnboardingScreen, start step', () => {
     ])
   })
 
-  it('previews what is included and finishes', async () => {
+  it('describes each size in one line, and finishes', async () => {
     const onNext = mock(() => {})
     const { user, strings } = renderScreen(<OnboardingScreen {...at('start')} onNext={onNext} />)
-    expect(screen.getByText('Leaving home')).toBeInTheDocument()
-    expect(screen.queryByText(strings.onboarding.andMore(1))).toBeNull()
+    expect(screen.getByText(strings.onboarding.startingDetail)).toBeInTheDocument()
+    expect(screen.getByText(strings.onboarding.essentialsDetail)).toBeInTheDocument()
+    expect(screen.getByText(strings.onboarding.everythingDetail)).toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: strings.onboarding.done }))
     expect(onNext).toHaveBeenCalledTimes(1)
-  })
-
-  it('counts what is not previewed', () => {
-    const titles = Array.from({ length: 8 }, (_, index) => `Item ${index}`)
-    const { strings } = renderScreen(
-      <OnboardingScreen {...at('start', { enabledTitles: titles })} />,
-    )
-    expect(screen.getByText('Item 4')).toBeInTheDocument()
-    expect(screen.queryByText('Item 5')).toBeNull()
-    expect(screen.getByText(strings.onboarding.andMore(3))).toBeInTheDocument()
   })
 
   it('has no preset ringed when none is chosen', () => {

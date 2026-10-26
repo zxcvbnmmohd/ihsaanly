@@ -116,16 +116,26 @@ export const ja: Strings = {
     testTitle: 'テストのリマインダー',
     testBody: 'Ihsaanlyのリマインダーはこのように届きます。',
     pausedRemembrance: 'ズィクルの時間です',
+    prayerArrived: (prayer: string): string => `${prayer}の時間になりました`,
+    prayerAsk: {
+      fajr: '礼拝はお済みですか？一日が動き出す前の、静かなひとときです。',
+      dhuhr: '礼拝はお済みですか？一日の真ん中で、ひと息つきましょう。',
+      asr: '礼拝はお済みですか？いちばん忘れやすい礼拝です。',
+      maghrib: '礼拝はお済みですか？時間が短いので、今がちょうどよい時です。',
+      isha: '礼拝はお済みですか？一日を終える前に、もうひとつ。',
+      jumuah: '礼拝はお済みですか？週に一度、皆と共に。',
+    },
     checkIn: 'Ihsaanlyからのひとこと',
     action: {
       done: '完了',
       later: 'あとで',
+      prayed: 'はい、礼拝しました',
+      notYet: 'まだです',
     },
     body: {
       window: '今です。時間帯が終わるまで。',
       windowUntil: (closes: string): string => `${closes}まで開いています。`,
       tomorrow: '明日です。',
-      prayerWindow: '礼拝の時間に入りました。次の礼拝まで時間帯は続きます。',
     },
   },
   event: {

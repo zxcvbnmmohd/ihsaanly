@@ -15,9 +15,12 @@ let spy: ReturnType<typeof spyOn>
 
 const at = new Date(Date.now() + 3_600_000)
 
+const endsAt = new Date(at.getTime() + 3_600_000)
+
 function planWith(...prayers: string[]): never {
   return {
-    notifications: prayers.map((prayer) => ({ kind: 'prayer', prayer, at, jumuah: false })),
+    today: { pausedNotice: null },
+    notifications: prayers.map((prayer) => ({ kind: 'prayer', prayer, at, endsAt, jumuah: false })),
   } as never
 }
 
@@ -81,6 +84,7 @@ describe('useNotificationSync', () => {
     )
     try {
       const plan = {
+        today: { pausedNotice: null },
         notifications: [
           { kind: 'item', itemId: 'mine-sync', at, reason: 'current-window', window: null },
         ],
@@ -126,6 +130,7 @@ describe('useNotificationSync', () => {
   it('skips entries whose item is not in the content', async () => {
     fake.permissions = { granted: true, canAskAgain: true }
     const plan = {
+      today: { pausedNotice: null },
       notifications: [{ kind: 'item', itemId: 'no-such-item', at, reason: 'upcoming' }],
     } as never
     renderHook(() => useNotificationSync(plan))
@@ -142,6 +147,14 @@ describe('useNotificationSync', () => {
     view.rerender({ plan: planWith('fajr', 'dhuhr') })
     await waitFor(() => expect(fake.scheduled).toHaveLength(2))
     expect(removed).toBe(1)
+  })
+
+  it("withdraws a prayer's second ask once tracking is paused", async () => {
+    fake.permissions = { granted: true, canAskAgain: true }
+    fake.scheduled = [{ identifier: 'later:prayer:asr@1', content: {}, trigger: null }]
+    const paused = { today: { pausedNotice: { fastingResumes: false } }, notifications: [] }
+    renderHook(() => useNotificationSync(paused as never))
+    await waitFor(() => expect(fake.cancelled).toEqual(['later:prayer:asr@1']))
   })
 
   it('stops listening on unmount', async () => {

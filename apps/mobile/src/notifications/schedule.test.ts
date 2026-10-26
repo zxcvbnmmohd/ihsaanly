@@ -16,7 +16,7 @@ const strings = {
     prayers: 'Prayers',
     testTitle: 'Test',
     testBody: 'Body',
-    action: { done: 'Done', later: 'Later' },
+    action: { done: 'Done', later: 'Later', prayed: "Yes, I've prayed", notYet: 'Not yet' },
   },
 } as never
 
@@ -92,9 +92,19 @@ describe('ensurePermission', () => {
 
   it('prepares the category and task, then asks only if not yet granted', async () => {
     expect(await schedule.ensurePermission(strings)).toBe(true)
-    expect(fake.categories.map((entry) => entry.id)).toEqual(['reminder'])
+    expect(fake.categories.map((entry) => entry.id)).toEqual(['reminder', 'prayer', 'prayer-again'])
     expect(fake.registeredTasks).toEqual([schedule.NOTIFICATION_TASK])
     expect(fake.channels).toEqual([])
+  })
+
+  it('offers "Not yet" on a prayer once, and "Yes, I\'ve prayed" both times', async () => {
+    await schedule.ensurePermission(strings)
+    const buttons = (id: string): string[] => {
+      const actions = fake.categories.find((entry) => entry.id === id)?.actions ?? []
+      return (actions as { buttonTitle: string }[]).map((action) => action.buttonTitle)
+    }
+    expect(buttons('prayer')).toEqual(["Yes, I've prayed", 'Not yet'])
+    expect(buttons('prayer-again')).toEqual(["Yes, I've prayed"])
   })
 
   it('does not ask again when already granted', async () => {
@@ -139,7 +149,7 @@ describe('hasPermission', () => {
   it('prepares delivery once granted', async () => {
     fake.permissions = { granted: true, canAskAgain: true }
     expect(await schedule.hasPermission(strings)).toBe(true)
-    expect(fake.categories).toHaveLength(1)
+    expect(fake.categories).toHaveLength(3)
   })
 
   it('is false when the check throws', async () => {
@@ -195,6 +205,17 @@ describe('sync', () => {
     ]
     await schedule.sync([])
     expect(fake.cancelled).toEqual(['plan:old'])
+  })
+
+  it("withdraws a prayer's second ask only while tracking is paused", async () => {
+    fake.scheduled = [
+      { identifier: 'later:prayer:asr@1', content: {}, trigger: null },
+      { identifier: 'later:keep@1', content: {}, trigger: null },
+    ]
+    await schedule.sync([])
+    expect(fake.cancelled).toEqual([])
+    await schedule.sync([], true)
+    expect(fake.cancelled).toEqual(['later:prayer:asr@1'])
   })
 
   it('is 0 when the library throws', async () => {

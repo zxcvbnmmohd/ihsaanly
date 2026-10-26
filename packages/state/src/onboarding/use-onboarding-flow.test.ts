@@ -15,7 +15,11 @@ const { getPlace } = await import('../location/store')
 const { getNotificationPreferences } = await import('../notifications/store')
 const { getEnabledItems, setEnabledItems } = await import('../plan/enabled-store')
 const { getOnboarding } = await import('./store')
-const { ONBOARDING_STEPS, useOnboardingFlow } = await import('./use-onboarding-flow')
+const { ONBOARDING_STEPS, onboardingSteps, useOnboardingFlow } = await import(
+  './use-onboarding-flow'
+)
+const { getAccent } = await import('../theme/accent-store')
+const { setUserState, getUserState } = await import('../plan/user-state-store')
 
 type Actions = Parameters<typeof useOnboardingFlow>[0]
 
@@ -53,13 +57,34 @@ describe('the onboarding flow', () => {
     expect(result.current).toMatchObject({
       step: 'welcome',
       stepIndex: 0,
-      stepCount: ONBOARDING_STEPS.length,
+      stepCount: onboardingSteps(false).length,
       locating: false,
       problem: null,
       query: '',
       place: null,
       gender: 'unspecified',
+      widgets: null,
+      widgetPreview: null,
+      reminderPreview: null,
     })
+  })
+
+  it('runs in this order, and leaves the widget step out where there are no widgets', () => {
+    expect(ONBOARDING_STEPS).toEqual([
+      'welcome',
+      'how',
+      'sourced',
+      'location',
+      'you',
+      'start',
+      'reminders',
+      'accent',
+      'widgets',
+      'summary',
+    ])
+    expect(onboardingSteps(true)).toEqual(ONBOARDING_STEPS)
+    expect(onboardingSteps(false)).toEqual(ONBOARDING_STEPS.filter((step) => step !== 'widgets'))
+    expect(flow({ widgets: true }).result.current.stepCount).toBe(ONBOARDING_STEPS.length)
   })
 
   it('walks forward and back through the steps', () => {
@@ -68,12 +93,13 @@ describe('the onboarding flow', () => {
     act(() => result.current.onNext())
     expect(result.current.step).toBe('how')
     act(() => result.current.onNext())
+    expect(result.current.step).toBe('sourced')
+    act(() => result.current.onNext())
     expect(result.current.step).toBe('location')
 
     act(() => result.current.onBack())
-    expect(result.current.step).toBe('how')
-    act(() => result.current.onBack())
-    act(() => result.current.onBack())
+    expect(result.current.step).toBe('sourced')
+    for (let i = 0; i < 3; i += 1) act(() => result.current.onBack())
     expect(result.current.stepIndex).toBe(0)
   })
 
@@ -86,7 +112,7 @@ describe('the onboarding flow', () => {
   it('lets the host keep the step, as the web does in its URL', () => {
     const visited: number[] = []
     const { result, rerender } = (() => {
-      let index = 2
+      let index = 3
       const hook = renderHook(() =>
         useOnboardingFlow({
           theme: 'system',
@@ -108,7 +134,7 @@ describe('the onboarding flow', () => {
     act(() => result.current.onNext())
     rerender()
 
-    expect(visited).toEqual([3])
+    expect(visited).toEqual([4])
     expect(result.current.step).toBe('you')
   })
 
@@ -121,15 +147,15 @@ describe('the onboarding flow', () => {
         stepControl: { index: 99, go: () => {} },
       }),
     )
-    expect(result.current.step).toBe('start')
+    expect(result.current.step).toBe('summary')
   })
 
   it('finishes on the last step: marks onboarding complete with a time, and tells the host', () => {
     const onComplete = mock(() => {})
     const { result } = flow({ onComplete })
     act(() => result.current.onSkipIntro())
-    for (let i = 0; i < 3; i += 1) act(() => result.current.onNext())
-    expect(result.current.step).toBe('start')
+    for (let i = 0; i < 5; i += 1) act(() => result.current.onNext())
+    expect(result.current.step).toBe('summary')
     expect(getOnboarding().completed).toBe(false)
 
     act(() => result.current.onNext())
@@ -137,12 +163,13 @@ describe('the onboarding flow', () => {
     expect(getOnboarding().completed).toBe(true)
     expect(Number.isNaN(Date.parse(getOnboarding().completedAt ?? ''))).toBe(false)
     expect(onComplete).toHaveBeenCalledTimes(1)
+    expect(onComplete).toHaveBeenCalledWith(undefined)
   })
 
   it('finishes without a host callback too', () => {
     const { result } = flow()
     act(() => result.current.onSkipIntro())
-    for (let i = 0; i < 4; i += 1) act(() => result.current.onNext())
+    for (let i = 0; i < 6; i += 1) act(() => result.current.onNext())
     expect(getOnboarding().completed).toBe(true)
   })
 
@@ -151,14 +178,13 @@ describe('the onboarding flow', () => {
     const enableAnnouncements = mock(async () => true)
     const { result } = flow({ ensureReminderPermission, enableAnnouncements })
     act(() => result.current.onSkipIntro())
-    act(() => result.current.onNext())
-    act(() => result.current.onNext())
+    for (let i = 0; i < 3; i += 1) act(() => result.current.onNext())
     expect(result.current.step).toBe('reminders')
     act(() => result.current.announcements?.onChange(true))
 
     act(() => result.current.onNotNow())
 
-    expect(result.current.step).toBe('start')
+    expect(result.current.step).toBe('accent')
     expect(ensureReminderPermission).not.toHaveBeenCalled()
     expect(enableAnnouncements).not.toHaveBeenCalled()
   })
@@ -166,8 +192,7 @@ describe('the onboarding flow', () => {
   describe('the reminders step', () => {
     const toReminders = (result: { current: ReturnType<typeof useOnboardingFlow> }): void => {
       act(() => result.current.onSkipIntro())
-      act(() => result.current.onNext())
-      act(() => result.current.onNext())
+      for (let i = 0; i < 3; i += 1) act(() => result.current.onNext())
     }
 
     const press = async (result: {
@@ -213,7 +238,7 @@ describe('the onboarding flow', () => {
       expect(ensureReminderPermission).toHaveBeenCalledTimes(1)
       expect(enableAnnouncements).not.toHaveBeenCalled()
       expect(remindersOn()).toBe(true)
-      expect(result.current.step).toBe('start')
+      expect(result.current.step).toBe('accent')
     })
 
     it('announcements only: asks once, then turns them on, with reminders off', async () => {
@@ -229,7 +254,7 @@ describe('the onboarding flow', () => {
       expect(ensureReminderPermission).toHaveBeenCalledTimes(1)
       expect(enableAnnouncements).toHaveBeenCalledTimes(1)
       expect(remindersOn()).toBe(false)
-      expect(result.current.step).toBe('start')
+      expect(result.current.step).toBe('accent')
     })
 
     it('both: one prompt covers reminders and announcements', async () => {
@@ -244,7 +269,7 @@ describe('the onboarding flow', () => {
       expect(ensureReminderPermission).toHaveBeenCalledTimes(1)
       expect(enableAnnouncements).toHaveBeenCalledTimes(1)
       expect(remindersOn()).toBe(true)
-      expect(result.current.step).toBe('start')
+      expect(result.current.step).toBe('accent')
     })
 
     it('neither: asks for nothing and just advances', () => {
@@ -258,7 +283,7 @@ describe('the onboarding flow', () => {
 
       expect(ensureReminderPermission).not.toHaveBeenCalled()
       expect(enableAnnouncements).not.toHaveBeenCalled()
-      expect(result.current.step).toBe('start')
+      expect(result.current.step).toBe('accent')
     })
 
     it('denied: announcements stay off, reminders stay as chosen, and it moves on', async () => {
@@ -273,7 +298,7 @@ describe('the onboarding flow', () => {
       expect(ensureReminderPermission).toHaveBeenCalledTimes(1)
       expect(enableAnnouncements).not.toHaveBeenCalled()
       expect(remindersOn()).toBe(true)
-      expect(result.current.step).toBe('start')
+      expect(result.current.step).toBe('accent')
     })
 
     it('moves on even if the prompt fails', async () => {
@@ -284,7 +309,7 @@ describe('the onboarding flow', () => {
 
       await press(result)
 
-      expect(result.current.step).toBe('start')
+      expect(result.current.step).toBe('accent')
     })
 
     it('moves on even if turning announcements on fails', async () => {
@@ -299,14 +324,14 @@ describe('the onboarding flow', () => {
       await press(result)
 
       expect(enableAnnouncements).toHaveBeenCalledTimes(1)
-      expect(result.current.step).toBe('start')
+      expect(result.current.step).toBe('accent')
     })
 
     it('just advances where there is no permission to ask for (the web)', () => {
       const { result } = flow()
       toReminders(result)
       act(() => result.current.onNext())
-      expect(result.current.step).toBe('start')
+      expect(result.current.step).toBe('accent')
     })
   })
 
@@ -390,12 +415,7 @@ describe('the onboarding flow', () => {
       const before = getNotificationPreferences()
 
       act(() => result.current.onToggleReminders(false))
-      expect(getNotificationPreferences()).toEqual({
-        ...before,
-        windows: false,
-        lookAhead: false,
-        prayers: false,
-      })
+      expect(getNotificationPreferences()).toEqual({ ...before, windows: false, lookAhead: false })
       expect(result.current.notifications.windows).toBe(false)
 
       act(() => result.current.onToggleReminders(true))
@@ -403,8 +423,35 @@ describe('the onboarding flow', () => {
         ...before,
         windows: DEFAULT_NOTIFICATION_PREFERENCES.windows,
         lookAhead: DEFAULT_NOTIFICATION_PREFERENCES.lookAhead,
-        prayers: DEFAULT_NOTIFICATION_PREFERENCES.prayers,
       })
+    })
+
+    it('turns prayer reminders on and off on their own', () => {
+      const { result } = flow()
+      const before = getNotificationPreferences()
+
+      act(() => result.current.onTogglePrayers(true))
+      expect(getNotificationPreferences()).toEqual({ ...before, prayers: true })
+      act(() => result.current.onTogglePrayers(false))
+      expect(getNotificationPreferences()).toEqual({ ...before, prayers: false })
+    })
+
+    it('stores the accent at once, so the flow recolours', () => {
+      const { result } = flow()
+
+      act(() => result.current.onSelectAccent('sage'))
+
+      expect(getAccent()).toBe('sage')
+      expect(result.current.accent).toBe('sage')
+    })
+
+    it('reports the tracking pause and how many items are on, for the summary', () => {
+      const { result } = flow()
+      act(() => result.current.onSelectPreset('starting'))
+      act(() => setUserState({ ...getUserState(), trackingPaused: true }))
+
+      expect(result.current.trackingPaused).toBe(true)
+      expect(result.current.enabledCount).toBe(idsForPreset('starting', items).length)
     })
 
     it('enables the items of a starter preset', () => {
@@ -443,5 +490,128 @@ describe('the onboarding flow', () => {
       expect(getLocale()).toBe('fr')
       expect(result.current.language).toBe('fr')
     })
+  })
+})
+
+describe('the onboarding flow, from the sourced step to the summary', () => {
+  beforeEach(() => {
+    resetStorage()
+    Object.assign(reactNative, { isRTL: false, os: 'ios', allowed: [], forced: [], reloads: [] })
+  })
+
+  const to = (
+    result: { current: ReturnType<typeof useOnboardingFlow> },
+    step: ReturnType<typeof useOnboardingFlow>['step'],
+  ): void => {
+    for (let i = 0; i < 12 && result.current.step !== step; i += 1) {
+      act(() => result.current.onNotNow())
+    }
+    expect(result.current.step).toBe(step)
+  }
+
+  it('sources a real item: its reminder, its hadith and its why', () => {
+    const { result } = flow()
+    act(() => result.current.onNext())
+    act(() => result.current.onNext())
+    expect(result.current.step).toBe('sourced')
+
+    const sourced = result.current.sourced
+    const item = items.find((candidate) => candidate.id === 'dua-leaving-home')
+    expect(sourced?.title).toBe(item?.title.en)
+    expect(sourced?.reminder).toBe(item?.reminder?.en ?? null)
+    expect(sourced?.why).toBe(item?.why?.en ?? null)
+    expect(sourced?.evidence).toMatchObject({ type: 'hadith', gradedBy: 'al-Albani' })
+  })
+
+  it('previews notifications from the plan only where the host can notify', () => {
+    const plain = flow()
+    to(plain.result, 'reminders')
+    expect(plain.result.current.reminderPreview).toBeNull()
+
+    const { result } = flow({ ensureReminderPermission: async () => true })
+    to(result, 'reminders')
+    const preview = result.current.reminderPreview
+    expect(preview?.item.title.length).toBeGreaterThan(0)
+    expect(preview?.item.body.length).toBeGreaterThan(0)
+    expect(preview?.prayer.title).toMatch(/has come in$/)
+    expect(preview?.prayer.body).toMatch(/^Have you prayed\?/)
+  })
+
+  it('previews from the chosen place once there is one', () => {
+    const { result } = flow({ ensureReminderPermission: async () => true })
+    act(() => result.current.onSelectPlace(london))
+    to(result, 'reminders')
+    expect(result.current.reminderPreview?.prayer.title).toMatch(/has come in$/)
+  })
+
+  it('offers widgets where the host has them, previewed from the plan', () => {
+    const { result } = flow({ widgets: true })
+    expect(result.current.widgets).toBe('later')
+    to(result, 'widgets')
+
+    const preview = result.current.widgetPreview
+    expect(preview?.home.caption.length).toBeGreaterThan(0)
+    expect(preview?.home.title.length).toBeGreaterThan(0)
+    expect(preview?.lock.title.length).toBeGreaterThan(0)
+    expect(preview?.notification.title.length).toBeGreaterThan(0)
+  })
+
+  it('"Show me how" moves on to the summary, then opens the widget gallery on finishing', () => {
+    const onComplete = mock((_destination?: string) => {})
+    const { result } = flow({ widgets: true, onComplete })
+    to(result, 'widgets')
+
+    act(() => result.current.onShowWidgets())
+    expect(result.current.step).toBe('summary')
+    expect(result.current.widgets).toBe('show')
+
+    act(() => result.current.onNext())
+    expect(onComplete).toHaveBeenCalledWith('/widgets')
+    expect(getOnboarding().completed).toBe(true)
+  })
+
+  it('"Later" takes back an earlier "Show me how", and finishing then opens Today', () => {
+    const onComplete = mock((_destination?: string) => {})
+    const { result } = flow({ widgets: true, onComplete })
+    to(result, 'widgets')
+    act(() => result.current.onShowWidgets())
+    act(() => result.current.onBack())
+
+    act(() => result.current.onNotNow())
+    expect(result.current.step).toBe('summary')
+    expect(result.current.widgets).toBe('later')
+
+    act(() => result.current.onNext())
+    expect(onComplete).toHaveBeenCalledWith(undefined)
+  })
+
+  it.each([
+    ['location', '/location'],
+    ['reminders', '/notifications'],
+    ['tracking', '/tracking'],
+    ['start', '/starting-point'],
+    ['accent', '/appearance'],
+    ['widgets', '/widgets'],
+    ['language', '/language'],
+  ] as const)('the %s row finishes and opens %s', (row, path) => {
+    const onComplete = mock((_destination?: string) => {})
+    const { result } = flow({ widgets: true, onComplete })
+    to(result, 'summary')
+
+    act(() => result.current.onOpenSetting(row))
+
+    expect(onComplete).toHaveBeenCalledWith(path)
+    expect(getOnboarding().completed).toBe(true)
+  })
+
+  it('the free card finishes and opens About', () => {
+    const onComplete = mock((_destination?: string) => {})
+    const { result } = flow({ onComplete })
+    to(result, 'summary')
+
+    act(() => result.current.onOpenAbout())
+
+    expect(onComplete).toHaveBeenCalledWith('/about')
+    expect(getOnboarding().completed).toBe(true)
   })
 })

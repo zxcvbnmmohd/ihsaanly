@@ -157,7 +157,7 @@ bump `react`, `react-native`, `react-native-screens`, `react-native-reanimated`,
   (`ms-`/`pe-`/`start-`/`text-start`); a lint plugin rejects left/right ones.
 - **Colours and font families → `style`, from JavaScript.** Inside
   `@ihsaanly/ui` call `useColors()` (`src/colors.ts`: brand colours from
-  `palettes[scheme]` / `brand` in `@ihsaanly/tailwind/tokens`, system colours
+  `paletteFor(scheme, accent)` / `brand` in `@ihsaanly/tailwind/tokens`, system colours
   from `useUi().systemColors`) and use `serif` / `arabic` from `src/fonts.ts`
   for `fontFamily`; where a component already takes a `palette` prop, use it.
   In this app's routes use `colors` (`src/theme/colors.ts`) and
@@ -256,6 +256,11 @@ prayer mark for `after-prayer`, the window start otherwise. The tasbih after
 "any" prayer, done after Dhuhr, is therefore owed again after Asr. Do not
 replace this with "completed today hides", which was the first draft and is
 wrong for exactly that item. `TodayModel.done` carries the hidden entries.
+A named prayer's "before" (`beforePrayerOpensAt`) is the exception: its
+occasion opens with the prayer window before it, when it is first listed
+under Up next, so what was done ahead (the ghusl for Jumu'ah, a mark from the
+Up next widget) counts once its window opens. "Before any prayer" keeps the
+window start, since it recurs at every prayer.
 
 ### On Fridays, Jumu'ah replaces Dhuhr for those who pray it
 
@@ -318,6 +323,21 @@ prefix. `later:` (a snooze from the shade) and `test:` are never touched, so a
 snooze made while the app was killed survives the next sync. Do not go back to
 cancel-all. The `data` payload is versioned and narrowed by
 `parseNotificationData`; nothing reads it raw.
+
+A prayer reminder asks "Have you prayed?" under the `prayer` category: its
+`done` ("Yes, I've prayed") marks the prayer through `markPrayer`, as the Today
+strip does, and its `later` ("Not yet") asks once more 30 minutes on, filed as
+`later:prayer:` under `prayer-again`, which has only the first button. No
+second ask with under ten minutes of the window left. While tracking is
+paused neither action does anything, and `sync()` withdraws any pending
+`later:prayer:`, the one snooze it touches.
+
+A window reminder's body is the item's `reminder` plus a rough cue ("Open
+until Dhuhr."), never a clock time, and no cue when the sentence already
+names the closing prayer. Witr is the one prayer item that sends a reminder:
+an hour after Isha opens, under the windows switch (`reminderCategoryOf`),
+asking "Have you prayed Witr?" with "Until Fajr.", and not once it is done
+that night.
 
 Taps are answered once, in `src/notifications/respond.ts`, from three doors:
 the warm listener, the cold-start replay (read then cleared) and the Android
@@ -445,9 +465,22 @@ reports what each language still lacks.
 `tooling/tailwind/tokens.ts` holds the only hex values. A gradient and a brand hue
 cannot be expressed as `PlatformColor`, which has no notion of either. Use the brand
 classes (`bg-accent`, `text-ink-secondary`, `bg-surface`) wherever a className fits;
-for a raw value read `palettes[useUi().scheme]` in `@ihsaanly/ui`, or `usePalette()`
+for a raw value call `usePalette()` from `src/colors.ts` in `@ihsaanly/ui`, or `usePalette()`
 from `src/theme/store.ts` in this app, both resolving against the scheme the app is
-actually rendering in.
+actually rendering in and the chosen accent.
+
+### Accents are a second choice beside the theme
+
+Ten named accents (`ACCENTS` in `tooling/tailwind/tokens.ts`, Terracotta the default)
+recolour only `accent`, `accent-ink`, `on-accent`, `indicator` and `tint`; the wash,
+paper and ink never change. `tokens.test.ts` holds each one to WCAG AA on the wash
+in both schemes, so a new accent that fails cannot land. The choice is the `accent`
+preference (`@ihsaanly/state/theme/accent-store`), synced like `theme`. Hosts pass it
+to `UiProvider` as `accent`; never read `palettes[scheme]` directly in a screen, which
+is always terracotta. The widget timeline takes it as `WidgetInput.accent` and
+`useWidgetTimeline` republishes when it changes. On the web `WebUiProvider` writes the
+accent's `--color-*` variables inline on `<html>` so Tailwind classes follow it too.
+`AccentPicker` (`@ihsaanly/ui/components/accent-picker`) is the reusable grid.
 
 Text, separators and system surfaces still use the `system-*` colours, so light,
 dark and contrast settings remain the OS's business. Use the accent for
@@ -456,6 +489,27 @@ selection, marks, section captions and primary actions; never for body text.
 The SPEC's "nothing on the home screen is decorative" rule was dropped
 deliberately on 2026-09-20 at the user's direction. Today carries the wash and
 the accent like every other tab.
+
+### Onboarding: one idea per step, previews from the real planner
+
+`ONBOARDING_STEPS` in `packages/state/src/onboarding/use-onboarding-flow.ts` is
+welcome, how, sourced, location, you, start, reminders, accent, widgets,
+summary. The web companion uses `onboardingSteps(false)`, without widgets.
+Starting point comes before reminders so the reminder preview is the person's
+own plan. Every preview is built in `onboarding/previews.ts` from `plan()`,
+`notificationContent` and content, never hand-written copy: the sourced step
+walks `dua-leaving-home`; the reminders step plans with every reminder on (only
+where the host can notify) and draws the item and prayer notification with
+their buttons; the widget step draws the Right now widget, the next prayer and
+a reminder. Until a place is chosen they use `PREVIEW_PLACE` through
+`useSignals(standIn)`, which never runs the rollover for it.
+
+The summary's rows and the free card finish onboarding and hand the host a
+path (`SETTING_PATHS`, `/about`); "Show me how" does the same with `/widgets`
+when Start is pressed. Onboarding replaces the tab bar, so mobile leaves the
+path in `src/onboarding/destination.ts` and the root layout pushes it once the
+tabs mount. `/widgets` is the gallery route from a separate branch; where it
+does not exist the push lands on not-found.
 
 ### The tab bar is native and branded, never reimplemented
 
@@ -598,22 +652,51 @@ platform like any iOS-only module.
   the 58.0.10 stub, and `src/widgets/ios/runtime-stub.test.ts` fails if it is
   lost. The widget tests render layouts in Bun with real React, so they cannot
   catch a failure in the JavaScriptCore runtime.
-- **Done from the Right now widget** (iOS 17+): its `Button` runs expo-widgets'
-  `WidgetUserInteraction` intent, which re-renders the layout, calls the
-  button's `onPress` and merges what it returns into the stored timeline. The
-  press appends `{ id, at }` to the entry's `taps`, so the widget shows the
-  item done at once; the app never hears about it unless it happens to be
-  running, so nothing depends on the event. The same patch makes the intent
-  merge into the pressed entry **and every later one** (upstream merges into
-  the pressed entry only, which would show the item undone again at the next
+- **Marking from a widget.** A tap is `{ kind, id, at }` (`WidgetTap` in
+  `model.ts`): `done` files `completeItem`, `prayer` files `markPrayer` (`id`
+  is the prayer), `count` counts one toward a counted item's progress. A tap
+  with no kind (written before kinds existed) is `done`. What can be marked
+  carries `since`, when its occasion opened; a tap counts only from then, so
+  the tasbih tapped after Dhuhr does not read done after Asr. Right now marks
+  its headline (a counted one gets +1 and "12 of 33" from medium up; small
+  keeps the check, which marks it all done), Prayers marks a prayer once its
+  window has opened that day and while it is unmarked (nothing while tracking
+  is paused: the list is empty), Up next marks a named prayer's "before" (its
+  `since` is the previous prayer window's start, matching `beforePrayerOpensAt`
+  in the planner, so a ghusl done in the morning counts at Dhuhr; "before any
+  prayer" and "after" rows stay links), Quick duas marks each dua for the
+  window, and Dua of the day has "Said it" for the civil day. Every other row
+  still opens its item.
+- **iOS taps** (iOS 17+): each mark is a `Button` with a target of its own
+  (that is how the intent finds the handler), which runs expo-widgets'
+  `WidgetUserInteraction` intent: it re-renders the layout, calls the
+  button's `onPress` and merges what it returns into the pressed widget's
+  stored timeline. The press appends to the entry's `taps`, so the widget shows
+  it done at once; the app never hears about it unless it happens to be
+  running, so nothing depends on the event. The patch makes the intent merge
+  into the pressed entry **and every later one** (upstream merges into the
+  pressed entry only, which would show the item undone again at the next
   entry); the stub test checks that too, so keep that hunk when the stub part
-  can be dropped at 58.0.10. The app takes taps in (`src/widgets/drain.ts`)
-  on launch, on every return to the foreground and on a press it hears: it
-  reads them back from `RightNowWidget.getTimeline()` (the App Group), files
-  each with `completeItem` at the tap's own moment and window, and moves the
-  device-only `widgetTapsThrough` cursor past them, so none is filed twice.
-  `publishTimeline` carries taps not yet taken in into the new timeline, so a
-  republish never drops one. Android widgets only open links.
+  can be dropped at 58.0.10. `taps.ios.ts` reads taps back from every widget
+  with buttons (`getTimeline()`, the App Group), and `publishTimeline` carries
+  taps not yet taken in into every widget's new timeline, so a republish never
+  drops one.
+- **Android taps**: a mark is a `TAP_ACTION` click with `{ kind, id }`, which
+  the widget task answers (`task-handler.tsx`): it appends the tap to
+  `widget-taps.json` beside the timeline (`tap-store.ts`, synchronous reads and
+  writes, since the task runs in the app's own JS runtime), redraws the pressed
+  widget and every other one with it, and tells the running app. The app drops
+  what it has filed from that file, so the widget's count never counts a tap
+  twice on top of the app's progress.
+- **Taking taps in** (`src/widgets/drain.ts`), on launch, on every return to
+  the foreground and on a tap it hears: each is filed at its own moment and
+  window, exactly as the same tap in the app; a prayer already marked that day
+  is left alone. Count taps are grouped by the item's progress period: while
+  that period is current they go to `addCount`; the tap that reaches the
+  repeat files the item done at that tap's moment, even if the period has
+  passed. The device-only `widgetTapsThrough` cursor then moves past them, so
+  none is filed twice. The app's counts reach the widget through
+  `WidgetInput.counts`, read at each republish rather than watched.
 - **Android** (`src/widgets/android/`, `react-native-android-widget`): the task
   handler registered from `index.ts` (via `register.android.ts`; the library
   throws at import on iOS) reads `widget-timeline.json` from `Paths.document`

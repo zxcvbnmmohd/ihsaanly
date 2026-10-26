@@ -1,7 +1,6 @@
-import { palettes } from '@ihsaanly/tailwind/tokens'
 import type { ReactElement } from 'react'
 import { Text, View } from 'react-native'
-import { useColors } from '../colors'
+import { useColors, usePalette } from '../colors'
 import { Button } from '../components/button'
 import { Row } from '../components/row'
 import { Screen } from '../components/screen'
@@ -35,8 +34,8 @@ export function DiagnosticsScreen({
   onReportProblem,
 }: DiagnosticsScreenProps): ReactElement {
   const colors = useColors()
-  const { strings, scheme } = useUi()
-  const palette = palettes[scheme]
+  const { strings } = useUi()
+  const palette = usePalette()
 
   // The bundle is still being gathered; a spinner for one frame would flash.
   if (!summary)

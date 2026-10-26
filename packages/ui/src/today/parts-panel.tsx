@@ -1,7 +1,6 @@
-import { palettes } from '@ihsaanly/tailwind/tokens'
 import type { ReactElement } from 'react'
 import { Pressable, ScrollView, Text, View } from 'react-native'
-import { useColors } from '../colors'
+import { useColors, usePalette } from '../colors'
 import { Button } from '../components/button'
 import { Sheet } from '../components/sheet'
 import { onSpace } from '../components/space-press'
@@ -23,8 +22,8 @@ export function PartsPanel({
   onClose,
 }: PartsPanelProps): ReactElement {
   const colors = useColors()
-  const { strings, scheme } = useUi()
-  const palette = palettes[scheme]
+  const { strings } = useUi()
+  const palette = usePalette()
   const { itemId, title, parts } = panel
   const done = parts.filter((part) => part.done).length
 

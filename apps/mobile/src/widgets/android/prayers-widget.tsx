@@ -4,22 +4,35 @@ import type { ReactElement } from 'react'
 import { FlexWidget, TextWidget } from 'react-native-android-widget'
 
 import type { WidgetModel } from '../model'
-import { Caption, Frame, ordered, type Paint, Secondary, type WidgetProps } from './parts'
+import { Caption, Frame, ordered, type Paint, Secondary, tapsFor, type WidgetProps } from './parts'
+import { TAP_ACTION } from './tap-action'
 
 type Mark = WidgetModel['prayers'][number]
 
 interface MarkProps {
   mark: Mark
+  /** Marked on this widget, not yet filed by the app. */
+  tapped: boolean
   paint: Paint
   diameter: number
   showName: boolean
 }
 
-/** Done is a filled accent circle; passed and unmarked is dimmed; upcoming is an outline. */
-function PrayerMark({ mark, paint, diameter, showName }: MarkProps): ReactElement {
+/**
+ * Done is a filled accent circle; passed and unmarked is dimmed; upcoming is
+ * an outline. Once its window has opened an unmarked prayer is a tap that
+ * marks it prayed, as on Today's strip.
+ */
+function PrayerMark({ mark: given, tapped, paint, diameter, showName }: MarkProps): ReactElement {
+  const mark = tapped ? { ...given, done: true } : given
   const ring = mark.done ? paint.accent : mark.passed ? paint.dimmed : paint.accent
+  const markable = !mark.done && mark.since !== undefined
   return (
-    <FlexWidget style={{ flex: 1, flexDirection: 'column', alignItems: 'center', flexGap: 4 }}>
+    <FlexWidget
+      clickAction={markable ? TAP_ACTION : undefined}
+      clickActionData={markable ? { kind: 'prayer', id: mark.id } : undefined}
+      accessibilityLabel={mark.name}
+      style={{ flex: 1, flexDirection: 'column', alignItems: 'center', flexGap: 4 }}>
       <FlexWidget
         style={{
           width: diameter,
@@ -86,6 +99,9 @@ export function PrayersWidget({ model, paint, layout }: WidgetProps): ReactEleme
               <PrayerMark
                 key={mark.name}
                 mark={mark}
+                tapped={
+                  mark.since !== undefined && tapsFor(model, 'prayer', mark.id, mark.since) > 0
+                }
                 paint={paint}
                 diameter={diameter}
                 showName={!compact}

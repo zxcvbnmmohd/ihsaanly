@@ -1,12 +1,11 @@
 import { getOnboarding } from '@ihsaanly/state/onboarding/store'
-import { ONBOARDING_STEPS } from '@ihsaanly/state/onboarding/use-onboarding-flow'
 import type { OnboardingStep } from '@ihsaanly/ui/screens/onboarding'
 import { createFileRoute, redirect } from '@tanstack/react-router'
 import type { ReactElement } from 'react'
-import { OnboardingFlow } from '~/onboarding/flow'
+import { OnboardingFlow, WEB_STEPS } from '~/onboarding/flow'
 
 function isStep(value: string): value is OnboardingStep {
-  return (ONBOARDING_STEPS as string[]).includes(value)
+  return (WEB_STEPS as string[]).includes(value)
 }
 
 // One URL per step, so Back, Forward and reload move through the flow like pages.

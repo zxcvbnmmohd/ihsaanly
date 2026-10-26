@@ -33,6 +33,14 @@ const MAX_PENDING_NOTIFICATIONS = 60
  */
 const LOOK_AHEAD_OFFSET_MS = 20 * 60_000
 
+/**
+ * Witr is the one prayer item that sends a reminder. It asks whether it has
+ * been prayed, so it goes out a while after Isha opens rather than as it does,
+ * when the answer can already be yes. The daily budget and quiet hours apply.
+ */
+const NIGHT_PRAYER_ITEM = 'witr'
+const NIGHT_PRAYER_OFFSET_MS = 60 * 60_000
+
 type ContentWindow = Extract<Trigger, { kind: 'window' }>['window']
 
 /** The prayer whose arrival closes each content window. */
@@ -190,6 +198,26 @@ function latestMark(
 }
 
 /**
+ * When a "before" item's occasion opens. A named prayer's is the start of the
+ * prayer window before it, from when that prayer is up next: the ghusl for
+ * Jumu'ah done in the morning, or marked from the Up next widget, counts once
+ * Dhuhr's window arrives, and a named prayer comes once a day so it cannot
+ * count twice. "Before any prayer" recurs at every prayer, so its occasion is
+ * the window itself.
+ */
+export function beforePrayerOpensAt(
+  trigger: Extract<Trigger, { kind: 'prayer' }>,
+  window: PrayerWindow,
+  windows: PrayerWindow[],
+): Date {
+  if (trigger.prayer === 'any') return window.startsAt
+  const previous = windows
+    .filter((candidate) => candidate.name !== 'sunrise' && candidate.startsAt < window.startsAt)
+    .at(-1)
+  return previous?.startsAt ?? window.startsAt
+}
+
+/**
  * A completion only counts for the occasion it belongs to. The tasbih after
  * "any" prayer, done after Dhuhr, is owed again after Asr; the morning adhkar
  * done at sunrise stay done until the window closes.
@@ -208,8 +236,11 @@ function isDoneForOccasion(
     switch (reason) {
       case 'after-prayer':
         return item.trigger.kind === 'prayer' ? latestMark(item.trigger, signals, windows) : null
-      case 'current-window':
       case 'before-prayer':
+        return item.trigger.kind === 'prayer' && window
+          ? beforePrayerOpensAt(item.trigger, window, windows)
+          : (window?.startsAt ?? null)
+      case 'current-window':
       case 'active-event':
         return window?.startsAt ?? null
       case 'today':
@@ -331,6 +362,13 @@ function futureWindows(signals: Signals): PrayerWindow[] {
   return buildWindows(signals.prayerTimes).filter((window) => window.startsAt > signals.now)
 }
 
+/** The switch that governs an item's reminders, or null for one that never sends any. */
+export function reminderCategoryOf(item: Item): 'windows' | 'lookAhead' | null {
+  if (item.trigger.kind === 'window' || item.id === NIGHT_PRAYER_ITEM) return 'windows'
+  if (item.trigger.kind === 'day') return 'lookAhead'
+  return null
+}
+
 /**
  * A category decides by default; a per-item override wins when present. Known
  * items leave the rotation, which is what keeps the daily budget flat as the
@@ -385,7 +423,13 @@ function scheduleNotifications(signals: Signals, items: Item[]): ScheduledNotifi
     const jumuah = isJumuahAt(window.startsAt, signals.timeZone, signals.attendsJumuah)
     const paused = signals.userState.trackingPaused
     if (prayer && notifications.prayers && !paused && admit(window.startsAt, false)) {
-      scheduled.push({ kind: 'prayer', prayer, at: window.startsAt, jumuah })
+      scheduled.push({
+        kind: 'prayer',
+        prayer,
+        at: window.startsAt,
+        endsAt: window.endsAt,
+        jumuah,
+      })
     }
     if (prayer && notifications.prayers && remembrance && admit(window.startsAt, false)) {
       scheduled.push({
@@ -421,6 +465,28 @@ function scheduleNotifications(signals: Signals, items: Item[]): ScheduledNotifi
               // The window closes as the next one opens, on the same civil day.
               jumuah: isJumuahAt(window.endsAt, signals.timeZone, signals.attendsJumuah),
             },
+          })
+        })
+    }
+
+    if (window.name === 'isha') {
+      const at = new Date(window.startsAt.getTime() + NIGHT_PRAYER_OFFSET_MS)
+      items
+        .filter((item) => item.id === NIGHT_PRAYER_ITEM)
+        .filter((item) => isRemindable(item, signals, 'windows'))
+        // Already prayed tonight: nothing to ask.
+        .filter((item) => {
+          const done = signals.completedToday[item.id]
+          return !done || done < window.startsAt
+        })
+        .forEach((item) => {
+          if (at >= window.endsAt || !admit(at, true)) return
+          scheduled.push({
+            kind: 'item',
+            itemId: item.id,
+            at,
+            reason: 'after-prayer',
+            window: { closes: 'fajr', endsAt: window.endsAt, jumuah: false },
           })
         })
     }

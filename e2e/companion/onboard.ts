@@ -4,7 +4,7 @@ import { expect, type Page } from '@playwright/test'
 /**
  * Walks a first run through onboarding the way someone without a location
  * permission would: welcome → how → sourced → location (search for a city) →
- * you → start → reminders → accent → summary, landing on Today. The web has
+ * you → start → reminders → theme → summary, landing on Today. The web has
  * no widget step. `page` must be on the welcome step,
  * already in the language `strings` belongs to.
  */
@@ -42,8 +42,8 @@ export async function onboardWithCity(page: Page, strings: Strings = en): Promis
   await expect(page.getByText(s.remindersStep, { exact: true })).toBeVisible()
   await page.getByRole('button', { name: s.allowNotifications }).click()
 
-  await expect(page).toHaveURL(/\/onboarding\/accent$/)
-  await expect(page.getByText(s.accentStep)).toBeVisible()
+  await expect(page).toHaveURL(/\/onboarding\/theme$/)
+  await expect(page.getByText(s.themeStep)).toBeVisible()
   await next.click()
 
   await expect(page).toHaveURL(/\/onboarding\/summary$/)

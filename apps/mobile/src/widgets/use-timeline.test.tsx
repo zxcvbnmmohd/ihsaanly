@@ -9,9 +9,9 @@ import { DEFAULT_CALCULATION_PREFERENCES } from '@ihsaanly/core/prayer/calculati
 import { prayerTimesAcross } from '@ihsaanly/core/prayer/times'
 import { deleteOwnDua, saveOwnDua, togglePinned } from '@ihsaanly/state/my-duas/store'
 import * as progress from '@ihsaanly/state/progress/store'
-import { setAccent } from '@ihsaanly/state/theme/accent-store'
 import { act, renderHook } from '@testing-library/react'
 import { AppState } from 'react-native'
+import { themePreferenceStore } from '@/theme/preference'
 
 import * as drain from './drain'
 import * as model from './model'
@@ -117,14 +117,14 @@ describe('useWidgetTimeline', () => {
     expect(published).toHaveBeenCalledTimes(3)
   })
 
-  it('republishes in the new colours when the accent changes', () => {
+  it('republishes in the new colours when the theme changes', () => {
     renderHook(() => useWidgetTimeline(signals(), planned(null), 'London'))
     expect(published).toHaveBeenCalledTimes(1)
-    act(() => setAccent('plum'))
+    act(() => themePreferenceStore.set('dusk'))
     expect(published).toHaveBeenCalledTimes(2)
     const [timeline] = published.mock.calls.at(-1) as [{ ink: { light: { accent: string } } }[]]
-    expect(timeline[0]?.ink.light.accent).toBe('#7d3f73')
-    act(() => setAccent('terracotta'))
+    expect(timeline[0]?.ink.light.accent).toBe('#e8a0ca')
+    act(() => themePreferenceStore.set('system'))
   })
 
   it('republishes when a prayer is marked or tracking is paused', () => {

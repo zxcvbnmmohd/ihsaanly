@@ -18,7 +18,6 @@ const { getOnboarding } = await import('./store')
 const { ONBOARDING_STEPS, onboardingSteps, useOnboardingFlow } = await import(
   './use-onboarding-flow'
 )
-const { getAccent } = await import('../theme/accent-store')
 const { setUserState, getUserState } = await import('../plan/user-state-store')
 
 type Actions = Parameters<typeof useOnboardingFlow>[0]
@@ -81,7 +80,7 @@ describe('the onboarding flow', () => {
       'you',
       'start',
       'reminders',
-      'accent',
+      'theme',
       'widgets',
       'summary',
     ])
@@ -187,7 +186,7 @@ describe('the onboarding flow', () => {
 
     act(() => result.current.onNotNow())
 
-    expect(result.current.step).toBe('accent')
+    expect(result.current.step).toBe('theme')
     expect(ensureReminderPermission).not.toHaveBeenCalled()
     expect(enableAnnouncements).not.toHaveBeenCalled()
   })
@@ -241,7 +240,7 @@ describe('the onboarding flow', () => {
       expect(ensureReminderPermission).toHaveBeenCalledTimes(1)
       expect(enableAnnouncements).not.toHaveBeenCalled()
       expect(remindersOn()).toBe(true)
-      expect(result.current.step).toBe('accent')
+      expect(result.current.step).toBe('theme')
     })
 
     it('announcements only: asks once, then turns them on, with reminders off', async () => {
@@ -257,7 +256,7 @@ describe('the onboarding flow', () => {
       expect(ensureReminderPermission).toHaveBeenCalledTimes(1)
       expect(enableAnnouncements).toHaveBeenCalledTimes(1)
       expect(remindersOn()).toBe(false)
-      expect(result.current.step).toBe('accent')
+      expect(result.current.step).toBe('theme')
     })
 
     it('both: one prompt covers reminders and announcements', async () => {
@@ -272,7 +271,7 @@ describe('the onboarding flow', () => {
       expect(ensureReminderPermission).toHaveBeenCalledTimes(1)
       expect(enableAnnouncements).toHaveBeenCalledTimes(1)
       expect(remindersOn()).toBe(true)
-      expect(result.current.step).toBe('accent')
+      expect(result.current.step).toBe('theme')
     })
 
     it('neither: asks for nothing and just advances', () => {
@@ -286,7 +285,7 @@ describe('the onboarding flow', () => {
 
       expect(ensureReminderPermission).not.toHaveBeenCalled()
       expect(enableAnnouncements).not.toHaveBeenCalled()
-      expect(result.current.step).toBe('accent')
+      expect(result.current.step).toBe('theme')
     })
 
     it('denied: announcements stay off, reminders stay as chosen, and it moves on', async () => {
@@ -301,7 +300,7 @@ describe('the onboarding flow', () => {
       expect(ensureReminderPermission).toHaveBeenCalledTimes(1)
       expect(enableAnnouncements).not.toHaveBeenCalled()
       expect(remindersOn()).toBe(true)
-      expect(result.current.step).toBe('accent')
+      expect(result.current.step).toBe('theme')
     })
 
     it('moves on even if the prompt fails', async () => {
@@ -312,7 +311,7 @@ describe('the onboarding flow', () => {
 
       await press(result)
 
-      expect(result.current.step).toBe('accent')
+      expect(result.current.step).toBe('theme')
     })
 
     it('moves on even if turning announcements on fails', async () => {
@@ -327,14 +326,14 @@ describe('the onboarding flow', () => {
       await press(result)
 
       expect(enableAnnouncements).toHaveBeenCalledTimes(1)
-      expect(result.current.step).toBe('accent')
+      expect(result.current.step).toBe('theme')
     })
 
     it('just advances where there is no permission to ask for (the web)', () => {
       const { result } = flow()
       toReminders(result)
       act(() => result.current.onNext())
-      expect(result.current.step).toBe('accent')
+      expect(result.current.step).toBe('theme')
     })
   })
 
@@ -437,15 +436,6 @@ describe('the onboarding flow', () => {
       expect(getNotificationPreferences()).toEqual({ ...before, prayers: true })
       act(() => result.current.onTogglePrayers(false))
       expect(getNotificationPreferences()).toEqual({ ...before, prayers: false })
-    })
-
-    it('stores the accent at once, so the flow recolours', () => {
-      const { result } = flow()
-
-      act(() => result.current.onSelectAccent('sage'))
-
-      expect(getAccent()).toBe('sage')
-      expect(result.current.accent).toBe('sage')
     })
 
     it('reports the tracking pause and how many items are on, for the summary', () => {
@@ -593,7 +583,7 @@ describe('the onboarding flow, from the sourced step to the summary', () => {
     ['reminders', '/notifications'],
     ['tracking', '/tracking'],
     ['start', '/starting-point'],
-    ['accent', '/appearance'],
+    ['theme', '/appearance'],
     ['widgets', '/widgets'],
     ['language', '/language'],
   ] as const)('the %s row finishes and opens %s', (row, path) => {

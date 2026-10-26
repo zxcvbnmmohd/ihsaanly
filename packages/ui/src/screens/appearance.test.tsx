@@ -1,17 +1,17 @@
 import { expect, it, mock } from 'bun:test'
 import { screen, within } from '@testing-library/react'
 import { renderScreen } from '../../test/render'
-import { ACCENTS, type AccentName, THEME_PREFERENCES, type ThemePreference } from '../types'
+import { THEME_PREFERENCES, THEMES, type ThemePreference } from '../types'
 import { AppearanceScreen } from './appearance'
 import { appearanceFixture } from './fixtures'
 
-it('offers each theme, marks the current one and reports a pick', async () => {
+it('offers every appearance as one grid, marks the current one and reports a pick', async () => {
   const onSelect = mock((_preference: ThemePreference) => {})
   const { user, strings } = renderScreen(
     <AppearanceScreen {...appearanceFixture} preference="dark" onSelect={onSelect} />,
   )
-  // The themes, the accents, then the two alignments.
-  expect(screen.getAllByRole('radio')).toHaveLength(THEME_PREFERENCES.length + ACCENTS.length + 2)
+  // System, Light, Dark and the ten themes, then the two alignments.
+  expect(screen.getAllByRole('radio')).toHaveLength(THEME_PREFERENCES.length + 2)
   expect(screen.getByRole('radio', { name: strings.appearance.dark })).toHaveAttribute(
     'aria-checked',
     'true',
@@ -25,19 +25,20 @@ it('offers each theme, marks the current one and reports a pick', async () => {
   expect(onSelect).toHaveBeenCalledWith('light')
 })
 
-it('offers the accents under their own heading and reports a pick', async () => {
-  const onSelectAccent = mock((_accent: AccentName) => {})
+it('offers the themes under their own heading and reports a pick', async () => {
+  const onSelect = mock((_preference: ThemePreference) => {})
   const { user, strings } = renderScreen(
-    <AppearanceScreen {...appearanceFixture} accent="indigo" onSelectAccent={onSelectAccent} />,
+    <AppearanceScreen {...appearanceFixture} preference="forest" onSelect={onSelect} />,
+    { theme: 'forest' },
   )
-  expect(screen.getByRole('heading', { name: strings.appearance.accentTitle })).toBeVisible()
-  expect(screen.getByText(strings.appearance.accentNote)).toBeInTheDocument()
-  const group = screen.getByRole('radiogroup', { name: strings.appearance.accentTitle })
+  expect(screen.getByRole('heading', { name: strings.appearance.themesTitle })).toBeVisible()
+  const group = screen.getByRole('radiogroup', { name: strings.appearance.themesTitle })
+  expect(within(group).getAllByRole('radio')).toHaveLength(THEMES.length)
   expect(
-    within(group).getByRole('radio', { name: strings.appearance.accents.indigo }),
+    within(group).getByRole('radio', { name: strings.appearance.themes.forest }),
   ).toHaveAttribute('aria-checked', 'true')
-  await user.click(within(group).getByRole('radio', { name: strings.appearance.accents.sage }))
-  expect(onSelectAccent).toHaveBeenCalledWith('sage')
+  await user.click(within(group).getByRole('radio', { name: strings.appearance.themes.sky }))
+  expect(onSelect).toHaveBeenCalledWith('sky')
 })
 
 it('offers Arabic first and the alignment, and reports each change', async () => {

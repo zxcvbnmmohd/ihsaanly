@@ -6,10 +6,9 @@ import {
   OWN_DUA_LIMITS,
   type OwnDuaDraft,
 } from '@ihsaanly/core/content/my-duas'
-import { palettes } from '@ihsaanly/tailwind/tokens'
 import type { ReactElement, ReactNode } from 'react'
 import { Text, View } from 'react-native'
-import { useColors } from '../colors'
+import { useColors, usePalette } from '../colors'
 import { Button } from '../components/button'
 import { Chip } from '../components/chip'
 import { Screen } from '../components/screen'
@@ -53,8 +52,8 @@ export function OwnDuaFormScreen({
   onSave,
 }: OwnDuaFormScreenProps): ReactElement {
   const colors = useColors()
-  const { strings, scheme } = useUi()
-  const palette = palettes[scheme]
+  const { strings } = useUi()
+  const palette = usePalette()
   const set = (patch: Partial<OwnDuaDraft>): void => onChange({ ...draft, ...patch })
   const moments: { value: Moment | null; label: string }[] = [
     { value: null, label: strings.myDuas.noReminder },

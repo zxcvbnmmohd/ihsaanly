@@ -7,7 +7,6 @@ import { getPlace } from '@ihsaanly/state/location/store'
 import { getNotificationPreferences } from '@ihsaanly/state/notifications/store'
 import { getOnboarding } from '@ihsaanly/state/onboarding/store'
 import { getEnabledItems } from '@ihsaanly/state/plan/enabled-store'
-import { getAccent } from '@ihsaanly/state/theme/accent-store'
 import { screen, waitFor } from '@testing-library/react'
 import { renderApp, resetApp } from '../../test/app'
 import { getThemePreference, setThemePreference } from '../theme/store'
@@ -126,9 +125,12 @@ describe('finishing', () => {
     expect(getNotificationPreferences().windows).toBe(false)
     await next(app.user)
 
-    await waitFor(() => expect(path(app)).toBe('/onboarding/accent'))
-    await app.user.click(await screen.findByRole('radio', { name: en.appearance.accents.sage }))
-    expect(getAccent()).toBe('sage')
+    await waitFor(() => expect(path(app)).toBe('/onboarding/theme'))
+    await app.user.click(await screen.findByRole('radio', { name: en.appearance.themes.sage }))
+    // One preference: the theme is the page's, live, under its own palette.
+    expect(localStorage.getItem('ihsaanly.theme')).toBe('sage')
+    expect(document.documentElement.dataset.palette).toBe('sage')
+    expect(document.documentElement.dataset.theme).toBe('light')
     await next(app.user)
 
     // No widget step on the web: straight to the summary, which has no widget row.
@@ -147,13 +149,13 @@ describe('finishing', () => {
   it('"Not now" on the reminders step moves on without asking for permission', async () => {
     const app = await renderApp('/onboarding/reminders')
     await app.user.click(await screen.findByRole('button', { name: en.onboarding.notNow }))
-    await waitFor(() => expect(path(app)).toBe('/onboarding/accent'))
+    await waitFor(() => expect(path(app)).toBe('/onboarding/theme'))
   })
 
   it('goes back from the last step to the one before', async () => {
     const app = await renderApp('/onboarding/summary')
     await app.user.click(await screen.findByRole('button', { name: en.onboarding.back }))
-    await waitFor(() => expect(path(app)).toBe('/onboarding/accent'))
+    await waitFor(() => expect(path(app)).toBe('/onboarding/theme'))
   })
 
   it('has no widget step on the web', async () => {

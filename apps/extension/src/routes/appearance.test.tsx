@@ -1,5 +1,4 @@
 import { beforeEach, describe, expect, it } from 'bun:test'
-import { getAccent } from '@ihsaanly/state/theme/accent-store'
 import { THEME_KEY } from '@ihsaanly/web/theme'
 import { screen } from '@testing-library/react'
 import { renderRoute, resetApp, strings } from '../../test/route'
@@ -24,14 +23,14 @@ describe('/appearance', () => {
     expect(document.documentElement.dataset.theme).toBe('dark')
   })
 
-  it('stores a picked accent and recolours the popup with it', async () => {
+  it('stores a picked theme and recolours the popup with it', async () => {
     const { user } = await renderRoute('/appearance')
-    const rose = await screen.findByRole('radio', { name: strings.appearance.accents.rose })
+    const rose = await screen.findByRole('radio', { name: strings.appearance.themes.rose })
     await user.click(rose)
     expect(rose).toHaveAttribute('aria-checked', 'true')
-    expect(getAccent()).toBe('rose')
-    expect(document.documentElement.style.getPropertyValue('--color-accent')).not.toBe('')
-    await user.click(screen.getByRole('radio', { name: strings.appearance.accents.terracotta }))
-    expect(document.documentElement.style.getPropertyValue('--color-accent')).toBe('')
+    expect(localStorage.getItem(THEME_KEY)).toBe('rose')
+    expect(document.documentElement.dataset.palette).toBe('rose')
+    await user.click(screen.getByRole('radio', { name: strings.appearance.system }))
+    expect(document.documentElement.dataset.palette).toBeUndefined()
   })
 })

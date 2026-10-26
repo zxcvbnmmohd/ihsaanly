@@ -16,7 +16,7 @@ import {
   WidgetText,
 } from './widget-scene'
 
-const palette = paletteFor('light', 'teal')
+const palette = paletteFor('light', 'sage')
 const ink = previewInkFor(palette)
 const ios: WidgetLook = { ink, platform: 'ios', lock: false, scale: 1 }
 const android: WidgetLook = { ...ios, platform: 'android' }

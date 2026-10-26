@@ -54,6 +54,38 @@ describe('Dropdown (native)', () => {
     expect(screen.queryByRole('dialog')).toBeNull()
   })
 
+  it('draws an option’s swatch in the field and beside it in the list', async () => {
+    const Native = await load()
+    const swatched = [
+      { value: 'obsidian', label: 'Obsidian', swatch: [{ ground: '#0b0b0c', mark: '#e3b65e' }] },
+      {
+        value: 'system',
+        label: 'System',
+        swatch: [
+          { ground: '#f7f0e9', mark: '#a94a32' },
+          { ground: '#1b1411', mark: '#e28c6f' },
+        ],
+      },
+      { value: 'plain', label: 'Plain' },
+    ] as const
+    const { user } = renderScreen(
+      <Native label="Theme" value="obsidian" options={swatched} onChange={() => {}} />,
+    )
+    const field = screen.getByRole('button', { name: 'Theme' })
+    expect(within(field).getByTestId('dropdown-swatch').children).toHaveLength(1)
+    expect(
+      (within(field).getByTestId('dropdown-swatch').firstElementChild as HTMLElement).style
+        .backgroundColor,
+    ).toBe('rgba(11, 11, 12, 1.00)')
+    await user.click(field)
+    const sheet = screen.getByRole('dialog', { name: 'Theme' })
+    const system = within(sheet).getByRole('radio', { name: 'System' })
+    expect(within(system).getByTestId('dropdown-swatch').children).toHaveLength(2)
+    expect(
+      within(within(sheet).getByRole('radio', { name: 'Plain' })).queryByTestId('dropdown-swatch'),
+    ).toBeNull()
+  })
+
   it('closes without a change when the current value is chosen again', async () => {
     const Native = await load()
     const onChange = mock((_value: string) => {})

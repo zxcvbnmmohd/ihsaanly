@@ -16,7 +16,6 @@
  * - `announcements`, `crashReports`: per-device opt-ins, below.
  */
 export const SYNCED_KEYS: ReadonlySet<string> = new Set([
-  'accent',
   'calculation',
   'enabledItems',
   'fastBacklog',
@@ -32,6 +31,8 @@ export const SYNCED_KEYS: ReadonlySet<string> = new Set([
   'place',
   'qadaBacklog',
   'suggestion',
+  // System, Light, Dark or a named theme. The accent that came before themes
+  // (`accent`) no longer syncs; each device folds its own into this once.
   'theme',
   'userState',
 ])

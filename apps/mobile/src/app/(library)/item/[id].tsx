@@ -16,8 +16,8 @@ import { usePlan } from '@ihsaanly/state/plan/use-plan'
 import { useCalculationPreferences } from '@ihsaanly/state/prayer/store'
 import { updateReaderPreferences, useReaderPreferences } from '@ihsaanly/state/reader/store'
 import { useStrings } from '@ihsaanly/state/strings'
-import { useAccent } from '@ihsaanly/state/theme/accent-store'
 import { useNow } from '@ihsaanly/state/time/use-now'
+import { palettePair } from '@ihsaanly/tailwind/tokens'
 import { ShareCard } from '@ihsaanly/ui/components/share-card'
 import { ShareStudio } from '@ihsaanly/ui/components/share-studio'
 import { cardFor, remindFor } from '@ihsaanly/ui/props/item'
@@ -37,8 +37,7 @@ import { type ComponentRef, type ReactElement, useRef, useState } from 'react'
 import { Clipboard, Share, View } from 'react-native'
 import { captureRef } from 'react-native-view-shot'
 import { OwnDuaRoute } from '@/library/own-dua-route'
-import { paletteFor } from '@/theme/colors'
-import { usePalette } from '@/theme/store'
+import { usePalette, useTheme } from '@/theme/store'
 
 interface Thing {
   count: number
@@ -69,7 +68,7 @@ function ContentItemRoute({ id }: ContentItemRouteProps): ReactElement {
   const cardRef = useRef<ComponentRef<typeof View>>(null)
   const strings = useStrings()
   const palette = usePalette()
-  const accent = useAccent()
+  const theme = useTheme()
   const item = itemById(id)
   const place = usePlace()
   const calculation = useCalculationPreferences()
@@ -167,11 +166,8 @@ function ContentItemRoute({ id }: ContentItemRouteProps): ReactElement {
     }
   }
 
-  const sharePalettes = {
-    light: paletteFor('light', accent),
-    dark: paletteFor('dark', accent),
-    current: palette,
-  }
+  // The paper styles take the theme and its counterpart in the other scheme.
+  const sharePalettes = { ...palettePair(theme), current: palette }
 
   return (
     <>

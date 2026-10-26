@@ -43,6 +43,8 @@ export function useStackScreenOptions(): StackScreenOptions {
     headerLargeTitleEnabled: true,
     headerLargeTitleShadowVisible: false,
     headerTitleStyle: { color: colors.label },
+    // UIKit's own label would do for System, Light and Dark; a theme's ink is its own.
+    headerLargeTitleStyle: { color: colors.label },
     headerBackButtonDisplayMode: 'minimal',
   }
 }

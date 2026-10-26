@@ -1,7 +1,7 @@
 import type { ReactElement } from 'react'
 import { type ColorValue, Text, View } from 'react-native'
 
-import { useUi } from '../provider'
+import { useSystemColors } from '../colors'
 
 interface PillProps {
   label: string
@@ -13,7 +13,7 @@ interface PillProps {
 
 /** A short standing label, so a ruling reads at a glance instead of as detail text. */
 export function Pill({ label, emphasis = false, accent, onAccent }: PillProps): ReactElement {
-  const { systemColors } = useUi()
+  const systemColors = useSystemColors()
 
   return (
     <View

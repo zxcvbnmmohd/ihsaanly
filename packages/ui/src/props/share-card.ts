@@ -27,9 +27,9 @@ export const DEFAULT_SHARE_OPTIONS: ShareCardOptions = {
 }
 
 /**
- * Where a card's colours come from: the light and dark brand palettes, and the
- * one in force for the accent style. This is the whole seam for accent themes:
- * a theme passes its own palettes here and every style follows.
+ * Where a card's colours come from: a light and a dark palette (the brand's,
+ * or a named theme and its counterpart: `palettePair` in tokens.ts), and the
+ * one in force for the accent style. Every style follows the chosen theme.
  */
 export interface ShareCardPalettes {
   light: Palette

@@ -15,8 +15,6 @@ import { getEnabledItems, setEnabledItems } from '@ihsaanly/state/plan/enabled-s
 import { getUserState } from '@ihsaanly/state/plan/user-state-store'
 import { getCalculationPreferences } from '@ihsaanly/state/prayer/store'
 import { getReaderPreferences } from '@ihsaanly/state/reader/store'
-import { getAccent } from '@ihsaanly/state/theme/accent-store'
-import { accents } from '@ihsaanly/tailwind/tokens'
 import { screen, waitFor, within } from '@testing-library/react'
 import { LONDON, renderApp, resetApp, setWidth, startUsing } from '../../test/app'
 import { setThemePreference } from '../theme/store'
@@ -38,19 +36,19 @@ describe('Appearance', () => {
     setThemePreference('system')
   })
 
-  it('recolours the page live when an accent is picked, and keeps it', async () => {
+  it('recolours the page live when a theme is picked, in place of System', async () => {
     const app = await renderApp('/appearance')
-    expect(await screen.findByRole('radio', { name: 'Terracotta' })).toBeChecked()
-    await app.user.click(screen.getByRole('radio', { name: 'Sage' }))
-    expect(screen.getByRole('radio', { name: 'Sage' })).toBeChecked()
-    expect(getAccent()).toBe('sage')
-    expect(document.documentElement.style.getPropertyValue('--color-accent')).toBe(
-      accents.sage.accent.light,
-    )
-    // The theme is a separate choice and stays as it was.
-    expect(screen.getByRole('radio', { name: 'System' })).toBeChecked()
-    await app.user.click(screen.getByRole('radio', { name: 'Terracotta' }))
-    expect(document.documentElement.style.getPropertyValue('--color-accent')).toBe('')
+    expect(await screen.findByRole('radio', { name: 'System' })).toBeChecked()
+    await app.user.click(screen.getByRole('radio', { name: 'Midnight' }))
+    expect(screen.getByRole('radio', { name: 'Midnight' })).toBeChecked()
+    expect(screen.getByRole('radio', { name: 'System' })).not.toBeChecked()
+    expect(localStorage.getItem('ihsaanly.theme')).toBe('midnight')
+    // web.css paints the theme from these; Midnight is a dark theme.
+    expect(document.documentElement.dataset.palette).toBe('midnight')
+    expect(document.documentElement.dataset.theme).toBe('dark')
+    await app.user.click(screen.getByRole('radio', { name: 'System' }))
+    expect(document.documentElement.dataset.palette).toBeUndefined()
+    expect(localStorage.getItem('ihsaanly.theme')).toBeNull()
   })
 
   it('saves Arabic first and the alignment', async () => {

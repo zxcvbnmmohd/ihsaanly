@@ -29,8 +29,8 @@ const useNative = (value: typeof fakeModule | null): void => {
 
 useNative(fakeModule)
 const store = await import('./store')
+const { readPreferenceRow, writePreferenceRow } = await import('@ihsaanly/state/storage/backend')
 const { palettes } = await import('./colors')
-const { setAccent } = await import('@ihsaanly/state/theme/accent-store')
 
 beforeEach(() => {
   installAppearance()
@@ -143,13 +143,43 @@ describe('usePalette', () => {
     expect(renderHook(() => store.usePalette()).result.current).toBe(palettes.light)
   })
 
-  it('recolours with the chosen accent, keeping the scheme', () => {
-    store.setThemePreference('dark')
+  it('is a named theme’s own palette, in its own scheme', () => {
+    store.setThemePreference('light')
     const view = renderHook(() => store.usePalette())
-    act(() => setAccent('sage'))
-    expect(view.result.current.accent).toBe('#a3c293')
-    expect(view.result.current.wash).toEqual(palettes.dark.wash)
-    act(() => setAccent('terracotta'))
+    act(() => store.setThemePreference('forest'))
+    expect(view.result.current.accent).toBe('#8fd3a6')
+    expect(view.result.current.wash).toEqual(['#0d1a13', '#1f3529'])
+    expect(view.result.current.scheme).toBe('dark')
+    act(() => store.setThemePreference('dark'))
     expect(view.result.current).toBe(palettes.dark)
+  })
+})
+
+describe('named themes', () => {
+  it('force their own scheme natively and through Appearance', () => {
+    store.applyThemePreference('midnight')
+    expect(native.nightModes).toEqual(['dark'])
+    expect(appearance.set).toEqual(['dark'])
+    store.applyThemePreference('ivory')
+    expect(native.nightModes).toEqual(['dark', 'light'])
+  })
+
+  it('render in their scheme whatever the device, and name the theme', () => {
+    native.systemMode = 'dark'
+    store.setThemePreference('sky')
+    expect(renderHook(() => store.useEffectiveColorScheme()).result.current).toBe('light')
+    expect(renderHook(() => store.useTheme()).result.current).toBe('sky')
+    store.setThemePreference('dark')
+    expect(renderHook(() => store.useTheme()).result.current).toBeUndefined()
+  })
+
+  it('take in an accent stored before themes, once', () => {
+    store.setThemePreference('dark')
+    writePreferenceRow('accent', '"plum"')
+    store.migrateAccent()
+    expect(store.getThemePreference()).toBe('dusk')
+    expect(readPreferenceRow('accent')).toBeNull()
+    store.migrateAccent()
+    expect(store.getThemePreference()).toBe('dusk')
   })
 })

@@ -1,8 +1,7 @@
 import type { ReadingLayout } from '@ihsaanly/core/content/reading'
-import { palettes } from '@ihsaanly/tailwind/tokens'
 import { type ReactElement, useId } from 'react'
 import { Pressable, Text, View } from 'react-native'
-import { useColors } from '../colors'
+import { useColors, usePalette } from '../colors'
 import { ArabicText } from '../components/arabic-text'
 import { Button } from '../components/button'
 import { CoachMark } from '../components/coach-mark'
@@ -64,8 +63,8 @@ interface TapAreaProps {
 /** The whole width is the target, so counting needs no looking. */
 function TapArea({ label, counter, onTap }: TapAreaProps): ReactElement {
   const colors = useColors()
-  const { strings, scheme } = useUi()
-  const palette = palettes[scheme]
+  const { strings } = useUi()
+  const palette = usePalette()
   const complete = counter.count >= counter.target
   const progressId = useId()
 
@@ -130,8 +129,8 @@ export function ReaderScreen({
   reading,
 }: ReaderScreenProps): ReactElement {
   const colors = useColors()
-  const { strings, scheme } = useUi()
-  const palette = palettes[scheme]
+  const { strings } = useUi()
+  const palette = usePalette()
   const current = pages[page]
 
   // Drawn in the flow just under what it explains, as Today's tour is.

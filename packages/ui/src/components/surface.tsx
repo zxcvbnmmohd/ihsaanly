@@ -5,6 +5,7 @@ import { type ReactNode, useEffect, useState } from 'react'
 import { AccessibilityInfo, type ColorValue, View, type ViewProps } from 'react-native'
 
 import { useColors } from '../colors'
+import { useUi } from '../provider'
 import { Ringed, ringSpace } from './ring'
 
 const noop = (): void => {}
@@ -68,6 +69,9 @@ export function Surface({
 function Material({ children, style, interactive = false }: SurfaceProps): ReactElement {
   const [thing, setThing] = useState<Thing>({ reduceTransparency: false })
   const colors = useColors()
+  // A named theme's cards are its own paper, so glass is tinted with it and the
+  // system material, which knows only light and dark, gives way to the veil.
+  const { theme } = useUi()
 
   useEffect(() => {
     const apply = (reduceTransparency: boolean): void => setThing({ reduceTransparency })
@@ -88,13 +92,20 @@ function Material({ children, style, interactive = false }: SurfaceProps): React
     )
   }
 
-  if (process.env.EXPO_OS === 'android' || process.env.EXPO_OS === 'web') {
+  if (
+    process.env.EXPO_OS === 'android' ||
+    process.env.EXPO_OS === 'web' ||
+    (theme && !canUseGlass())
+  ) {
     return <View style={[{ backgroundColor: colors.surface }, base]}>{children}</View>
   }
 
   if (canUseGlass()) {
     return (
-      <GlassView isInteractive={interactive} style={base}>
+      <GlassView
+        isInteractive={interactive}
+        tintColor={theme ? colors.surface : undefined}
+        style={base}>
         {children}
       </GlassView>
     )

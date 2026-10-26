@@ -1,7 +1,6 @@
-import { palettes } from '@ihsaanly/tailwind/tokens'
 import type { ReactElement } from 'react'
 import { Text, View } from 'react-native'
-import { useColors } from '../colors'
+import { useColors, usePalette } from '../colors'
 import { ArabicText } from '../components/arabic-text'
 import { Button } from '../components/button'
 import { Counter } from '../components/counter'
@@ -51,8 +50,8 @@ export function OwnDuaScreen({
   onDelete,
 }: OwnDuaScreenProps): ReactElement {
   const colors = useColors()
-  const { strings, scheme } = useUi()
-  const palette = palettes[scheme]
+  const { strings } = useUi()
+  const palette = usePalette()
 
   if (!dua) {
     return <EmptyState message={strings.notFound.body} />

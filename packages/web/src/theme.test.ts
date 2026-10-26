@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, test } from 'bun:test'
+import { themes } from '@ihsaanly/tailwind/tokens'
 import {
   applyMode,
   nextMode,
@@ -15,12 +16,17 @@ describe('nextMode', () => {
     expect(nextMode('light')).toBe('dark')
     expect(nextMode('dark')).toBe('system')
   })
+
+  test('takes a named theme back to System', () => {
+    expect(nextMode('obsidian')).toBe('system')
+  })
 })
 
 describe('themeSearch', () => {
   test('accepts a known mode or none, and rejects others', () => {
     for (const theme of THEME_MODES) expect(themeSearch.parse({ theme })).toEqual({ theme })
     expect(themeSearch.parse({})).toEqual({})
+    expect(themeSearch.parse({ theme: 'midnight' })).toEqual({ theme: 'midnight' })
     expect(themeSearch.safeParse({ theme: 'sepia' }).success).toBe(false)
   })
 })
@@ -34,6 +40,7 @@ describe('applyMode', () => {
   })
   afterEach(() => {
     document.documentElement.removeAttribute('data-theme')
+    document.documentElement.removeAttribute('data-palette')
     document.head.innerHTML = ''
   })
   const colors = (): (string | null)[] =>
@@ -48,6 +55,18 @@ describe('applyMode', () => {
     expect(colors()).toEqual([THEME_COLOR.light, THEME_COLOR.light, THEME_COLOR.light])
   })
 
+  test('a named theme sets its scheme, its palette and its own wash as the chrome', () => {
+    applyMode('espresso')
+    const root = document.documentElement
+    expect(root.getAttribute('data-theme')).toBe('dark')
+    expect(root.getAttribute('data-palette')).toBe('espresso')
+    const wash = themes.espresso.colors['wash-top']
+    expect(colors()).toEqual([wash, wash, wash])
+    applyMode('light')
+    expect(root.hasAttribute('data-palette')).toBe(false)
+    expect(root.getAttribute('data-theme')).toBe('light')
+  })
+
   test('system clears data-theme and restores each meta by its media query', () => {
     applyMode('dark')
     applyMode('system')
@@ -59,6 +78,7 @@ describe('applyMode', () => {
 describe('THEME_SCRIPT', () => {
   afterEach(() => {
     document.documentElement.removeAttribute('data-theme')
+    document.documentElement.removeAttribute('data-palette')
     window.localStorage.clear()
     window.history.replaceState(null, '', '/')
     document.head.innerHTML = ''
@@ -77,6 +97,23 @@ describe('THEME_SCRIPT', () => {
     run()
     expect(document.documentElement.getAttribute('data-theme')).toBe('light')
     expect(document.querySelector('meta')?.getAttribute('content')).toBe(THEME_COLOR.light)
+  })
+
+  test('applies a stored theme: its scheme, its palette and its chrome colour', () => {
+    document.head.innerHTML = '<meta name="theme-color" content="x">'
+    window.localStorage.setItem(THEME_KEY, 'sky')
+    run()
+    expect(document.documentElement.getAttribute('data-theme')).toBe('light')
+    expect(document.documentElement.getAttribute('data-palette')).toBe('sky')
+    expect(document.querySelector('meta')?.getAttribute('content')).toBe(
+      themes.sky.colors['wash-top'],
+    )
+  })
+
+  test('ignores a stored name it does not know', () => {
+    window.localStorage.setItem(THEME_KEY, 'sepia')
+    run()
+    expect(document.documentElement.hasAttribute('data-theme')).toBe(false)
   })
 
   test('?theme= beats the stored choice', () => {

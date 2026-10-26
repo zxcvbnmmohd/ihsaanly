@@ -1,9 +1,9 @@
 // What every web host wraps its screens in: @ihsaanly/ui's UiProvider, fed a
 // scheme that follows the page's own theme switch (<html data-theme>) and
-// falls back to the system's, and the raw systemColors for that scheme from
-// the shared design tokens.
+// falls back to the system's, the named theme (<html data-palette>), and the
+// raw systemColors for that scheme from the shared design tokens.
 import type { Strings } from '@ihsaanly/core/strings/en'
-import { type AccentName, accents, DEFAULT_ACCENT, system } from '@ihsaanly/tailwind/tokens'
+import { isTheme, system, type ThemeName } from '@ihsaanly/tailwind/tokens'
 import { type UiContextValue, UiProvider } from '@ihsaanly/ui/provider'
 import { type ReactElement, type ReactNode, useEffect, useState } from 'react'
 
@@ -16,26 +16,36 @@ function pageScheme(): Scheme {
   return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
 }
 
+/** The named theme the page wears, if any (`applyMode` and THEME_SCRIPT set it). */
+function pageTheme(): ThemeName | undefined {
+  const palette = document.documentElement.dataset.palette ?? ''
+  return isTheme(palette) ? palette : undefined
+}
+
 interface Thing {
   scheme: Scheme
+  theme: ThemeName | undefined
 }
 
 /**
- * The scheme the page is actually rendering in, kept live: a MutationObserver
- * on `<html data-theme>` (the theme toggle) and a matchMedia listener (the OS
- * setting) both re-read it.
+ * The scheme the page is actually rendering in and its named theme, kept live:
+ * a MutationObserver on `<html data-theme>` and `data-palette` (the theme
+ * choice) and a matchMedia listener (the OS setting) both re-read them.
  */
-export function usePageScheme(): Scheme {
-  const [thing, setThing] = useState<Thing>(() => ({ scheme: pageScheme() }))
+export function usePageAppearance(): Thing {
+  const [thing, setThing] = useState<Thing>(() => ({
+    scheme: pageScheme(),
+    theme: pageTheme(),
+  }))
 
   useEffect(() => {
-    const rescheme = (): void => setThing({ scheme: pageScheme() })
+    const rescheme = (): void => setThing({ scheme: pageScheme(), theme: pageTheme() })
     const media = window.matchMedia('(prefers-color-scheme: dark)')
     const observer = new MutationObserver(rescheme)
     media.addEventListener('change', rescheme)
     observer.observe(document.documentElement, {
       attributes: true,
-      attributeFilter: ['data-theme'],
+      attributeFilter: ['data-theme', 'data-palette'],
     })
     return () => {
       media.removeEventListener('change', rescheme)
@@ -43,7 +53,7 @@ export function usePageScheme(): Scheme {
     }
   }, [])
 
-  return thing.scheme
+  return thing
 }
 
 function systemColorsFor(scheme: Scheme): UiContextValue['systemColors'] {
@@ -58,51 +68,26 @@ function systemColorsFor(scheme: Scheme): UiContextValue['systemColors'] {
   }
 }
 
-/** The stylesheet colours an accent decides; see `AccentTokens` in tokens.ts. */
-const ACCENT_VARIABLES = ['accent', 'accent-ink', 'on-accent', 'indicator', 'tint'] as const
-
-/**
- * Lays an accent's colours over the stylesheet's, inline on `<html>`, so the
- * page's own Tailwind classes (`text-accent`, `bg-accent`) follow it as the
- * screens' `style` colours do. An inline value beats every `:root` rule in
- * web.css, so it is written per scheme and rewritten when the scheme turns.
- * The default accent writes nothing: the stylesheet already is it.
- */
-export function applyAccent(accent: AccentName, scheme: Scheme): void {
-  const style = document.documentElement.style
-  for (const name of ACCENT_VARIABLES) {
-    if (accent === DEFAULT_ACCENT) style.removeProperty(`--color-${name}`)
-    else style.setProperty(`--color-${name}`, accents[accent][name][scheme])
-  }
-}
-
 export interface WebUiProviderProps {
   strings: Strings
   Link: UiContextValue['Link']
-  /** The chosen accent. Left out, the page keeps the stylesheet's (terracotta) untouched. */
-  accent?: AccentName
   children: ReactNode
 }
 
-/** Wraps @ihsaanly/ui's UiProvider with a live scheme, this scheme's system colours and the accent. */
-export function WebUiProvider({
-  strings,
-  Link,
-  accent,
-  children,
-}: WebUiProviderProps): ReactElement {
-  const scheme = usePageScheme()
+/**
+ * Wraps @ihsaanly/ui's UiProvider with the page's live scheme and theme and
+ * this scheme's system colours. The stylesheet follows the theme by itself
+ * (web.css's `data-palette` rules), so nothing is written here.
+ */
+export function WebUiProvider({ strings, Link, children }: WebUiProviderProps): ReactElement {
+  const { scheme, theme } = usePageAppearance()
   const value: UiContextValue = {
     strings,
     scheme,
     Link,
     systemColors: systemColorsFor(scheme),
-    accent,
+    theme,
   }
-
-  useEffect(() => {
-    if (accent) applyAccent(accent, scheme)
-  }, [accent, scheme])
 
   return <UiProvider value={value}>{children}</UiProvider>
 }

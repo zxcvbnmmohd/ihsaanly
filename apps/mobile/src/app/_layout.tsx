@@ -8,7 +8,7 @@ import { useStrings } from '@ihsaanly/state/strings'
 import { RecedeProvider } from '@ihsaanly/ui/components/recede'
 import { Toast } from '@ihsaanly/ui/components/toast'
 import { NativeTabs } from 'expo-router/native-tabs'
-import { DarkTheme, DefaultTheme, ThemeProvider } from 'expo-router/react-navigation'
+import { ThemeProvider } from 'expo-router/react-navigation'
 import { StatusBar } from 'expo-status-bar'
 import type { ReactElement } from 'react'
 import { useCallback, useEffect, useState } from 'react'
@@ -22,17 +22,21 @@ import { OnboardingFlow } from '@/onboarding/flow'
 import { useAnnouncements } from '@/push/use-announcements'
 import { REMOTE_MARK_TOAST_MS, useRemoteMarkToast } from '@/remote-marks/use-remote-mark-toast'
 import { colors } from '@/theme/colors'
+import { navigationTheme } from '@/theme/navigation'
 import {
   applyThemePreference,
   getThemePreference,
+  migrateAccent,
   useEffectiveColorScheme,
   usePalette,
+  useTheme,
 } from '@/theme/store'
 import { MobileUiProvider } from '@/theme/ui-provider'
 
 import '../../global.css'
 
 setContentLanguage(languageOf(getLocale()))
+migrateAccent()
 applyThemePreference(getThemePreference())
 startProgress()
 
@@ -98,6 +102,7 @@ export default function RootLayout(): ReactElement {
   const strings = useStrings()
   const colorScheme = useEffectiveColorScheme()
   const palette = usePalette()
+  const navigation = navigationTheme(colorScheme, palette, useTheme() !== undefined)
   const onboarding = useOnboarding()
   useNotificationResponse(onboarding.completed)
   useAnnouncements(onboarding.completed)
@@ -137,7 +142,7 @@ export default function RootLayout(): ReactElement {
     return (
       <MobileUiProvider>
         <RecedeProvider>
-          <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+          <ThemeProvider value={navigation}>
             <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
             <OnboardingFlow
               restoring={thing.restoring}
@@ -153,7 +158,7 @@ export default function RootLayout(): ReactElement {
   return (
     <MobileUiProvider>
       <RecedeProvider>
-        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+        <ThemeProvider value={navigation}>
           <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
           {/*
         iOS 26 draws its own tab bar background and ignores `backgroundColor`;

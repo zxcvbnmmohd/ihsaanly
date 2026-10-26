@@ -34,6 +34,7 @@ describe('useStackScreenOptions', () => {
       headerLargeTitleEnabled: true,
       headerLargeTitleShadowVisible: false,
       headerTitleStyle: { color: 'ios:label' },
+      headerLargeTitleStyle: { color: 'ios:label' },
       headerBackButtonDisplayMode: 'minimal',
     })
   })

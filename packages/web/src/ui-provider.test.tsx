@@ -1,10 +1,10 @@
 import { afterEach, beforeEach, describe, expect, test } from 'bun:test'
 import { en } from '@ihsaanly/core/strings/en'
-import { accents, system } from '@ihsaanly/tailwind/tokens'
+import { system } from '@ihsaanly/tailwind/tokens'
 import { useUi } from '@ihsaanly/ui/provider'
 import { act, cleanup, render, renderHook, screen, waitFor } from '@testing-library/react'
 import type { ReactElement, ReactNode } from 'react'
-import { applyAccent, usePageScheme, WebUiProvider } from './ui-provider.tsx'
+import { usePageAppearance, WebUiProvider } from './ui-provider.tsx'
 
 interface FakeMedia {
   matches: boolean
@@ -29,48 +29,59 @@ afterEach(() => {
   cleanup()
   window.matchMedia = originalMatchMedia
   document.documentElement.removeAttribute('data-theme')
+  document.documentElement.removeAttribute('data-palette')
 })
 
-describe('usePageScheme', () => {
+describe('usePageAppearance', () => {
   test('follows the system when the page does not force a theme', () => {
-    expect(renderHook(usePageScheme).result.current).toBe('light')
+    expect(renderHook(usePageAppearance).result.current.scheme).toBe('light')
     media.matches = true
-    expect(renderHook(usePageScheme).result.current).toBe('dark')
+    expect(renderHook(usePageAppearance).result.current.scheme).toBe('dark')
   })
 
   test('the page switch beats the system', () => {
     media.matches = true
     document.documentElement.dataset.theme = 'light'
-    expect(renderHook(usePageScheme).result.current).toBe('light')
+    expect(renderHook(usePageAppearance).result.current.scheme).toBe('light')
     document.documentElement.dataset.theme = 'dark'
     media.matches = false
-    expect(renderHook(usePageScheme).result.current).toBe('dark')
+    expect(renderHook(usePageAppearance).result.current.scheme).toBe('dark')
   })
 
   test('an unknown data-theme falls back to the system', () => {
     document.documentElement.dataset.theme = 'sepia'
     media.matches = true
-    expect(renderHook(usePageScheme).result.current).toBe('dark')
+    expect(renderHook(usePageAppearance).result.current.scheme).toBe('dark')
   })
 
   test('updates when the system setting changes', () => {
-    const { result } = renderHook(usePageScheme)
-    expect(result.current).toBe('light')
+    const { result } = renderHook(usePageAppearance)
+    expect(result.current.scheme).toBe('light')
     act(() => {
       media.matches = true
       for (const listener of media.listeners) listener()
     })
-    expect(result.current).toBe('dark')
+    expect(result.current.scheme).toBe('dark')
   })
 
   test('updates when data-theme changes', async () => {
-    const { result } = renderHook(usePageScheme)
+    const { result } = renderHook(usePageAppearance)
     document.documentElement.dataset.theme = 'dark'
-    await waitFor(() => expect(result.current).toBe('dark'))
+    await waitFor(() => expect(result.current.scheme).toBe('dark'))
+  })
+
+  test('reads a named theme from data-palette, and ignores an unknown one', async () => {
+    const { result } = renderHook(usePageAppearance)
+    expect(result.current.theme).toBeUndefined()
+    document.documentElement.dataset.theme = 'dark'
+    document.documentElement.dataset.palette = 'obsidian'
+    await waitFor(() => expect(result.current).toEqual({ scheme: 'dark', theme: 'obsidian' }))
+    document.documentElement.dataset.palette = 'sepia'
+    await waitFor(() => expect(result.current.theme).toBeUndefined())
   })
 
   test('stops listening on unmount', () => {
-    const { unmount } = renderHook(usePageScheme)
+    const { unmount } = renderHook(usePageAppearance)
     expect(media.listeners.size).toBe(1)
     unmount()
     expect(media.listeners.size).toBe(0)
@@ -101,57 +112,19 @@ describe('WebUiProvider', () => {
     )
   })
 
-  const variable = (name: string): string =>
-    document.documentElement.style.getPropertyValue(`--color-${name}`)
-
-  function AccentProbe(): ReactElement {
-    return <p>{`accent:${useUi().accent ?? 'none'}`}</p>
+  function ThemeProbe(): ReactElement {
+    return <p>{`theme:${useUi().theme ?? 'none'}`}</p>
   }
 
-  test('hands screens the accent and lays its colours over the stylesheet for the scheme', async () => {
-    const view = render(
-      <WebUiProvider strings={en} Link={Link} accent="indigo">
-        <AccentProbe />
-      </WebUiProvider>,
-    )
-    expect(screen.getByText('accent:indigo')).toBeInTheDocument()
-    expect(variable('accent')).toBe(accents.indigo.accent.light)
-    expect(variable('accent-ink')).toBe(accents.indigo['accent-ink'].light)
-    expect(variable('on-accent')).toBe(accents.indigo['on-accent'].light)
-    expect(variable('indicator')).toBe(accents.indigo.indicator.light)
-    expect(variable('tint')).toBe(accents.indigo.tint.light)
-
-    document.documentElement.dataset.theme = 'dark'
-    await waitFor(() => expect(variable('accent')).toBe(accents.indigo.accent.dark))
-
-    // Back to the default: the stylesheet's own values show through again.
-    view.rerender(
-      <WebUiProvider strings={en} Link={Link} accent="terracotta">
-        <AccentProbe />
-      </WebUiProvider>,
-    )
-    expect(variable('accent')).toBe('')
-    expect(variable('tint')).toBe('')
-  })
-
-  test('leaves the page alone when the host names no accent', () => {
+  test('hands screens the page’s named theme, and none without one', async () => {
     render(
       <WebUiProvider strings={en} Link={Link}>
-        <AccentProbe />
+        <ThemeProbe />
       </WebUiProvider>,
     )
-    expect(screen.getByText('accent:none')).toBeInTheDocument()
-    expect(variable('accent')).toBe('')
-  })
-})
-
-describe('applyAccent', () => {
-  test('writes every accent colour for one scheme, and clears them for the default', () => {
-    applyAccent('graphite', 'dark')
-    expect(document.documentElement.style.getPropertyValue('--color-accent')).toBe(
-      accents.graphite.accent.dark,
-    )
-    applyAccent('terracotta', 'dark')
-    expect(document.documentElement.style.getPropertyValue('--color-accent')).toBe('')
+    expect(screen.getByText('theme:none')).toBeInTheDocument()
+    document.documentElement.dataset.theme = 'light'
+    document.documentElement.dataset.palette = 'sage'
+    await waitFor(() => expect(screen.getByText('theme:sage')).toBeInTheDocument())
   })
 })

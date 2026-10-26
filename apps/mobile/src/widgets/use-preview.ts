@@ -12,7 +12,7 @@ const SAMPLE: WidgetModel = sample
 /**
  * The entry the widgets show now, built from the same stores and the same
  * `currentWidgetModel` as the published timeline, so a preview in the widget
- * gallery says what the widget itself says, in the chosen accent. Without a
+ * gallery says what the widget itself says, in the chosen theme. Without a
  * place nothing can be planned, and the sample stands in.
  */
 export function useWidgetPreview(): WidgetModel {
@@ -20,7 +20,7 @@ export function useWidgetPreview(): WidgetModel {
   const counts = useWidgetCounts()
   const signals = useSignals()
   const place = usePlace()
-  if (!signals) return { ...SAMPLE, ink: widgetInk(settings.accent) }
+  if (!signals) return { ...SAMPLE, ink: widgetInk(settings.theme) }
   return currentWidgetModel({
     ...settings,
     signals,

@@ -1,7 +1,12 @@
-import { brand, type Palette, paletteFor } from '@ihsaanly/tailwind/tokens'
+import {
+  type Palette,
+  paletteFor,
+  type ThemeName,
+  themeSystemColors,
+} from '@ihsaanly/tailwind/tokens'
 import type { ColorValue } from 'react-native'
 
-import { useUi } from './provider'
+import { type SystemColors, useUi } from './provider'
 
 /**
  * Every colour a screen paints with, for `style` props. On native, NativeWind 5
@@ -37,15 +42,41 @@ export interface Colors {
   onTint: ColorValue
 }
 
-/** The brand palette for the scheme being rendered, under the chosen accent. */
+/** The palette being painted with: the named theme's, or the brand's for the scheme. */
 export function usePalette(): Palette {
-  const { scheme, accent } = useUi()
-  return paletteFor(scheme, accent)
+  const { scheme, theme } = useUi()
+  return paletteFor(scheme, theme)
+}
+
+/**
+ * The host's system colours, unless a named theme is chosen: a theme is a
+ * whole canvas, so its ink, rule and paper stand in for the OS's label,
+ * separator and fills (`themeSystemColors` in tokens.ts).
+ */
+function systemColorsOf(systemColors: SystemColors, theme: ThemeName | undefined): SystemColors {
+  if (!theme) return systemColors
+  const own = themeSystemColors(theme)
+  return {
+    label: own['system-label'],
+    secondaryLabel: own['system-secondary-label'],
+    separator: own['system-separator'],
+    systemBackground: own['system-background'],
+    secondarySystemBackground: own['system-secondary-background'],
+    tint: own['system-tint'],
+    onTint: own['system-on-tint'],
+  }
+}
+
+/** The system colours to paint with, a named theme's own when one is chosen. */
+export function useSystemColors(): SystemColors {
+  const { theme, systemColors } = useUi()
+  return systemColorsOf(systemColors, theme)
 }
 
 export function useColors(): Colors {
-  const { scheme, accent, systemColors } = useUi()
-  const palette = paletteFor(scheme, accent)
+  const { scheme, theme, systemColors: host } = useUi()
+  const palette = paletteFor(scheme, theme)
+  const systemColors = systemColorsOf(host, theme)
 
   return {
     washTop: palette.wash[0],
@@ -53,16 +84,16 @@ export function useColors(): Colors {
     accent: palette.accent,
     accentInk: palette.accentInk,
     onAccent: palette.onAccent,
-    paper: brand.paper[scheme],
+    paper: palette.paper,
     ink: palette.ink,
     inkSecondary: palette.inkSecondary,
-    inkSoft: brand['ink-soft'][scheme],
+    inkSoft: palette.inkSoft,
     knob: palette.knob,
     surface: palette.surface,
     indicator: palette.indicator,
-    rule: brand.rule[scheme],
-    ruleStrong: brand['rule-strong'][scheme],
-    fieldBorder: brand['field-border'][scheme],
+    rule: palette.rule,
+    ruleStrong: palette.ruleStrong,
+    fieldBorder: palette.fieldBorder,
     tint: palette.tint,
     label: systemColors.label,
     secondaryLabel: systemColors.secondaryLabel,

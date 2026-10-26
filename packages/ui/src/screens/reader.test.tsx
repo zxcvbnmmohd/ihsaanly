@@ -19,6 +19,32 @@ describe('ReaderScreen', () => {
     )
   })
 
+  it('puts the meaning first and aligns everything to its start when the reader asks', () => {
+    renderScreen(
+      <ReaderScreen
+        {...readerFixture}
+        pages={single}
+        reading={{ arabicFirst: false, align: 'start' }}
+      />,
+    )
+    const arabic = screen.getByText(first?.arabic as string)
+    const transliteration = screen.getByText(first?.transliteration as string)
+    const translation = screen.getByText(first?.translation as string)
+    // The translation leads; the transliteration stays with the Arabic.
+    expect(translation.compareDocumentPosition(arabic)).toBe(Node.DOCUMENT_POSITION_FOLLOWING)
+    expect(arabic.compareDocumentPosition(transliteration)).toBe(Node.DOCUMENT_POSITION_FOLLOWING)
+    // Arabic starts at the right; the rest at the layout's start.
+    expect(arabic).toHaveStyle({ textAlign: 'right' })
+    expect(translation.className).toContain('text-start')
+    expect(transliteration.className).toContain('text-start')
+  })
+
+  it('centres the Arabic and its meaning by default', () => {
+    renderScreen(<ReaderScreen {...readerFixture} pages={single} />)
+    expect(screen.getByText(first?.arabic as string)).toHaveStyle({ textAlign: 'center' })
+    expect(screen.getByText(first?.translation as string).className).toContain('text-center')
+  })
+
   it('has no pager for a single text, and marks it done or opens the rest', async () => {
     const onDone = mock(() => {})
     const onMore = mock(() => {})

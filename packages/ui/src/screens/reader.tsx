@@ -1,3 +1,4 @@
+import type { ReadingLayout } from '@ihsaanly/core/content/reading'
 import { palettes } from '@ihsaanly/tailwind/tokens'
 import { type ReactElement, useId } from 'react'
 import { Pressable, Text, View } from 'react-native'
@@ -34,6 +35,8 @@ export interface ReaderScreenProps {
   onDone: () => void
   /** Opens the full item screen: why, evidence, reminders. */
   onMore: () => void
+  /** The reader's order and alignment, as on the item screen. */
+  reading: ReadingLayout
 }
 
 interface TapAreaProps {
@@ -107,6 +110,7 @@ export function ReaderScreen({
   onTapCounter,
   onDone,
   onMore,
+  reading,
 }: ReaderScreenProps): ReactElement {
   const colors = useColors()
   const { strings, scheme } = useUi()
@@ -117,6 +121,13 @@ export function ReaderScreen({
 
   const paged = pages.length > 1
   const last = page === pages.length - 1
+  // The transliteration stays with the Arabic it spells out; only the meaning moves.
+  const align = reading.align === 'center' ? 'text-center' : 'text-start'
+  const meaning = current.translation ? (
+    <Text className={`${align} text-lg leading-relaxed`} style={{ color: colors.label }}>
+      {current.translation}
+    </Text>
+  ) : null
 
   return (
     <Screen palette={palette} className="grow justify-between gap-8 p-6">
@@ -136,19 +147,18 @@ export function ReaderScreen({
         ) : null}
 
         <View className="gap-4">
-          <ArabicText variant="hero">{current.arabic}</ArabicText>
+          {reading.arabicFirst ? null : meaning}
+          <ArabicText variant="hero" align={reading.align}>
+            {current.arabic}
+          </ArabicText>
           {current.transliteration ? (
             <Text
-              className="text-center text-lg italic leading-relaxed"
+              className={`${align} text-lg italic leading-relaxed`}
               style={{ color: colors.secondaryLabel }}>
               {current.transliteration}
             </Text>
           ) : null}
-          {current.translation ? (
-            <Text className="text-center text-lg leading-relaxed" style={{ color: colors.label }}>
-              {current.translation}
-            </Text>
-          ) : null}
+          {reading.arabicFirst ? meaning : null}
         </View>
 
         {counter ? <TapArea label={title} counter={counter} onTap={onTapCounter} /> : null}

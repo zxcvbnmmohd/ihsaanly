@@ -9,6 +9,7 @@ import {
   setPartDone,
   useItemProgress,
 } from '@ihsaanly/state/progress/store'
+import { useReaderPreferences } from '@ihsaanly/state/reader/store'
 import { useStrings } from '@ihsaanly/state/strings'
 import { useNow } from '@ihsaanly/state/time/use-now'
 import type { CounterState } from '@ihsaanly/ui/screens/item'
@@ -33,6 +34,7 @@ interface Thing {
 export default function ReaderRoute(): ReactElement {
   const [thing, setThing] = useState<Thing>({ page: 0, partCounts: {}, finished: false })
   const strings = useStrings()
+  const reader = useReaderPreferences()
   const { id } = useLocalSearchParams<{ id: string }>()
   const item = itemById(id)
   const progress = useItemProgress(id)
@@ -140,6 +142,7 @@ export default function ReaderRoute(): ReactElement {
         onTapCounter={tapCounter}
         onDone={markDone}
         onMore={() => router.replace(`/item/${id}`)}
+        reading={{ arabicFirst: reader.arabicFirst, align: reader.align }}
       />
     </>
   )

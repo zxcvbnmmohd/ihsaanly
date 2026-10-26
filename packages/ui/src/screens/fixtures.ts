@@ -682,4 +682,5 @@ export const readerFixture: ReaderScreenProps = {
   onTapCounter: noop,
   onDone: noop,
   onMore: noop,
+  reading: { arabicFirst: true, align: 'center' },
 }

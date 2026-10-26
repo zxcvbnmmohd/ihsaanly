@@ -11,7 +11,14 @@ import { prayerTimesAcross } from '@ihsaanly/core/prayer/times'
 import { buildWindows } from '@ihsaanly/core/prayer/windows'
 import { en } from '@ihsaanly/core/strings/en'
 
-import { distanceLabel, remainingLabel, type WidgetInput, widgetTimeline } from './model'
+import {
+  currentWidgetModel,
+  distanceLabel,
+  remainingLabel,
+  type WidgetInput,
+  widgetInk,
+  widgetTimeline,
+} from './model'
 
 const london: Place = {
   label: 'London',
@@ -253,6 +260,38 @@ describe('what else is open, and the done button', () => {
     expect(first?.moreNow).toBeNull()
   })
 
+  it('offers the undetectable moments’ duas until the user chooses their own', () => {
+    const [base] = widgetTimeline(input())
+    expect(base?.quickDuas.length).toBeGreaterThan(0)
+    expect(base?.quickDuas.every((entry) => entry.url.startsWith('ihsaanly://item/'))).toBe(true)
+    const empty = widgetTimeline({ ...input(), myDuas: { pinned: [], own: [] } })[0]
+    expect(empty?.quickDuas).toEqual(base?.quickDuas ?? [])
+  })
+
+  it('lists pinned items, then own duas, when the user has chosen some', () => {
+    const chosen = widgetTimeline({
+      ...input(),
+      myDuas: {
+        pinned: ['evening-adhkar', 'no-such-item'],
+        own: [{ id: 'mine-parents', title: 'For my parents' }],
+      },
+    })
+    const entry = chosen[0]
+    expect(entry?.quickDuas.map((link) => link.url)).toEqual([
+      'ihsaanly://item/evening-adhkar',
+      'ihsaanly://item/mine-parents',
+    ])
+    expect(entry?.quickDuas[1]).toEqual({
+      id: 'mine-parents',
+      title: 'For my parents',
+      detail: null,
+      url: 'ihsaanly://item/mine-parents',
+    })
+    expect(chosen.at(-1)?.quickDuas.map((link) => link.url)).toEqual(
+      entry?.quickDuas.map((link) => link.url),
+    )
+  })
+
   it('starts every entry with no taps and labels the button', () => {
     const timeline = widgetTimeline(input())
     expect(timeline.every((entry) => entry.taps.length === 0)).toBe(true)
@@ -361,5 +400,18 @@ describe('what a widget can mark', () => {
     )[0]
     expect(said?.duaOfTheDay?.done).toBe(true)
     expect(said?.quickDuas.find((entry) => entry.id === 'dua-leaving-home')?.done).toBe(true)
+  })
+})
+
+describe('the current entry', () => {
+  it('is the first entry of the timeline, for the widget gallery', () => {
+    const at = input({ completedToday: { 'morning-adhkar': now } })
+    expect(currentWidgetModel(at)).toEqual(widgetTimeline(at)[0] as never)
+  })
+
+  it('carries both schemes in the chosen accent', () => {
+    const entry = currentWidgetModel({ ...input(), accent: 'denim' })
+    expect(entry.ink).toEqual(widgetInk('denim'))
+    expect(entry.ink.light.accent).not.toBe(widgetInk(undefined).light.accent)
   })
 })

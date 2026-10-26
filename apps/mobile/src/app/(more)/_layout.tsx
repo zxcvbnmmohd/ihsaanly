@@ -28,7 +28,7 @@ export default function MoreLayout(): ReactElement {
   const segments = useSegments()
   const pathname = usePathname()
   const theme = useThemePreference()
-  const groups = useMoreGroups(theme, cloudEnabled)
+  const groups = useMoreGroups(theme, cloudEnabled, true)
   useColorScheme()
 
   const parts = morePath(segments, pathname)
@@ -56,6 +56,7 @@ export default function MoreLayout(): ReactElement {
         <Stack.Screen name="calculation" options={{ title: strings.calculation.title }} />
         <Stack.Screen name="hijri" options={{ title: strings.hijri.title }} />
         <Stack.Screen name="notifications" options={{ title: strings.notifications.title }} />
+        <Stack.Screen name="widgets" options={{ title: strings.widgetGallery.title }} />
         <Stack.Screen name="tracking" options={{ title: strings.tracking.title }} />
         <Stack.Screen name="events" options={{ title: strings.events.title }} />
         <Stack.Screen name="starting-point" options={{ title: strings.startingPoint.title }} />

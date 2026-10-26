@@ -1,4 +1,4 @@
-import { items } from '@ihsaanly/core/content'
+import { items, personalItems } from '@ihsaanly/core/content'
 import type { Plan } from '@ihsaanly/core/plan/signals'
 import {
   type NotificationContent,
@@ -11,7 +11,9 @@ import { hasPermission, sync } from './schedule'
 
 function contentsFor(plan: Plan): NotificationContent[] {
   const strings = getStrings()
-  return plan.notifications.flatMap((entry) => notificationContent(entry, items, strings) ?? [])
+  // The user's own duas with a moment are planned too; their words come from them.
+  const known = [...items, ...personalItems()]
+  return plan.notifications.flatMap((entry) => notificationContent(entry, known, strings) ?? [])
 }
 
 /**

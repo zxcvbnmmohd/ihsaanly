@@ -16,9 +16,10 @@ import { useStrings } from '../strings'
  * it. Reads the stores and hands the values to the pure builder, which
  * decides what each row is called and what it currently says. Theme lives
  * outside this package — each host's own store differs — so it is taken as a
- * parameter rather than read here, as is whether this build has a cloud.
+ * parameter rather than read here, as is whether this build has a cloud and
+ * whether the host has widgets.
  */
-export function useMoreGroups(theme: ThemePreference, cloud = false): MoreGroup[] {
+export function useMoreGroups(theme: ThemePreference, cloud = false, widgets = false): MoreGroup[] {
   const strings = useStrings()
   const place = usePlace()
   const calculation = useCalculationPreferences()
@@ -40,6 +41,7 @@ export function useMoreGroups(theme: ThemePreference, cloud = false): MoreGroup[
     theme,
     qadaOwed: owed,
     startingPoint,
+    widgets,
     accountDetail: cloud
       ? (account?.email ??
         account?.displayName ??

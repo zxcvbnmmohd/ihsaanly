@@ -304,6 +304,26 @@ today's Hijri date. A `friday` day item carries no "expected" caveat.
 (`matchesWindowDay`, civil weekday, since the window never crosses Maghrib),
 in `reasonFor` and in the window reminders alike.
 
+### My duas: pins and the user's own words
+
+`pinnedItems` (library ids) and `ownDuas` live in `packages/state/src/my-duas/store.ts`
+and sync like any preference (`cloud/keys.ts`); both are capped at 30
+(`packages/core/src/content/my-duas.ts`) so the one preferences document stays light.
+An own dua's id starts with `mine-`, so `/item/<id>` serves both: the item route
+hands a `mine-` id to `src/library/own-dua-route.tsx`, and `/my-dua[?id=]` is the form.
+An own dua carries no ruling, evidence or review line, and none is shown for it.
+
+A moment (`after-fajr` … `night`, never a clock time) turns the dua into an
+in-memory `Item` (`ownDuaItem`): `useSignals` adds it to `items`, to the enabled
+ids and to `perItem` as a yes, so the plan places it on Today and reminds of a
+window moment through the usual budget and quiet hours. After-prayer moments
+send nothing, as no after-prayer item does. The store installs these items into
+core content (`installPersonalItems`) so `itemById` resolves them for Today, the
+counter sheet and a widget tap; `items` itself stays content only, so the
+Library, search and suggestions never list them. The Quick duas widget shows
+pinned, then own duas, and falls back to the undetectable-moment duas when none
+are chosen (`quickDuas` in `src/widgets/model.ts`).
+
 ### `react-native-view-shot` is typed locally
 
 The package ships TypeScript source that does not compile against
@@ -705,6 +725,15 @@ platform like any iOS-only module.
   passed. The device-only `widgetTapsThrough` cursor then moves past them, so
   none is filed twice. The app's counts reach the widget through
   `WidgetInput.counts`, read at each republish rather than watched.
+- **The gallery** (More → Widgets, `/widgets`, `ihsaanly://widgets`; link to it with
+  `WIDGET_GALLERY_HREF` from `@ihsaanly/ui/props/more`): `WidgetPreview`
+  (`@ihsaanly/ui/components/widget-preview`) draws each widget in React Native from
+  `currentWidgetModel`, the first timeline entry built from the same stores
+  (`useWidgetPreview`), so the previews say what the widgets say, in the chosen
+  accent. They approximate the iOS layouts; when a widget's layout changes, change
+  its preview too. Lock Screen previews are iOS only, per `LOCK_FAMILIES_BY_WIDGET`,
+  which `names.test.ts` holds to `app.json`. The Widgets row is opt-in
+  (`useMoreGroups(theme, cloud, true)`), since the web hosts have no widgets.
 - **Android** (`src/widgets/android/`, `react-native-android-widget`): the task
   handler registered from `index.ts` (via `register.android.ts`; the library
   throws at import on iOS) reads `widget-timeline.json` from `Paths.document`

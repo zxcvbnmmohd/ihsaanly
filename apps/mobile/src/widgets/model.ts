@@ -161,6 +161,12 @@ export interface WidgetInput {
   fastsOwed: number
   /** The chosen accent; widgets cannot read the app's preferences, so it is resolved here. */
   accent?: AccentName
+  /**
+   * What the user chose for the Quick duas widget: pinned library items, then
+   * their own duas. Absent or empty, the widget offers the duas for the
+   * moments a phone cannot detect.
+   */
+  myDuas?: { pinned: string[]; own: { id: string; title: string }[] }
   /** Counted items' progress now (the tasbih's taps so far), by item id. */
   counts?: Partial<Record<string, number>>
 }
@@ -179,6 +185,28 @@ function link(id: string, detail: string | null = null): WidgetLink | null {
   const item = itemById(id)
   if (!item) return null
   return { title: resolveText(item.title) ?? id, detail, url: itemUrl(id) }
+}
+
+/**
+ * What the user chose for the Quick duas widget, pinned items then their own
+ * duas, each markable like the defaults; with nothing chosen, the duas for the
+ * moments a phone cannot detect.
+ */
+function quickDuas(
+  chosen: WidgetInput['myDuas'],
+  actionable: (id: string) => WidgetItem | null,
+): WidgetItem[] {
+  const mine = [
+    ...(chosen?.pinned ?? []).flatMap((id) => actionable(id) ?? []),
+    ...(chosen?.own ?? []).map(
+      (dua) =>
+        actionable(dua.id) ?? { id: dua.id, title: dua.title, detail: null, url: itemUrl(dua.id) },
+    ),
+  ]
+  if (mine.length > 0) return mine
+  return items
+    .filter((item) => item.trigger.kind === 'event' && UNDETECTABLE.includes(item.trigger.event))
+    .flatMap((item) => actionable(item.id) ?? [])
 }
 
 function inkFor(scheme: 'light' | 'dark', accent: AccentName | undefined): WidgetInk {
@@ -372,7 +400,7 @@ function modelAt(input: WidgetInput, at: Date): WidgetModel {
     at: at.getTime(),
     stale: false,
     rtl: input.rtl,
-    ink: { light: inkFor('light', input.accent), dark: inkFor('dark', input.accent) },
+    ink: widgetInk(input.accent),
     labels: {
       app: 'Ihsaanly',
       rightNow: strings.plan.rightNow,
@@ -466,9 +494,7 @@ function modelAt(input: WidgetInput, at: Date): WidgetModel {
         (entry, index, all) => all.findIndex((other) => other.itemId === entry.itemId) === index,
       )
       .flatMap((entry) => link(entry.itemId, whenLabel(entry, strings)) ?? []),
-    quickDuas: items
-      .filter((item) => item.trigger.kind === 'event' && UNDETECTABLE.includes(item.trigger.event))
-      .flatMap((item) => actionable(item.id, opened) ?? []),
+    quickDuas: quickDuas(input.myDuas, (id) => actionable(id, opened)),
     duaOfTheDay: duaOfTheDay(dayKey, dayStart, doneSince),
     makeUp: {
       prayers: qadaTotal,
@@ -477,6 +503,19 @@ function modelAt(input: WidgetInput, at: Date): WidgetModel {
       url: 'ihsaanly://qada',
     },
   }
+}
+
+/** Both schemes' widget colours under an accent, as every timeline entry carries them. */
+export function widgetInk(accent: AccentName | undefined): WidgetModel['ink'] {
+  return { light: inkFor('light', accent), dark: inkFor('dark', accent) }
+}
+
+/**
+ * The entry the widgets show now: the first of `widgetTimeline`, without
+ * planning the rest of the day. The widget gallery draws its previews from it.
+ */
+export function currentWidgetModel(input: WidgetInput): WidgetModel {
+  return modelAt(input, input.signals.now)
 }
 
 /**

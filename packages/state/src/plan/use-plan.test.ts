@@ -10,6 +10,7 @@ const { setPlace } = await import('../location/store')
 const { setOnboarding } = await import('../onboarding/store')
 const { setEnabledItems } = await import('./enabled-store')
 const { setKnownItems } = await import('../memorise/store')
+const { saveOwnDua } = await import('../my-duas/store')
 const { setUserState } = await import('./user-state-store')
 const { DEFAULT_USER_STATE } = await import('@ihsaanly/core/plan/user-state')
 const { DEFAULT_NOTIFICATION_PREFERENCES } = await import(
@@ -70,6 +71,36 @@ describe('useSignals', () => {
 
     expect(result.current?.preferences.enabledItemIds).toEqual(['one'])
     expect(result.current?.preferences.knownItemIds).toEqual(['two'])
+  })
+
+  it('plans an own dua with a moment, and reminds of it on its own yes', () => {
+    setPlace(london)
+    setEnabledItems(['one'])
+    saveOwnDua({
+      id: 'mine-evening',
+      title: 'Mine',
+      arabic: null,
+      transliteration: null,
+      text: 'Words',
+      repeat: 1,
+      moment: 'evening',
+    })
+    saveOwnDua({
+      id: 'mine-plain',
+      title: 'Plain',
+      arabic: null,
+      transliteration: null,
+      text: 'Words',
+      repeat: 1,
+      moment: null,
+    })
+    const { result } = renderHook(() => useSignals())
+
+    const signals = result.current
+    expect(signals?.items.some((item) => item.id === 'mine-evening')).toBe(true)
+    expect(signals?.items.some((item) => item.id === 'mine-plain')).toBe(false)
+    expect(signals?.preferences.enabledItemIds).toEqual(['one', 'mine-evening'])
+    expect(signals?.preferences.notifications.perItem).toEqual({ 'mine-evening': true })
   })
 
   it('raises manual events always, and the home transition only when detection is on', () => {

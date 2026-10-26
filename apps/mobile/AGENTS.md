@@ -319,6 +319,14 @@ snooze made while the app was killed survives the next sync. Do not go back to
 cancel-all. The `data` payload is versioned and narrowed by
 `parseNotificationData`; nothing reads it raw.
 
+A prayer reminder asks "Have you prayed?" under the `prayer` category: its
+`done` ("Yes, I've prayed") marks the prayer through `markPrayer`, as the Today
+strip does, and its `later` ("Not yet") asks once more 30 minutes on, filed as
+`later:prayer:` under `prayer-again`, which has only the first button. No
+second ask with under ten minutes of the window left. While tracking is
+paused neither action does anything, and `sync()` withdraws any pending
+`later:prayer:`, the one snooze it touches.
+
 Taps are answered once, in `src/notifications/respond.ts`, from three doors:
 the warm listener, the cold-start replay (read then cleared) and the Android
 background task. The task is defined in `index.ts`, the app entry, because a

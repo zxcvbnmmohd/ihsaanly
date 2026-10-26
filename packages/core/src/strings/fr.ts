@@ -121,16 +121,26 @@ export const fr: Strings = {
     testTitle: 'Un rappel test',
     testBody: 'Voici à quoi ressemble un rappel d’Ihsaanly.',
     pausedRemembrance: 'Un moment pour le dhikr',
+    prayerArrived: (prayer: string): string => `L’heure de ${prayer} est entrée`,
+    prayerAsk: {
+      fajr: 'Avez-vous prié ? Quelques minutes calmes, avant que la journée ne vous réclame.',
+      dhuhr: 'Avez-vous prié ? Une pause au milieu de la journée, avant qu’elle ne reprenne.',
+      asr: 'Avez-vous prié ? C’est celle qu’on perd le plus facilement de vue.',
+      maghrib: 'Avez-vous prié ? Son temps est court, c’est le bon moment.',
+      isha: 'Avez-vous prié ? Une dernière avant la fin de la journée.',
+      jumuah: 'Avez-vous prié ? Une fois par semaine, ensemble.',
+    },
     checkIn: 'Un petit mot d’Ihsaanly',
     action: {
       done: 'Fait',
       later: 'Plus tard',
+      prayed: 'Oui, j’ai prié',
+      notYet: 'Pas encore',
     },
     body: {
       window: 'Maintenant, jusqu’à la fin de la plage.',
       windowUntil: (closes: string): string => `Ouvert jusqu’à ${closes}.`,
       tomorrow: 'Demain.',
-      prayerWindow: 'L’heure est entrée. La plage reste ouverte jusqu’à la prière suivante.',
     },
   },
   event: {

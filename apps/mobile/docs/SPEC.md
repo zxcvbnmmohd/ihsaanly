@@ -208,7 +208,8 @@ the trade.
 - Default set: morning adhkar, evening adhkar, look-ahead for upcoming worship days. 2–3/day.
 - Prayer reminders **off** by default.
 - Per-item delivery override, buried in item detail.
-- Quiet hours, honoured globally.
+- Quiet hours, honoured globally for everyday reminders. Night worship still comes: the Fajr
+  and Isha prayer reminders, Witr and any item whose window closes at Fajr, each with its own switch.
 - Never guilt-shaped. Never "you didn't".
 
 **Scheduling.** iOS holds ~64 pending local notifications (Apple limit — verify on device).

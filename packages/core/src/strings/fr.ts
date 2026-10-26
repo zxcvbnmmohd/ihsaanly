@@ -130,6 +130,7 @@ export const fr: Strings = {
       isha: 'Avez-vous prié ? Une dernière avant la fin de la journée.',
       jumuah: 'Avez-vous prié ? Une fois par semaine, ensemble.',
     },
+    askPrayed: (title: string): string => `Avez-vous prié ${title} ?`,
     checkIn: 'Un petit mot d’Ihsaanly',
     action: {
       done: 'Fait',
@@ -140,6 +141,7 @@ export const fr: Strings = {
     body: {
       window: 'Maintenant, jusqu’à la fin de la plage.',
       windowUntil: (closes: string): string => `Ouvert jusqu’à ${closes}.`,
+      until: (closes: string): string => `Jusqu’à ${closes}.`,
       tomorrow: 'Demain.',
     },
   },

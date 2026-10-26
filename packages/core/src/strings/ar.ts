@@ -136,6 +136,7 @@ export const ar: Strings = {
       isha: 'هل صلّيت؟ صلاة أخيرة قبل أن ينتهي اليوم.',
       jumuah: 'هل صلّيت؟ مرة في الأسبوع، مع الجماعة.',
     },
+    askPrayed: (title: string): string => `هل صلّيت ${title}؟`,
     checkIn: 'اطمئنان سريع من إحسانلي',
     action: {
       done: 'تم',
@@ -146,6 +147,7 @@ export const ar: Strings = {
     body: {
       window: 'الآن، حتى ينتهي الوقت.',
       windowUntil: (closes: string): string => `مفتوح حتى ${closes}.`,
+      until: (closes: string): string => `حتى ${closes}.`,
       tomorrow: 'غدًا.',
     },
   },

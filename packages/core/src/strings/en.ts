@@ -120,6 +120,7 @@ export const en = {
       isha: 'Have you prayed? One more before the day is done.',
       jumuah: 'Have you prayed? Once a week, together.',
     },
+    askPrayed: (title: string): string => `Have you prayed ${title}?`,
     checkIn: 'A quick check-in from Ihsaanly',
     action: {
       done: 'Done',
@@ -130,6 +131,7 @@ export const en = {
     body: {
       window: 'Now, until the window closes.',
       windowUntil: (closes: string): string => `Open until ${closes}.`,
+      until: (closes: string): string => `Until ${closes}.`,
       tomorrow: 'Tomorrow.',
     },
   },

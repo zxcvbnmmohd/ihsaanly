@@ -124,6 +124,7 @@ export const zh: Strings = {
       isha: '礼拜了吗？一天结束之前，再礼一番。',
       jumuah: '礼拜了吗？每周一次，大家一起。',
     },
+    askPrayed: (title: string): string => `${title}礼了吗？`,
     checkIn: '来自 Ihsaanly 的简短问候',
     action: {
       done: '完成',
@@ -134,6 +135,7 @@ export const zh: Strings = {
     body: {
       window: '就是现在，直到这个时段结束。',
       windowUntil: (closes: string): string => `开放至 ${closes}。`,
+      until: (closes: string): string => `至 ${closes}。`,
       tomorrow: '明天。',
     },
   },

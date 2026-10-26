@@ -131,6 +131,7 @@ export const hi: Strings = {
       isha: 'क्या आपने नमाज़ पढ़ ली? दिन ख़त्म होने से पहले एक और।',
       jumuah: 'क्या आपने नमाज़ पढ़ ली? हफ़्ते में एक बार, सबके साथ।',
     },
+    askPrayed: (title: string): string => `क्या आपने ${title} पढ़ ली?`,
     checkIn: 'इहसानली की ओर से एक छोटा-सा संदेश',
     action: {
       done: 'हो गया',
@@ -141,6 +142,7 @@ export const hi: Strings = {
     body: {
       window: 'अभी, वक़्त ख़त्म होने तक।',
       windowUntil: (closes: string): string => `${closes} तक खुला है।`,
+      until: (closes: string): string => `${closes} तक।`,
       tomorrow: 'कल।',
     },
   },

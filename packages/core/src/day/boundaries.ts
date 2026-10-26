@@ -20,13 +20,24 @@ function partOf(parts: Intl.DateTimeFormatPart[], type: Intl.DateTimeFormatPartT
   return Number(part.value)
 }
 
-export function civilDateIn(instant: Date, timeZone: string): CivilDate {
-  const parts = new Intl.DateTimeFormat('en-CA', {
+/** One formatter per zone: building one costs far more than using it, and the plan asks often. */
+const dateFormats = new Map<string, Intl.DateTimeFormat>()
+
+function dateFormat(timeZone: string): Intl.DateTimeFormat {
+  const cached = dateFormats.get(timeZone)
+  if (cached) return cached
+  const format = new Intl.DateTimeFormat('en-CA', {
     timeZone,
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',
-  }).formatToParts(instant)
+  })
+  dateFormats.set(timeZone, format)
+  return format
+}
+
+export function civilDateIn(instant: Date, timeZone: string): CivilDate {
+  const parts = dateFormat(timeZone).formatToParts(instant)
 
   return { year: partOf(parts, 'year'), month: partOf(parts, 'month'), day: partOf(parts, 'day') }
 }

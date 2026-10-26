@@ -1,11 +1,18 @@
 import type { QuietHours } from './notification-preferences'
 
+/** One formatter per zone: building one costs far more than using it, and the plan asks often. */
+const hourFormats = new Map<string, Intl.DateTimeFormat>()
+
+function hourFormat(timeZone: string): Intl.DateTimeFormat {
+  const cached = hourFormats.get(timeZone)
+  if (cached) return cached
+  const format = new Intl.DateTimeFormat('en-GB', { timeZone, hour: '2-digit', hour12: false })
+  hourFormats.set(timeZone, format)
+  return format
+}
+
 function localHour(at: Date, timeZone: string): number {
-  const part = new Intl.DateTimeFormat('en-GB', {
-    timeZone,
-    hour: '2-digit',
-    hour12: false,
-  })
+  const part = hourFormat(timeZone)
     .formatToParts(at)
     .find((candidate) => candidate.type === 'hour')
 

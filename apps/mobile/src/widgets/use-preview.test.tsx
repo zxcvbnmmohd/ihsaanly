@@ -26,7 +26,11 @@ afterEach(() => {
 
 describe('useWidgetPreview', () => {
   it('shows the sample in the chosen accent until there is a place', () => {
-    act(() => setAccent('denim'))
+    // Another file may leave a place behind; this case is the one without one.
+    act(() => {
+      setPlace(null)
+      setAccent('denim')
+    })
     const { result } = renderHook(() => useWidgetPreview())
     expect(result.current.rightNow?.title).toBe(sample.rightNow.title)
     expect(result.current.ink).toEqual(widgetInk('denim'))

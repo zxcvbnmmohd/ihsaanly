@@ -4,6 +4,7 @@ import { useFastsOutstanding } from '@ihsaanly/state/fasting/store'
 import { useHijriOffset } from '@ihsaanly/state/hijri/store'
 import { useLocale } from '@ihsaanly/state/i18n/store'
 import { useQada } from '@ihsaanly/state/prayer/marks'
+import { useReaderPreferences } from '@ihsaanly/state/reader/store'
 import { useStrings } from '@ihsaanly/state/strings'
 import { useEffect } from 'react'
 import { AppState } from 'react-native'
@@ -34,6 +35,7 @@ export function useWidgetTimeline(
   const qada = useQada()
   const fastsOwed = useFastsOutstanding()
   const tapsThrough = useWidgetTapsThrough()
+  const reader = useReaderPreferences()
 
   // Done taps on the Right now widget wait in its timeline until the app runs:
   // taken in on launch, on every return to the foreground, and on a press
@@ -62,6 +64,8 @@ export function useWidgetTimeline(
     locale,
     placeLabel,
     hijriOffset,
+    reader.arabicFirst,
+    reader.align,
   ])
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: `key` fingerprints every input the timeline reads, so the widgets refresh only when one of them changes.
@@ -74,6 +78,7 @@ export function useWidgetTimeline(
         strings,
         locale,
         rtl: isRightToLeft(locale),
+        reading: { arabicFirst: reader.arabicFirst, align: reader.align },
         placeLabel,
         hijriOffset,
         qada,

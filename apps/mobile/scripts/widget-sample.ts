@@ -49,6 +49,7 @@ const [sample] = widgetTimeline({
   strings: en,
   locale: 'en-GB',
   rtl: false,
+  reading: { arabicFirst: true, align: 'center' },
   placeLabel: 'London',
   hijriOffset: 0,
   qada: { dhuhr: 1 },

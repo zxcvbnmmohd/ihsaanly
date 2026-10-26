@@ -14,6 +14,7 @@ import { setOnboarding } from '@ihsaanly/state/onboarding/store'
 import { getEnabledItems, setEnabledItems } from '@ihsaanly/state/plan/enabled-store'
 import { getUserState } from '@ihsaanly/state/plan/user-state-store'
 import { getCalculationPreferences } from '@ihsaanly/state/prayer/store'
+import { getReaderPreferences } from '@ihsaanly/state/reader/store'
 import { screen, waitFor, within } from '@testing-library/react'
 import { LONDON, renderApp, resetApp, setWidth, startUsing } from '../../test/app'
 import { setThemePreference } from '../theme/store'
@@ -33,6 +34,14 @@ describe('Appearance', () => {
     expect(localStorage.getItem('ihsaanly.theme')).toBe('dark')
     expect(document.documentElement.dataset.theme).toBe('dark')
     setThemePreference('system')
+  })
+
+  it('saves Arabic first and the alignment', async () => {
+    const app = await renderApp('/appearance')
+    await app.user.click(await screen.findByRole('switch', { name: en.appearance.arabicFirst }))
+    await app.user.click(screen.getByRole('radio', { name: en.appearance.alignStart }))
+    expect(screen.getByRole('radio', { name: en.appearance.alignStart })).toBeChecked()
+    expect(getReaderPreferences()).toMatchObject({ arabicFirst: false, align: 'start' })
   })
 })
 

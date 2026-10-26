@@ -13,9 +13,12 @@ import { useLayout } from '../layout'
 import { useUi } from '../provider'
 import { columnBasisFor } from './library-grid'
 
-export type LibraryFilter = 'all' | 'onToday' | 'known'
+export type LibraryFilter = 'all' | 'onToday' | 'known' | 'mine'
 
-export const LIBRARY_FILTERS: LibraryFilter[] = ['all', 'onToday', 'known']
+/** The filters over content, which every host counts. `mine` is offered only with `mine`. */
+export type ContentFilter = Exclude<LibraryFilter, 'mine'>
+
+export const LIBRARY_FILTERS: ContentFilter[] = ['all', 'onToday', 'known']
 
 export interface LibraryEntry {
   id: string
@@ -33,6 +36,26 @@ export interface LibrarySectionView {
   entries: LibraryEntry[]
 }
 
+/** A dua the user wrote, listed under My duas. */
+export interface OwnDuaEntry {
+  id: string
+  title: string
+  /** A line of its words, when it has them. */
+  detail: string | null
+  href: string
+}
+
+/**
+ * My duas, for a host that keeps them: pinned items arrive as `sections`
+ * under the `mine` filter like any other filter's, and the user's own as `own`.
+ */
+export interface LibraryMine {
+  /** Pinned and own together, for the chip. */
+  count: number
+  own: OwnDuaEntry[]
+  writeHref: string
+}
+
 export interface LibrarySearchable {
   query: string
   onQueryChange: (query: string) => void
@@ -42,7 +65,7 @@ export interface LibrarySearchable {
 export interface LibraryScreenProps {
   query: string
   filter: LibraryFilter
-  counts: Record<LibraryFilter, number>
+  counts: Record<ContentFilter, number>
   sections: LibrarySectionView[]
   glossaryHref: string
   onFilterChange: (filter: LibraryFilter) => void
@@ -50,9 +73,12 @@ export interface LibraryScreenProps {
   searchable?: LibrarySearchable
   /** The entry open in a regular/wide reader panel, if any. */
   selectedId?: string | null
+  /** Offers the My duas filter. */
+  mine?: LibraryMine
 }
 
 function filterLabel(filter: LibraryFilter, strings: Strings): string {
+  if (filter === 'mine') return strings.myDuas.title
   if (filter === 'onToday') return strings.library.filterOnToday
   if (filter === 'known') return strings.library.filterKnown
   return strings.library.filterAll
@@ -60,6 +86,7 @@ function filterLabel(filter: LibraryFilter, strings: Strings): string {
 
 function emptyMessage(query: string, filter: LibraryFilter, strings: Strings): string {
   if (query.trim()) return strings.library.noResults
+  if (filter === 'mine') return strings.myDuas.empty
   if (filter === 'onToday') return strings.library.emptyOnToday
   if (filter === 'known') return strings.library.emptyKnown
   return strings.library.empty
@@ -74,25 +101,56 @@ export function LibraryScreen({
   onFilterChange,
   searchable,
   selectedId = null,
+  mine,
 }: LibraryScreenProps): ReactElement {
   const colors = useColors()
   const { strings } = useUi()
   const palette = usePalette()
   const layout = useLayout()
   const showTerms = query.trim() === '' && filter === 'all'
+  const filters: { filter: LibraryFilter; count: number }[] = [
+    ...LIBRARY_FILTERS.map((candidate) => ({ filter: candidate, count: counts[candidate] })),
+    ...(mine ? [{ filter: 'mine' as const, count: mine.count }] : []),
+  ]
   const chips = (
-    <View className="flex-row gap-2">
-      {LIBRARY_FILTERS.map((candidate) => (
+    <View className="flex-row flex-wrap gap-2">
+      {filters.map((candidate) => (
         <Chip
-          key={candidate}
-          label={`${filterLabel(candidate, strings)} · ${counts[candidate]}`}
-          selected={filter === candidate}
-          onPress={() => onFilterChange(candidate)}
+          key={candidate.filter}
+          label={`${filterLabel(candidate.filter, strings)} · ${candidate.count}`}
+          selected={filter === candidate.filter}
+          onPress={() => onFilterChange(candidate.filter)}
           palette={palette}
         />
       ))}
     </View>
   )
+  const own = filter === 'mine' && mine ? mine.own : []
+  const isEmpty = sections.length === 0 && own.length === 0
+  const mineBlock =
+    filter === 'mine' && mine ? (
+      <View className="gap-3">
+        <Row
+          href={mine.writeHref}
+          title={strings.myDuas.write}
+          detail={strings.myDuas.writeDetail}
+        />
+        {own.length > 0 ? (
+          <View className="gap-3">
+            <Text
+              accessibilityRole="header"
+              aria-level={2}
+              className="font-semibold text-xs uppercase tracking-wide"
+              style={{ color: colors.accent }}>
+              {strings.myDuas.yours}
+            </Text>
+            {own.map((entry) => (
+              <Row key={entry.id} href={entry.href} title={entry.title} detail={entry.detail} />
+            ))}
+          </View>
+        ) : null}
+      </View>
+    ) : null
   const search = searchable ? (
     <TextField
       kind="search"
@@ -118,7 +176,9 @@ export function LibraryScreen({
           />
         ) : null}
 
-        {sections.length === 0 ? (
+        {mineBlock}
+
+        {isEmpty ? (
           <EmptyState message={emptyMessage(query, filter, strings)} />
         ) : (
           sections.map((section) => (
@@ -155,7 +215,9 @@ export function LibraryScreen({
         />
       ) : null}
 
-      {sections.length === 0 ? (
+      {mineBlock}
+
+      {isEmpty ? (
         <EmptyState message={emptyMessage(query, filter, strings)} />
       ) : (
         sections.map((section) => (

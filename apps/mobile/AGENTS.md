@@ -304,6 +304,26 @@ today's Hijri date. A `friday` day item carries no "expected" caveat.
 (`matchesWindowDay`, civil weekday, since the window never crosses Maghrib),
 in `reasonFor` and in the window reminders alike.
 
+### My duas: pins and the user's own words
+
+`pinnedItems` (library ids) and `ownDuas` live in `packages/state/src/my-duas/store.ts`
+and sync like any preference (`cloud/keys.ts`); both are capped at 30
+(`packages/core/src/content/my-duas.ts`) so the one preferences document stays light.
+An own dua's id starts with `mine-`, so `/item/<id>` serves both: the item route
+hands a `mine-` id to `src/library/own-dua-route.tsx`, and `/my-dua[?id=]` is the form.
+An own dua carries no ruling, evidence or review line, and none is shown for it.
+
+A moment (`after-fajr` … `night`, never a clock time) turns the dua into an
+in-memory `Item` (`ownDuaItem`): `useSignals` adds it to `items`, to the enabled
+ids and to `perItem` as a yes, so the plan places it on Today and reminds of a
+window moment through the usual budget and quiet hours. After-prayer moments
+send nothing, as no after-prayer item does. The store installs these items into
+core content (`installPersonalItems`) so `itemById` resolves them for Today, the
+counter sheet and a widget tap; `items` itself stays content only, so the
+Library, search and suggestions never list them. The Quick duas widget shows
+pinned, then own duas, and falls back to the undetectable-moment duas when none
+are chosen (`quickDuas` in `src/widgets/model.ts`).
+
 ### `react-native-view-shot` is typed locally
 
 The package ships TypeScript source that does not compile against

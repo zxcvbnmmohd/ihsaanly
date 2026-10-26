@@ -1,4 +1,5 @@
 import { itemById, items, resolveText } from '@ihsaanly/core/content'
+import { itemOpenPath } from '@ihsaanly/core/content/reader'
 import { civilDateIn, civilDateKey } from '@ihsaanly/core/day/boundaries'
 import { dayContextFor } from '@ihsaanly/core/plan/day-context'
 import { prayerName, windowName } from '@ihsaanly/core/plan/jumuah'
@@ -119,8 +120,9 @@ const HORIZON_MS = 24 * 60 * 60_000
 /** The events a phone cannot detect, which is what the quick widget is for. */
 const UNDETECTABLE = ['ascending', 'descending', 'leaving-home', 'travel']
 
+/** A dua or dhikr opens in the focused reader, anything else on its own screen. */
 function itemUrl(id: string): string {
-  return `ihsaanly://item/${id}`
+  return `ihsaanly:/${itemOpenPath(id)}`
 }
 
 function link(id: string, detail: string | null = null): WidgetLink | null {

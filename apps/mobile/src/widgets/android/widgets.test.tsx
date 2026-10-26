@@ -39,8 +39,8 @@ const SHAPES = Object.keys(SIZES) as Shape[]
 
 const EXPECTED: Record<Name, Record<Shape, Drawn>> = {
   RightNowWidget: {
-    square: { texts: ['Morning', 'Morning adhkar'], uris: ['ihsaanly://item/morning-adhkar'] },
-    strip: { texts: ['Morning', 'Morning adhkar'], uris: ['ihsaanly://item/morning-adhkar'] },
+    square: { texts: ['Morning', 'Morning adhkar'], uris: ['ihsaanly://item/read/morning-adhkar'] },
+    strip: { texts: ['Morning', 'Morning adhkar'], uris: ['ihsaanly://item/read/morning-adhkar'] },
     medium: {
       texts: [
         'Morning',
@@ -48,7 +48,7 @@ const EXPECTED: Record<Name, Record<Shape, Drawn>> = {
         'Open for about 3 more hours',
         '12 Rabi’ ath-Thani 1448',
       ],
-      uris: ['ihsaanly://item/morning-adhkar'],
+      uris: ['ihsaanly://item/read/morning-adhkar'],
     },
     large: {
       texts: [
@@ -57,7 +57,7 @@ const EXPECTED: Record<Name, Record<Shape, Drawn>> = {
         'Open for about 3 more hours',
         '12 Rabi’ ath-Thani 1448',
       ],
-      uris: ['ihsaanly://item/morning-adhkar'],
+      uris: ['ihsaanly://item/read/morning-adhkar'],
     },
   },
   NextPrayerWidget: {
@@ -71,7 +71,7 @@ const EXPECTED: Record<Name, Record<Shape, Drawn>> = {
         'Before · Two or four rak’ah before Dhuhr',
         'After · Tasbih after prayer',
       ],
-      uris: ['ihsaanly://item/sunnah-before-dhuhr', 'ihsaanly://item/tasbih-after-prayer'],
+      uris: ['ihsaanly://item/sunnah-before-dhuhr', 'ihsaanly://item/read/tasbih-after-prayer'],
     },
     large: {
       texts: [
@@ -84,7 +84,7 @@ const EXPECTED: Record<Name, Record<Shape, Drawn>> = {
       ],
       uris: [
         'ihsaanly://item/sunnah-before-dhuhr',
-        'ihsaanly://item/tasbih-after-prayer',
+        'ihsaanly://item/read/tasbih-after-prayer',
         'ihsaanly://item/sunnah-after-dhuhr',
       ],
     },
@@ -144,7 +144,7 @@ const EXPECTED: Record<Name, Record<Shape, Drawn>> = {
       ],
       uris: [
         'ihsaanly://item/sunnah-before-dhuhr',
-        'ihsaanly://item/tasbih-after-prayer',
+        'ihsaanly://item/read/tasbih-after-prayer',
         'ihsaanly://item/sunnah-after-dhuhr',
       ],
     },
@@ -158,7 +158,7 @@ const EXPECTED: Record<Name, Record<Shape, Drawn>> = {
       ],
       uris: [
         'ihsaanly://item/sunnah-before-dhuhr',
-        'ihsaanly://item/tasbih-after-prayer',
+        'ihsaanly://item/read/tasbih-after-prayer',
         'ihsaanly://item/sunnah-after-dhuhr',
       ],
     },
@@ -170,10 +170,13 @@ const EXPECTED: Record<Name, Record<Shape, Drawn>> = {
     large: { texts: ['Also today', 'Nothing asked of you right now'], uris: [] },
   },
   QuickDuasWidget: {
-    square: { texts: ['Quick duas', 'Leaving home'], uris: ['ihsaanly://item/dua-leaving-home'] },
+    square: {
+      texts: ['Quick duas', 'Leaving home'],
+      uris: ['ihsaanly://item/read/dua-leaving-home'],
+    },
     strip: {
       texts: ['Quick duas', 'Leaving home', 'Setting out on a journey'],
-      uris: ['ihsaanly://item/dua-leaving-home', 'ihsaanly://item/dua-travel'],
+      uris: ['ihsaanly://item/read/dua-leaving-home', 'ihsaanly://item/read/dua-travel'],
     },
     medium: {
       texts: [
@@ -185,11 +188,11 @@ const EXPECTED: Record<Name, Record<Shape, Drawn>> = {
         'Going down',
       ],
       uris: [
-        'ihsaanly://item/dua-leaving-home',
-        'ihsaanly://item/dua-travel',
+        'ihsaanly://item/read/dua-leaving-home',
+        'ihsaanly://item/read/dua-travel',
         'ihsaanly://item/qasr-while-travelling',
-        'ihsaanly://item/takbir-ascending',
-        'ihsaanly://item/tasbih-descending',
+        'ihsaanly://item/read/takbir-ascending',
+        'ihsaanly://item/read/tasbih-descending',
       ],
     },
     large: {
@@ -202,24 +205,24 @@ const EXPECTED: Record<Name, Record<Shape, Drawn>> = {
         'Going down',
       ],
       uris: [
-        'ihsaanly://item/dua-leaving-home',
-        'ihsaanly://item/dua-travel',
+        'ihsaanly://item/read/dua-leaving-home',
+        'ihsaanly://item/read/dua-travel',
         'ihsaanly://item/qasr-while-travelling',
-        'ihsaanly://item/takbir-ascending',
-        'ihsaanly://item/tasbih-descending',
+        'ihsaanly://item/read/takbir-ascending',
+        'ihsaanly://item/read/tasbih-descending',
       ],
     },
   },
   DuaOfTheDayWidget: {
-    square: { texts: ['بِسْمِ اللَّهِ'], uris: ['ihsaanly://item/dua-entering-home'] },
-    strip: { texts: ['بِسْمِ اللَّهِ'], uris: ['ihsaanly://item/dua-entering-home'] },
+    square: { texts: ['بِسْمِ اللَّهِ'], uris: ['ihsaanly://item/read/dua-entering-home'] },
+    strip: { texts: ['بِسْمِ اللَّهِ'], uris: ['ihsaanly://item/read/dua-entering-home'] },
     medium: {
       texts: ['Coming home', 'بِسْمِ اللَّهِ'],
-      uris: ['ihsaanly://item/dua-entering-home'],
+      uris: ['ihsaanly://item/read/dua-entering-home'],
     },
     large: {
       texts: ['Coming home', 'بِسْمِ اللَّهِ', 'In the name of Allah.'],
-      uris: ['ihsaanly://item/dua-entering-home'],
+      uris: ['ihsaanly://item/read/dua-entering-home'],
     },
   },
   MakeUpWidget: {

@@ -16,7 +16,7 @@ export const unstable_settings = { anchor: 'index' }
 
 /**
  * The reader panel's title: the glossary's, the item's (looked up the same
- * way `item/[id].tsx` does), or the memorised item's — `null` at the group
+ * way `item/[id].tsx` and `item/read/[id].tsx` do), or the memorised item's — `null` at the group
  * index, where the panel does not render at all.
  */
 function detailTitle(parts: string[] | null, strings: Strings): string | null {
@@ -24,7 +24,8 @@ function detailTitle(parts: string[] | null, strings: Strings): string | null {
   if (parts[0] === 'glossary') return strings.glossary.title
   if (parts[0] === 'item' && parts[1] === 'memorise') return strings.memorise.title
   if (parts[0] === 'item' && parts[1]) {
-    const item = itemById(parts[1])
+    // The focused reader at `item/read/<id>` is titled by its item too.
+    const item = itemById((parts[1] === 'read' ? parts[2] : parts[1]) ?? '')
     return item ? (resolveText(item.title) ?? strings.notFound.title) : strings.notFound.title
   }
   return null

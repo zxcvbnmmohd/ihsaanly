@@ -414,6 +414,17 @@ export const so: Strings = {
     play: 'Shid',
     stop: 'Jooji',
     loop: 'Ku celi',
+    speed: 'Xawaare',
+    rate: (rate: number): string => `${rate}×`,
+    repeatOff: 'Maya',
+    repeatTimes: (times: number): string => `×${times}`,
+    repeatAlways: '∞',
+  },
+  reader: {
+    more: 'Wax badan oo ku saabsan',
+    previous: 'Kii hore',
+    next: 'Kii xiga',
+    page: (page: number, total: number): string => `${page} ee ${total}`,
   },
   language: {
     title: 'Luqadda',

@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, mock } from 'bun:test'
+import { afterEach, beforeEach, describe, expect, it, mock, setSystemTime } from 'bun:test'
 import { itemById, resolveText } from '@ihsaanly/core/content'
 import { en } from '@ihsaanly/core/strings/en'
 import { act, renderHook } from '@testing-library/react'
@@ -165,6 +165,48 @@ describe('a repeated dhikr', () => {
     readerProps.length = 0
     open(TASBIH)
     expect(last().counter?.count).toBe(1)
+  })
+})
+
+const { completeItem } = await import('@ihsaanly/state/plan/completions')
+const { setPlace } = await import('@ihsaanly/state/location/store')
+const { getEnabledItems, setEnabledItems } = await import('@ihsaanly/state/plan/enabled-store')
+
+describe('while the plan has it open', () => {
+  const WEDNESDAY_DHUHR = new Date('2026-03-04T12:30:00Z')
+  const OPEN_NOW = 'sunnah-before-dhuhr'
+  const enabled = getEnabledItems()
+
+  beforeEach(() => {
+    setSystemTime(WEDNESDAY_DHUHR)
+    act(() => {
+      setPlace({
+        label: 'London',
+        latitude: 51.5,
+        longitude: -0.12,
+        timeZone: 'Europe/London',
+        source: 'city',
+      })
+      setEnabledItems([OPEN_NOW])
+    })
+  })
+
+  afterEach(() => {
+    act(() => {
+      uncompleteItem(OPEN_NOW, WEDNESDAY_DHUHR, 'Europe/London')
+      setEnabledItems(enabled)
+      setPlace(null)
+    })
+    setSystemTime()
+  })
+
+  it('reads as not done when the completion today belongs to an earlier occasion', () => {
+    // Filed this morning, before the Dhuhr window opened: the plan still has it open.
+    act(() => completeItem(OPEN_NOW, new Date('2026-03-04T06:00:00Z'), 'Europe/London'))
+    open(OPEN_NOW)
+    act(() => last().onDone())
+    expect(haptics).toEqual(['notification:success'])
+    expect(router.calls).toEqual([['back']])
   })
 })
 

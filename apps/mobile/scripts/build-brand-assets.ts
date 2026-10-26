@@ -237,6 +237,10 @@ export async function main(argv: string[]): Promise<void> {
         256,
         { background: null, colour: white, scale: 0.94, outline: null },
       ],
+      // The app icon itself, small, for screens that show it as the system does
+      // (the widget gallery's header, a widget's name label): the same artwork as
+      // `icon.png`, so the icon in the app and on the Home Screen cannot drift.
+      ['../../packages/ui/assets/images/app-icon.png', 180, chosen],
     ]
 
     for (const [path, size, mark] of outputs) {

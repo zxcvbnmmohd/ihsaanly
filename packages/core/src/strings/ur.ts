@@ -729,8 +729,6 @@ export const ur: Strings = {
     everythingDetail: 'ان کے لیے جو سب کچھ چاہتے ہیں۔',
     skipIntro: 'چھوڑیں',
     skipLocation: 'ابھی چھوڑ دیں',
-    reminderQuiet: (from: number, to: number): string =>
-      `${from}:00 سے ${to}:00 کے درمیان کوئی یاد دہانی نہیں۔`,
     back: 'واپس',
     continue: 'جاری رکھیں',
     allowReminders: 'یاد دہانیوں کی اجازت دیں',
@@ -754,7 +752,8 @@ export const ur: Strings = {
     widgetLock: 'لاک اسکرین ویجٹ',
     widgetNotification: 'اطلاع',
     showMeHow: 'طریقہ دکھائیں',
-    later: 'بعد میں',
+    widgetGuideTitle: 'وجیٹ شامل کریں',
+    widgetGuideDone: 'ہو گیا',
     summaryTitle: 'یہ رہا آپ کا Ihsaanly۔',
     summaryWhy:
       'ان میں سے کچھ بھی بعد میں بدلا جا سکتا ہے۔ سیدھا وہاں جانے کے لیے کسی سطر پر ٹیپ کریں۔',
@@ -772,7 +771,6 @@ export const ur: Strings = {
       on: 'آن',
       paused: 'موقوف',
       addNow: 'ابھی شامل کریں',
-      afterStart: 'شروع کرنے پر دکھایا جائے گا',
       custom: 'آپ کا اپنا انتخاب',
     },
     sunnahCount: (n: number): string => count(n, 'سنت', 'سنتیں'),

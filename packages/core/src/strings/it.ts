@@ -748,8 +748,6 @@ export const it: Strings = {
     everythingDetail: 'Per chi vuole tutto.',
     skipIntro: 'Salta',
     skipLocation: 'Salta per ora',
-    reminderQuiet: (from: number, to: number): string =>
-      `Nessun promemoria tra le ${from}:00 e le ${to}:00.`,
     back: 'Indietro',
     continue: 'Continua',
     allowReminders: 'Consenti i promemoria',
@@ -773,7 +771,8 @@ export const it: Strings = {
     widgetLock: 'Widget della schermata di blocco',
     widgetNotification: 'Notifica',
     showMeHow: 'Mostrami come',
-    later: 'Più tardi',
+    widgetGuideTitle: 'Aggiungi un widget',
+    widgetGuideDone: 'Fine',
     summaryTitle: 'Ecco il tuo Ihsaanly.',
     summaryWhy: 'Puoi cambiare tutto più tardi. Tocca una riga per andarci subito.',
     summary: {
@@ -790,7 +789,6 @@ export const it: Strings = {
       on: 'Attivi',
       paused: 'In pausa',
       addNow: 'Aggiungi ora',
-      afterStart: 'All’avvio',
       custom: 'Scelta tua',
     },
     sunnahCount: (n: number): string => `${n} sunnah`,

@@ -29,12 +29,16 @@ import { Button } from '../components/button'
 import { ChoiceRow } from '../components/choice-row'
 import { Dropdown } from '../components/dropdown'
 import { citationFor } from '../components/evidence-panel'
+import { NotificationMock } from '../components/notification-mock'
+import { NumberedSteps } from '../components/numbered-steps'
 import { OnboardingArt } from '../components/onboarding-art'
+import { PageSheet } from '../components/page-sheet'
 import { PlaceMap } from '../components/place-map'
 import { Row } from '../components/row'
 import { Surface } from '../components/surface'
 import { SwitchRow } from '../components/switch-row'
 import { TextField } from '../components/text-field'
+import { WidgetPreview as LiveWidget, type WidgetPreviewModel } from '../components/widget-preview'
 import { serif } from '../fonts'
 import { useUi } from '../provider'
 import type { Gender, OptIn } from '../types'
@@ -89,8 +93,18 @@ export type SetupRowId =
   | 'widgets'
   | 'language'
 
-/** The widget step's answer: open the gallery after setup, or later. */
-export type WidgetsChoice = 'show' | 'later'
+/**
+ * "Show me how" on the widget step: how to add a widget on this platform,
+ * beside a live one, in a sheet over the step.
+ */
+export interface WidgetGuide {
+  /** The sheet is showing. */
+  open: boolean
+  /** Whose steps to give; Android has no Lock Screen widgets. */
+  platform: 'ios' | 'android'
+  /** The widgets' entry now, so the preview says what the real widget says. */
+  model: WidgetPreviewModel
+}
 
 import type { StarterPreset } from '@ihsaanly/core/plan/presets'
 
@@ -122,8 +136,8 @@ export interface OnboardingScreenProps {
   reminderPreview: ReminderPreview | null
   /** The widget step's three surfaces; null where the host has no widgets. */
   widgetPreview: WidgetPreview | null
-  /** The widget step's answer so far, or null where the host has no widgets. */
-  widgets: WidgetsChoice | null
+  /** The widget step's guide, or null where the host has no widgets (the web). */
+  widgetGuide: WidgetGuide | null
   onSelectLanguage: (language: SupportedLanguage) => void
   onSelectTheme: (theme: ThemePreference) => void
   /** Stored at once, so the whole flow recolours as the person chooses. */
@@ -144,8 +158,10 @@ export interface OnboardingScreenProps {
   onBack: () => void
   onSkipIntro: () => void
   onNotNow: () => void
-  /** "Show me how" on the widget step: the gallery opens once setup is done. */
+  /** "Show me how" on the widget step: opens the guide over the step. */
   onShowWidgets: () => void
+  /** The guide's Done (or a swipe down): back to the step. */
+  onCloseWidgets: () => void
   /** Finishes onboarding and opens the setting behind a summary row. */
   onOpenSetting: (row: SetupRowId) => void
   /** Finishes onboarding and opens About, where donating lives. */
@@ -560,73 +576,6 @@ function SourcedCard({ caption, body, palette, quote = false }: SourcedCardProps
   )
 }
 
-interface AppGlyphProps {
-  palette: Palette
-}
-
-/** The app's icon as a notification header draws it: a small accent tile. */
-function AppGlyph({ palette }: AppGlyphProps): ReactElement {
-  return (
-    <View
-      className="items-center justify-center"
-      style={{ width: 20, height: 20, borderRadius: 5, backgroundColor: palette.accent }}>
-      <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: palette.onAccent }} />
-    </View>
-  )
-}
-
-interface NotificationCardProps {
-  preview: NotificationPreview
-  /** The two buttons the notification carries, drawn as the system would. */
-  actions: readonly [string, string]
-  palette: Palette
-}
-
-/**
- * A notification as it arrives, with its buttons drawn under it, so someone
- * can see that it can be ticked off from there. It is a picture: nothing on
- * it can be pressed.
- */
-function NotificationCard({ preview, actions, palette }: NotificationCardProps): ReactElement {
-  const colors = useColors()
-  const { strings } = useUi()
-  return (
-    <View testID="notification-preview" className="gap-1.5">
-      <Surface style={{ borderRadius: 18, padding: 12 }}>
-        <View className="gap-1">
-          <View className="flex-row items-center gap-2">
-            <AppGlyph palette={palette} />
-            <Text className="flex-1 text-xs uppercase" style={{ color: colors.secondaryLabel }}>
-              Ihsaanly
-            </Text>
-            <Text className="text-xs" style={{ color: colors.secondaryLabel }}>
-              {strings.onboarding.previewNow}
-            </Text>
-          </View>
-          <Text numberOfLines={1} className="font-semibold text-sm" style={{ color: colors.label }}>
-            {preview.title}
-          </Text>
-          <Text numberOfLines={2} className="text-sm leading-snug" style={{ color: colors.label }}>
-            {preview.body}
-          </Text>
-        </View>
-      </Surface>
-      <View className="flex-row gap-1.5">
-        {actions.map((action) => (
-          <Surface key={action} style={{ flex: 1, borderRadius: 14, paddingVertical: 8 }}>
-            <Text
-              numberOfLines={1}
-              className="text-center font-medium text-sm"
-              style={{ color: palette.accent }}>
-              {action}
-            </Text>
-          </Surface>
-        ))}
-      </View>
-    </View>
-  )
-}
-
 interface WidgetMocksProps {
   preview: WidgetPreview
   palette: Palette
@@ -688,12 +637,73 @@ function WidgetMocks({ preview, palette }: WidgetMocksProps): ReactElement {
           </View>
         </View>
       </View>
-      <NotificationCard
-        preview={preview.notification}
+      <NotificationMock
+        title={preview.notification.title}
+        body={preview.notification.body}
         actions={[strings.notifications.action.done, strings.notifications.action.later]}
-        palette={palette}
       />
     </View>
+  )
+}
+
+interface WidgetGuideSheetProps {
+  guide: WidgetGuide
+  palette: Palette
+  onClose: () => void
+}
+
+/**
+ * "Show me how": the platform's own steps for adding a widget, the Lock
+ * Screen's too on iOS, under the Right now widget as it stands, drawn live.
+ * Done returns to the step; the gallery in More shows every widget.
+ */
+function WidgetGuideSheet({ guide, palette, onClose }: WidgetGuideSheetProps): ReactElement {
+  const colors = useColors()
+  const { strings } = useUi()
+  const copy = strings.widgetGallery
+  const name = copy.widgets.rightNow.name
+  const sections =
+    guide.platform === 'android'
+      ? [{ title: null, steps: copy.androidSteps }]
+      : [
+          { title: copy.homeScreen, steps: copy.iosHomeSteps },
+          { title: copy.lockScreen, steps: copy.iosLockSteps },
+        ]
+  return (
+    <PageSheet
+      title={strings.onboarding.widgetGuideTitle}
+      closeLabel={strings.onboarding.widgetGuideDone}
+      onClose={onClose}
+      accent={palette.accent}
+      onAccent={palette.onAccent}>
+      <View className="gap-5 pb-2">
+        <View className="items-center gap-2 pt-2">
+          <LiveWidget
+            widget="rightNow"
+            family="small"
+            model={guide.model}
+            label={copy.preview(name)}
+          />
+          <Text className="text-center text-sm" style={{ color: colors.secondaryLabel }}>
+            {copy.updates}
+          </Text>
+        </View>
+        {sections.map((section) => (
+          <View key={section.title ?? 'steps'} className="gap-2">
+            {section.title ? (
+              <Text
+                accessibilityRole="header"
+                aria-level={2}
+                className="font-semibold text-xs uppercase tracking-wide"
+                style={{ color: colors.secondaryLabel }}>
+                {section.title}
+              </Text>
+            ) : null}
+            <NumberedSteps steps={section.steps} />
+          </View>
+        ))}
+      </View>
+    </PageSheet>
   )
 }
 
@@ -740,13 +750,8 @@ function summaryLines(props: OnboardingScreenProps, strings: Strings): SummaryLi
       status: strings.appearance.accents[props.accent],
       done: true,
     },
-    props.widgets
-      ? {
-          id: 'widgets',
-          title: summary.widgets,
-          status: props.widgets === 'show' ? status.afterStart : status.addNow,
-          done: false,
-        }
+    props.widgetGuide
+      ? { id: 'widgets', title: summary.widgets, status: status.addNow, done: false }
       : null,
     {
       id: 'language',
@@ -1050,7 +1055,6 @@ function StepBody(props: StepBodyProps): ReactElement {
       )
 
     case 'reminders': {
-      const quiet = props.notifications.quietHours
       const daily = props.notifications.windows || props.notifications.lookAhead
       const announcements = props.announcements
       const preview = props.reminderPreview
@@ -1064,15 +1068,15 @@ function StepBody(props: StepBodyProps): ReactElement {
           />
           {preview ? (
             <View className="gap-3">
-              <NotificationCard
-                preview={preview.item}
+              <NotificationMock
+                title={preview.item.title}
+                body={preview.item.body}
                 actions={[action.done, action.later]}
-                palette={palette}
               />
-              <NotificationCard
-                preview={preview.prayer}
+              <NotificationMock
+                title={preview.prayer.title}
+                body={preview.prayer.body}
                 actions={[action.prayed, action.notYet]}
-                palette={palette}
               />
             </View>
           ) : null}
@@ -1104,11 +1108,6 @@ function StepBody(props: StepBodyProps): ReactElement {
               knob={palette.knob}
               track={palette.wash[1]}
             />
-          ) : null}
-          {remindersOn(props.notifications) && quiet ? (
-            <Text className="pt-1 text-xs leading-snug" style={{ color: colors.secondaryLabel }}>
-              {strings.onboarding.reminderQuiet(quiet.from, quiet.to)}
-            </Text>
           ) : null}
         </>
       )
@@ -1157,6 +1156,23 @@ function StepBody(props: StepBodyProps): ReactElement {
           {props.widgetPreview ? (
             <WidgetMocks preview={props.widgetPreview} palette={palette} />
           ) : null}
+          {props.widgetGuide ? (
+            <View className="items-center">
+              <Button
+                variant="secondary"
+                title={strings.onboarding.showMeHow}
+                onPress={props.onShowWidgets}
+                color={palette.accent}
+              />
+            </View>
+          ) : null}
+          {props.widgetGuide?.open ? (
+            <WidgetGuideSheet
+              guide={props.widgetGuide}
+              palette={palette}
+              onClose={props.onCloseWidgets}
+            />
+          ) : null}
         </>
       )
 
@@ -1197,7 +1213,6 @@ export function OnboardingScreen(props: OnboardingScreenProps): ReactElement {
   const intro = step === 'welcome' || step === 'how' || step === 'sourced'
   const asking = step === 'reminders' && wantsNotifications(props)
   const needsPlace = step === 'location' && props.place === null
-  const widgets = step === 'widgets'
 
   // Every way past a step sits beside Back, so the footer is the same height
   // on every step and the primary button never moves under the thumb.
@@ -1207,18 +1222,14 @@ export function OnboardingScreen(props: OnboardingScreenProps): ReactElement {
       ? { title: strings.onboarding.notNow, onPress: props.onNotNow }
       : needsPlace
         ? { title: strings.onboarding.skipLocation, onPress: props.onNext }
-        : widgets
-          ? { title: strings.onboarding.later, onPress: props.onNotNow }
-          : null
+        : null
 
   const primary =
     step === 'summary'
       ? strings.onboarding.done
       : asking
         ? strings.onboarding.allowNotifications
-        : widgets
-          ? strings.onboarding.showMeHow
-          : strings.onboarding.continue
+        : strings.onboarding.continue
 
   return (
     <View className="flex-1" style={{ backgroundColor: colors.systemBackground }}>
@@ -1285,7 +1296,7 @@ export function OnboardingScreen(props: OnboardingScreenProps): ReactElement {
         <View className="pt-2">
           <Button
             title={primary}
-            onPress={widgets ? props.onShowWidgets : props.onNext}
+            onPress={props.onNext}
             color={palette.accent}
             onColor={palette.onAccent}
             disabled={needsPlace}

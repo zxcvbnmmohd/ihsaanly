@@ -53,10 +53,11 @@ interface Screen {
   onToggleReminders: (on: boolean) => void
   announcements: { on: boolean; onChange: (on: boolean) => void } | undefined
   stepCount: number
-  widgets: string | null
+  widgetGuide: { open: boolean; platform: string; model: { rightNow: unknown } } | null
   reminderPreview: unknown
   widgetPreview: unknown
   onShowWidgets: () => void
+  onCloseWidgets: () => void
   onOpenSetting: (row: string) => void
 }
 const screen = (): Screen => onboardingScreens.at(-1) as unknown as Screen
@@ -144,14 +145,22 @@ describe('OnboardingFlow steps', () => {
     expect(screen().step).toBe('how')
   })
 
-  it('offers the widget step, previewed from the plan', () => {
+  it('offers the widget step, previewed from the plan, with a guide drawn from the widgets', () => {
     mount()
     expect(screen().stepCount).toBe(10)
-    expect(screen().widgets).toBe('later')
+    expect(screen().widgetGuide).toMatchObject({ open: false, platform: 'ios' })
+    // The widgets' own entry (the sample, with no place yet) feeds the guide's preview.
+    expect(screen().widgetGuide?.model.rightNow).toBeDefined()
     // "Not now" past the reminders step, which would otherwise wait on the OS.
     for (let i = 0; i < 8; i++) act(() => screen().onNotNow())
     expect(screen().step).toBe('widgets')
     expect(screen().widgetPreview).not.toBeNull()
+
+    act(() => screen().onShowWidgets())
+    expect(screen().widgetGuide?.open).toBe(true)
+    act(() => screen().onCloseWidgets())
+    expect(screen().widgetGuide?.open).toBe(false)
+    expect(screen().step).toBe('widgets')
   })
 
   it('previews notifications on the reminders step, since it can ask for them', () => {

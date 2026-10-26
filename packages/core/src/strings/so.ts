@@ -743,8 +743,6 @@ export const so: Strings = {
     everythingDetail: 'Qof raba wax walba.',
     skipIntro: 'Ka bood',
     skipLocation: 'Hadda ka bood',
-    reminderQuiet: (from: number, to: number): string =>
-      `Xusuusiye ma jiro ${from}:00 iyo ${to}:00 dhexdooda.`,
     back: 'Dib',
     continue: 'Sii wad',
     allowReminders: 'Oggolow xusuusiyeyaasha',
@@ -769,7 +767,8 @@ export const so: Strings = {
     widgetLock: 'Widget-ka shaashadda quful',
     widgetNotification: 'Ogeysiis',
     showMeHow: 'I tus sida',
-    later: 'Mar dambe',
+    widgetGuideTitle: 'Ku dar widget',
+    widgetGuideDone: 'Dhammaad',
     summaryTitle: 'Kani waa Ihsaanly-gaaga.',
     summaryWhy: 'Waxaas oo dhan mar dambe waad beddeli kartaa. Taabo saf si aad toos ugu tagto.',
     summary: {
@@ -786,7 +785,6 @@ export const so: Strings = {
       on: 'Shidan',
       paused: 'La hakiyay',
       addNow: 'Hadda ku dar',
-      afterStart: 'Marka aad bilowdo',
       custom: 'Doorashadaada',
     },
     sunnahCount: (n: number): string => count(n, 'Hal sunno', 'sunno'),

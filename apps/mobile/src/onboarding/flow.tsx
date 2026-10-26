@@ -2,7 +2,7 @@
 // and, before advancing off the reminders step, asking the OS once for
 // permission to show notifications, then turning on announcements if they
 // were chosen (the same path as the More → Reminders switch); offering the
-// widgets; and opening the setting a summary row leads to once it is done.
+// widgets, with a guide drawn from their own entry; and opening the setting a summary row leads to once it is done.
 // Everything else — store reads/writes, step state, and the
 // props OnboardingScreen renders — lives in
 // @ihsaanly/state/onboarding/use-onboarding-flow, shared with the web
@@ -11,12 +11,14 @@ import { useOnboardingFlow } from '@ihsaanly/state/onboarding/use-onboarding-flo
 import { getStrings } from '@ihsaanly/state/strings'
 import { OnboardingScreen } from '@ihsaanly/ui/screens/onboarding'
 import type { ReactElement } from 'react'
+import { Platform } from 'react-native'
 import { RestoreAccount } from '@/account/restore'
 import { requestDeviceLocation } from '@/location/device'
 import { ensurePermission } from '@/notifications/schedule'
 import { openAfterOnboarding } from '@/onboarding/destination'
 import { setAnnouncementsEnabled } from '@/push/announcements'
 import { setThemePreference, useThemePreference } from '@/theme/store'
+import { useWidgetPreview } from '@/widgets/use-preview'
 
 interface OnboardingFlowProps {
   /** Showing sign-in for an existing account in place of the steps. */
@@ -33,6 +35,7 @@ export function OnboardingFlow({
   onRestoreEnd,
 }: OnboardingFlowProps): ReactElement {
   const theme = useThemePreference()
+  const widgetModel = useWidgetPreview()
   const props = useOnboardingFlow({
     theme,
     onSelectTheme: setThemePreference,
@@ -40,7 +43,8 @@ export function OnboardingFlow({
     ensureReminderPermission: () => ensurePermission(getStrings()),
     // Already granted by then, so this asks nothing more of the OS.
     enableAnnouncements: () => setAnnouncementsEnabled(true, getStrings()),
-    widgets: true,
+    // "Show me how" draws the Right now widget from the widgets' own entry.
+    widgets: { platform: Platform.OS === 'android' ? 'android' : 'ios', model: widgetModel },
     // Completing swaps the flow for the tabs; the layout then opens this.
     onComplete: (destination) => {
       if (destination) openAfterOnboarding(destination)

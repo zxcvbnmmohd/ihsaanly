@@ -114,7 +114,7 @@ export default function RootLayout(): ReactElement {
     }
   }, [])
 
-  // A summary row (or "Show me how") asked for somewhere other than Today: go
+  // A summary row asked for somewhere other than Today: go
   // there once the tabs exist, which is after the render that mounts them.
   const settled = onboarding.completed && !thing.restoring
   useEffect(() => {

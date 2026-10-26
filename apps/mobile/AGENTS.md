@@ -532,12 +532,28 @@ their buttons; the widget step draws the Right now widget, the next prayer and
 a reminder. Until a place is chosen they use `PREVIEW_PLACE` through
 `useSignals(standIn)`, which never runs the rollover for it.
 
+The notifications are `NotificationMock` (`@ihsaanly/ui/components/notification-mock`),
+drawn as each platform draws an expanded one: on iOS the real app icon
+(`packages/ui/assets/images/app-icon.png`, written by
+`scripts/build-brand-assets.ts` beside the store icon), the title beside "now"
+and the actions as the menu under a held notification, with no app name, which
+iOS leaves off a notification that has a title; on Android "Ihsaanly · now"
+beside the small star in the manifest's notification colour, and text buttons.
+The reminders step names no quiet hours: the night's reminders come through
+them.
+
+The widget step's primary button is Continue. "Show me how" opens a
+`PageSheet` (the page sheet the dropdowns use, the shared Sheet on Android)
+over the step with the platform's steps from `widgetGallery` and the Right now
+widget drawn live by `WidgetPreview` from the widgets' own entry
+(`useWidgetPreview`, which mobile passes as `widgets.model`); Done closes it
+and leaves the step where it was. Nothing is deferred to after setup.
+
 The summary's rows and the free card finish onboarding and hand the host a
-path (`SETTING_PATHS`, `/about`); "Show me how" does the same with `/widgets`
-when Start is pressed. Onboarding replaces the tab bar, so mobile leaves the
-path in `src/onboarding/destination.ts` and the root layout pushes it once the
-tabs mount. `/widgets` is the gallery route from a separate branch; where it
-does not exist the push lands on not-found.
+path (`SETTING_PATHS`, `/about`); the Widgets row leads to `/widgets`, the
+gallery. Onboarding replaces the tab bar, so mobile leaves the path in
+`src/onboarding/destination.ts` and the root layout pushes it once the tabs
+mount.
 
 ### The tab bar is native and branded, never reimplemented
 

@@ -374,8 +374,6 @@ describe('OnboardingScreen, reminders step', () => {
     )
     const daily = screen.getByRole('switch', { name: named(strings.onboarding.dailyReminders) })
     expect(daily).not.toBeChecked()
-    // No quiet hours to mention when nothing is scheduled.
-    expect(screen.queryByText(strings.onboarding.reminderQuiet(22, 7))).toBeNull()
     await user.click(daily)
     expect(onToggleReminders).toHaveBeenCalledWith(true)
   })
@@ -401,29 +399,19 @@ describe('OnboardingScreen, reminders step', () => {
     expect(onChange).toHaveBeenCalledWith(true)
   })
 
-  it('states the quiet hours, and allows or declines', async () => {
+  it('promises no silent hours, and allows or declines', async () => {
     const onNext = mock(() => {})
     const onNotNow = mock(() => {})
     const { user, strings } = renderScreen(
       <OnboardingScreen {...at('reminders')} onNext={onNext} onNotNow={onNotNow} />,
     )
-    expect(screen.getByText(strings.onboarding.reminderQuiet(22, 7))).toBeInTheDocument()
+    // Fajr, Witr and the night's reminders come through quiet hours, so no
+    // hours are named as silent.
+    expect(screen.queryByText(/:00/)).toBeNull()
     await user.click(screen.getByRole('button', { name: strings.onboarding.allowNotifications }))
     await user.click(screen.getByRole('button', { name: strings.onboarding.notNow }))
     expect(onNext).toHaveBeenCalledTimes(1)
     expect(onNotNow).toHaveBeenCalledTimes(1)
-  })
-
-  it('states nothing without quiet hours', () => {
-    const { strings } = renderScreen(
-      <OnboardingScreen
-        {...at('reminders', {
-          notifications: { ...onboardingFixture.notifications, quietHours: null },
-        })}
-      />,
-    )
-    expect(screen.queryByText(strings.onboarding.reminderQuiet(22, 7))).toBeNull()
-    expect(screen.queryByText(/:00/)).toBeNull()
   })
 
   it('asks to allow notifications for announcements alone', async () => {
@@ -608,7 +596,6 @@ describe('OnboardingScreen, reminders step previews', () => {
     expect(
       screen.getByRole('switch', { name: named(strings.onboarding.prayerReminders) }),
     ).toBeChecked()
-    expect(screen.getByText(strings.onboarding.reminderQuiet(22, 7))).toBeInTheDocument()
     expect(
       screen.getByRole('button', { name: strings.onboarding.allowNotifications }),
     ).toBeInTheDocument()
@@ -671,23 +658,78 @@ describe('OnboardingScreen, widgets step', () => {
     expect(screen.queryByText(preview?.home.detail ?? '')).toBeNull()
   })
 
-  it('"Show me how" and "Later"', async () => {
+  it('continues with the primary button and opens the guide from "Show me how"', async () => {
     const onShowWidgets = mock(() => {})
-    const onNotNow = mock(() => {})
     const onNext = mock(() => {})
     const { user, strings } = renderScreen(
+      <OnboardingScreen {...at('widgets')} onShowWidgets={onShowWidgets} onNext={onNext} />,
+    )
+    // Nothing to skip: Continue is the way on, so there is no "Later".
+    expect(screen.queryByRole('button', { name: 'Later' })).toBeNull()
+    await user.click(screen.getByRole('button', { name: strings.onboarding.showMeHow }))
+    expect(onShowWidgets).toHaveBeenCalledTimes(1)
+    expect(onNext).not.toHaveBeenCalled()
+    // The guide is the host's to open; until it does, nothing is over the step.
+    expect(screen.queryByText(strings.onboarding.widgetGuideTitle)).toBeNull()
+    await user.click(screen.getByRole('button', { name: strings.onboarding.continue }))
+    expect(onNext).toHaveBeenCalledTimes(1)
+  })
+
+  it('guides adding a widget on Android beside a live one, and Done returns', async () => {
+    const onCloseWidgets = mock(() => {})
+    const guide = onboardingFixture.widgetGuide
+    if (!guide) throw new Error('the fixture has a guide')
+    const { user, strings } = renderScreen(
       <OnboardingScreen
-        {...at('widgets')}
-        onShowWidgets={onShowWidgets}
-        onNotNow={onNotNow}
-        onNext={onNext}
+        {...at('widgets', { widgetGuide: { ...guide, open: true, platform: 'android' } })}
+        onCloseWidgets={onCloseWidgets}
       />,
     )
-    await user.click(screen.getByRole('button', { name: strings.onboarding.showMeHow }))
-    await user.click(screen.getByRole('button', { name: strings.onboarding.later }))
-    expect(onShowWidgets).toHaveBeenCalledTimes(1)
-    expect(onNotNow).toHaveBeenCalledTimes(1)
-    expect(onNext).not.toHaveBeenCalled()
+    const copy = strings.widgetGallery
+    const sheet = screen.getByRole('dialog', { name: strings.onboarding.widgetGuideTitle })
+    expect(
+      within(sheet).getByLabelText(copy.preview(copy.widgets.rightNow.name)),
+    ).toBeInTheDocument()
+    expect(within(sheet).getAllByRole('listitem')).toHaveLength(copy.androidSteps.length)
+    expect(within(sheet).getByText(copy.androidSteps[0] ?? '')).toBeInTheDocument()
+    expect(within(sheet).queryByText(copy.lockScreen)).toBeNull()
+    await user.click(
+      within(sheet).getByRole('button', { name: strings.onboarding.widgetGuideDone }),
+    )
+    expect(onCloseWidgets).toHaveBeenCalledTimes(1)
+  })
+
+  it('gives the Home Screen and Lock Screen steps in the iOS page sheet', async () => {
+    const onCloseWidgets = mock(() => {})
+    const guide = onboardingFixture.widgetGuide
+    if (!guide) throw new Error('the fixture has a guide')
+    process.env.EXPO_OS = 'ios'
+    try {
+      const { user, strings } = renderScreen(
+        <OnboardingScreen
+          {...at('widgets', { widgetGuide: { ...guide, open: true } })}
+          onCloseWidgets={onCloseWidgets}
+        />,
+      )
+      const copy = strings.widgetGallery
+      expect(
+        screen.getByRole('heading', { name: strings.onboarding.widgetGuideTitle }),
+      ).toBeInTheDocument()
+      expect(screen.getByRole('heading', { name: copy.homeScreen })).toBeInTheDocument()
+      expect(screen.getByRole('heading', { name: copy.lockScreen })).toBeInTheDocument()
+      expect(screen.getAllByRole('listitem')).toHaveLength(
+        copy.iosHomeSteps.length + copy.iosLockSteps.length,
+      )
+      await user.click(screen.getByRole('button', { name: strings.onboarding.widgetGuideDone }))
+      expect(onCloseWidgets).toHaveBeenCalledTimes(1)
+    } finally {
+      process.env.EXPO_OS = 'web'
+    }
+  })
+
+  it('offers no guide where the host has no widgets', () => {
+    const { strings } = renderScreen(<OnboardingScreen {...at('widgets', { widgetGuide: null })} />)
+    expect(screen.queryByRole('button', { name: strings.onboarding.showMeHow })).toBeNull()
   })
 
   it('shows only the headline without a preview', () => {
@@ -751,7 +793,6 @@ describe('OnboardingScreen, summary step', () => {
           trackingPaused: true,
           preset: null,
           enabledCount: 1,
-          widgets: 'show',
         })}
       />,
     )
@@ -774,12 +815,12 @@ describe('OnboardingScreen, summary step', () => {
     )
     expect(row(summary.widgets)).toHaveAttribute(
       'aria-label',
-      `${summary.widgets}, ${status.afterStart}`,
+      `${summary.widgets}, ${status.addNow}`,
     )
   })
 
   it('has no widget row where the host has no widgets', () => {
-    const { strings } = renderScreen(<OnboardingScreen {...at('summary', { widgets: null })} />)
+    const { strings } = renderScreen(<OnboardingScreen {...at('summary', { widgetGuide: null })} />)
     expect(
       screen.queryByRole('button', { name: named(strings.onboarding.summary.widgets) }),
     ).toBeNull()

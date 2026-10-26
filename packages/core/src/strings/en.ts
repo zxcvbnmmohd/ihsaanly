@@ -724,8 +724,6 @@ export const en = {
     everythingDetail: 'For someone who wants it all.',
     skipIntro: 'Skip',
     skipLocation: 'Skip for now',
-    reminderQuiet: (from: number, to: number): string =>
-      `No reminders between ${from}:00 and ${to}:00.`,
     back: 'Back',
     continue: 'Continue',
     allowReminders: 'Allow reminders',
@@ -749,7 +747,8 @@ export const en = {
     widgetLock: 'Lock Screen widget',
     widgetNotification: 'Notification',
     showMeHow: 'Show me how',
-    later: 'Later',
+    widgetGuideTitle: 'Add a widget',
+    widgetGuideDone: 'Done',
     summaryTitle: "That's your Ihsaanly.",
     summaryWhy: 'You can change any of this later. Tap a row to go straight there.',
     summary: {
@@ -766,7 +765,6 @@ export const en = {
       on: 'On',
       paused: 'Paused',
       addNow: 'Add now',
-      afterStart: 'Shown when you start',
       custom: 'Your own choice',
     },
     sunnahCount: (n: number): string => `${n} ${n === 1 ? 'sunnah' : 'sunnahs'}`,

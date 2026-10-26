@@ -717,8 +717,6 @@ export const hi: Strings = {
     everythingDetail: 'उनके लिए जो सब कुछ चाहते हैं।',
     skipIntro: 'छोड़ें',
     skipLocation: 'अभी छोड़ें',
-    reminderQuiet: (from: number, to: number): string =>
-      `${from}:00 से ${to}:00 के बीच कोई रिमाइंडर नहीं।`,
     back: 'पीछे',
     continue: 'आगे बढ़ें',
     allowReminders: 'रिमाइंडर की इजाज़त दें',
@@ -742,7 +740,8 @@ export const hi: Strings = {
     widgetLock: 'लॉक स्क्रीन विजेट',
     widgetNotification: 'सूचना',
     showMeHow: 'कैसे, दिखाइए',
-    later: 'बाद में',
+    widgetGuideTitle: 'विजेट जोड़ें',
+    widgetGuideDone: 'हो गया',
     summaryTitle: 'यह रहा आपका Ihsaanly।',
     summaryWhy: 'इनमें से कुछ भी बाद में बदला जा सकता है। सीधे वहाँ जाने के लिए किसी पंक्ति पर टैप करें।',
     summary: {
@@ -759,7 +758,6 @@ export const hi: Strings = {
       on: 'चालू',
       paused: 'रुका हुआ',
       addNow: 'अभी जोड़ें',
-      afterStart: 'शुरू करने पर दिखेगा',
       custom: 'आपकी अपनी पसंद',
     },
     sunnahCount: (n: number): string => count(n, 'सुन्नत', 'सुन्नतें'),

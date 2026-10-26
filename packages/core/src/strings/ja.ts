@@ -728,8 +728,6 @@ export const ja: Strings = {
     everythingDetail: 'すべてを使いたい人に。',
     skipIntro: 'スキップ',
     skipLocation: '今はスキップ',
-    reminderQuiet: (from: number, to: number): string =>
-      `${from}:00〜${to}:00にはリマインダーは届きません。`,
     back: '戻る',
     continue: '続ける',
     allowReminders: 'リマインダーを許可',
@@ -753,7 +751,8 @@ export const ja: Strings = {
     widgetLock: 'ロック画面ウィジェット',
     widgetNotification: '通知',
     showMeHow: '方法を見る',
-    later: 'あとで',
+    widgetGuideTitle: 'ウィジェットを追加',
+    widgetGuideDone: '完了',
     summaryTitle: 'これがあなたの Ihsaanly です。',
     summaryWhy: 'どれもあとから変更できます。行をタップするとその設定に移動します。',
     summary: {
@@ -770,7 +769,6 @@ export const ja: Strings = {
       on: 'オン',
       paused: '一時停止中',
       addNow: '今すぐ追加',
-      afterStart: '開始時に表示',
       custom: 'カスタム',
     },
     sunnahCount: (n: number): string => `${n} 件のスンナ`,

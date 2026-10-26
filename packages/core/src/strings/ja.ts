@@ -125,6 +125,7 @@ export const ja: Strings = {
       isha: '礼拝はお済みですか？一日を終える前に、もうひとつ。',
       jumuah: '礼拝はお済みですか？週に一度、皆と共に。',
     },
+    askPrayed: (title: string): string => `${title}は礼拝しましたか？`,
     checkIn: 'Ihsaanlyからのひとこと',
     action: {
       done: '完了',
@@ -135,6 +136,7 @@ export const ja: Strings = {
     body: {
       window: '今です。時間帯が終わるまで。',
       windowUntil: (closes: string): string => `${closes}まで開いています。`,
+      until: (closes: string): string => `${closes}まで。`,
       tomorrow: '明日です。',
     },
   },

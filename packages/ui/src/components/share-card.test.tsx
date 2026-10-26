@@ -76,9 +76,16 @@ describe('ShareCard', () => {
 
   it('signs the card in the chosen accent', () => {
     const plum = paletteFor('dark', 'plum')
+    const plumTheme = shareCardTheme('paper-dark', {
+      light: paletteFor('light', 'plum'),
+      dark: plum,
+      current: plum,
+    })
     renderScreen(
       <ShareCard
-        palette={plum}
+        theme={plumTheme}
+        background="solid"
+        aspect="story"
         card={{
           title: 'Plain',
           arabic: null,
@@ -91,6 +98,6 @@ describe('ShareCard', () => {
     )
     // #d79acb, the plum accent in the dark scheme.
     expect(plum.accent).toBe('#d79acb')
-    expect(screen.getByText('Ihsaanly').style.color).toBe('rgba(215, 154, 203, 1.00)')
+    expect(screen.getByText(SHARE_WATERMARK).style.color).toBe(rgba(plum.accent))
   })
 })

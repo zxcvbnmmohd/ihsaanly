@@ -132,6 +132,7 @@ export const so: Strings = {
       isha: 'Ma tukatay? Mid kale ka hor inta maalintu aysan dhammaan.',
       jumuah: 'Ma tukatay? Toddobaadkii mar, si wadajir ah.',
     },
+    askPrayed: (title: string): string => `Ma tukatay ${title}?`,
     checkIn: 'Salaan kooban oo ka yimid Ihsaanly',
     action: {
       done: 'Waa la sameeyey',
@@ -142,6 +143,7 @@ export const so: Strings = {
     body: {
       window: 'Hadda, ilaa waqtigu ka dhammaanayo.',
       windowUntil: (closes: string): string => `Furan ilaa ${closes}.`,
+      until: (closes: string): string => `Ilaa ${closes}.`,
       tomorrow: 'Berri.',
     },
   },

@@ -352,6 +352,13 @@ second ask with under ten minutes of the window left. While tracking is
 paused neither action does anything, and `sync()` withdraws any pending
 `later:prayer:`, the one snooze it touches.
 
+A window reminder's body is the item's `reminder` plus a rough cue ("Open
+until Dhuhr."), never a clock time, and no cue when the sentence already
+names the closing prayer. Witr is the one prayer item that sends a reminder:
+an hour after Isha opens, under the windows switch (`reminderCategoryOf`),
+asking "Have you prayed Witr?" with "Until Fajr.", and not once it is done
+that night.
+
 Taps are answered once, in `src/notifications/respond.ts`, from three doors:
 the warm listener, the cold-start replay (read then cleared) and the Android
 background task. The task is defined in `index.ts`, the app entry, because a

@@ -35,8 +35,8 @@ import { type ComponentRef, type ReactElement, useRef, useState } from 'react'
 // expo-clipboard when the next native build goes out anyway.
 import { Clipboard, Share, View } from 'react-native'
 import { captureRef } from 'react-native-view-shot'
-import { paletteFor } from '@/theme/colors'
 import { OwnDuaRoute } from '@/library/own-dua-route'
+import { paletteFor } from '@/theme/colors'
 import { usePalette } from '@/theme/store'
 
 interface Thing {

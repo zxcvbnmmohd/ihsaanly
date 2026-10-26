@@ -237,6 +237,10 @@ export async function main(argv: string[]): Promise<void> {
         256,
         { background: null, colour: white, scale: 0.94, outline: null },
       ],
+      // The icon itself, small, for the notifications onboarding draws: the shared
+      // screens cannot reach this app's assets, and a picture of a notification
+      // should carry the icon the real one does.
+      ['../../packages/ui/assets/images/app-icon.png', 120, chosen],
     ]
 
     for (const [path, size, mark] of outputs) {

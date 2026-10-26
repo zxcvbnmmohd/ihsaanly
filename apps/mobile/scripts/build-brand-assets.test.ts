@@ -72,23 +72,24 @@ describe('default run', () => {
       'assets/images/notification-icon.png',
       '../../packages/ui/assets/images/star-outline.png',
       '../../packages/ui/assets/images/star-solid.png',
+      '../../packages/ui/assets/images/app-icon.png',
     ])
     expect([...sizes.values()].map((png) => png.width)).toEqual([
-      1024, 1024, 1024, 512, 96, 256, 256,
+      1024, 1024, 1024, 512, 96, 256, 256, 120,
     ])
     for (const png of sizes.values()) {
       expect(png.height).toBe(png.width)
       expect(png.chunks).toEqual(['IHDR', 'IDAT', 'IEND'])
     }
-    expect(logged).toHaveLength(7)
+    expect(logged).toHaveLength(8)
     expect(logged[0]).toMatch(/^✔ assets\/images\/icon\.png — 1024×1024, \d+ bytes$/)
   }, 60_000)
 
-  it('writes the store icon without an alpha channel and everything else with one', async () => {
+  it('writes the icons without an alpha channel and everything else with one', async () => {
     await run()
-    expect(decode(written.get('assets/images/icon.png') as Uint8Array).colourType).toBe(2)
+    const icons = ['assets/images/icon.png', '../../packages/ui/assets/images/app-icon.png']
     for (const [path, bytes] of written) {
-      if (path !== 'assets/images/icon.png') expect(decode(bytes).colourType).toBe(6)
+      expect(decode(bytes).colourType).toBe(icons.includes(path) ? 2 : 6)
     }
   }, 60_000)
 

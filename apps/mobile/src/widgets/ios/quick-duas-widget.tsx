@@ -1,5 +1,6 @@
 import {
   AccessoryWidgetBackground,
+  Button,
   HStack,
   Image,
   Link,
@@ -8,20 +9,25 @@ import {
   ZStack,
 } from '@expo/ui/swift-ui'
 import {
+  buttonBorderShape,
+  buttonStyle,
   containerBackground,
+  controlSize,
   font,
   foregroundStyle,
   frame,
+  labelStyle,
   lineLimit,
   minimumScaleFactor,
   multilineTextAlignment,
+  tint,
   type ViewModifier,
   widgetURL,
 } from '@expo/ui/swift-ui/modifiers'
 import { createWidget, type WidgetEnvironment } from 'expo-widgets'
 import type { ReactElement, ReactNode } from 'react'
 
-import type { WidgetLink, WidgetModel } from '../model'
+import type { WidgetItem, WidgetLink, WidgetModel } from '../model'
 import { withoutNulls } from '../native-props'
 import sample from '../sample.json'
 
@@ -130,7 +136,11 @@ function QuickDuasWidget(props: WidgetModel, environment: WidgetEnvironment): Re
   )
   const heading = (value: string): ReactElement => say(value, 'caption', 'accent', 1, 'semibold')
   // Medium and larger can hold a tap target per row; small is one target.
-  const row = (item: WidgetLink, tappable: boolean): ReactElement => {
+  const row = (
+    item: WidgetLink,
+    tappable: boolean,
+    mark: ReactElement | null = null,
+  ): ReactElement => {
     const content = (
       <VStack
         alignment={align}
@@ -140,12 +150,59 @@ function QuickDuasWidget(props: WidgetModel, environment: WidgetEnvironment): Re
         {item.detail ? say(item.detail, 'caption', 'secondary', 1) : null}
       </VStack>
     )
-    return tappable ? (
-      <Link key={item.url} destination={item.url}>
+    const key = mark ? 'link' : item.url
+    const target = tappable ? (
+      <Link key={key} destination={item.url}>
         {content}
       </Link>
     ) : (
-      <VStack key={item.url}>{content}</VStack>
+      <VStack key={key}>{content}</VStack>
+    )
+    if (!mark) return target
+    return (
+      <HStack key={item.url} spacing={8}>
+        {props.rtl ? mark : target}
+        {props.rtl ? target : mark}
+      </HStack>
+    )
+  }
+  // Taps the app has not taken in yet count from the item's own occasion.
+  const taps = props.taps ?? []
+  const isDone = (item: WidgetItem): boolean =>
+    item.done === true ||
+    taps.some(
+      (tap) => (tap.kind ?? 'done') === 'done' && tap.id === item.id && tap.at >= (item.since ?? 0),
+    )
+  // A mark beside a row: a button with a target of its own (which is how a
+  // press finds its handler), or once pressed a check. An item without
+  // `since` cannot be marked from here, so its row only opens it.
+  const markFor = (item: WidgetItem): ReactElement | null => {
+    if (item.since === undefined) return null
+    if (isDone(item)) {
+      return (
+        <Image
+          key="mark"
+          systemName="checkmark.circle.fill"
+          size={17}
+          modifiers={[paint('accent')]}
+        />
+      )
+    }
+    return (
+      <Button
+        key="mark"
+        target={`done-${item.id}`}
+        label={props.labels.markDone}
+        systemImage="checkmark"
+        onPress={() => ({ taps: [...taps, { kind: 'done', id: item.id, at: Date.now() }] })}
+        modifiers={[
+          buttonStyle(plain ? 'bordered' : 'borderedProminent'),
+          buttonBorderShape('circle'),
+          controlSize('small'),
+          labelStyle('iconOnly'),
+          ...(plain ? [] : [tint(ink.accent)]),
+        ]}
+      />
     )
   }
 
@@ -196,7 +253,7 @@ function QuickDuasWidget(props: WidgetModel, environment: WidgetEnvironment): Re
         <HStack alignment="top" spacing={12}>
           {(props.rtl ? [...columns].reverse() : columns).map((column, index) => (
             <VStack key={`column-${index}`} alignment={align} spacing={6}>
-              {column.map((entry) => row(entry, true))}
+              {column.map((entry) => row(entry, true, markFor(entry)))}
             </VStack>
           ))}
         </HStack>
@@ -208,7 +265,7 @@ function QuickDuasWidget(props: WidgetModel, environment: WidgetEnvironment): Re
   return panel(
     <>
       {heading(props.labels.quickDuas)}
-      {duas.slice(0, limit).map((entry) => row(entry, true))}
+      {duas.slice(0, limit).map((entry) => row(entry, true, markFor(entry)))}
     </>,
     url,
   )

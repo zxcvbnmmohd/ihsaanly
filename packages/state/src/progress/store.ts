@@ -68,6 +68,11 @@ export function configureProgress(next: Partial<ProgressContext>): () => void {
   }
 }
 
+/** The period the item's progress is counted in now. */
+export function currentPeriod(itemId: string): string {
+  return context.periodOf(itemId)
+}
+
 /** The item's progress now; none when nothing is stored or it is from another period. */
 export function getItemProgress(itemId: string): ItemProgress {
   const periodKey = context.periodOf(itemId)

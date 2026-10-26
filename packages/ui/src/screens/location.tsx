@@ -1,8 +1,7 @@
 import type { Place } from '@ihsaanly/core/location/place'
-import { palettes } from '@ihsaanly/tailwind/tokens'
 import type { ReactElement } from 'react'
 import { Text, View } from 'react-native'
-import { useColors } from '../colors'
+import { useColors, usePalette } from '../colors'
 import { PlaceMap } from '../components/place-map'
 import { Row } from '../components/row'
 import { Screen } from '../components/screen'
@@ -39,8 +38,8 @@ export function LocationScreen({
   onSelect,
 }: LocationScreenProps): ReactElement {
   const colors = useColors()
-  const { strings, scheme } = useUi()
-  const palette = palettes[scheme]
+  const { strings } = useUi()
+  const palette = usePalette()
 
   return (
     <Screen palette={palette} className="gap-4 p-4">

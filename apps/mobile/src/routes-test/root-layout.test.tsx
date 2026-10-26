@@ -5,10 +5,11 @@ import type { ReactElement, ReactNode } from 'react'
 import { AppState, I18nManager, Platform } from 'react-native'
 import { type Metrics, SafeAreaProvider } from 'react-native-safe-area-context'
 import { last, mockScreen } from '../../test/more'
-import { nativeTabs } from '../../test/router'
+import { nativeTabs, resetRouter, router } from '../../test/router'
 
 interface OnboardingProps {
   onRestore: (() => void) | undefined
+  onOpenSetting: (row: string) => void
 }
 interface AccountProps {
   restore?: { onBackToSetup: () => void; onContinueSetup: () => void }
@@ -170,6 +171,17 @@ describe('root layout', () => {
       onboarding.length = 0
       act(() => last(accounts).restore?.onBackToSetup())
       expect(last(onboarding)).toBeDefined()
+    })
+
+    it('opens the setting a summary row asked for, once the tabs are up', () => {
+      resetRouter()
+      render(app())
+      expect(router.calls).toEqual([])
+
+      act(() => last(onboarding).onOpenSetting('tracking'))
+
+      expect(tabs.names).toEqual(['(home)', '(library)', '(more)'])
+      expect(router.calls).toEqual([['push', '/tracking']])
     })
 
     it('keeps the gate shut after a restore of an unfinished setup, then continues', () => {

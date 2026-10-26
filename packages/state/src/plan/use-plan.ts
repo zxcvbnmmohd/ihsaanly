@@ -1,4 +1,5 @@
 import { items } from '@ihsaanly/core/content'
+import type { Place } from '@ihsaanly/core/location/place'
 import { dayContextFor } from '@ihsaanly/core/plan/day-context'
 import { attendsJumuah } from '@ihsaanly/core/plan/jumuah'
 import { plan } from '@ihsaanly/core/plan/plan'
@@ -29,8 +30,14 @@ const LOOK_AHEAD_DAYS = 7
  */
 const HORIZON_DAYS = LOOK_AHEAD_DAYS + 1
 
-export function useSignals(): Signals | null {
-  const place = usePlace()
+/**
+ * The signals the planner reads, or null without a place. `standIn` is used in
+ * place of a missing one, for a preview (onboarding) that must show a real day
+ * before a place is chosen; the rollover only ever runs for the stored place.
+ */
+export function useSignals(standIn: Place | null = null): Signals | null {
+  const stored = usePlace()
+  const place = stored ?? standIn
   const preferences = useCalculationPreferences()
   const hijriOffset = useHijriOffset()
   const now = useNow()
@@ -44,8 +51,8 @@ export function useSignals(): Signals | null {
   const completedToday = useCompletedToday(place?.timeZone ?? 'UTC', now)
 
   useEffect(() => {
-    if (place) runRollover(place, preferences, new Date(), userState.trackingPaused)
-  }, [place, preferences, userState.trackingPaused])
+    if (stored) runRollover(stored, preferences, new Date(), userState.trackingPaused)
+  }, [stored, preferences, userState.trackingPaused])
 
   if (!place) return null
 

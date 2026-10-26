@@ -1,8 +1,7 @@
 import type { Strings } from '@ihsaanly/core/strings/en'
-import { palettes } from '@ihsaanly/tailwind/tokens'
 import type { ReactElement } from 'react'
 import { Pressable, Text, View } from 'react-native'
-import { useColors } from '../colors'
+import { useColors, usePalette } from '../colors'
 import { useUi } from '../provider'
 import type { EntryMark } from '../types'
 
@@ -37,8 +36,8 @@ export function circleLabel(title: string, mark: EntryMark, strings: Strings): s
  */
 export function MarkCircle({ title, mark, onPress, testID }: MarkCircleProps): ReactElement {
   const colors = useColors()
-  const { strings, scheme } = useUi()
-  const palette = palettes[scheme]
+  const { strings } = useUi()
+  const palette = usePalette()
 
   return (
     <Pressable

@@ -1,7 +1,9 @@
 // The native-only half of onboarding: asking the device for a location fix
 // and, before advancing off the reminders step, asking the OS once for
 // permission to show notifications, then turning on announcements if they
-// were chosen (the same path as the More → Reminders switch). Everything else — store reads/writes, step state, and the
+// were chosen (the same path as the More → Reminders switch); offering the
+// widgets; and opening the setting a summary row leads to once it is done.
+// Everything else — store reads/writes, step state, and the
 // props OnboardingScreen renders — lives in
 // @ihsaanly/state/onboarding/use-onboarding-flow, shared with the web
 // companion (see apps/companion/src/onboarding/flow.tsx), which has neither.
@@ -12,6 +14,7 @@ import type { ReactElement } from 'react'
 import { RestoreAccount } from '@/account/restore'
 import { requestDeviceLocation } from '@/location/device'
 import { ensurePermission } from '@/notifications/schedule'
+import { openAfterOnboarding } from '@/onboarding/destination'
 import { setAnnouncementsEnabled } from '@/push/announcements'
 import { setThemePreference, useThemePreference } from '@/theme/store'
 
@@ -37,6 +40,11 @@ export function OnboardingFlow({
     ensureReminderPermission: () => ensurePermission(getStrings()),
     // Already granted by then, so this asks nothing more of the OS.
     enableAnnouncements: () => setAnnouncementsEnabled(true, getStrings()),
+    widgets: true,
+    // Completing swaps the flow for the tabs; the layout then opens this.
+    onComplete: (destination) => {
+      if (destination) openAfterOnboarding(destination)
+    },
   })
 
   // The flow stays mounted under the sign-in, so its step is where it was.

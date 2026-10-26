@@ -650,6 +650,21 @@ describe('prayer reminders', () => {
     expect(prayers).not.toContain('sunrise')
   })
 
+  it('carry the moment their window closes, so a second ask can respect it', () => {
+    const result = plan(makeSignals([morningAdhkar], { preferences: on }))
+    const prayers = result.notifications.flatMap((entry) =>
+      entry.kind === 'prayer' ? [entry] : [],
+    )
+    const maghrib = prayers.find((entry) => entry.prayer === 'maghrib')
+    const isha = prayers.find((entry) => entry.prayer === 'isha')
+    const fajr = prayers.find((entry) => entry.prayer === 'fajr')
+    const dhuhr = prayers.find((entry) => entry.prayer === 'dhuhr')
+    // Maghrib closes as Isha opens; Fajr closes at sunrise, well before Dhuhr.
+    expect(maghrib?.endsAt).toEqual(isha?.at as Date)
+    expect(fajr?.endsAt.getTime()).toBeGreaterThan(fajr?.at.getTime() ?? Infinity)
+    expect(fajr?.endsAt.getTime()).toBeLessThan(dhuhr?.at.getTime() ?? 0)
+  })
+
   it('do not spend the daily budget', () => {
     const result = plan(
       makeSignals([morningAdhkar], {

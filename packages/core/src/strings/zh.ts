@@ -115,16 +115,26 @@ export const zh: Strings = {
     testTitle: '测试提醒',
     testBody: '这就是 Ihsaanly 提醒的样子。',
     pausedRemembrance: '记念的时刻到了',
+    prayerArrived: (prayer: string): string => `${prayer}的时间到了`,
+    prayerAsk: {
+      fajr: '礼拜了吗？在一天开始之前，安静的几分钟。',
+      dhuhr: '礼拜了吗？在一天当中停一停。',
+      asr: '礼拜了吗？这是最容易被忽略的一番礼拜。',
+      maghrib: '礼拜了吗？它的时间很短，现在正好。',
+      isha: '礼拜了吗？一天结束之前，再礼一番。',
+      jumuah: '礼拜了吗？每周一次，大家一起。',
+    },
     checkIn: '来自 Ihsaanly 的简短问候',
     action: {
       done: '完成',
       later: '稍后',
+      prayed: '是的，礼过了',
+      notYet: '还没有',
     },
     body: {
       window: '就是现在，直到这个时段结束。',
       windowUntil: (closes: string): string => `开放至 ${closes}。`,
       tomorrow: '明天。',
-      prayerWindow: '礼拜时间已到。这个时段一直开放到下一番礼拜。',
     },
   },
   event: {

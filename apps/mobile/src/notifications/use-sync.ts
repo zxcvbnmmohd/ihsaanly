@@ -39,7 +39,7 @@ export function useNotificationSync(plan: Plan | null): void {
     const run = async (): Promise<void> => {
       const granted = await hasPermission(getStrings())
       if (!granted || cancelled) return
-      await sync(contentsFor(plan))
+      await sync(contentsFor(plan), plan.today.pausedNotice !== null)
     }
 
     void run()

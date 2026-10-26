@@ -5,7 +5,13 @@ import { prayerName } from '@ihsaanly/core/plan/jumuah'
 import type { ScheduledNotification } from '@ihsaanly/core/plan/signals'
 import type { Strings } from '../strings'
 
-import { identifierFor, type NotificationData, REMINDER_CATEGORY } from './payload'
+import {
+  identifierFor,
+  type NotificationCategory,
+  type NotificationData,
+  PRAYER_CATEGORY,
+  REMINDER_CATEGORY,
+} from './payload'
 
 export type ChannelId = 'reminders' | 'prayers'
 
@@ -15,7 +21,7 @@ export interface NotificationContent {
   body: string
   at: Date
   channelId: ChannelId
-  categoryIdentifier?: typeof REMINDER_CATEGORY
+  categoryIdentifier?: NotificationCategory
   data: NotificationData
 }
 
@@ -65,14 +71,24 @@ export function notificationContent(
       }
     }
 
+    // A question with a gentle why, never a verdict: "Not yet" is an answer
+    // too. Only planned while tracking runs, so it never asks during a pause.
     case 'prayer':
       return {
         identifier: identifierFor(entry),
-        title: prayerName(strings, entry.prayer, entry.jumuah),
-        body: strings.notifications.body.prayerWindow,
+        title: strings.notifications.prayerArrived(prayerName(strings, entry.prayer, entry.jumuah)),
+        body: strings.notifications.prayerAsk[
+          entry.prayer === 'dhuhr' && entry.jumuah ? 'jumuah' : entry.prayer
+        ],
         at: entry.at,
         channelId: 'prayers',
-        data: { v: 1, kind: 'prayer', prayer: entry.prayer },
+        categoryIdentifier: PRAYER_CATEGORY,
+        data: {
+          v: 1,
+          kind: 'prayer',
+          prayer: entry.prayer,
+          window: { startsAt: entry.at.getTime(), endsAt: entry.endsAt.getTime() },
+        },
       }
 
     // Both can be read on a locked screen by anyone holding the phone, so

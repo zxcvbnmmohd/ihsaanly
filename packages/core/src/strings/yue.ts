@@ -114,16 +114,26 @@ export const yue: Strings = {
     testTitle: '測試提醒',
     testBody: 'Ihsaanly 嘅提醒就係咁嘅樣。',
     pausedRemembrance: '記念嘅時間到',
+    prayerArrived: (prayer: string): string => `${prayer}嘅時間到咗`,
+    prayerAsk: {
+      fajr: '禮咗拜未？一日開始之前，靜靜哋幾分鐘。',
+      dhuhr: '禮咗拜未？喺一日中間停一停。',
+      asr: '禮咗拜未？呢個係最容易唔記得嘅一個。',
+      maghrib: '禮咗拜未？佢嘅時間好短，而家正好。',
+      isha: '禮咗拜未？一日完之前，再多一個。',
+      jumuah: '禮咗拜未？一個禮拜一次，大家一齊。',
+    },
     checkIn: 'Ihsaanly 嘅簡短問候',
     action: {
       done: '完成',
       later: '遲啲',
+      prayed: '係，禮咗',
+      notYet: '未呀',
     },
     body: {
       window: '而家開始，直到呢個時段完結。',
       windowUntil: (closes: string): string => `開放到${closes}。`,
       tomorrow: '聽日。',
-      prayerWindow: '時間已經到咗。呢個時段會一直開放到下一個禮拜。',
     },
   },
   event: {

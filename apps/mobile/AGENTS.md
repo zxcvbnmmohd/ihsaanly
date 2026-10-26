@@ -332,7 +332,10 @@ until Dhuhr."), never a clock time, and no cue when the sentence already
 names the closing prayer. Witr is the one prayer item that sends a reminder:
 an hour after Isha opens, under the windows switch (`reminderCategoryOf`),
 asking "Have you prayed Witr?" with "Until Fajr.", and not once it is done
-that night.
+that night. It is answered like a prayer reminder, under the `prayer`
+category, but stays an item (`asks: true` in its data): "Yes, I've prayed"
+files `completeItem`, and "Not yet" asks once more 30 minutes on as
+`later:witr@…` under `prayer-again`, never with under ten minutes before Fajr.
 
 Taps are answered once, in `src/notifications/respond.ts`, from three doors:
 the warm listener, the cold-start replay (read then cleared) and the Android

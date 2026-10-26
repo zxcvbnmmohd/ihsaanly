@@ -73,6 +73,30 @@ async function askAgain(
   })
 }
 
+type ItemData = Extract<NotificationData, { kind: 'item' }>
+
+/**
+ * "Not yet" on an item that asks (Witr) is answered as a prayer's is: one
+ * more ask a little later, with only "Yes, I've prayed", and none with the
+ * last minutes of the night left. Its "Yes" is the item's own done.
+ */
+async function askItemAgain(
+  data: ItemData,
+  content: Response['notification']['request']['content'],
+): Promise<void> {
+  const at = new Date(Date.now() + LATER_DELAY_MS)
+  if (at.getTime() > data.endsAt - PRAYER_AGAIN_MIN_LEFT_MS) return
+  await scheduleLater({
+    identifier: `later:${data.itemId}@${at.getTime()}`,
+    title: content.title ?? data.itemId,
+    body: content.body ?? '',
+    at,
+    channelId: 'reminders',
+    categoryIdentifier: PRAYER_AGAIN_CATEGORY,
+    data,
+  })
+}
+
 /**
  * Every way a response reaches JavaScript funnels through here: the warm
  * listener, the cold-start replay and the Android background task. Each
@@ -99,6 +123,7 @@ export async function handleResponse(response: Response, navigate = true): Promi
     case 'later': {
       if (data.kind === 'prayer') return askAgain(data, content)
       if (data.kind !== 'item') return
+      if (data.asks) return askItemAgain(data, content)
       const at = new Date(Date.now() + LATER_DELAY_MS)
       // A snooze past the window's end would remind of something already gone.
       if (at.getTime() >= data.endsAt) return

@@ -76,13 +76,16 @@ export function notificationContent(
               : strings.notifications.body.window)),
         at: entry.at,
         channelId: 'reminders',
-        categoryIdentifier: REMINDER_CATEGORY,
+        // A question takes the prayer reminder's answers, "Yes, I've prayed"
+        // and "Not yet", rather than "Done" and "Later".
+        categoryIdentifier: asks ? PRAYER_CATEGORY : REMINDER_CATEGORY,
         data: {
           v: 1,
           kind: 'item',
           itemId: item.id,
           endsAt: entry.window?.endsAt.getTime() ?? entry.at.getTime(),
           reason,
+          ...(asks ? { asks: true as const } : {}),
         },
       }
     }

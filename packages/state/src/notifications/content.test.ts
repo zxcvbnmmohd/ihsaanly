@@ -125,13 +125,15 @@ describe('notification words', () => {
     const content = notificationContent(entry, [witr], en)
     expect(content?.title).toBe('Have you prayed Witr?')
     expect(content?.body).toBe('The last prayer of the night. Until Fajr.')
-    expect(content?.categoryIdentifier).toBe('reminder')
+    // Answered like a prayer: "Yes, I've prayed" or "Not yet".
+    expect(content?.categoryIdentifier).toBe('prayer')
     expect(content?.data).toEqual({
       v: 1,
       kind: 'item',
       itemId: 'witr',
       endsAt: endsAt.getTime(),
       reason: 'current-window',
+      asks: true,
     })
     // Without the item's sentence in the reader's language, the cue alone.
     expect(notificationContent(entry, [{ ...witr, reminder: null }], en)?.body).toBe('Until Fajr.')

@@ -9,7 +9,7 @@ import { prayerTimesAcross } from '../prayer/times'
 import { buildWindows, type PrayerWindow, type WindowName } from '../prayer/windows'
 
 import { DEFAULT_NOTIFICATION_PREFERENCES } from './notification-preferences'
-import { plan } from './plan'
+import { plan, reminderCategoryOf } from './plan'
 import type { DayContext, ScheduledNotification, Signals } from './signals'
 
 const toronto: Place = {
@@ -648,6 +648,78 @@ describe('prayer reminders', () => {
       }),
     )
     expect(itemIds(result.notifications).length).toBeGreaterThan(0)
+  })
+})
+
+describe('the night Witr reminder', () => {
+  const witr = makeItem(
+    'witr',
+    { kind: 'prayer', prayer: 'isha', when: 'after' },
+    { isPrayer: true },
+  )
+  const witrs = (signals: Signals): ScheduledNotification[] =>
+    plan(signals).notifications.filter((entry) => entry.kind === 'item' && entry.itemId === 'witr')
+
+  it('asks an hour after Isha opens, until Fajr', () => {
+    const [first] = witrs(makeSignals([witr]))
+    const isha = windowOf('isha')
+    expect(first).toEqual({
+      kind: 'item',
+      itemId: 'witr',
+      at: new Date(isha.startsAt.getTime() + 60 * 60_000),
+      reason: 'after-prayer',
+      window: { closes: 'fajr', endsAt: isha.endsAt, jumuah: false },
+    })
+  })
+
+  it('does not ask tonight once Witr is marked done, but still asks tomorrow', () => {
+    const isha = windowOf('isha')
+    const done = new Date(isha.startsAt.getTime() + 5 * 60_000)
+    const entries = witrs(makeSignals([witr], { now: done, completedToday: { witr: done } }))
+    expect(entries[0]?.at.getTime()).toBeGreaterThan(isha.endsAt.getTime())
+  })
+
+  it('still asks tonight after a mark from before Isha', () => {
+    const entries = witrs(makeSignals([witr], { completedToday: { witr: justNow } }))
+    expect(entries[0]?.at.getTime()).toBeLessThan(windowOf('isha').endsAt.getTime())
+  })
+
+  it('answers to the windows switch and the per-item override', () => {
+    const notifications = { ...DEFAULT_NOTIFICATION_PREFERENCES, quietHours: null }
+    const off = (perItem: Record<string, boolean>, windows: boolean): Signals =>
+      makeSignals([witr], {
+        preferences: {
+          enabledItemIds: ['witr'],
+          knownItemIds: [],
+          notifications: { ...notifications, windows, perItem },
+        },
+      })
+    expect(witrs(off({}, false))).toEqual([])
+    expect(witrs(off({ witr: false }, true))).toEqual([])
+    expect(witrs(off({ witr: true }, false)).length).toBeGreaterThan(0)
+  })
+
+  it('keeps to quiet hours, and never asks while tracking is paused', () => {
+    const quiet = makeSignals([witr], {
+      preferences: {
+        enabledItemIds: ['witr'],
+        knownItemIds: [],
+        notifications: { ...DEFAULT_NOTIFICATION_PREFERENCES, quietHours: { from: 0, to: 23 } },
+      },
+    })
+    // Isha in Toronto in September is well before 23:00, so the hour after it is quiet.
+    expect(witrs(quiet)).toEqual([])
+    const paused = makeSignals([witr], {
+      userState: { travelling: false, trackingPaused: true, jumuah: 'auto' },
+    })
+    expect(witrs(paused)).toEqual([])
+  })
+
+  it('is the one prayer item whose reminders have a switch', () => {
+    expect(reminderCategoryOf(witr)).toBe('windows')
+    expect(reminderCategoryOf(makeItem('sunnah', witr.trigger))).toBeNull()
+    expect(reminderCategoryOf(morningAdhkar)).toBe('windows')
+    expect(reminderCategoryOf(makeItem('fast', { kind: 'day', day: 'monday' }))).toBe('lookAhead')
   })
 })
 

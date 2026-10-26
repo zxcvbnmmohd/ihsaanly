@@ -123,6 +123,7 @@ export const yue: Strings = {
       isha: '禮咗拜未？一日完之前，再多一個。',
       jumuah: '禮咗拜未？一個禮拜一次，大家一齊。',
     },
+    askPrayed: (title: string): string => `禮咗${title}未？`,
     checkIn: 'Ihsaanly 嘅簡短問候',
     action: {
       done: '完成',
@@ -133,6 +134,7 @@ export const yue: Strings = {
     body: {
       window: '而家開始，直到呢個時段完結。',
       windowUntil: (closes: string): string => `開放到${closes}。`,
+      until: (closes: string): string => `到${closes}為止。`,
       tomorrow: '聽日。',
     },
   },

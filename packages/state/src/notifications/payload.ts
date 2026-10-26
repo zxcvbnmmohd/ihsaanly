@@ -40,6 +40,12 @@ export type NotificationData =
       itemId: string
       endsAt: number
       reason: 'current-window' | 'upcoming'
+      /**
+       * Set on a reminder that asks whether an item was prayed (Witr): it has
+       * the prayer reminder's buttons, and its "Not yet" asks once more like
+       * a prayer's does. Absent from every other item reminder.
+       */
+      asks?: true
     }
   | {
       v: 1
@@ -78,12 +84,23 @@ export function parseNotificationData(value: unknown): NotificationData | null {
   if (!isRecord(value) || value.v !== 1) return null
 
   switch (value.kind) {
-    case 'item':
-      return typeof value.itemId === 'string' &&
-        typeof value.endsAt === 'number' &&
-        (value.reason === 'current-window' || value.reason === 'upcoming')
-        ? { v: 1, kind: 'item', itemId: value.itemId, endsAt: value.endsAt, reason: value.reason }
-        : null
+    case 'item': {
+      if (
+        typeof value.itemId !== 'string' ||
+        typeof value.endsAt !== 'number' ||
+        (value.reason !== 'current-window' && value.reason !== 'upcoming')
+      ) {
+        return null
+      }
+      const item = {
+        v: 1,
+        kind: 'item',
+        itemId: value.itemId,
+        endsAt: value.endsAt,
+        reason: value.reason,
+      } as const
+      return value.asks === true ? { ...item, asks: true } : item
+    }
     case 'prayer': {
       if (!PRAYERS.includes(value.prayer as Prayer)) return null
       const prayer = value.prayer as Prayer

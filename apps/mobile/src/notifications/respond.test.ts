@@ -259,3 +259,46 @@ describe('a prayer reminder', () => {
     expect(fake.scheduled).toEqual([])
   })
 })
+
+describe('Witr, an item that asks', () => {
+  const asked = { title: 'Have you prayed Witr?', body: 'Until Fajr.' }
+  /** The night's reminder, with Fajr `left` from now. */
+  const witr = (left = 4 * 3_600_000): Record<string, unknown> => ({
+    v: 1,
+    kind: 'item',
+    itemId: 'witr',
+    endsAt: NOW.getTime() + left,
+    reason: 'current-window',
+    asks: true,
+  })
+  const witrDone = (): number =>
+    allActions().filter((action) => JSON.stringify(action).includes('"witr"')).length
+
+  it('marks Witr done on "Yes, I\'ve prayed"', async () => {
+    const before = witrDone()
+    await handleResponse(response('done', witr(), asked))
+    expect(witrDone()).toBe(before + 1)
+  })
+
+  it('asks once more on "Not yet", half an hour later, with only the first button', async () => {
+    await handleResponse(response('later', witr(), asked))
+    expect(fake.scheduled).toHaveLength(1)
+    const [request] = fake.scheduled
+    expect(request?.identifier).toBe(`later:witr@${NOW.getTime() + LATER_DELAY_MS}`)
+    expect(request?.content).toMatchObject({ ...asked, categoryIdentifier: 'prayer-again' })
+    expect(request?.trigger).toMatchObject({ channelId: 'reminders' })
+  })
+
+  it('keeps the item id and empty words when the notification had none', async () => {
+    await handleResponse(response('later', witr(), { title: null as never, body: null as never }))
+    expect(fake.scheduled[0]?.content).toMatchObject({ title: 'witr', body: '' })
+  })
+
+  it('does not ask again in the last minutes before Fajr', async () => {
+    const tooLate = LATER_DELAY_MS + PRAYER_AGAIN_MIN_LEFT_MS - 1
+    await handleResponse(response('later', witr(tooLate), asked))
+    expect(fake.scheduled).toEqual([])
+    await handleResponse(response('later', witr(tooLate + 1), asked))
+    expect(fake.scheduled).toHaveLength(1)
+  })
+})

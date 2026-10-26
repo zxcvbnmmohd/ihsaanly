@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it } from 'bun:test'
 import type { Place } from '@ihsaanly/core/location/place'
 import { setPlace } from '@ihsaanly/state/location/store'
+import { resumeTracking } from '@ihsaanly/state/plan/user-state-store'
 import { setAccent } from '@ihsaanly/state/theme/accent-store'
 import { act, renderHook } from '@testing-library/react'
 
@@ -32,7 +33,9 @@ describe('useWidgetPreview', () => {
   })
 
   it("is the widgets' current entry once there is a place, in the city and accent chosen", () => {
+    // Prayers are listed only while tracking runs; another file may leave it paused.
     act(() => {
+      resumeTracking()
       setPlace(london)
       setAccent('sage')
     })

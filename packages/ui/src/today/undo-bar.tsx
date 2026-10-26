@@ -1,8 +1,9 @@
-import { brand, palettes } from '@ihsaanly/tailwind/tokens'
+import { brand, paletteFor } from '@ihsaanly/tailwind/tokens'
 import type { ReactElement } from 'react'
 import { useEffect, useRef } from 'react'
 import { Pressable, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { usePalette } from '../colors'
 import { useUi } from '../provider'
 import { type TodayUndo, UNDO_MS } from '../types'
 
@@ -18,10 +19,10 @@ export interface UndoBarProps {
  * new message politely, without taking focus from where the finger is.
  */
 export function UndoBar({ undo, onDismiss }: UndoBarProps): ReactElement {
-  const { strings, scheme } = useUi()
-  const palette = palettes[scheme]
+  const { strings, scheme, accent } = useUi()
+  const palette = usePalette()
   // The bar is the scheme inverted, so its Undo takes the other scheme's accent.
-  const inverted = palettes[scheme === 'light' ? 'dark' : 'light']
+  const inverted = paletteFor(scheme === 'light' ? 'dark' : 'light', accent)
   const insets = useSafeAreaInsets()
   // The timer runs per mark (`undo.id`), not per render: a host that builds a
   // new handler each render must not keep the bar up forever.

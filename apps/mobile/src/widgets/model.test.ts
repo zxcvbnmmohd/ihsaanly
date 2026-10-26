@@ -11,7 +11,14 @@ import { prayerTimesAcross } from '@ihsaanly/core/prayer/times'
 import { buildWindows } from '@ihsaanly/core/prayer/windows'
 import { en } from '@ihsaanly/core/strings/en'
 
-import { distanceLabel, remainingLabel, type WidgetInput, widgetTimeline } from './model'
+import {
+  currentWidgetModel,
+  distanceLabel,
+  remainingLabel,
+  type WidgetInput,
+  widgetInk,
+  widgetTimeline,
+} from './model'
 
 const london: Place = {
   label: 'London',
@@ -98,6 +105,25 @@ describe('the widget timeline', () => {
 
   it('gives every entry a dua of the day with its Arabic', () => {
     expect(first?.duaOfTheDay?.arabic.length).toBeGreaterThan(0)
+  })
+})
+
+describe('the widget colours', () => {
+  it('are terracotta when no accent is given', () => {
+    const [entry] = widgetTimeline(input())
+    expect(entry?.ink.light).toMatchObject({ accent: '#a94a32', onAccent: '#fff6f0' })
+    expect(entry?.ink.dark).toMatchObject({ accent: '#e28c6f', onAccent: '#1d120d' })
+  })
+
+  it('take the chosen accent in both schemes, on every entry, over the same wash', () => {
+    const plain = widgetTimeline(input())
+    const timeline = widgetTimeline({ ...input(), accent: 'teal' })
+    for (const entry of timeline) {
+      expect(entry.ink.light).toMatchObject({ accent: '#1f6b6b', onAccent: '#f0fbfa' })
+      expect(entry.ink.dark).toMatchObject({ accent: '#6fc2bd', onAccent: '#0c1918' })
+    }
+    expect(timeline[0]?.ink.light.background).toBe(plain[0]?.ink.light.background ?? '')
+    expect(timeline[0]?.ink.dark.label).toBe(plain[0]?.ink.dark.label ?? '')
   })
 })
 
@@ -234,10 +260,158 @@ describe('what else is open, and the done button', () => {
     expect(first?.moreNow).toBeNull()
   })
 
+  it('offers the undetectable moments’ duas until the user chooses their own', () => {
+    const [base] = widgetTimeline(input())
+    expect(base?.quickDuas.length).toBeGreaterThan(0)
+    expect(base?.quickDuas.every((entry) => entry.url.startsWith('ihsaanly://item/'))).toBe(true)
+    const empty = widgetTimeline({ ...input(), myDuas: { pinned: [], own: [] } })[0]
+    expect(empty?.quickDuas).toEqual(base?.quickDuas ?? [])
+  })
+
+  it('lists pinned items, then own duas, when the user has chosen some', () => {
+    const chosen = widgetTimeline({
+      ...input(),
+      myDuas: {
+        pinned: ['evening-adhkar', 'no-such-item'],
+        own: [{ id: 'mine-parents', title: 'For my parents' }],
+      },
+    })
+    const entry = chosen[0]
+    expect(entry?.quickDuas.map((link) => link.url)).toEqual([
+      'ihsaanly://item/evening-adhkar',
+      'ihsaanly://item/mine-parents',
+    ])
+    expect(entry?.quickDuas[1]).toEqual({
+      id: 'mine-parents',
+      title: 'For my parents',
+      detail: null,
+      url: 'ihsaanly://item/mine-parents',
+    })
+    expect(chosen.at(-1)?.quickDuas.map((link) => link.url)).toEqual(
+      entry?.quickDuas.map((link) => link.url),
+    )
+  })
+
   it('starts every entry with no taps and labels the button', () => {
     const timeline = widgetTimeline(input())
     expect(timeline.every((entry) => entry.taps.length === 0)).toBe(true)
     expect(timeline[0]?.labels.markDone).toBe('Mark done')
     expect(timeline[0]?.labels.markedDone).toBe('Marked done')
+  })
+})
+
+describe('what a widget can mark', () => {
+  const windows = buildWindows(prayerTimesAcross(london, now, DEFAULT_CALCULATION_PREFERENCES, 3))
+  const startOf = (name: string, from: Date): number =>
+    windows.find((window) => window.name === name && window.endsAt > from)?.startsAt.getTime() ?? 0
+  // 13:20 in London, Dhuhr marked ten minutes ago and its sunnah prayed: the tasbih leads.
+  const afterDhuhr = new Date('2026-09-23T12:20:00Z')
+  const dhuhrMarked = { fajr: now, dhuhr: new Date('2026-09-23T12:10:00Z') }
+  const sunnahDone = { 'sunnah-after-dhuhr': new Date('2026-09-23T12:15:00Z') }
+
+  it('marks the headline for the occasion now open, and labels every mark', () => {
+    const [first] = widgetTimeline(input())
+    expect(first?.rightNow?.since).toBe(first?.openedAt ?? -1)
+    expect(first?.rightNow?.done).toBe(false)
+    expect(first?.rightNow?.repeat).toBeUndefined()
+    expect(first?.labels).toMatchObject({
+      saidIt: 'Said it',
+      marked: 'Marked',
+      addOne: '+1',
+      countOf: '{count} of {total}',
+    })
+  })
+
+  it('counts a counted headline on top of the app’s count, in its own occasion only', () => {
+    const timeline = widgetTimeline({
+      ...input({ prayedToday: dhuhrMarked, completedToday: sunnahDone }, afterDhuhr),
+      counts: { 'tasbih-after-prayer': 40 },
+    })
+    const [first] = timeline
+    expect(first?.rightNow?.id).toBe('tasbih-after-prayer')
+    expect(first?.rightNow?.repeat).toBe(33)
+    // Never past the repeat, whatever was stored.
+    expect(first?.rightNow?.count).toBe(33)
+    const asr = startOf('asr', afterDhuhr)
+    const later = timeline.filter(
+      (entry) => entry.at >= asr && entry.rightNow?.id === 'tasbih-after-prayer',
+    )
+    expect(later.every((entry) => entry.rightNow?.count === 0)).toBe(true)
+    const none = widgetTimeline(
+      input({ prayedToday: dhuhrMarked, completedToday: sunnahDone }, afterDhuhr),
+    )[0]
+    expect(none?.rightNow?.count).toBe(0)
+  })
+
+  it('lets a named prayer’s “before” be marked ahead, from the prayer before it', () => {
+    const [first] = widgetTimeline(input())
+    const [before] = first?.next?.before ?? []
+    expect(before?.id).toBe('sunnah-before-dhuhr')
+    expect(before?.since).toBe(startOf('fajr', new Date('2026-09-23T04:00:00Z')))
+    expect(before?.done).toBe(false)
+    const done = widgetTimeline(input({ completedToday: { 'sunnah-before-dhuhr': now } }))[0]
+    expect(done?.next?.before[0]?.done).toBe(true)
+  })
+
+  it('leaves “before any prayer” as a link, since it is owed again at every prayer', () => {
+    const base = input()
+    const [first] = widgetTimeline({
+      ...base,
+      signals: {
+        ...base.signals,
+        preferences: {
+          ...base.signals.preferences,
+          enabledItemIds: [...base.signals.preferences.enabledItemIds, 'siwak-before-prayer'],
+        },
+      },
+    })
+    const siwak = first?.next?.before.find((entry) => entry.id === 'siwak-before-prayer')
+    expect(siwak).toBeDefined()
+    expect(siwak?.since).toBeUndefined()
+  })
+
+  it('offers a prayer once its window has opened that day, while it is unmarked', () => {
+    const [morning] = widgetTimeline(input())
+    expect(morning?.prayers.map((prayer) => prayer.id)).toEqual([
+      'fajr',
+      'dhuhr',
+      'asr',
+      'maghrib',
+      'isha',
+    ])
+    // Fajr is marked and Dhuhr has not come in: nothing to mark yet.
+    expect(morning?.prayers.every((prayer) => prayer.since === undefined)).toBe(true)
+    const [noon] = widgetTimeline(input({}, afterDhuhr))
+    const dhuhr = noon?.prayers.find((prayer) => prayer.id === 'dhuhr')
+    expect(dhuhr?.since).toBe(startOf('dhuhr', afterDhuhr))
+    expect(noon?.prayers.find((prayer) => prayer.id === 'asr')?.since).toBeUndefined()
+  })
+
+  it('marks quick duas for the window, and today’s dua for the day', () => {
+    const [first] = widgetTimeline(input())
+    expect(first?.quickDuas.length).toBeGreaterThan(0)
+    expect(first?.quickDuas.every((dua) => dua.since === first.openedAt)).toBe(true)
+    const dua = first?.duaOfTheDay
+    // Midnight in London (BST) on the 23rd.
+    expect(dua?.since).toBe(new Date('2026-09-22T23:00:00Z').getTime())
+    expect(dua?.done).toBe(false)
+    const said = widgetTimeline(
+      input({ completedToday: { [dua?.id ?? '']: now, 'dua-leaving-home': now } }),
+    )[0]
+    expect(said?.duaOfTheDay?.done).toBe(true)
+    expect(said?.quickDuas.find((entry) => entry.id === 'dua-leaving-home')?.done).toBe(true)
+  })
+})
+
+describe('the current entry', () => {
+  it('is the first entry of the timeline, for the widget gallery', () => {
+    const at = input({ completedToday: { 'morning-adhkar': now } })
+    expect(currentWidgetModel(at)).toEqual(widgetTimeline(at)[0] as never)
+  })
+
+  it('carries both schemes in the chosen accent', () => {
+    const entry = currentWidgetModel({ ...input(), accent: 'denim' })
+    expect(entry.ink).toEqual(widgetInk('denim'))
+    expect(entry.ink.light.accent).not.toBe(widgetInk(undefined).light.accent)
   })
 })

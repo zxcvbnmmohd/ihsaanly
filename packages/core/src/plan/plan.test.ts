@@ -597,6 +597,30 @@ describe('marking an item done', () => {
     expect(result.today.rightNow?.itemId).toBe('after-any')
   })
 
+  it('counts a named prayer\'s "before" done ahead, from when that prayer was up next', () => {
+    const beforeMaghrib = makeItem('before-maghrib', {
+      kind: 'prayer',
+      prayer: 'maghrib',
+      when: 'before',
+    })
+    const atMaghrib = startOf('maghrib')
+    const duringAsr = (at: Date): Signals =>
+      makeSignals([beforeMaghrib], { now: atMaghrib, completedToday: { 'before-maghrib': at } })
+    expect(plan(duringAsr(now)).today.rightNow).toBeNull()
+    expect(plan(duringAsr(now)).today.done.map((entry) => entry.itemId)).toEqual(['before-maghrib'])
+    // Before Asr's window opened, Maghrib was not yet up next.
+    const beforeAsr = new Date(windowOf('asr').startsAt.getTime() - 60_000)
+    expect(plan(duringAsr(beforeAsr)).today.rightNow?.itemId).toBe('before-maghrib')
+  })
+
+  it('still owes "before any prayer" again at the next prayer', () => {
+    const siwak = makeItem('siwak', { kind: 'prayer', prayer: 'any', when: 'before' })
+    const result = plan(
+      makeSignals([siwak], { now: startOf('maghrib'), completedToday: { siwak: now } }),
+    )
+    expect(result.today.rightNow?.itemId).toBe('siwak')
+  })
+
   it('leaves what the next prayer asks untouched', () => {
     const result = plan(makeSignals([dhikr], { now, completedToday: { 'after-any': now } }))
     expect(result.today.next?.after).toEqual(['after-any'])

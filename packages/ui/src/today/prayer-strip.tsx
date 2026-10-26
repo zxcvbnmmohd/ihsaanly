@@ -1,11 +1,9 @@
 import type { Prayer } from '@ihsaanly/core/prayer/qada'
-import { palettes } from '@ihsaanly/tailwind/tokens'
 import type { ReactElement } from 'react'
 import { Pressable, Text, View } from 'react-native'
-import { useColors } from '../colors'
+import { useColors, usePalette } from '../colors'
 import { onSpace } from '../components/space-press'
 import { Surface } from '../components/surface'
-import { useUi } from '../provider'
 import type { PrayerEntry } from '../screens/today'
 
 export interface PrayerStripProps {
@@ -17,7 +15,7 @@ export interface PrayerStripProps {
 /** Five marks in a row: the whole day's prayers readable at a glance. */
 export function PrayerStrip({ prayers, names, onMark }: PrayerStripProps): ReactElement {
   const colors = useColors()
-  const palette = palettes[useUi().scheme]
+  const palette = usePalette()
   return (
     <View className="flex-row gap-2">
       {prayers.map((entry) => (

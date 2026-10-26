@@ -1,8 +1,7 @@
 import type { Evidence, Ruling } from '@ihsaanly/core/content/schema'
-import { palettes } from '@ihsaanly/tailwind/tokens'
 import type { ReactElement, ReactNode } from 'react'
 import { Pressable, Text, View } from 'react-native'
-import { useColors } from '../colors'
+import { useColors, usePalette } from '../colors'
 import { ArabicText } from '../components/arabic-text'
 import { Button } from '../components/button'
 import { Counter } from '../components/counter'
@@ -71,6 +70,8 @@ export interface ItemScreenProps {
   onToggleRemind: (value: boolean) => void
   onShareText: () => void
   onShareImage: () => void
+  /** Set by a host that keeps My duas: whether this item is pinned there. */
+  pin?: { value: boolean; onToggle: () => void }
 }
 
 interface LabelledProps {
@@ -149,10 +150,11 @@ export function ItemScreen({
   onToggleRemind,
   onShareText,
   onShareImage,
+  pin,
 }: ItemScreenProps): ReactElement {
   const colors = useColors()
-  const { strings, scheme, Link } = useUi()
-  const palette = palettes[scheme]
+  const { strings, Link } = useUi()
+  const palette = usePalette()
 
   if (!item) {
     return <EmptyState message={strings.notFound.body} />
@@ -293,6 +295,17 @@ export function ItemScreen({
               detail={remind.detail}
               value={remind.value}
               onValueChange={onToggleRemind}
+              accent={palette.accent}
+              knob={palette.knob}
+              track={palette.wash[1]}
+            />
+          ) : null}
+          {pin ? (
+            <SwitchRow
+              title={strings.myDuas.pin}
+              detail={strings.myDuas.pinDetail}
+              value={pin.value}
+              onValueChange={pin.onToggle}
               accent={palette.accent}
               knob={palette.knob}
               track={palette.wash[1]}

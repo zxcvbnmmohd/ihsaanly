@@ -1,8 +1,7 @@
 import type { Prayer } from '@ihsaanly/core/prayer/qada'
-import { palettes } from '@ihsaanly/tailwind/tokens'
 import type { ReactElement } from 'react'
 import { Text, View } from 'react-native'
-import { useColors } from '../colors'
+import { useColors, usePalette } from '../colors'
 import { Button } from '../components/button'
 import { Screen } from '../components/screen'
 import { Stepper } from '../components/stepper'
@@ -48,8 +47,8 @@ export function QadaScreen({
   onRecord,
 }: QadaScreenProps): ReactElement {
   const colors = useColors()
-  const { strings, scheme } = useUi()
-  const palette = palettes[scheme]
+  const { strings } = useUi()
+  const palette = usePalette()
 
   return (
     <Screen palette={palette} className="gap-4 p-4">

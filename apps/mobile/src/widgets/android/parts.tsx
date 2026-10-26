@@ -5,7 +5,8 @@
 import type { ReactElement, ReactNode } from 'react'
 import { FlexWidget, type HexColor, TextWidget, type WidgetInfo } from 'react-native-android-widget'
 
-import type { WidgetInk, WidgetLink, WidgetModel } from '../model'
+import type { WidgetInk, WidgetItem, WidgetLink, WidgetModel, WidgetTapKind } from '../model'
+import { TAP_ACTION } from './tap-action'
 
 export type WidgetSize = 'compact' | 'medium' | 'large'
 
@@ -213,10 +214,12 @@ interface LinkRowProps {
   showDetail?: boolean
   /** A short tag in the accent before the title, such as "Before". */
   tag?: string
+  /** A mark on the far side; the rest of the row still opens the item. */
+  mark?: ReactElement | null
 }
 
 /** One item, its own tap target: a dot, the title, and its detail when asked for. */
-export function LinkRow({ link, paint, rtl, showDetail, tag }: LinkRowProps): ReactElement {
+export function LinkRow({ link, paint, rtl, showDetail, tag, mark }: LinkRowProps): ReactElement {
   const title = (
     <FlexWidget key="title" style={{ flex: 1, flexDirection: 'column' }}>
       <TextWidget
@@ -251,19 +254,34 @@ export function LinkRow({ link, paint, rtl, showDetail, tag }: LinkRowProps): Re
       style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: paint.accent }}
     />
   )
-  return (
+  const height = showDetail && link.detail ? DETAIL_ROW_HEIGHT : ROW_HEIGHT
+  const target = (
     <FlexWidget
+      key="link"
       clickAction="OPEN_URI"
       clickActionData={{ uri: link.url }}
       accessibilityLabel={link.title}
       style={{
-        width: 'match_parent',
-        height: showDetail && link.detail ? DETAIL_ROW_HEIGHT : ROW_HEIGHT,
+        ...(mark ? { flex: 1 } : { width: 'match_parent' as const }),
+        height,
         flexDirection: 'row',
         alignItems: 'center',
         flexGap: 8,
       }}>
       {ordered(rtl, [dot, title])}
+    </FlexWidget>
+  )
+  if (!mark) return target
+  return (
+    <FlexWidget
+      style={{
+        width: 'match_parent',
+        height: Math.max(height, MARK_HEIGHT),
+        flexDirection: 'row',
+        alignItems: 'center',
+        flexGap: 8,
+      }}>
+      {ordered(rtl, [target, <FlexWidget key="mark">{mark}</FlexWidget>])}
     </FlexWidget>
   )
 }
@@ -275,6 +293,8 @@ interface LinkListProps {
   limit: number
   showDetail?: boolean
   tag?: string
+  /** The mark for a row, where the item can be marked from here. */
+  markFor?: (link: WidgetLink, index: number) => ReactElement | null
 }
 
 export function LinkList({
@@ -284,10 +304,11 @@ export function LinkList({
   limit,
   showDetail,
   tag,
+  markFor,
 }: LinkListProps): ReactElement {
   return (
     <FlexWidget style={{ width: 'match_parent', flexDirection: 'column' }}>
-      {links.slice(0, Math.max(0, limit)).map((link) => (
+      {links.slice(0, Math.max(0, limit)).map((link, index) => (
         <LinkRow
           key={link.url}
           link={link}
@@ -295,8 +316,101 @@ export function LinkList({
           rtl={rtl}
           showDetail={showDetail}
           tag={tag}
+          mark={markFor?.(link, index) ?? null}
         />
       ))}
+    </FlexWidget>
+  )
+}
+
+/** How many taps of `kind` for `id` the widget holds from `since` on: this occasion's. */
+export function tapsFor(
+  model: WidgetModel,
+  kind: WidgetTapKind,
+  id: string,
+  since: number,
+): number {
+  return (model.taps ?? []).filter(
+    (tap) => (tap.kind ?? 'done') === kind && tap.id === id && tap.at >= since,
+  ).length
+}
+
+/** Where an item stands with the taps not yet filed: done, and for a counted item how far. */
+export function standing(model: WidgetModel, item: WidgetItem): { done: boolean; count: number } {
+  const since = item.since ?? Number.POSITIVE_INFINITY
+  const repeat = item.repeat ?? 0
+  const count = Math.min(repeat, (item.count ?? 0) + tapsFor(model, 'count', item.id, since))
+  const done =
+    item.done === true ||
+    tapsFor(model, 'done', item.id, since) > 0 ||
+    (repeat > 0 && count >= repeat)
+  return { done, count }
+}
+
+/** "12 of 33", from the template the app resolved. */
+export function countLabel(model: WidgetModel, count: number, total: number): string {
+  return model.labels.countOf.replace('{count}', String(count)).replace('{total}', String(total))
+}
+
+export const MARK_HEIGHT = 26
+
+interface MarkButtonProps {
+  paint: Paint
+  kind: WidgetTapKind
+  id: string
+  label: string
+  /** Shown in place of the button once the tap is made. */
+  doneLabel: string
+  done: boolean
+  /** A bare check, for a row or chip with no room for words. */
+  compact?: boolean
+}
+
+/**
+ * A mark: a click the widget task answers (`TAP_ACTION`) rather than a link,
+ * so it records the tap without opening the app. Once made it is a quiet
+ * check and the words, with no click left on it.
+ */
+export function MarkButton({
+  paint,
+  kind,
+  id,
+  label,
+  doneLabel,
+  done,
+  compact,
+}: MarkButtonProps): ReactElement {
+  if (done) {
+    return (
+      <FlexWidget
+        accessibilityLabel={doneLabel}
+        style={{ height: MARK_HEIGHT, paddingHorizontal: 4, justifyContent: 'center' }}>
+        <TextWidget
+          text={compact ? '✓' : `✓ ${doneLabel}`}
+          maxLines={1}
+          style={{ fontSize: 12, fontWeight: 'bold', color: paint.accent }}
+        />
+      </FlexWidget>
+    )
+  }
+  return (
+    <FlexWidget
+      clickAction={TAP_ACTION}
+      clickActionData={{ kind, id }}
+      accessibilityLabel={label}
+      style={{
+        height: MARK_HEIGHT,
+        ...(compact ? { width: MARK_HEIGHT } : { paddingHorizontal: 12 }),
+        borderRadius: MARK_HEIGHT / 2,
+        backgroundColor: paint.accent,
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}>
+      <TextWidget
+        text={compact ? '✓' : label}
+        maxLines={1}
+        style={{ fontSize: 12, fontWeight: 'bold', color: paint.onAccent }}
+      />
     </FlexWidget>
   )
 }

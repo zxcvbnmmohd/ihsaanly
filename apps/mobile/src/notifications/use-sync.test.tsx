@@ -6,6 +6,8 @@ import { fake, installReminderFakes, resetReminderFakes } from '../../test/remin
 
 installReminderFakes()
 const { useNotificationSync } = await import('./use-sync')
+const { installPersonalItems } = await import('@ihsaanly/core/content')
+const { ownDuaItems } = await import('@ihsaanly/core/content/my-duas')
 
 let listeners: ((state: string) => void)[] = []
 let removed = 0
@@ -60,6 +62,35 @@ describe('useNotificationSync', () => {
     renderHook(() => useNotificationSync(planWith('fajr')))
     await waitFor(() => expect(fake.scheduled.length).toBeGreaterThan(0))
     expect(fake.scheduled[0]?.identifier.startsWith('plan:')).toBe(true)
+  })
+
+  it('words a reminder for an own dua from the dua itself', async () => {
+    fake.permissions = { granted: true, canAskAgain: true }
+    installPersonalItems(
+      ownDuaItems([
+        {
+          id: 'mine-sync',
+          title: 'For my parents',
+          arabic: null,
+          transliteration: null,
+          text: 'Words',
+          repeat: 1,
+          moment: 'evening',
+        },
+      ]),
+    )
+    try {
+      const plan = {
+        notifications: [
+          { kind: 'item', itemId: 'mine-sync', at, reason: 'current-window', window: null },
+        ],
+      } as never
+      renderHook(() => useNotificationSync(plan))
+      await waitFor(() => expect(fake.scheduled.length).toBeGreaterThan(0))
+      expect(JSON.stringify(fake.scheduled[0])).toContain('For my parents')
+    } finally {
+      installPersonalItems([])
+    }
   })
 
   it('does not reschedule when only the plan object changes', async () => {

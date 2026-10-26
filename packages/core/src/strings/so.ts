@@ -204,7 +204,7 @@ export const so: Strings = {
     title: 'Akoon',
     notSignedIn: 'Lama gelin',
     explanation:
-      'Ikhtiyaari. Xogtaadu waxay ku jirtaa qalabkan ilaa aad gasho. Gelitaanku wuxuu ka dhigayaa taariikhdaada, horumarkaaga iyo dejintaada, oo goobtaada ku jirto, mid ku wada iswaafaqsan dhammaan qalabkaaga.',
+      'Ikhtiyaari. Xogtaadu waxay ku jirtaa qalabkan ilaa aad gasho. Gelitaanku wuxuu ka dhigayaa taariikhdaada, horumarkaaga, dejintaada (oo goobtaada ku jirto) iyo ducooyinka aad qorto ama dhejiso, mid ku wada iswaafaqsan dhammaan qalabkaaga.',
     continueWithApple: 'Ku sii wad Apple',
     continueWithGoogle: 'Ku sii wad Google',
     signInWithApple: 'Ku gal Apple',
@@ -213,7 +213,7 @@ export const so: Strings = {
     terms: 'Shuruudaha',
     privacy: 'Siyaasadda asturnaanta',
     notice:
-      'Diiwaanka camalkaaga, dejintaada iyo goobtaada qiyaasta ah waxaa lagu kaydiyaa Google Firebase (Maraykanka) si ay u iswaafaqaan, iyadoo ay la socdaan magacaaga iyo iimaylkaaga ee Apple ama Google. Waa inaad jirtaa 13 sano ama ka badan, ama da’da uu dalkaagu shardi ka dhigo (ilaa 16). Akoonkaaga waqti kasta tirtir.',
+      'Diiwaanka camalkaaga, dejintaada, goobtaada qiyaasta ah iyo ducooyinka aad qorto ama dhejiso waxaa lagu kaydiyaa Google Firebase (Maraykanka) si ay u iswaafaqaan, iyadoo ay la socdaan magacaaga iyo iimaylkaaga ee Apple ama Google. Waa inaad jirtaa 13 sano ama ka badan, ama da’da uu dalkaagu shardi ka dhigo (ilaa 16). Akoonkaaga waqti kasta tirtir.',
     signingIn: 'Waa la gelayaa…',
     signInFailed: 'Gelitaanku ma dhammaan. Waxba kuma beddelmin qalabkan.',
     errors: {
@@ -397,7 +397,7 @@ export const so: Strings = {
     termsOfUse: 'Shuruudaha isticmaalka',
     privacyTitle: 'Xogtaadu waxay ku jirtaa qalabkan',
     privacyBody:
-      'Ma jiro falanqayn iyo xayeysiis toona. Goobtaada waxaa qalabkan loogu isticmaalaa xisaabinta waqtiyada salaadda, diiwaanka camalkaaga iyo dejintaaduna halkan ayay ku jiraan. Appku wuxuu ihsaanly.app ka hubiyaa cusboonaysiinta nuxurka, isagoon waxba kaa dirin. Intaas ka sokow waxba kama baxaan qalabkan haddii aadan adigu dooran: dhoofin ama wadaag, dirista fikrad, shidista warbixinnada burburka ama ogeysiisyada (appka iOS iyo Android), ama gelitaan si loo iswaafajiyo. Gelitaanka Apple ama Google waa ikhtiyaari: markaas magacaaga iyo iimaylkaaga, diiwaanka camalkaaga, horumarkaaga, dejintaada iyo goobtaada qiyaasta ah (ilaa 1 km) waxaa lagu kaydiyaa Google Firebase ee Maraykanka, si ay ugu iswaafaqaan qalabkaaga. Akoonkaaga waqti kasta ka tirtir Akoon. Android-ka, Deeqdu waxay furaysaa browser-kaaga, boggaasuna qayb kama aha Ihsaanly.',
+      'Ma jiro falanqayn iyo xayeysiis toona. Goobtaada waxaa qalabkan loogu isticmaalaa xisaabinta waqtiyada salaadda, diiwaanka camalkaaga iyo dejintaaduna halkan ayay ku jiraan. Appku wuxuu ihsaanly.app ka hubiyaa cusboonaysiinta nuxurka, isagoon waxba kaa dirin. Intaas ka sokow waxba kama baxaan qalabkan haddii aadan adigu dooran: dhoofin ama wadaag, dirista fikrad, shidista warbixinnada burburka ama ogeysiisyada (appka iOS iyo Android), ama gelitaan si loo iswaafajiyo. Gelitaanka Apple ama Google waa ikhtiyaari: markaas magacaaga iyo iimaylkaaga, diiwaanka camalkaaga, horumarkaaga, dejintaada, ducooyinka aad qorto ama dhejiso iyo goobtaada qiyaasta ah (ilaa 1 km) waxaa lagu kaydiyaa Google Firebase ee Maraykanka, si ay ugu iswaafaqaan qalabkaaga. Akoonkaaga waqti kasta ka tirtir Akoon. Android-ka, Deeqdu waxay furaysaa browser-kaaga, boggaasuna qayb kama aha Ihsaanly.',
     licences: 'Waxaa lagu dhisay',
     licencesBody:
       'Expo iyo React Native, maktabadda adhan ee waqtiyada salaadda, jaantusyada kalandarka Umm al-Qura, xogta magaalooyinka ee city-timezones (oo ku dhisan GeoNames), iyo Natural Earth ee khariidadda. Mid kasta waxaa loo isticmaalaa sida ruqsaddiisa furan, oo ku qoran kaydka koodka.',

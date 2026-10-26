@@ -18,6 +18,8 @@ The ground truth behind every answer:
     fasting, items known);
   - synced settings, including location rounded to about 1 km with city and
     time zone, and the Brother/Sister/prefer-not-to-say setup choice.
+  - the user's own duas (the words they write, up to 30) and the duas they
+    pin to My duas.
 - **Feedback** (signed-in users only, via Send feedback) is stored in the
   Firestore `feedback` collection (Google Cloud, US): the message, its kind
   (problem, idea or other), an optional contact email (prefilled from the
@@ -72,7 +74,7 @@ The ground truth behind every answer:
 | Identifiers → **User ID** | Yes | Yes | No | App Functionality |
 | Location → **Coarse Location** | Yes | Yes | No | App Functionality |
 | Sensitive Info (religious or philosophical beliefs) | Yes | Yes | No | App Functionality |
-| User Content → **Other User Content** (practice record, settings, feedback messages) | Yes | Yes | No | App Functionality |
+| User Content → **Other User Content** (practice record, settings, own duas and pins, feedback messages) | Yes | Yes | No | App Functionality |
 | Diagnostics → **Other Diagnostic Data** (optional diagnostic summary attached to feedback) | Yes | Yes | No | App Functionality |
 | Diagnostics → **Crash Data** (opt-in Crashlytics reports: crashes and error-log entries) | Yes | **No** | No | App Functionality |
 | Identifiers → **Device ID** (Firebase installation ID for Crashlytics; FCM and APNs tokens for opt-in announcements) | Yes | **No** | No | App Functionality |
@@ -145,7 +147,7 @@ review notes.
 | Personal info → **Political or religious beliefs** | App functionality |
 | Personal info → **Other info** (Brother/Sister setup choice) | App functionality |
 | Location → **Approximate location** | App functionality |
-| App activity → **Other user-generated content** (practice record, settings and feedback messages) | App functionality |
+| App activity → **Other user-generated content** (practice record, settings, own duas and pins, and feedback messages) | App functionality |
 | App info and performance → **Diagnostics** (optional diagnostic summary attached to feedback) | App functionality |
 | App info and performance → **Crash logs** (opt-in Crashlytics reports: crashes and error-log entries) | App functionality |
 | Device or other IDs → **Device or other IDs** (Firebase installation ID for Crashlytics; FCM registration token for opt-in announcements) | App functionality, Developer communications (announcements) |

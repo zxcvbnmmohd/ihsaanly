@@ -405,6 +405,17 @@ export const ja: Strings = {
     play: '再生',
     stop: '停止',
     loop: '繰り返し',
+    speed: '速度',
+    rate: (rate: number): string => `${rate}×`,
+    repeatOff: 'オフ',
+    repeatTimes: (times: number): string => `×${times}`,
+    repeatAlways: '∞',
+  },
+  reader: {
+    more: 'くわしく見る',
+    previous: '前へ',
+    next: '次へ',
+    page: (page: number, total: number): string => `${page} / ${total}`,
   },
   language: {
     title: '言語',

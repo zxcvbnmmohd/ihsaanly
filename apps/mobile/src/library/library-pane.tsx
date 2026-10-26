@@ -35,11 +35,11 @@ export function libraryPath(segments: string[], pathname: string): string[] | nu
   return pathname.split('/').filter(Boolean)
 }
 
-/** The item id open in the wide reader panel: `item/<id>` and
- * `item/memorise/<id>` both belong to the same card. */
+/** The item id open in the wide reader panel: `item/<id>`, `item/read/<id>`
+ * and `item/memorise/<id>` all belong to the same card. */
 function selectedItemId(parts: string[] | null): string | null {
   if (!parts || parts[0] !== 'item') return null
-  return (parts[1] === 'memorise' ? parts[2] : parts[1]) ?? null
+  return (parts[1] === 'memorise' || parts[1] === 'read' ? parts[2] : parts[1]) ?? null
 }
 
 /**

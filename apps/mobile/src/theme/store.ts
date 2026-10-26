@@ -1,4 +1,5 @@
 import { createPreferenceStore } from '@ihsaanly/state/storage/preference-store'
+import { useAccent } from '@ihsaanly/state/theme/accent-store'
 import { THEME_PREFERENCES, type ThemePreference } from '@ihsaanly/ui/types'
 import { useSyncExternalStore } from 'react'
 import { Appearance, Platform } from 'react-native'
@@ -80,7 +81,9 @@ export function useEffectiveColorScheme(): 'light' | 'dark' {
   return preference === 'system' ? system : preference
 }
 
-/** The brand palette for the scheme the app is actually rendering in. */
+/** The brand palette for the scheme the app is actually rendering in, under the chosen accent. */
 export function usePalette(): Palette {
-  return paletteFor(useEffectiveColorScheme())
+  const scheme = useEffectiveColorScheme()
+  const accent = useAccent()
+  return paletteFor(scheme, accent)
 }

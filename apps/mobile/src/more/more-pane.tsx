@@ -38,7 +38,7 @@ export function MorePane(): ReactElement {
   const strings = useStrings()
   const palette = usePalette()
   const theme = useThemePreference()
-  const groups = useMoreGroups(theme, cloudEnabled)
+  const groups = useMoreGroups(theme, cloudEnabled, true)
   const layout = useLayout()
   const segments = useSegments()
   const pathname = usePathname()

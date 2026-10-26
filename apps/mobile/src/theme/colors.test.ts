@@ -60,4 +60,10 @@ describe('paletteFor', () => {
     expect(paletteFor('light')).toBe(palettes.light)
     expect(paletteFor(null)).toBe(palettes.light)
   })
+
+  it('resolves the chosen accent for the scheme', () => {
+    expect(paletteFor('dark', 'rose').accent).toBe('#ec90a6')
+    expect(paletteFor(null, 'graphite').accent).toBe('#2b2b2e')
+    expect(paletteFor('light', 'terracotta')).toBe(palettes.light)
+  })
 })

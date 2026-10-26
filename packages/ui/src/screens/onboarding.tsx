@@ -6,7 +6,7 @@ import {
 } from '@ihsaanly/core/i18n/locale'
 import { cityOf, type Place } from '@ihsaanly/core/location/place'
 import type { NotificationPreferences } from '@ihsaanly/core/plan/notification-preferences'
-import { type Palette, palettes } from '@ihsaanly/tailwind/tokens'
+import type { Palette } from '@ihsaanly/tailwind/tokens'
 import { LinearGradient } from 'expo-linear-gradient'
 import { type ReactElement, type ReactNode, useState } from 'react'
 import {
@@ -21,7 +21,7 @@ import {
 } from 'react-native'
 import Animated, { FadeInRight, useReducedMotion } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { useColors } from '../colors'
+import { useColors, usePalette } from '../colors'
 import { Button } from '../components/button'
 import { ChoiceRow } from '../components/choice-row'
 import { Dropdown } from '../components/dropdown'
@@ -207,7 +207,7 @@ interface DotsProps {
 
 function Dots({ count, index }: DotsProps): ReactElement {
   const colors = useColors()
-  const accent = palettes[useUi().scheme].accent
+  const accent = usePalette().accent
   return (
     <View className="flex-row justify-center gap-1.5">
       {Array.from({ length: count }, (_, position) => (
@@ -677,8 +677,8 @@ function StepBody(props: StepBodyProps): ReactElement {
 
 export function OnboardingScreen(props: OnboardingScreenProps): ReactElement {
   const colors = useColors()
-  const { strings, scheme } = useUi()
-  const palette = palettes[scheme]
+  const { strings } = useUi()
+  const palette = usePalette()
   const insets = useSafeAreaInsets()
   const reduceMotion = useReducedMotion()
 

@@ -39,7 +39,11 @@
     "before": "Before",
     "after": "After",
     "markDone": "Mark done",
-    "markedDone": "Marked done"
+    "markedDone": "Marked done",
+    "saidIt": "Said it",
+    "marked": "Marked",
+    "addOne": "+1",
+    "countOf": "{count} of {total}"
   },
   "window": "Morning",
   "remaining": "Open for about 3 more hours",
@@ -54,7 +58,9 @@
     "title": "Morning adhkar",
     "detail": null,
     "url": "ihsaanly://item/read/morning-adhkar",
-    "id": "morning-adhkar"
+    "id": "morning-adhkar",
+    "since": 1790142480000,
+    "done": false
   },
   "alsoNow": [],
   "moreNow": null,
@@ -66,7 +72,10 @@
       {
         "title": "Two or four rak’ah before Dhuhr",
         "detail": null,
-        "url": "ihsaanly://item/sunnah-before-dhuhr"
+        "url": "ihsaanly://item/sunnah-before-dhuhr",
+        "id": "sunnah-before-dhuhr",
+        "since": 1790135640000,
+        "done": false
       }
     ],
     "after": [
@@ -84,30 +93,35 @@
   },
   "prayers": [
     {
+      "id": "fajr",
       "name": "Fajr",
       "short": "F",
       "done": true,
       "passed": true
     },
     {
+      "id": "dhuhr",
       "name": "Dhuhr",
       "short": "D",
       "done": false,
       "passed": false
     },
     {
+      "id": "asr",
       "name": "Asr",
       "short": "A",
       "done": false,
       "passed": false
     },
     {
+      "id": "maghrib",
       "name": "Maghrib",
       "short": "M",
       "done": false,
       "passed": false
     },
     {
+      "id": "isha",
       "name": "Isha",
       "short": "I",
       "done": false,
@@ -131,34 +145,52 @@
     {
       "title": "Leaving home",
       "detail": null,
-      "url": "ihsaanly://item/read/dua-leaving-home"
+      "url": "ihsaanly://item/read/dua-leaving-home",
+      "id": "dua-leaving-home",
+      "since": 1790142480000,
+      "done": false
     },
     {
       "title": "Setting out on a journey",
       "detail": null,
-      "url": "ihsaanly://item/read/dua-travel"
+      "url": "ihsaanly://item/read/dua-travel",
+      "id": "dua-travel",
+      "since": 1790142480000,
+      "done": false
     },
     {
       "title": "Shortening the prayer",
       "detail": null,
-      "url": "ihsaanly://item/qasr-while-travelling"
+      "url": "ihsaanly://item/qasr-while-travelling",
+      "id": "qasr-while-travelling",
+      "since": 1790142480000,
+      "done": false
     },
     {
       "title": "Going up",
       "detail": null,
-      "url": "ihsaanly://item/read/takbir-ascending"
+      "url": "ihsaanly://item/read/takbir-ascending",
+      "id": "takbir-ascending",
+      "since": 1790142480000,
+      "done": false
     },
     {
       "title": "Going down",
       "detail": null,
-      "url": "ihsaanly://item/read/tasbih-descending"
+      "url": "ihsaanly://item/read/tasbih-descending",
+      "id": "tasbih-descending",
+      "since": 1790142480000,
+      "done": false
     }
   ],
   "duaOfTheDay": {
+    "id": "dua-entering-home",
     "title": "Coming home",
     "arabic": "بِسْمِ اللَّهِ",
     "translation": "In the name of Allah.",
-    "url": "ihsaanly://item/read/dua-entering-home"
+    "url": "ihsaanly://item/read/dua-entering-home",
+    "since": 1790118000000,
+    "done": false
   },
   "makeUp": {
     "prayers": 1,

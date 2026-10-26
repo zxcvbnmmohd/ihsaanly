@@ -1,5 +1,6 @@
 import { itemById, resolveText } from '@ihsaanly/core/content'
 import { daysActive, summarise, withoutRetracted } from '@ihsaanly/core/plan/history'
+import { ownDuaById, useOwnDuas } from '@ihsaanly/state/my-duas/store'
 import { useActions } from '@ihsaanly/state/storage/events'
 import { useStrings } from '@ihsaanly/state/strings'
 import { HistoryScreen } from '@ihsaanly/ui/screens/history'
@@ -7,6 +8,7 @@ import type { ReactElement } from 'react'
 
 export default function HistoryRoute(): ReactElement {
   const strings = useStrings()
+  const own = useOwnDuas()
   const actions = withoutRetracted(useActions(), [
     ['prayer-performed', 'prayer-unmarked'],
     ['item-completed', 'item-uncompleted'],
@@ -15,6 +17,8 @@ export default function HistoryRoute(): ReactElement {
   const labelFor = (subject: string): string => {
     const item = itemById(subject)
     if (item) return resolveText(item.title) ?? subject
+    const dua = ownDuaById(own, subject)
+    if (dua) return dua.title
     return strings.prayer[subject as keyof typeof strings.prayer] ?? subject
   }
 

@@ -1,10 +1,9 @@
 import { REPEATS, type Repeat, SPEEDS, type Speed } from '@ihsaanly/core/memorise/recitation'
 import type { Reveal } from '@ihsaanly/core/memorise/reveal'
 import type { Strings } from '@ihsaanly/core/strings/en'
-import { palettes } from '@ihsaanly/tailwind/tokens'
 import type { ReactElement, ReactNode } from 'react'
 import { Text, View } from 'react-native'
-import { useColors } from '../colors'
+import { useColors, usePalette } from '../colors'
 import { ArabicText } from '../components/arabic-text'
 import { Chip } from '../components/chip'
 import { Row } from '../components/row'
@@ -54,8 +53,8 @@ function repeatLabel(repeat: Repeat, strings: Strings['memorise']): string {
 
 export function MemoriseScreen(props: MemoriseScreenProps): ReactElement {
   const colors = useColors()
-  const { strings, scheme } = useUi()
-  const palette = palettes[scheme]
+  const { strings } = useUi()
+  const palette = usePalette()
 
   return (
     <Screen palette={palette} className="gap-6 p-4">

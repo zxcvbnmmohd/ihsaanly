@@ -1,4 +1,3 @@
-import { palettes } from '@ihsaanly/tailwind/tokens'
 import type { ReactElement } from 'react'
 import { type ComponentRef, useEffect, useRef } from 'react'
 import {
@@ -9,6 +8,7 @@ import {
   Text,
   View,
 } from 'react-native'
+import { usePalette } from '../colors'
 import { useUi } from '../provider'
 
 const ARROW = 14
@@ -45,8 +45,8 @@ export function CoachMark({
   onSkip,
   arrowAt,
 }: CoachMarkProps): ReactElement {
-  const { strings, scheme } = useUi()
-  const palette = palettes[scheme]
+  const { strings } = useUi()
+  const palette = usePalette()
   const next = useRef<ComponentRef<typeof Pressable>>(null)
   const last = step >= total - 1
 

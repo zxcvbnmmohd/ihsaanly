@@ -190,6 +190,26 @@ function latestMark(
 }
 
 /**
+ * When a "before" item's occasion opens. A named prayer's is the start of the
+ * prayer window before it, from when that prayer is up next: the ghusl for
+ * Jumu'ah done in the morning, or marked from the Up next widget, counts once
+ * Dhuhr's window arrives, and a named prayer comes once a day so it cannot
+ * count twice. "Before any prayer" recurs at every prayer, so its occasion is
+ * the window itself.
+ */
+export function beforePrayerOpensAt(
+  trigger: Extract<Trigger, { kind: 'prayer' }>,
+  window: PrayerWindow,
+  windows: PrayerWindow[],
+): Date {
+  if (trigger.prayer === 'any') return window.startsAt
+  const previous = windows
+    .filter((candidate) => candidate.name !== 'sunrise' && candidate.startsAt < window.startsAt)
+    .at(-1)
+  return previous?.startsAt ?? window.startsAt
+}
+
+/**
  * A completion only counts for the occasion it belongs to. The tasbih after
  * "any" prayer, done after Dhuhr, is owed again after Asr; the morning adhkar
  * done at sunrise stay done until the window closes.
@@ -208,8 +228,11 @@ function isDoneForOccasion(
     switch (reason) {
       case 'after-prayer':
         return item.trigger.kind === 'prayer' ? latestMark(item.trigger, signals, windows) : null
-      case 'current-window':
       case 'before-prayer':
+        return item.trigger.kind === 'prayer' && window
+          ? beforePrayerOpensAt(item.trigger, window, windows)
+          : (window?.startsAt ?? null)
+      case 'current-window':
       case 'active-event':
         return window?.startsAt ?? null
       case 'today':

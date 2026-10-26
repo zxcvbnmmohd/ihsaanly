@@ -1,4 +1,6 @@
+import { paletteFor } from '@ihsaanly/tailwind/tokens'
 import type { LibraryCardProps } from '../components/library-card'
+import type { PreviewInk, WidgetPreviewModel } from '../components/widget-preview'
 import type { AboutScreenProps } from './about'
 import type { AccountScreenProps } from './account'
 import type { AppearanceScreenProps } from './appearance'
@@ -12,17 +14,20 @@ import type { HijriScreenProps } from './hijri'
 import type { HistoryScreenProps } from './history'
 import type { ItemDetail, ItemScreenProps } from './item'
 import type { LanguageScreenProps } from './language'
-import type { LibraryScreenProps } from './library'
+import type { LibraryMine, LibraryScreenProps } from './library'
 import type { LocationScreenProps } from './location'
 import type { MemoriseScreenProps } from './memorise'
 import type { MoreScreenProps } from './more'
 import type { NotificationsScreenProps } from './notifications'
 import type { OnboardingScreenProps } from './onboarding'
+import type { OwnDuaScreenProps } from './own-dua'
+import type { OwnDuaFormScreenProps } from './own-dua-form'
 import type { QadaScreenProps } from './qada'
 import type { ReaderScreenProps } from './reader'
 import type { StartingPointScreenProps } from './starting-point'
 import type { TodayScreenProps } from './today'
 import type { TrackingScreenProps } from './tracking'
+import type { WidgetsScreenProps } from './widgets'
 
 const noop = (): void => {}
 
@@ -234,6 +239,19 @@ export const libraryFixture: LibraryScreenProps = {
   },
 }
 
+export const libraryMine: LibraryMine = {
+  count: 2,
+  writeHref: '/my-dua',
+  own: [
+    {
+      id: 'mine-parents',
+      title: 'For my parents',
+      detail: 'My Lord, have mercy on them',
+      href: '/item/mine-parents',
+    },
+  ],
+}
+
 export const libraryCardFixture: LibraryCardProps = {
   entry: {
     id: 'dua-leaving-home',
@@ -316,6 +334,39 @@ export const itemScreenFixture: ItemScreenProps = {
   onToggleRemind: noop,
   onShareText: noop,
   onShareImage: noop,
+}
+
+export const ownDuaFixture: OwnDuaScreenProps = {
+  dua: {
+    title: 'For my parents',
+    arabic: 'رَبِّ ارْحَمْهُمَا كَمَا رَبَّيَانِي صَغِيرًا',
+    transliteration: 'Rabbi irhamhuma kama rabbayani saghira',
+    text: 'My Lord, have mercy on them as they raised me when I was small.',
+    repeat: 3,
+    moment: 'Evening',
+  },
+  done: false,
+  onToggleDone: noop,
+  counter: { count: 0, target: 3 },
+  onTapCounter: noop,
+  onResetCounter: noop,
+  editHref: '/my-dua?id=mine-parents',
+  onDelete: noop,
+}
+
+export const ownDuaFormFixture: OwnDuaFormScreenProps = {
+  draft: {
+    title: 'For my parents',
+    arabic: '',
+    transliteration: '',
+    text: 'My Lord, have mercy on them.',
+    repeat: 1,
+    moment: 'evening',
+  },
+  onChange: noop,
+  problem: null,
+  full: false,
+  onSave: noop,
 }
 
 export const missingItemFixture: ItemDetail | null = null
@@ -450,6 +501,8 @@ export const onboardingFixture: OnboardingScreenProps = {
 export const appearanceFixture: AppearanceScreenProps = {
   preference: 'system',
   onSelect: noop,
+  accent: 'terracotta',
+  onSelectAccent: noop,
 }
 
 export const startingPointFixture: StartingPointScreenProps = {
@@ -677,4 +730,107 @@ export const readerFixture: ReaderScreenProps = {
   onTapCounter: noop,
   onDone: noop,
   onMore: noop,
+}
+
+function fixtureInk(scheme: 'light' | 'dark'): PreviewInk {
+  const palette = paletteFor(scheme)
+  return {
+    background: palette.wash[0],
+    backgroundEnd: palette.wash[1],
+    accent: palette.accent,
+    onAccent: palette.onAccent,
+    label: palette.ink,
+    secondaryLabel: palette.inkSecondary,
+  }
+}
+
+/** One widget timeline entry: the morning, with the tasbih part-way and Dhuhr next. */
+export const widgetPreviewFixture: WidgetPreviewModel = {
+  ink: { light: fixtureInk('light'), dark: fixtureInk('dark') },
+  labels: {
+    rightNow: 'Right now',
+    upNext: 'Up next',
+    prayers: 'Prayers',
+    hijri: 'Hijri date',
+    alsoToday: 'Also today',
+    quickDuas: 'Quick duas',
+    duaOfTheDay: 'Dua of the day',
+    makeUp: 'To make up',
+    comingUp: 'Later this week',
+    nothingNow: 'Nothing asked of you right now',
+    nothingOwed: 'Nothing owed',
+    before: 'Before',
+    after: 'After',
+    markDone: 'Mark done',
+    markedDone: 'Marked done',
+    saidIt: 'Said it',
+    marked: 'Marked',
+    addOne: '+1',
+    countOf: '{count} of {total}',
+  },
+  window: 'Morning',
+  remaining: 'Open for about 3 more hours',
+  date: {
+    gregorian: 'Wed 23 Sep',
+    hijri: '12 Rabi’ ath-Thani 1448',
+    hijriDay: 12,
+    place: 'London',
+  },
+  rightNow: {
+    title: 'Tasbih',
+    detail: null,
+    url: 'ihsaanly://item/tasbih',
+    since: 1,
+    done: false,
+    repeat: 33,
+    count: 12,
+  },
+  alsoNow: [
+    { title: 'Morning adhkar', detail: null, url: 'ihsaanly://item/morning-adhkar' },
+    { title: 'Duha prayer', detail: null, url: 'ihsaanly://item/duha' },
+  ],
+  moreNow: '+2 more now',
+  next: {
+    prayer: 'Dhuhr',
+    distance: 'In about 3 hours',
+    before: [
+      { title: 'Ghusl', detail: null, url: 'ihsaanly://item/ghusl-friday', since: 1 },
+      { title: 'Miswak', detail: null, url: 'ihsaanly://item/miswak', since: 1, done: true },
+      { title: 'Wudu', detail: null, url: 'ihsaanly://item/wudu' },
+    ],
+    after: [{ title: 'Sunnah after Dhuhr', detail: null, url: 'ihsaanly://item/sunnah-dhuhr' }],
+  },
+  prayers: [
+    { id: 'fajr', name: 'Fajr', done: true, passed: true },
+    { id: 'dhuhr', name: 'Dhuhr', done: false, passed: false },
+    { id: 'asr', name: 'Asr', done: false, passed: false },
+    { id: 'maghrib', name: 'Maghrib', done: false, passed: false },
+    { id: 'isha', name: 'Isha', done: false, passed: true, since: 1 },
+  ],
+  allDay: [
+    { title: 'Fasting on Monday', detail: 'Today', url: 'ihsaanly://item/fast-monday' },
+    { title: 'Salawat', detail: null, url: 'ihsaanly://item/salawat' },
+  ],
+  comingUp: [
+    { title: 'Surah al-Kahf', detail: 'Tomorrow', url: 'ihsaanly://item/kahf-friday' },
+    { title: 'Fasting on Thursday', detail: null, url: 'ihsaanly://item/fast-thursday' },
+  ],
+  quickDuas: [
+    { title: 'Leaving home', detail: null, url: 'ihsaanly://item/leaving-home', since: 1 },
+    { title: 'Travelling', detail: null, url: 'ihsaanly://item/travel', since: 1, done: true },
+    { title: 'Going up', detail: null, url: 'ihsaanly://item/ascending' },
+    { title: 'Coming down', detail: null, url: 'ihsaanly://item/descending', since: 1 },
+  ],
+  duaOfTheDay: {
+    title: 'Trust in Allah',
+    arabic: 'بِسْمِ اللَّهِ، تَوَكَّلْتُ عَلَى اللَّهِ',
+    translation: 'In the name of Allah, I place my trust in Allah.',
+    done: false,
+  },
+  makeUp: { prayers: 3, fasts: 2, summary: '3 prayers owed · 2 fasts to make up' },
+}
+
+export const widgetsFixture: WidgetsScreenProps = {
+  model: widgetPreviewFixture,
+  platform: 'ios',
 }

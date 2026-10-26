@@ -18,13 +18,18 @@ export function openAfterOnboarding(path: string): void {
  * Opens the path left by onboarding, once. A route this build lacks (the
  * widget gallery ships separately) lands on the not-found screen, which has
  * its own way back, rather than failing here.
+ *
+ * `withAnchor` puts the tab's own index under the destination. The tab's
+ * stack has not mounted yet at this point, so a plain push made the setting
+ * the only screen in it: More opened on Widgets with no Back and no way to
+ * reach the list, and stayed that way until the app was restarted.
  */
 export function openPendingDestination(): void {
   const path = pending.path
   pending.path = null
   if (path === null) return
   try {
-    router.push(path as Href)
+    router.push(path as Href, { withAnchor: true })
   } catch {
     // The navigator was not ready; Today is still a fine place to start.
   }

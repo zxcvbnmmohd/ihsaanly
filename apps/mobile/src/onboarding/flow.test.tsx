@@ -165,7 +165,7 @@ describe('OnboardingFlow steps', () => {
     act(() => screen().onOpenSetting('reminders'))
     expect(getOnboarding().completed).toBe(true)
     openPendingDestination()
-    expect(router.calls).toContainEqual(['push', '/notifications'])
+    expect(router.calls).toContainEqual(['push', '/notifications', { withAnchor: true }])
   })
 
   it('finishing without a destination leaves nothing to open', () => {

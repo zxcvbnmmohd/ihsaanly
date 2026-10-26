@@ -106,6 +106,14 @@ describe('useMoreGroups', () => {
     expect(rowAt(result.current, '/account')).toBeUndefined()
   })
 
+  it('lists Widgets only for a host with widgets', () => {
+    expect(rowAt(renderHook(() => useMoreGroups('light')).result.current, '/widgets')).toBe(
+      undefined,
+    )
+    const { result } = renderHook(() => useMoreGroups('light', false, true))
+    expect(rowAt(result.current, '/widgets')?.title).toBe(en.widgetGallery.title)
+  })
+
   it('shows Not signed in in a build with a cloud', () => {
     const { result } = renderHook(() => useMoreGroups('light', true))
     expect(rowAt(result.current, '/account')?.detail).toBe(en.account.notSignedIn)

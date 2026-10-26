@@ -50,6 +50,7 @@ describe('more layout', () => {
         strings.calculation.title,
         strings.hijri.title,
         strings.notifications.title,
+        strings.widgetGallery.title,
         strings.tracking.title,
         strings.events.title,
         strings.startingPoint.title,

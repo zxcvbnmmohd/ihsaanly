@@ -411,7 +411,7 @@ function modelAt(input: WidgetInput, at: Date): WidgetModel {
     stale: false,
     rtl: input.rtl,
     reading: { arabicFirst: input.reading.arabicFirst, centred: input.reading.align === 'center' },
-    ink: { light: inkFor('light', input.accent), dark: inkFor('dark', input.accent) },
+    ink: widgetInk(input.accent),
     labels: {
       app: 'Ihsaanly',
       rightNow: strings.plan.rightNow,
@@ -514,6 +514,19 @@ function modelAt(input: WidgetInput, at: Date): WidgetModel {
       url: 'ihsaanly://qada',
     },
   }
+}
+
+/** Both schemes' widget colours under an accent, as every timeline entry carries them. */
+export function widgetInk(accent: AccentName | undefined): WidgetModel['ink'] {
+  return { light: inkFor('light', accent), dark: inkFor('dark', accent) }
+}
+
+/**
+ * The entry the widgets show now: the first of `widgetTimeline`, without
+ * planning the rest of the day. The widget gallery draws its previews from it.
+ */
+export function currentWidgetModel(input: WidgetInput): WidgetModel {
+  return modelAt(input, input.signals.now)
 }
 
 /**

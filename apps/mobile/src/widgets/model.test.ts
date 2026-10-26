@@ -11,7 +11,14 @@ import { prayerTimesAcross } from '@ihsaanly/core/prayer/times'
 import { buildWindows } from '@ihsaanly/core/prayer/windows'
 import { en } from '@ihsaanly/core/strings/en'
 
-import { distanceLabel, remainingLabel, type WidgetInput, widgetTimeline } from './model'
+import {
+  currentWidgetModel,
+  distanceLabel,
+  remainingLabel,
+  type WidgetInput,
+  widgetInk,
+  widgetTimeline,
+} from './model'
 
 const london: Place = {
   label: 'London',
@@ -395,5 +402,18 @@ describe('what a widget can mark', () => {
     )[0]
     expect(said?.duaOfTheDay?.done).toBe(true)
     expect(said?.quickDuas.find((entry) => entry.id === 'dua-leaving-home')?.done).toBe(true)
+  })
+})
+
+describe('the current entry', () => {
+  it('is the first entry of the timeline, for the widget gallery', () => {
+    const at = input({ completedToday: { 'morning-adhkar': now } })
+    expect(currentWidgetModel(at)).toEqual(widgetTimeline(at)[0] as never)
+  })
+
+  it('carries both schemes in the chosen accent', () => {
+    const entry = currentWidgetModel({ ...input(), accent: 'denim' })
+    expect(entry.ink).toEqual(widgetInk('denim'))
+    expect(entry.ink.light.accent).not.toBe(widgetInk(undefined).light.accent)
   })
 })

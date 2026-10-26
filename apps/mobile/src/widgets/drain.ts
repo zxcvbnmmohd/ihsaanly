@@ -21,6 +21,8 @@ import { createPreferenceStore } from '@ihsaanly/state/storage/preference-store'
 import { readPreference } from '@ihsaanly/state/storage/preferences'
 import { z } from 'zod'
 
+import { noteRemoteMarks, type RemoteMark } from '@/remote-marks/ledger'
+
 import type { WidgetTap, WidgetTapKind } from './model'
 import { forgetWidgetTaps, readWidgetTaps } from './taps'
 
@@ -78,13 +80,16 @@ export async function waitingTaps(): Promise<WidgetTap[]> {
 interface Filing {
   timeZone: string
   windowsAt: (at: Date) => PrayerWindow[]
+  /** What was filed, for the toast that says so the next time the app is in front. */
+  filed: RemoteMark[]
 }
 
 /** Done, as a tap in the app would be: at the tap's moment, in its window. */
-function fileDone(tap: WidgetTap, { timeZone, windowsAt }: Filing): boolean {
+function fileDone(tap: WidgetTap, { timeZone, windowsAt, filed }: Filing): boolean {
   if (!itemById(tap.id)) return false
   const at = new Date(tap.at)
   completeItem(tap.id, at, timeZone, windowAt(at, windowsAt(at)) ?? undefined)
+  filed.push({ source: 'widget', kind: 'done', id: tap.id, at: tap.at, timeZone })
   return true
 }
 
@@ -93,7 +98,7 @@ function fileDone(tap: WidgetTap, { timeZone, windowsAt }: Filing): boolean {
  * widget only marks, so a prayer already marked that day is left alone, and
  * nothing is filed while tracking is paused.
  */
-function filePrayer(tap: WidgetTap, { timeZone, windowsAt }: Filing): boolean {
+function filePrayer(tap: WidgetTap, { timeZone, windowsAt, filed }: Filing): boolean {
   if (!isPrayer(tap.id) || getUserState().trackingPaused) return false
   const at = new Date(tap.at)
   const prayer = tap.id
@@ -102,6 +107,7 @@ function filePrayer(tap: WidgetTap, { timeZone, windowsAt }: Filing): boolean {
     .filter((entry) => entry.name === prayer && entry.startsAt <= at)
     .at(-1)
   markPrayer(prayer, at, timeZone, window)
+  filed.push({ source: 'widget', kind: 'prayer', id: prayer, at: tap.at, timeZone })
   return true
 }
 
@@ -115,7 +121,7 @@ function fileCounts(
   itemId: string,
   periodKey: string,
   taps: WidgetTap[],
-  { timeZone, windowsAt }: Filing,
+  { timeZone, windowsAt, filed }: Filing,
 ): number {
   const item = itemById(itemId)
   if (!item || item.repeat <= 1) return 0
@@ -131,8 +137,19 @@ function fileCounts(
     const at = new Date(finishing.at)
     completeItem(itemId, at, timeZone, windowAt(at, windowsAt(at)) ?? undefined)
     if (live || stored?.periodKey === periodKey) clearProgress(itemId)
+    filed.push({ source: 'widget', kind: 'done', id: itemId, at: finishing.at, timeZone })
   } else if (live) {
     addCount(itemId, taps.length)
+    const at = taps.at(-1)?.at ?? Date.now()
+    filed.push({
+      source: 'widget',
+      kind: 'count',
+      id: itemId,
+      at,
+      timeZone,
+      counted: taps.length,
+      periodKey,
+    })
   }
   return taps.length
 }
@@ -156,6 +173,7 @@ export async function takeWidgetTaps(): Promise<number> {
   const filing: Filing = {
     timeZone: place?.timeZone ?? 'UTC',
     windowsAt: (at) => (place ? buildWindows(prayerTimesAcross(place, at, calculation)) : []),
+    filed: [],
   }
 
   let taken = 0
@@ -184,6 +202,7 @@ export async function takeWidgetTaps(): Promise<number> {
   }
 
   through.set(last.at)
+  noteRemoteMarks(filing.filed)
   // Android keeps taps in a file of its own; what is filed leaves it.
   await forgetWidgetTaps(last.at).catch(() => {})
   return taken

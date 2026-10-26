@@ -712,4 +712,14 @@ export const yue: Strings = {
     progress: (count: number, target: number): string => `${count} / ${target}`,
     tapToCount: '㩒一下計數',
   },
+  remoteMarks: {
+    doneFromWidget: '已經喺小工具標記完成',
+    doneFromNotification: '已經喺通知標記完成',
+    prayerFromWidget: (prayer: string): string => `已經喺小工具標記${prayer}`,
+    prayerFromNotification: (prayer: string): string => `已經喺通知標記${prayer}`,
+    countedFromWidget: (n: number): string => `喺小工具數咗 ${n} 次`,
+    manyFromWidgets: (n: number): string => `喺小工具標記咗 ${n} 項`,
+    manyFromNotifications: (n: number): string => `喺通知標記咗 ${n} 項`,
+    manyFromBoth: (n: number): string => `喺小工具同通知標記咗 ${n} 項`,
+  },
 }

@@ -760,4 +760,15 @@ export const so: Strings = {
     progress: (count: number, target: number): string => `${count} ka mid ah ${target}`,
     tapToCount: 'Taabo si aad u tirisid',
   },
+  remoteMarks: {
+    doneFromWidget: 'Waxaa laga calaamadeeyey widget-kaaga',
+    doneFromNotification: 'Waxaa laga calaamadeeyey ogeysiis',
+    prayerFromWidget: (prayer: string): string => `${prayer} waxaa laga calaamadeeyey widget-kaaga`,
+    prayerFromNotification: (prayer: string): string =>
+      `${prayer} waxaa laga calaamadeeyey ogeysiis`,
+    countedFromWidget: (n: number): string => `${n} ayaa laga tiriyey widget-kaaga`,
+    manyFromWidgets: (n: number): string => `${n} ayaa laga calaamadeeyey widget-yadaada`,
+    manyFromNotifications: (n: number): string => `${n} ayaa laga calaamadeeyey ogeysiisyo`,
+    manyFromBoth: (n: number): string => `${n} ayaa laga calaamadeeyey widget-yo iyo ogeysiisyo`,
+  },
 }

@@ -36,7 +36,8 @@ const { setPlace } = await import('@ihsaanly/state/location/store')
 const { getUserState, setUserState } = await import('@ihsaanly/state/plan/user-state-store')
 const { markPrayer } = await import('@ihsaanly/state/prayer/marks')
 const { startProgress } = await import('@ihsaanly/state/progress/configure')
-const { addCount, getItemProgress } = await import('@ihsaanly/state/progress/store')
+const { addCount, currentPeriod, getItemProgress } = await import('@ihsaanly/state/progress/store')
+const { forgetRemoteMarks, getRemoteMarks } = await import('@/remote-marks/ledger')
 
 const london: Place = {
   label: 'London',
@@ -71,6 +72,7 @@ beforeEach(() => {
   setPlace(london)
   setSystemTime(new Date(afterDhuhr + 60_000))
   stopProgress = startProgress()
+  forgetRemoteMarks()
 })
 afterEach(() => stopProgress())
 afterAll(() => setSystemTime())
@@ -130,6 +132,17 @@ describe('takeWidgetTaps, done', () => {
     expect(actions.every((action) => action.kind === 'item-completed')).toBe(true)
     // Filed with its window, as a tap in the app is.
     expect(actions[0]?.deltaSeconds).toBeNumber()
+    // Noted, for the toast that says so and can take them back.
+    expect(getRemoteMarks()).toEqual([
+      {
+        source: 'widget',
+        kind: 'done',
+        id: 'morning-adhkar',
+        at: morning,
+        timeZone: 'Europe/London',
+      },
+      { source: 'widget', kind: 'done', id: 'witr', at: pastMidnight, timeZone: 'Europe/London' },
+    ])
   })
 
   it('never files the same tap twice, however often it is read', async () => {
@@ -193,6 +206,9 @@ describe('takeWidgetTaps, prayer', () => {
     expect(action?.at).toBe(afterDhuhr)
     expect(action?.logDay).toBe('2026-09-23')
     expect(action?.deltaSeconds).toBeNumber()
+    expect(getRemoteMarks()).toEqual([
+      { source: 'widget', kind: 'prayer', id: 'dhuhr', at: afterDhuhr, timeZone: 'Europe/London' },
+    ])
   })
 
   it('leaves a prayer already marked that day alone', async () => {
@@ -223,6 +239,17 @@ describe('takeWidgetTaps, count', () => {
     expect(await takeWidgetTaps()).toBe(3)
     expect(getItemProgress(tasbih).count).toBe(3)
     expect(allActions()).toEqual([])
+    expect(getRemoteMarks()).toEqual([
+      {
+        source: 'widget',
+        kind: 'count',
+        id: tasbih,
+        at: afterDhuhr + 2000,
+        timeZone: 'Europe/London',
+        counted: 3,
+        periodKey: currentPeriod(tasbih),
+      },
+    ])
   })
 
   it('files the item done at the tap that reaches its repeat, and starts its count again', async () => {
@@ -234,6 +261,9 @@ describe('takeWidgetTaps, count', () => {
     expect(action?.subject).toBe(tasbih)
     expect(action?.at).toBe(afterDhuhr + 1000)
     expect(getItemProgress(tasbih).count).toBe(0)
+    expect(getRemoteMarks().map((mark) => [mark.kind, mark.at])).toEqual([
+      ['done', afterDhuhr + 1000],
+    ])
   })
 
   it('still files a finished count once its occasion has passed, and drops an unfinished one', async () => {

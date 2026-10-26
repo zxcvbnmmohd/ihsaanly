@@ -764,4 +764,14 @@ export const fr: Strings = {
     progress: (count: number, target: number): string => `${count} sur ${target}`,
     tapToCount: 'Touchez pour compter',
   },
+  remoteMarks: {
+    doneFromWidget: 'Marqué comme fait depuis votre widget',
+    doneFromNotification: 'Marqué comme fait depuis une notification',
+    prayerFromWidget: (prayer: string): string => `${prayer} marquée depuis votre widget`,
+    prayerFromNotification: (prayer: string): string => `${prayer} marquée depuis une notification`,
+    countedFromWidget: (n: number): string => `${n} compté${n > 1 ? 's' : ''} depuis votre widget`,
+    manyFromWidgets: (n: number): string => `${n} marqués depuis vos widgets`,
+    manyFromNotifications: (n: number): string => `${n} marqués depuis des notifications`,
+    manyFromBoth: (n: number): string => `${n} marqués depuis des widgets et des notifications`,
+  },
 }

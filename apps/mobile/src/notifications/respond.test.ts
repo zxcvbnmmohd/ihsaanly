@@ -10,6 +10,7 @@ import {
 } from '@ihsaanly/state/notifications/payload'
 import { setUserState } from '@ihsaanly/state/plan/user-state-store'
 import { allActions, prayerMarksOn } from '@ihsaanly/state/storage/events'
+import { forgetRemoteMarks, getRemoteMarks } from '@/remote-marks/ledger'
 import { fake, installReminderFakes, resetReminderFakes } from '../../test/reminders'
 import { router } from '../../test/router'
 import type { Response } from './respond'
@@ -82,10 +83,20 @@ describe('handleResponse', () => {
     expect(router.calls).toEqual([])
   })
 
-  it('records an item completion on Done', async () => {
+  it('records an item completion on Done, noted for the toast', async () => {
+    forgetRemoteMarks()
     const before = completions()
     await handleResponse(response('done', itemData(NOW.getTime() + 1000)))
     expect(completions()).toBe(before + 1)
+    expect(getRemoteMarks()).toEqual([
+      {
+        source: 'notification',
+        kind: 'done',
+        id: 'dhikr-morning',
+        at: NOW.getTime(),
+        timeZone: 'Asia/Dubai',
+      },
+    ])
   })
 
   it('records nothing on Done for a non-item payload', async () => {
@@ -179,9 +190,13 @@ describe('a prayer reminder', () => {
   const asked = { title: 'Asr has come in', body: 'Have you prayed?' }
 
   it('marks the prayer on "Yes, I\'ve prayed", as the Today strip does', async () => {
+    forgetRemoteMarks()
     expect(marked('asr')).toBeUndefined()
     await handleResponse(response('done', prayerData('asr'), asked))
     expect(marked('asr')).toEqual(NOW)
+    expect(getRemoteMarks().map((mark) => [mark.source, mark.kind, mark.id])).toEqual([
+      ['notification', 'prayer', 'asr'],
+    ])
   })
 
   it('marks an older reminder that carried no window too', async () => {

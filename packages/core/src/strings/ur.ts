@@ -130,6 +130,7 @@ export const ur: Strings = {
       isha: 'کیا آپ نے نماز پڑھ لی؟ دن ختم ہونے سے پہلے ایک اور۔',
       jumuah: 'کیا آپ نے نماز پڑھ لی؟ ہفتے میں ایک بار، سب کے ساتھ۔',
     },
+    askPrayed: (title: string): string => `کیا آپ نے ${title} پڑھ لی؟`,
     checkIn: 'Ihsaanly کی طرف سے ایک مختصر پیغام',
     action: {
       done: 'ہو گیا',
@@ -140,6 +141,7 @@ export const ur: Strings = {
     body: {
       window: 'ابھی، جب تک وقت باقی ہے۔',
       windowUntil: (closes: string): string => `${closes} تک کھلا ہے۔`,
+      until: (closes: string): string => `${closes} تک۔`,
       tomorrow: 'کل۔',
     },
   },

@@ -34,6 +34,10 @@ export interface NotificationContent {
  * returns null for a language the content does not carry, so an Arabic reader
  * gets the interface sentence rather than an English one — which is why the
  * fallback stays rather than being replaced.
+ *
+ * A reminder inside a window ends on a rough cue, "Open until Dhuhr.", never a
+ * clock time. The night prayer reminder asks instead of telling: "Have you
+ * prayed Witr?", then "Until Fajr."
  */
 export function notificationContent(
   entry: ScheduledNotification,
@@ -45,19 +49,31 @@ export function notificationContent(
       const item = items.find((candidate) => candidate.id === entry.itemId)
       if (!item) return null
       const reason = entry.reason === 'upcoming' ? 'upcoming' : 'current-window'
+      const title = resolveText(item.title) ?? item.id
+      const asks = entry.reason === 'after-prayer'
+      const closes = entry.window
+        ? prayerName(strings, entry.window.closes, entry.window.jumuah)
+        : null
+      const cue =
+        reason === 'upcoming' || closes === null
+          ? null
+          : asks
+            ? strings.notifications.body.until(closes)
+            : strings.notifications.body.windowUntil(closes)
+      const reminder = resolveText(item.reminder)
 
       return {
         identifier: identifierFor(entry),
-        title: resolveText(item.title) ?? item.id,
-        body:
-          resolveText(item.reminder) ??
-          (reason === 'upcoming'
-            ? strings.notifications.body.tomorrow
-            : entry.window
-              ? strings.notifications.body.windowUntil(
-                  prayerName(strings, entry.window.closes, entry.window.jumuah),
-                )
-              : strings.notifications.body.window),
+        title: asks ? strings.notifications.askPrayed(title) : title,
+        // A sentence that already names the end ("before Maghrib") needs no cue.
+        body: reminder
+          ? cue && closes && !reminder.includes(closes)
+            ? `${reminder} ${cue}`
+            : reminder
+          : (cue ??
+            (reason === 'upcoming'
+              ? strings.notifications.body.tomorrow
+              : strings.notifications.body.window)),
         at: entry.at,
         channelId: 'reminders',
         categoryIdentifier: REMINDER_CATEGORY,

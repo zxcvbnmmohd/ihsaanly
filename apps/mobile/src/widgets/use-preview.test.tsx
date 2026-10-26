@@ -26,7 +26,11 @@ afterEach(() => {
 
 describe('useWidgetPreview', () => {
   it('shows the sample in the chosen accent until there is a place', () => {
-    act(() => setAccent('denim'))
+    // Another file in the run may leave a city chosen; this case is about having none.
+    act(() => {
+      setPlace(null)
+      setAccent('denim')
+    })
     const { result } = renderHook(() => useWidgetPreview())
     expect(result.current.rightNow?.title).toBe(sample.rightNow.title)
     expect(result.current.ink).toEqual(widgetInk('denim'))

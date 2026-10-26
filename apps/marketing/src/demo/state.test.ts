@@ -191,6 +191,12 @@ describe('back, reset-counter, remind and unknown actions', () => {
     )
   })
 
+  test('keeps the brief or detailed choice, starting detailed', () => {
+    const state = initialDemoState(ZONE)
+    expect(state.detail).toBe('detailed')
+    expect(demoReducer(state, { type: 'set-detail', detail: 'brief' }).detail).toBe('brief')
+  })
+
   test('an unknown action leaves the state as it was', () => {
     const state = initialDemoState(ZONE)
     expect(demoReducer(state, { type: 'nope' } as unknown as DemoAction)).toBe(state)

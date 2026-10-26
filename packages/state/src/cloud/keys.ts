@@ -87,6 +87,14 @@ export const TODAY_HINTS_KEY = 'todayHints'
  */
 export const WIDGET_TAPS_KEY = 'widgetTapsThrough'
 
+/**
+ * How duas and dhikr are laid out (Arabic first, alignment, brief or detailed
+ * why). Kept on the device for now: a synced key would take one of the 64 the
+ * rules allow, and a reading taste can differ between a phone and a tablet.
+ * It is still exported with everything else.
+ */
+export const READER_KEY = 'reader'
+
 /** Device bookkeeping that never belongs in an export either. */
 export const DEVICE_ONLY_KEYS: ReadonlySet<string> = new Set([
   SYNC_META_KEY,

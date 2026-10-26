@@ -16,4 +16,17 @@ describe('ArabicText', () => {
     renderScreen(<ArabicText variant="hero">الْحَمْدُ لِلَّهِ</ArabicText>)
     expect(screen.getByText('الْحَمْدُ لِلَّهِ')).toHaveStyle({ textAlign: 'center' })
   })
+
+  it('follows a stated alignment over its variant', () => {
+    renderScreen(
+      <>
+        <ArabicText variant="hero" align="start">
+          سُبْحَانَ اللَّهِ
+        </ArabicText>
+        <ArabicText align="center">اللَّهُ أَكْبَرُ</ArabicText>
+      </>,
+    )
+    expect(screen.getByText('سُبْحَانَ اللَّهِ')).toHaveStyle({ textAlign: 'right' })
+    expect(screen.getByText('اللَّهُ أَكْبَرُ')).toHaveStyle({ textAlign: 'center' })
+  })
 })

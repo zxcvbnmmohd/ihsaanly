@@ -4,6 +4,7 @@
 // Today, per-item reminders, and where the visitor is in the screens and the
 // coach.
 
+import { DEFAULT_READER_PREFERENCES, type DetailLevel } from '@ihsaanly/core/content/reading'
 import type { Place } from '@ihsaanly/core/location/place'
 import type { Prayer } from '@ihsaanly/core/prayer/qada'
 import { markKind } from '@ihsaanly/ui/props/today'
@@ -42,6 +43,8 @@ export interface DemoState {
   selectedItemId: string | null
   /** The open item's repeat counter. */
   count: number
+  /** Brief or detailed why and evidence on the item screen. */
+  detail: DetailLevel
   libraryQuery: string
   libraryFilter: LibraryFilter
   coachStep: CoachStep
@@ -66,6 +69,7 @@ export type DemoAction =
   | { type: 'dismiss-undo' }
   | { type: 'toggle-on-today'; id: string }
   | { type: 'toggle-remind'; id: string; value: boolean }
+  | { type: 'set-detail'; detail: DetailLevel }
 
 /** The visitor's own city, guessed from their time zone — same default the app itself falls back to. */
 export function initialDemoState(timeZone: string): DemoState {
@@ -82,6 +86,7 @@ export function initialDemoState(timeZone: string): DemoState {
     previousTab: 'today',
     selectedItemId: null,
     count: 0,
+    detail: DEFAULT_READER_PREFERENCES.detail,
     libraryQuery: '',
     libraryFilter: 'all',
     coachStep: 'mark',
@@ -219,6 +224,9 @@ export function demoReducer(state: DemoState, action: DemoAction): DemoState {
 
     case 'toggle-remind':
       return { ...state, remind: { ...state.remind, [action.id]: action.value } }
+
+    case 'set-detail':
+      return { ...state, detail: action.detail }
 
     default:
       return state

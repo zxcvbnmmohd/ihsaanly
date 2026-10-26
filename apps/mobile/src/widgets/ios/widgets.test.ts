@@ -739,3 +739,51 @@ describe('RightNowWidget, what else is open and the date', () => {
     expect(footer(true)).toEqual(['Button', 'Spacer', 'Text'])
   })
 })
+
+describe('iOS Dua of the day and the reading preference', () => {
+  const dua = { title: 'T', arabic: 'ع', translation: 'Meaning', url: 'ihsaanly://item/d' }
+  const sideOf = (root: Node, text: string): unknown =>
+    nodes(root)
+      .filter((n) => n.children.includes(text))
+      .flatMap(modifiers)
+      .find((m) => m.modifier === 'multilineTextAlignment')?.args[0]
+  const large = { widgetFamily: 'systemLarge' } as const
+
+  it('centres the Arabic and its meaning, Arabic first, by default', () => {
+    const root = draw('DuaOfTheDayWidget', model({ duaOfTheDay: dua }), large)
+    expect(texts(root)).toEqual(['Dua of the day', 'ع', 'T', 'Meaning'])
+    expect(sideOf(root, 'ع')).toBe('center')
+    expect(sideOf(root, 'Meaning')).toBe('center')
+  })
+
+  it('puts the meaning first and aligns each to its start when asked', () => {
+    const reading = { arabicFirst: false, centred: false }
+    const root = draw('DuaOfTheDayWidget', model({ duaOfTheDay: dua, reading }), large)
+    expect(texts(root)).toEqual(['Dua of the day', 'Meaning', 'ع', 'T'])
+    expect(sideOf(root, 'ع')).toBe('trailing')
+    expect(sideOf(root, 'Meaning')).toBe('leading')
+    const rtl = draw('DuaOfTheDayWidget', model({ rtl: true, duaOfTheDay: dua, reading }), large)
+    expect(sideOf(rtl, 'ع')).toBe('leading')
+    expect(sideOf(rtl, 'Meaning')).toBe('trailing')
+  })
+
+  it('keeps the usual order when there is no meaning to put first', () => {
+    const reading = { arabicFirst: false, centred: true }
+    const root = draw(
+      'DuaOfTheDayWidget',
+      model({ duaOfTheDay: { ...dua, translation: null }, reading }),
+      large,
+    )
+    expect(texts(root)).toEqual(['Dua of the day', 'ع', 'T'])
+  })
+
+  it('reads a timeline published before the preference existed as the default', () => {
+    const entry = { ...model({ duaOfTheDay: dua }), reading: undefined } as unknown as WidgetModel
+    expect(texts(draw('DuaOfTheDayWidget', entry, large))).toEqual([
+      'Dua of the day',
+      'ع',
+      'T',
+      'Meaning',
+    ])
+  })
+})

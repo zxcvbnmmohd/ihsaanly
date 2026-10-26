@@ -1,3 +1,5 @@
+import { resolveText } from '@ihsaanly/core/content/language'
+import { type DetailLevel, firstSentence, type ReadingLayout } from '@ihsaanly/core/content/reading'
 import type { Evidence, Ruling } from '@ihsaanly/core/content/schema'
 import { palettes } from '@ihsaanly/tailwind/tokens'
 import type { ReactElement, ReactNode } from 'react'
@@ -5,6 +7,7 @@ import { Pressable, Text, View } from 'react-native'
 import { useColors } from '../colors'
 import { ArabicText } from '../components/arabic-text'
 import { Button } from '../components/button'
+import { Chip } from '../components/chip'
 import { Counter } from '../components/counter'
 import { EmptyState } from '../components/empty-state'
 import { EvidencePanel } from '../components/evidence-panel'
@@ -71,7 +74,14 @@ export interface ItemScreenProps {
   onToggleRemind: (value: boolean) => void
   onShareText: () => void
   onShareImage: () => void
+  /** Arabic before or after its translation, and how it is aligned. */
+  reading: ReadingLayout
+  /** Brief shows the why's first sentence and the evidence's citations only. */
+  detail: DetailLevel
+  onDetail: (detail: DetailLevel) => void
 }
+
+const DETAIL_LEVELS: readonly DetailLevel[] = ['brief', 'detailed']
 
 interface LabelledProps {
   label: string
@@ -80,9 +90,65 @@ interface LabelledProps {
 
 interface PartCardProps {
   part: ItemPartDetail
+  reading: ReadingLayout
 }
 
-function PartCard({ part }: PartCardProps): ReactElement {
+interface ReadingTextProps {
+  arabic: string
+  transliteration: string | null
+  translation: string | null
+  reading: ReadingLayout
+  variant: 'inline' | 'hero'
+}
+
+/**
+ * The words to say and their meaning, in the reader's order and alignment.
+ * The transliteration stays with the Arabic it spells out.
+ */
+function ReadingText({
+  arabic,
+  transliteration,
+  translation,
+  reading,
+  variant,
+}: ReadingTextProps): ReactElement {
+  const colors = useColors()
+  const align = reading.align === 'center' ? 'text-center' : 'text-start'
+  const hero = variant === 'hero'
+  const said = (
+    <>
+      <ArabicText variant={variant} align={reading.align}>
+        {arabic}
+      </ArabicText>
+      {transliteration ? (
+        <Text className={`${align} text-base italic`} style={{ color: colors.secondaryLabel }}>
+          {transliteration}
+        </Text>
+      ) : null}
+    </>
+  )
+  const meaning = translation ? (
+    <Text
+      className={`${align} text-base${hero ? '' : 'leading-relaxed'}`}
+      style={{ color: hero ? colors.secondaryLabel : colors.label }}>
+      {translation}
+    </Text>
+  ) : null
+
+  return reading.arabicFirst ? (
+    <>
+      {said}
+      {meaning}
+    </>
+  ) : (
+    <>
+      {meaning}
+      {said}
+    </>
+  )
+}
+
+function PartCard({ part, reading }: PartCardProps): ReactElement {
   const colors = useColors()
   const { strings } = useUi()
 
@@ -99,17 +165,13 @@ function PartCard({ part }: PartCardProps): ReactElement {
             </Text>
           ) : null}
         </View>
-        <ArabicText>{part.arabic}</ArabicText>
-        {part.transliteration ? (
-          <Text className="text-base italic" style={{ color: colors.secondaryLabel }}>
-            {part.transliteration}
-          </Text>
-        ) : null}
-        {part.translation ? (
-          <Text className="text-base leading-relaxed" style={{ color: colors.label }}>
-            {part.translation}
-          </Text>
-        ) : null}
+        <ReadingText
+          arabic={part.arabic}
+          transliteration={part.transliteration}
+          translation={part.translation}
+          reading={reading}
+          variant="inline"
+        />
         <Text className="text-sm" style={{ color: colors.secondaryLabel }}>
           {part.source}
         </Text>
@@ -149,6 +211,9 @@ export function ItemScreen({
   onToggleRemind,
   onShareText,
   onShareImage,
+  reading,
+  detail,
+  onDetail,
 }: ItemScreenProps): ReactElement {
   const colors = useColors()
   const { strings, scheme, Link } = useUi()
@@ -157,6 +222,11 @@ export function ItemScreen({
   if (!item) {
     return <EmptyState message={strings.notFound.body} />
   }
+
+  const brief = detail === 'brief'
+  const canShorten =
+    (item.why !== null && firstSentence(item.why) !== item.why.trim()) ||
+    item.evidence.some((entry) => resolveText(entry.text) !== null)
 
   return (
     <Screen palette={palette} className="gap-6 p-4">
@@ -186,20 +256,14 @@ export function ItemScreen({
 
       {item.arabic ? (
         <Surface style={{ borderRadius: 24, padding: 22 }}>
-          <View className="items-center gap-3">
-            <ArabicText variant="hero">{item.arabic}</ArabicText>
-            {item.transliteration ? (
-              <Text
-                className="text-center text-base italic"
-                style={{ color: colors.secondaryLabel }}>
-                {item.transliteration}
-              </Text>
-            ) : null}
-            {item.translation ? (
-              <Text className="text-center text-base" style={{ color: colors.secondaryLabel }}>
-                {item.translation}
-              </Text>
-            ) : null}
+          <View className="gap-3">
+            <ReadingText
+              arabic={item.arabic}
+              transliteration={item.transliteration}
+              translation={item.translation}
+              reading={reading}
+              variant="hero"
+            />
           </View>
         </Surface>
       ) : null}
@@ -220,16 +284,31 @@ export function ItemScreen({
         <Labelled label={strings.item.parts}>
           <View className="gap-3">
             {item.parts.map((part) => (
-              <PartCard key={part.id} part={part} />
+              <PartCard key={part.id} part={part} reading={reading} />
             ))}
           </View>
         </Labelled>
       ) : null}
 
+      {/* Only offered when Brief would leave something out. */}
+      {canShorten ? (
+        <View accessibilityRole="radiogroup" className="flex-row gap-2">
+          {DETAIL_LEVELS.map((level) => (
+            <Chip
+              key={level}
+              label={strings.item[level]}
+              selected={detail === level}
+              onPress={() => onDetail(level)}
+              palette={palette}
+            />
+          ))}
+        </View>
+      ) : null}
+
       {item.why ? (
         <Labelled label={strings.item.why}>
           <Text className="text-base leading-relaxed" style={{ color: colors.label }}>
-            {item.why}
+            {brief ? firstSentence(item.why) : item.why}
           </Text>
         </Labelled>
       ) : null}
@@ -307,7 +386,7 @@ export function ItemScreen({
         <Row title={strings.item.shareImage} onPress={onShareImage} />
       </View>
 
-      <EvidencePanel evidence={item.evidence} />
+      <EvidencePanel evidence={item.evidence} brief={brief} />
     </Screen>
   )
 }

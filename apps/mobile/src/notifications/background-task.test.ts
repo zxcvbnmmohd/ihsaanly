@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, setSystemTime } from 'bun:test'
+import { civilDateKey, logDay } from '@ihsaanly/core/day/boundaries'
 import { setPlace } from '@ihsaanly/state/location/store'
-import { allActions } from '@ihsaanly/state/storage/events'
+import { allActions, prayerMarksOn } from '@ihsaanly/state/storage/events'
 import {
   fake,
   installReminderFakes,
@@ -92,6 +93,11 @@ describe('the notification response task', () => {
     withText.notification.request.content = { data: itemData } as never
     await run(withText)
     expect(fake.scheduled.map((request) => request.content.title)).toEqual(['T', 'bg-item'])
+  })
+
+  it('marks a prayer from the shade without the app being opened', async () => {
+    await run(tap('done', { v: 1, kind: 'prayer', prayer: 'fajr' }))
+    expect(prayerMarksOn(civilDateKey(logDay(new Date(), 'UTC'))).fajr).toEqual(new Date())
   })
 
   it('ignores payloads that are not a response', async () => {

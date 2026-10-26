@@ -16,6 +16,21 @@ describe('notification data', () => {
     expect(parseNotificationData({ v: 1, kind: 'check-in' })).toEqual({ v: 1, kind: 'check-in' })
   })
 
+  it("keeps a prayer's window, and drops one that is not two instants", () => {
+    const window = { startsAt: 1, endsAt: 2 }
+    expect(parseNotificationData({ v: 1, kind: 'prayer', prayer: 'asr', window })).toEqual({
+      v: 1,
+      kind: 'prayer',
+      prayer: 'asr',
+      window,
+    })
+    for (const broken of [{ startsAt: 1 }, { startsAt: '1', endsAt: 2 }, 'soon']) {
+      expect(
+        parseNotificationData({ v: 1, kind: 'prayer', prayer: 'asr', window: broken }),
+      ).toEqual({ v: 1, kind: 'prayer', prayer: 'asr' })
+    }
+  })
+
   it('rejects junk', () => {
     expect(parseNotificationData(null)).toBeNull()
     expect(parseNotificationData({ itemId: 'x' })).toBeNull()

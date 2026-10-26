@@ -111,33 +111,53 @@ describe('notification words', () => {
     expect(content?.body).toBe(en.notifications.body.tomorrow)
   })
 
-  it('names the prayer on its own channel', () => {
+  it('asks whether the prayer is prayed, on its own channel, with the window it closes at', () => {
     const content = notificationContent(
-      { kind: 'prayer', prayer: 'fajr', at, jumuah: false },
+      { kind: 'prayer', prayer: 'asr', at, endsAt, jumuah: false },
       [item],
       en,
     )
-    expect(content?.title).toBe(en.prayer.fajr)
+    expect(content?.title).toBe('Asr has come in')
+    expect(content?.body).toBe("Have you prayed? It's the one that's easiest to lose track of.")
     expect(content?.channelId).toBe('prayers')
-    expect(content?.categoryIdentifier).toBeUndefined()
+    expect(content?.categoryIdentifier).toBe('prayer')
+    expect(content?.data).toEqual({
+      v: 1,
+      kind: 'prayer',
+      prayer: 'asr',
+      window: { startsAt: at.getTime(), endsAt: endsAt.getTime() },
+    })
+  })
+
+  it('gives each prayer its own why, in every language, and never a clock time', () => {
+    const prayers = ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha'] as const
+    for (const strings of [en, ar, fr, hi, italian, ja, so, ur, yue, zh]) {
+      const ask = (prayer: (typeof prayers)[number], jumuah: boolean): string | undefined =>
+        notificationContent({ kind: 'prayer', prayer, at, endsAt, jumuah }, [], strings)?.body
+      const bodies = [...prayers.map((prayer) => ask(prayer, false)), ask('dhuhr', true)]
+      expect(new Set(bodies).size).toBe(6)
+      bodies.forEach((body) => expect(body).not.toMatch(/[0-9]/))
+    }
   })
 
   it("names Jumu'ah, not Dhuhr, when the prayer falls on the user's Jumu'ah day", () => {
     const friday = notificationContent(
-      { kind: 'prayer', prayer: 'dhuhr', at, jumuah: true },
+      { kind: 'prayer', prayer: 'dhuhr', at, endsAt, jumuah: true },
       [item],
       en,
     )
     const otherDay = notificationContent(
-      { kind: 'prayer', prayer: 'dhuhr', at, jumuah: false },
+      { kind: 'prayer', prayer: 'dhuhr', at, endsAt, jumuah: false },
       [item],
       en,
     )
-    expect(friday?.title).toBe("Jumu'ah")
-    expect(otherDay?.title).toBe('Dhuhr')
+    expect(friday?.title).toBe("Jumu'ah has come in")
+    expect(friday?.body).toBe(en.notifications.prayerAsk.jumuah)
+    expect(otherDay?.title).toBe('Dhuhr has come in')
+    expect(otherDay?.body).toBe(en.notifications.prayerAsk.dhuhr)
     // The identifier and payload stay dhuhr: Jumu'ah is recorded as the dhuhr mark.
     expect(friday?.identifier).toBe(otherDay?.identifier ?? '')
-    expect(friday?.data).toEqual({ v: 1, kind: 'prayer', prayer: 'dhuhr' })
+    expect(friday?.data).toMatchObject({ v: 1, kind: 'prayer', prayer: 'dhuhr' })
   })
 
   it("says the morning window is open until Jumu'ah on a Friday", () => {

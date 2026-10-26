@@ -43,6 +43,12 @@ describe('planSync', () => {
     expect(plan.cancel).toEqual(['plan:b@2'])
   })
 
+  it("withdraws a prayer's second ask while tracking is paused, and no other snooze", () => {
+    const pending = ['later:prayer:asr@1', 'later:a@1', 'test:1']
+    expect(planSync([], pending, NOW, true).cancel).toEqual(['later:prayer:asr@1'])
+    expect(planSync([], pending, NOW, false).cancel).toEqual([])
+  })
+
   it('ignores anything already in the past rather than scheduling it', () => {
     const plan = planSync([entry('plan:gone@1', -30), entry('plan:soon@2', 30)], [], NOW)
 

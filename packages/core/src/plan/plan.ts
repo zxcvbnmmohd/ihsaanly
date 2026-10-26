@@ -385,7 +385,13 @@ function scheduleNotifications(signals: Signals, items: Item[]): ScheduledNotifi
     const jumuah = isJumuahAt(window.startsAt, signals.timeZone, signals.attendsJumuah)
     const paused = signals.userState.trackingPaused
     if (prayer && notifications.prayers && !paused && admit(window.startsAt, false)) {
-      scheduled.push({ kind: 'prayer', prayer, at: window.startsAt, jumuah })
+      scheduled.push({
+        kind: 'prayer',
+        prayer,
+        at: window.startsAt,
+        endsAt: window.endsAt,
+        jumuah,
+      })
     }
     if (prayer && notifications.prayers && remembrance && admit(window.startsAt, false)) {
       scheduled.push({

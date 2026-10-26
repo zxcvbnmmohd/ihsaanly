@@ -659,6 +659,18 @@ describe('OnboardingScreen, widgets step', () => {
     expect(within(notification).getByText(strings.notifications.action.done)).toBeInTheDocument()
   })
 
+  it('draws them as the gallery does: on a wallpaper, named, under the clock, with the real icon', () => {
+    renderScreen(<OnboardingScreen {...at('widgets')} />)
+    const home = screen.getByTestId('home-widget-preview')
+    expect(within(home).getByTestId('widget-frame')).toBeInTheDocument()
+    expect(within(home).getByText('Ihsaanly')).toBeInTheDocument()
+    const lock = screen.getByTestId('lock-widget-preview')
+    expect(within(lock).getByText('9:41')).toBeInTheDocument()
+    expect(within(lock).getByTestId('lock-widget')).toBeInTheDocument()
+    const notification = screen.getByTestId('notification-preview')
+    expect(within(notification).getByTestId('app-icon')).toBeInTheDocument()
+  })
+
   it('leaves out a home widget detail it does not have', () => {
     const preview = onboardingFixture.widgetPreview
     renderScreen(

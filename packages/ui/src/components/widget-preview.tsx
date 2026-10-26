@@ -1,9 +1,26 @@
-import { LinearGradient } from 'expo-linear-gradient'
 import type { ReactElement } from 'react'
 import { Text, View } from 'react-native'
 
-import { arabic } from '../fonts'
 import { useUi } from '../provider'
+import {
+  APP_NAME,
+  type HomeFamily,
+  LOCK_INK,
+  type LockFamily,
+  LockFrame,
+  type PreviewInk,
+  type PreviewPlatform,
+  WIDGET_POINTS,
+  WidgetFrame,
+  type WidgetLook,
+  WidgetScene,
+  WidgetText,
+  type WidgetTextSize,
+  type WidgetTone,
+  type WidgetWeight,
+} from './widget-scene'
+
+export type { HomeFamily, LockFamily, PreviewInk, PreviewPlatform }
 
 /** The ten widgets, in the order the gallery lists them (the app's `WIDGET_NAMES`). */
 export const GALLERY_WIDGETS = [
@@ -20,12 +37,10 @@ export const GALLERY_WIDGETS = [
 ] as const
 export type GalleryWidget = (typeof GALLERY_WIDGETS)[number]
 
-export const HOME_FAMILIES = ['small', 'medium', 'large'] as const
-export type HomeFamily = (typeof HOME_FAMILIES)[number]
+export const HOME_FAMILIES = ['small', 'medium', 'large'] as const satisfies HomeFamily[]
 
 /** iOS's accessory families. Android has no Lock Screen widgets. */
-export const LOCK_FAMILIES = ['circular', 'rectangular', 'inline'] as const
-export type LockFamily = (typeof LOCK_FAMILIES)[number]
+export const LOCK_FAMILIES = ['circular', 'rectangular', 'inline'] as const satisfies LockFamily[]
 
 export type PreviewFamily = HomeFamily | LockFamily
 
@@ -45,15 +60,6 @@ export const LOCK_FAMILIES_BY_WIDGET: Record<GalleryWidget, readonly LockFamily[
   duaOfTheDay: LOCK_FAMILIES,
   makeUp: LOCK_FAMILIES,
   comingUp: LOCK_FAMILIES,
-}
-
-export interface PreviewInk {
-  background: string
-  backgroundEnd: string
-  accent: string
-  onAccent: string
-  label: string
-  secondaryLabel: string
 }
 
 export interface PreviewLink {
@@ -113,80 +119,91 @@ export interface WidgetPreviewModel {
   makeUp: { prayers: number; fasts: number; summary: string | null }
 }
 
-type Tone = 'label' | 'secondary' | 'accent'
-type Size =
-  | 'largeTitle'
-  | 'title'
-  | 'title2'
-  | 'title3'
-  | 'headline'
-  | 'subheadline'
-  | 'body'
-  | 'footnote'
-  | 'caption'
-
-/** SwiftUI's text styles on the Tailwind scale, close enough for a preview. */
-const TYPE: Record<Size, string> = {
-  largeTitle: 'text-4xl font-bold',
-  title: 'text-3xl font-bold',
-  title2: 'text-2xl font-semibold',
-  title3: 'text-xl font-semibold',
-  headline: 'text-base font-semibold',
-  subheadline: 'text-sm font-medium',
-  body: 'text-base',
-  footnote: 'text-sm',
-  caption: 'text-xs',
-}
-
-/** Points, from the iPhone's own widget sizes; medium and large shrink to fit a narrow phone. */
-const HOME_FRAME: Record<HomeFamily, { width: number; aspectRatio: number }> = {
-  small: { width: 158, aspectRatio: 1 },
-  medium: { width: 338, aspectRatio: 338 / 158 },
-  large: { width: 338, aspectRatio: 338 / 354 },
-}
+type Tone = WidgetTone
+type Size = WidgetTextSize
 
 interface Kit {
-  say: (text: string, size: Size, tone?: Tone, lines?: number) => ReactElement
+  say: (
+    text: string,
+    size: Size,
+    tone?: Tone,
+    lines?: number,
+    weight?: WidgetWeight,
+  ) => ReactElement
   heading: (text: string) => ReactElement
   row: (item: PreviewLink, mark?: ReactElement | null) => ReactElement
   /** A widget button, drawn but inert; compact is the round icon-only one. */
-  button: (label: string, compact?: boolean) => ReactElement
+  button: (label: string, compact?: boolean, icon?: string | null) => ReactElement
   /** The button a markable row carries, or its tick once marked. */
   mark: (item: PreviewItem, label: string) => ReactElement | null
+  /** A filled check, as `checkmark.circle.fill` is drawn once something is marked. */
+  check: (size: number) => ReactElement
+  /** Points on the phone, at the preview's scale. */
+  pt: (points: number) => number
   spacer: ReactElement
 }
 
-function kitFor(ink: PreviewInk, lock: boolean): Kit {
-  const color = (tone: Tone): string =>
-    tone === 'label' || lock ? ink.label : tone === 'accent' ? ink.accent : ink.secondaryLabel
-  const say = (text: string, size: Size, tone: Tone = 'label', lines = 1): ReactElement => (
-    <Text
-      numberOfLines={lines}
-      className={`text-start ${TYPE[size]}`}
-      style={{ color: color(tone), opacity: lock && tone === 'secondary' ? 0.7 : 1 }}>
-      {text}
-    </Text>
+function kitFor(look: WidgetLook): Kit {
+  const pt = (points: number): number => points * look.scale
+  const say = (
+    text: string,
+    size: Size,
+    tone: Tone = 'label',
+    lines = 1,
+    weight?: WidgetWeight,
+  ): ReactElement => (
+    <WidgetText look={look} text={text} size={size} tone={tone} lines={lines} weight={weight} />
   )
-  const button = (text: string, compact = false): ReactElement => (
+  const check = (size: number): ReactElement => (
     <View
-      aria-label={text}
-      className={compact ? 'items-center justify-center rounded-full' : 'rounded-full px-3 py-1'}
-      style={[
-        { backgroundColor: ink.accent },
-        compact ? { width: 28, height: 28 } : { alignSelf: 'flex-start' },
-      ]}>
-      <Text className="font-semibold text-xs" style={{ color: ink.onAccent }}>
-        {compact ? '✓' : text}
+      className="items-center justify-center rounded-full"
+      style={{ width: pt(size), height: pt(size), backgroundColor: look.ink.accent }}>
+      <Text style={{ color: look.ink.onAccent, fontSize: pt(size * 0.6), fontWeight: '700' }}>
+        ✓
       </Text>
     </View>
   )
+  // iOS: a small, bordered-prominent capsule (or circle) tinted with the accent.
+  // Android: the app's MarkButton, bold accent text with no fill.
+  const button = (text: string, compact = false, icon: string | null = '✓'): ReactElement => {
+    if (look.platform === 'android') {
+      return (
+        <View aria-label={text} className="flex-row items-center" style={{ gap: pt(4) }}>
+          {icon ? say(icon, 'caption', 'accent', 1, 'bold') : null}
+          {compact ? null : say(text, 'caption', 'accent', 1, 'bold')}
+        </View>
+      )
+    }
+    return (
+      <View
+        aria-label={text}
+        className="flex-row items-center justify-center rounded-full"
+        style={[
+          { backgroundColor: look.ink.accent, gap: pt(4) },
+          compact
+            ? { width: pt(28), height: pt(28) }
+            : { height: pt(28), paddingHorizontal: pt(10), alignSelf: 'flex-start' },
+        ]}>
+        {icon ? (
+          <Text style={{ color: look.ink.onAccent, fontSize: pt(13), fontWeight: '700' }}>
+            {icon}
+          </Text>
+        ) : null}
+        {compact ? null : (
+          <Text style={{ color: look.ink.onAccent, fontSize: pt(13), fontWeight: '600' }}>
+            {text}
+          </Text>
+        )}
+      </View>
+    )
+  }
   return {
     say,
-    heading: (text) => say(text, 'caption', 'accent'),
+    heading: (text) => say(text, 'caption', 'accent', 1, 'semibold'),
     row: (item, mark = null) => (
-      <View key={item.url} className="flex-row items-center gap-2">
+      <View key={item.url} className="flex-row items-center" style={{ gap: pt(8) }}>
         <View className="flex-1">
-          {say(item.title, 'subheadline')}
+          {say(item.title, 'subheadline', 'label', 1, 'medium')}
           {item.detail ? say(item.detail, 'caption', 'secondary') : null}
         </View>
         {mark}
@@ -195,16 +212,12 @@ function kitFor(ink: PreviewInk, lock: boolean): Kit {
     button,
     mark: (item, label) => {
       if (item.since === undefined) return null
-      if (item.done) {
-        return (
-          <Text className="font-semibold text-xs" style={{ color: ink.accent }}>
-            ✓
-          </Text>
-        )
-      }
+      if (item.done) return check(22)
       // A row's mark is the round, icon-only button, as on iOS.
       return button(label, true)
     },
+    check,
+    pt,
     spacer: <View className="flex-1" />,
   }
 }
@@ -213,13 +226,13 @@ interface Body {
   kit: Kit
   model: WidgetPreviewModel
   family: PreviewFamily
-  ink: PreviewInk
+  look: WidgetLook
 }
 
 /** A widget with nothing to show says so, in each family's own shape. */
 function nothing({ kit, model, family }: Body, heading: string, glyph = '✓'): ReactElement {
   if (family === 'inline') return kit.say(model.labels.nothingNow, 'footnote')
-  if (family === 'circular') return kit.say(glyph, 'title2')
+  if (family === 'circular') return kit.say(glyph, 'title2', 'label', 1, 'bold')
   if (family === 'rectangular') return kit.say(model.labels.nothingNow, 'footnote', 'label', 3)
   return (
     <>
@@ -229,19 +242,19 @@ function nothing({ kit, model, family }: Body, heading: string, glyph = '✓'): 
   )
 }
 
-function rightNow({ kit, model, family, ink }: Body): ReactElement {
+function rightNow({ kit, model, family }: Body): ReactElement {
   const item = model.rightNow
   const labels = model.labels
   const title = item?.title ?? labels.nothingNow
   const caption = model.window ?? labels.rightNow
   if (family === 'inline') return kit.say(title, 'footnote')
   if (family === 'circular') {
-    return kit.say(item ? `${1 + model.alsoNow.length}` : '✓', 'title2')
+    return kit.say(item ? `${1 + model.alsoNow.length}` : '✓', 'title2', 'label', 1, 'bold')
   }
   if (family === 'rectangular') {
     return (
       <>
-        {kit.say(caption, 'caption', 'secondary')}
+        {kit.say(caption, 'caption', 'secondary', 1, 'semibold')}
         {kit.say(title, 'headline', 'label', 2)}
       </>
     )
@@ -254,35 +267,39 @@ function rightNow({ kit, model, family, ink }: Body): ReactElement {
     if (!item) return null
     if (done) {
       return (
-        <View className="flex-row items-center gap-1">
-          <Text style={{ color: ink.accent }}>✓</Text>
-          {compact ? null : kit.say(labels.markedDone, 'caption', 'secondary')}
+        <View className="flex-row items-center" style={{ gap: kit.pt(4) }}>
+          {kit.check(compact ? 22 : 15)}
+          {compact ? null : kit.say(labels.markedDone, 'caption', 'secondary', 1, 'semibold')}
         </View>
       )
     }
     if (repeat > 0 && !compact) {
       return (
-        <View className="flex-row items-center gap-2">
+        <View className="flex-row items-center" style={{ gap: kit.pt(6) }}>
           {kit.say(
             labels.countOf.replace('{count}', `${count}`).replace('{total}', `${repeat}`),
             'caption',
             'secondary',
+            1,
+            'semibold',
           )}
-          {kit.button(labels.addOne)}
+          {kit.button(labels.addOne, false, '+')}
         </View>
       )
     }
     return kit.button(labels.markDone, compact)
   }
   const footer = (compact: boolean): ReactElement => (
-    <View className="flex-row items-end gap-2">
-      <View className="flex-1">{kit.say(model.date.hijri, 'caption', 'secondary', 2)}</View>
+    <View className="flex-row items-center" style={{ gap: kit.pt(6) }}>
+      <View className="flex-1">
+        {kit.say(model.date.hijri, 'caption2', 'secondary', compact ? 2 : 1)}
+      </View>
       {action(compact)}
     </View>
   )
   const left = item ? model.remaining : null
   const remaining = left ? kit.say(left, 'caption', 'secondary') : null
-  const more = model.moreNow ? kit.say(model.moreNow, 'caption', 'accent') : null
+  const more = model.moreNow ? kit.say(model.moreNow, 'caption', 'accent', 1, 'medium') : null
 
   if (family === 'small') {
     return (
@@ -313,7 +330,7 @@ function rightNow({ kit, model, family, ink }: Body): ReactElement {
     <>
       {kit.heading(labels.rightNow)}
       {model.window ? kit.say(model.window, 'subheadline', 'secondary') : null}
-      {kit.say(title, 'title2', 'label', 3)}
+      {kit.say(title, 'title2', 'label', 3, 'semibold')}
       {remaining}
       {model.alsoNow.slice(0, 5).map((entry) => kit.row(entry))}
       {next ? kit.heading(labels.upNext) : null}
@@ -330,7 +347,7 @@ function nextPrayer(body: Body): ReactElement {
   const labels = model.labels
   if (!next) return nothing(body, labels.upNext, '☾')
   if (family === 'inline') return kit.say(`${next.prayer} · ${next.distance}`, 'footnote')
-  if (family === 'circular') return kit.say(next.prayer, 'caption')
+  if (family === 'circular') return kit.say(next.prayer, 'caption', 'label', 1, 'semibold')
   if (family === 'rectangular') {
     const first = next.before[0] ?? next.after[0]
     return (
@@ -366,7 +383,7 @@ function nextPrayer(body: Body): ReactElement {
     <>
       {kit.heading(labels.upNext)}
       {kit.say(next.prayer, 'largeTitle')}
-      {kit.say(next.distance, 'title3', 'secondary')}
+      {kit.say(next.distance, 'title3', 'secondary', 1, 'regular')}
       {next.before.length > 0 ? kit.heading(labels.before) : null}
       {next.before.slice(0, 4).map((entry) => kit.row(entry))}
       {next.after.length > 0 ? kit.heading(labels.after) : null}
@@ -376,7 +393,8 @@ function nextPrayer(body: Body): ReactElement {
 }
 
 function prayers(body: Body): ReactElement {
-  const { kit, model, family, ink } = body
+  const { kit, model, family, look } = body
+  const ink = look.ink
   const all = model.prayers
   const labels = model.labels
   if (all.length === 0) return nothing(body, labels.prayers, '‖')
@@ -387,10 +405,10 @@ function prayers(body: Body): ReactElement {
       className="rounded-full"
       style={
         prayer.done
-          ? { width: size, height: size, backgroundColor: ink.accent }
+          ? { width: kit.pt(size), height: kit.pt(size), backgroundColor: ink.accent }
           : {
-              width: size,
-              height: size,
+              width: kit.pt(size),
+              height: kit.pt(size),
               borderWidth: 1.5,
               borderColor: prayer.passed ? ink.secondaryLabel : ink.label,
               borderStyle: prayer.passed ? 'dashed' : 'solid',
@@ -400,7 +418,7 @@ function prayers(body: Body): ReactElement {
     />
   )
   const dots = (size: number): ReactElement => (
-    <View className="flex-row" style={{ gap: size / 2 }}>
+    <View className="flex-row" style={{ gap: kit.pt(size / 2) }}>
       {all.map((prayer) => dot(prayer, size))}
     </View>
   )
@@ -408,7 +426,7 @@ function prayers(body: Body): ReactElement {
     prayer.passed && !prayer.done ? 'secondary' : 'label'
 
   if (family === 'inline') return kit.say(`${labels.prayers} ${count}`, 'footnote')
-  if (family === 'circular') return kit.say(count, 'headline')
+  if (family === 'circular') return kit.say(count, 'headline', 'label', 1, 'bold')
   if (family === 'rectangular') {
     return (
       <>
@@ -434,7 +452,7 @@ function prayers(body: Body): ReactElement {
         {kit.spacer}
         <View className="flex-row justify-between">
           {all.map((prayer) => (
-            <View key={prayer.id} className="items-center gap-1">
+            <View key={prayer.id} className="items-center" style={{ gap: kit.pt(4) }}>
               {dot(prayer, 28)}
               {kit.say(prayer.name, 'caption', tone(prayer))}
             </View>
@@ -449,9 +467,9 @@ function prayers(body: Body): ReactElement {
       {kit.heading(labels.prayers)}
       {kit.say(count, 'largeTitle')}
       {all.map((prayer) => (
-        <View key={prayer.id} className="flex-row items-center gap-3">
+        <View key={prayer.id} className="flex-row items-center" style={{ gap: kit.pt(12) }}>
           {dot(prayer, 24)}
-          {kit.say(prayer.name, 'title3', tone(prayer))}
+          {kit.say(prayer.name, 'title3', tone(prayer), 1, 'regular')}
         </View>
       ))}
     </>
@@ -462,7 +480,7 @@ function hijriDate({ kit, model, family }: Body): ReactElement {
   const date = model.date
   const detail = date.place ? `${date.gregorian} · ${date.place}` : date.gregorian
   if (family === 'inline') return kit.say(date.hijri, 'footnote')
-  if (family === 'circular') return kit.say(String(date.hijriDay), 'title3')
+  if (family === 'circular') return kit.say(String(date.hijriDay), 'title3', 'label', 1, 'bold')
   if (family === 'rectangular') {
     return (
       <>
@@ -496,7 +514,7 @@ function hijriDate({ kit, model, family }: Body): ReactElement {
       {kit.heading(model.labels.hijri)}
       {kit.spacer}
       {kit.say(date.hijri, 'largeTitle', 'label', 3)}
-      {kit.say(date.gregorian, 'title3', 'secondary')}
+      {kit.say(date.gregorian, 'title3', 'secondary', 1, 'regular')}
       {date.place ? kit.say(date.place, 'subheadline', 'secondary') : null}
       {kit.spacer}
     </>
@@ -516,7 +534,7 @@ function upNext(body: Body): ReactElement {
   if (family === 'circular') {
     return (
       <>
-        {kit.say(`${asked.length}`, 'title3')}
+        {kit.say(`${asked.length}`, 'title3', 'label', 1, 'bold')}
         {kit.say(next.prayer, 'caption', 'secondary')}
       </>
     )
@@ -568,7 +586,7 @@ function list(
   const [first] = entries
   if (!first) return nothing(body, heading)
   if (family === 'inline') return kit.say(label(first), 'footnote')
-  if (family === 'circular') return kit.say(`${entries.length}`, 'title2')
+  if (family === 'circular') return kit.say(`${entries.length}`, 'title2', 'label', 1, 'bold')
   if (family === 'rectangular') {
     return (
       <>
@@ -601,7 +619,7 @@ function quickDuas({ kit, model, family }: Body): ReactElement {
   const duas = model.quickDuas
   const labels = model.labels
   if (family === 'inline') return kit.say(labels.quickDuas, 'footnote')
-  if (family === 'circular') return kit.say(`${duas.length}`, 'title2')
+  if (family === 'circular') return kit.say(`${duas.length}`, 'title2', 'label', 1, 'bold')
   if (family === 'rectangular') {
     return (
       <>
@@ -627,9 +645,13 @@ function quickDuas({ kit, model, family }: Body): ReactElement {
     return (
       <>
         {kit.heading(labels.quickDuas)}
-        <View className="flex-row gap-3">
-          <View className="flex-1 gap-1">{duas.slice(0, 2).map(marked)}</View>
-          <View className="flex-1 gap-1">{duas.slice(2, 4).map(marked)}</View>
+        <View className="flex-row" style={{ gap: kit.pt(12) }}>
+          <View className="flex-1" style={{ gap: kit.pt(4) }}>
+            {duas.slice(0, 2).map(marked)}
+          </View>
+          <View className="flex-1" style={{ gap: kit.pt(4) }}>
+            {duas.slice(2, 4).map(marked)}
+          </View>
         </View>
       </>
     )
@@ -643,23 +665,18 @@ function quickDuas({ kit, model, family }: Body): ReactElement {
 }
 
 function duaOfTheDay(body: Body): ReactElement {
-  const { kit, model, family, ink } = body
+  const { kit, model, family, look } = body
   const dua = model.duaOfTheDay
   const labels = model.labels
   if (!dua) return nothing(body, labels.duaOfTheDay, '۞')
   // Arabic reads right to left and sits centred, whatever the app's language.
   const words = (size: Size, lines: number): ReactElement => (
-    <Text
-      numberOfLines={lines}
-      className={`text-center ${TYPE[size]}`}
-      style={{ color: ink.label, fontFamily: arabic, writingDirection: 'rtl' }}>
-      {dua.arabic}
-    </Text>
+    <WidgetText look={look} text={dua.arabic} size={size} lines={lines} weight="regular" arabic />
   )
   const saidIt = dua.done ? (
-    <View className="flex-row items-center gap-1">
-      <Text style={{ color: ink.accent }}>✓</Text>
-      {kit.say(labels.marked, 'caption', 'secondary')}
+    <View className="flex-row items-center" style={{ gap: kit.pt(4) }}>
+      {kit.check(15)}
+      {kit.say(labels.marked, 'caption', 'secondary', 1, 'semibold')}
     </View>
   ) : (
     kit.button(labels.saidIt)
@@ -718,7 +735,9 @@ function makeUp({ kit, model, family }: Body): ReactElement {
   const each = (size: Size): ReactElement[] =>
     parts.map((part) => <View key={part}>{kit.say(part, size)}</View>)
   if (family === 'inline') return kit.say(summary, 'footnote')
-  if (family === 'circular') return kit.say(total > 0 ? `${total}` : '✓', 'title2')
+  if (family === 'circular') {
+    return kit.say(total > 0 ? `${total}` : '✓', 'title2', 'label', 1, 'bold')
+  }
   if (family === 'rectangular') {
     return (
       <>
@@ -774,73 +793,81 @@ export interface WidgetPreviewProps {
   model: WidgetPreviewModel
   /** What a screen reader hears for the whole preview: "Prayers widget preview". */
   label: string
+  /** iOS draws SwiftUI's type, its continuous corner and the app's name; Android its own. */
+  platform?: PreviewPlatform
 }
 
 function isLock(family: PreviewFamily): family is LockFamily {
   return (LOCK_FAMILIES as readonly string[]).includes(family)
 }
 
-/**
- * A React Native drawing of one widget in one family, from the same timeline
- * entry the real widget renders: an approximation of the SwiftUI and Android
- * layouts, faithful in what it says and roughly in where. Home Screen widgets
- * take the model's ink for the scheme being rendered; Lock Screen ones are
- * one hue on a dark wallpaper, as iOS draws them.
- */
-export function WidgetPreview({ widget, family, model, label }: WidgetPreviewProps): ReactElement {
-  const { scheme } = useUi()
-  const lock = isLock(family)
-  // The Lock Screen tints its widgets white over the wallpaper; the dark ink stands in for both.
-  const ink = lock ? model.ink.dark : model.ink[scheme]
-  const kit = kitFor(ink, lock)
-  const content = BODIES[widget]({ kit, model, family, ink })
+/** The width a family needs at full size: the scene scales to fit it, and medium and large share it. */
+function fitFor(family: PreviewFamily): number {
+  if (family === 'inline') return WIDGET_POINTS.rectangular.width * 1.5
+  return WIDGET_POINTS[family === 'small' ? 'medium' : family].width
+}
 
-  if (!lock) {
-    const frame = HOME_FRAME[family as HomeFamily]
-    return (
-      <View role="img" aria-label={label} style={{ width: '100%', maxWidth: frame.width }}>
-        <LinearGradient
-          colors={[ink.background, ink.backgroundEnd]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={{ aspectRatio: frame.aspectRatio, borderRadius: 22, overflow: 'hidden' }}>
-          <View className="flex-1 gap-1 p-4">{content}</View>
-        </LinearGradient>
-      </View>
+/**
+ * One widget in one family, drawn in React Native from the same timeline entry
+ * the real widget renders, on a wallpaper as it will be seen: SwiftUI's type
+ * sizes, spacing and continuous corner, at the iPhone's own proportions and
+ * scaled together to fit, with the app's name under it; Android's own type and
+ * corner. Lock Screen widgets are one vibrant white under the date and the
+ * clock, as iOS tints them, with the inline one on the date line.
+ */
+export function WidgetPreview({
+  widget,
+  family,
+  model,
+  label,
+  platform = 'ios',
+}: WidgetPreviewProps): ReactElement {
+  const { scheme } = useUi()
+  const ink = model.ink[scheme]
+  const draw = (scale: number): ReactElement => {
+    const lock = isLock(family)
+    const look: WidgetLook = {
+      ink: lock ? LOCK_INK : ink,
+      platform,
+      lock,
+      scale,
+      dateLine: family === 'inline',
+    }
+    const content = BODIES[widget]({ kit: kitFor(look), model, family, look })
+    return isLock(family) ? (
+      <LockFrame look={look} family={family}>
+        {content}
+      </LockFrame>
+    ) : (
+      <WidgetFrame look={look} family={family}>
+        {content}
+      </WidgetFrame>
     )
   }
 
-  const shape =
-    family === 'circular'
-      ? { width: 72, height: 72, borderRadius: 36 }
-      : family === 'rectangular'
-        ? { width: 172, minHeight: 72 }
-        : { maxWidth: 260 }
+  if (isLock(family)) {
+    return (
+      <WidgetScene
+        placement="lock"
+        platform={platform}
+        ink={ink}
+        fit={fitFor(family)}
+        date={model.date.gregorian}
+        label={label}
+        inline={family === 'inline' ? draw : undefined}>
+        {family === 'inline' ? undefined : draw}
+      </WidgetScene>
+    )
+  }
   return (
-    <LinearGradient
-      role="img"
-      aria-label={label}
-      colors={[model.ink.dark.backgroundEnd, model.ink.dark.background]}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 0, y: 1 }}
-      style={{
-        borderRadius: 24,
-        paddingVertical: 24,
-        paddingHorizontal: 32,
-        alignItems: 'center',
-      }}>
-      <View
-        className={family === 'circular' ? 'items-center justify-center' : 'justify-center'}
-        style={[shape, { overflow: 'hidden' }]}>
-        {/* iOS's AccessoryWidgetBackground: a translucent disc behind the round family only. */}
-        {family === 'circular' ? (
-          <View
-            className="absolute inset-0"
-            style={{ backgroundColor: ink.label, opacity: 0.16 }}
-          />
-        ) : null}
-        {content}
-      </View>
-    </LinearGradient>
+    <WidgetScene
+      placement="home"
+      platform={platform}
+      ink={ink}
+      fit={fitFor(family)}
+      appName={APP_NAME}
+      label={label}>
+      {draw}
+    </WidgetScene>
   )
 }

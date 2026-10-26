@@ -736,8 +736,24 @@ platform like any iOS-only module.
   (`@ihsaanly/ui/components/widget-preview`) draws each widget in React Native from
   `currentWidgetModel`, the first timeline entry built from the same stores
   (`useWidgetPreview`), so the previews say what the widgets say, in the chosen
-  accent. They approximate the iOS layouts; when a widget's layout changes, change
-  its preview too. Lock Screen previews are iOS only, per `LOCK_FAMILIES_BY_WIDGET`,
+  accent. They follow the iOS layouts; when a widget's layout changes, change
+  its preview too. The screen opens like the system's widget sheet: the real
+  icon (`AppIcon`, `packages/ui/assets/images/app-icon.png`, written by
+  `scripts/build-brand-assets.ts` from the same artwork as `icon.png`), the app's
+  name and a one-line pitch. `@ihsaanly/ui/components/widget-scene` holds the
+  realism, shared with onboarding's widget step: `WidgetScene` (an accent
+  wallpaper that measures itself and scales every widget to fit, never above
+  1; the app's name under each Home Screen widget on iOS; the Lock Screen's
+  date, a static "9:41" clock that is a picture and not the time, and the
+  inline family on the date line), `WidgetFrame` (iPhone 17 Pro points:
+  small 170×170, medium 364×170, large 364×382, continuous corner, SwiftUI's
+  16pt margin and 4pt spacing; Android's 22dp corner and 14dp padding),
+  `LockFrame` (one vibrant white, `LOCK_INK`) and `WidgetText` (SwiftUI's text
+  styles in points on iOS, the sp the Android widgets set on Android). Colours
+  come in as one `PreviewInk` (`previewInkFor(palette)` for a screen that has
+  only a palette), so whatever decides the app's colours only has to produce it;
+  the scene's own whites and shades are `scene` in `tooling/tailwind/tokens.ts`.
+  Lock Screen previews are iOS only, per `LOCK_FAMILIES_BY_WIDGET`,
   which `names.test.ts` holds to `app.json`. The Widgets row is opt-in
   (`useMoreGroups(theme, cloud, true)`), since the web hosts have no widgets.
 - **Saying so, with Undo.** Every mark the drain files, and every mark a

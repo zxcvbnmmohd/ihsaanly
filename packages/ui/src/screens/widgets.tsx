@@ -4,6 +4,7 @@ import { Text, View } from 'react-native'
 import { useColors, usePalette } from '../colors'
 import { Chip } from '../components/chip'
 import { CoachMark } from '../components/coach-mark'
+import { NumberedSteps } from '../components/numbered-steps'
 import { Screen } from '../components/screen'
 import { Surface } from '../components/surface'
 import {
@@ -195,20 +196,7 @@ export function WidgetsScreen({ model, platform, coach = null }: WidgetsScreenPr
           style={{ color: colors.secondaryLabel }}>
           {copy.howToAdd}
         </Text>
-        <View role="list" className="gap-2">
-          {steps.map((step, index) => (
-            <View key={step} role="listitem" className="flex-row gap-3">
-              <Text
-                className="text-base"
-                style={{ fontFamily: serif, color: palette.accent, fontWeight: '600' }}>
-                {index + 1}
-              </Text>
-              <Text className="flex-1 text-base leading-relaxed" style={{ color: colors.label }}>
-                {step}
-              </Text>
-            </View>
-          ))}
-        </View>
+        <NumberedSteps steps={steps} />
       </View>
     </Screen>
   )

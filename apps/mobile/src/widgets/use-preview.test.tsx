@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from 'bun:test'
+import { afterEach, beforeEach, describe, expect, it } from 'bun:test'
 import type { Place } from '@ihsaanly/core/location/place'
 import { setPlace } from '@ihsaanly/state/location/store'
 import { resumeTracking } from '@ihsaanly/state/plan/user-state-store'
@@ -16,6 +16,11 @@ const london: Place = {
   timeZone: 'Europe/London',
   source: 'city',
 }
+
+// Another file may leave a place behind; the sample shows only without one.
+beforeEach(() => {
+  act(() => setPlace(null))
+})
 
 afterEach(() => {
   act(() => {

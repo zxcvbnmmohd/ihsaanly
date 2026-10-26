@@ -30,6 +30,9 @@ const london = {
   timeZone: 'Europe/London',
   source: 'device',
 } as const
+/** A host with widgets: its platform and the widgets' entry, which the flow only passes on. */
+const WIDGETS = { platform: 'ios', model: { rightNow: null } as never } as const
+
 const flush = (): Promise<void> => new Promise((resolve) => setTimeout(resolve, 0))
 
 function flow(
@@ -63,7 +66,7 @@ describe('the onboarding flow', () => {
       query: '',
       place: null,
       gender: 'unspecified',
-      widgets: null,
+      widgetGuide: null,
       widgetPreview: null,
       reminderPreview: null,
     })
@@ -84,7 +87,7 @@ describe('the onboarding flow', () => {
     ])
     expect(onboardingSteps(true)).toEqual(ONBOARDING_STEPS)
     expect(onboardingSteps(false)).toEqual(ONBOARDING_STEPS.filter((step) => step !== 'widgets'))
-    expect(flow({ widgets: true }).result.current.stepCount).toBe(ONBOARDING_STEPS.length)
+    expect(flow({ widgets: WIDGETS }).result.current.stepCount).toBe(ONBOARDING_STEPS.length)
   })
 
   it('walks forward and back through the steps', () => {
@@ -545,8 +548,8 @@ describe('the onboarding flow, from the sourced step to the summary', () => {
   })
 
   it('offers widgets where the host has them, previewed from the plan', () => {
-    const { result } = flow({ widgets: true })
-    expect(result.current.widgets).toBe('later')
+    const { result } = flow({ widgets: WIDGETS })
+    expect(result.current.widgetGuide).toEqual({ ...WIDGETS, open: false })
     to(result, 'widgets')
 
     const preview = result.current.widgetPreview
@@ -556,33 +559,33 @@ describe('the onboarding flow, from the sourced step to the summary', () => {
     expect(preview?.notification.title.length).toBeGreaterThan(0)
   })
 
-  it('"Show me how" moves on to the summary, then opens the widget gallery on finishing', () => {
-    const onComplete = mock((_destination?: string) => {})
-    const { result } = flow({ widgets: true, onComplete })
+  it('"Show me how" opens the guide over the step, and Done returns to it', () => {
+    const { result } = flow({ widgets: WIDGETS })
     to(result, 'widgets')
 
     act(() => result.current.onShowWidgets())
-    expect(result.current.step).toBe('summary')
-    expect(result.current.widgets).toBe('show')
+    expect(result.current.step).toBe('widgets')
+    expect(result.current.widgetGuide?.open).toBe(true)
+    expect(result.current.widgetGuide?.model).toBe(WIDGETS.model)
 
-    act(() => result.current.onNext())
-    expect(onComplete).toHaveBeenCalledWith('/widgets')
-    expect(getOnboarding().completed).toBe(true)
+    act(() => result.current.onCloseWidgets())
+    expect(result.current.step).toBe('widgets')
+    expect(result.current.widgetGuide?.open).toBe(false)
   })
 
-  it('"Later" takes back an earlier "Show me how", and finishing then opens Today', () => {
+  it('continues past the widget step to the summary, and finishing opens Today', () => {
     const onComplete = mock((_destination?: string) => {})
-    const { result } = flow({ widgets: true, onComplete })
+    const { result } = flow({ widgets: WIDGETS, onComplete })
     to(result, 'widgets')
     act(() => result.current.onShowWidgets())
-    act(() => result.current.onBack())
-
-    act(() => result.current.onNotNow())
-    expect(result.current.step).toBe('summary')
-    expect(result.current.widgets).toBe('later')
+    act(() => result.current.onCloseWidgets())
 
     act(() => result.current.onNext())
+    expect(result.current.step).toBe('summary')
+    act(() => result.current.onNext())
+    // The guide was the "how"; nothing is deferred to after setup.
     expect(onComplete).toHaveBeenCalledWith(undefined)
+    expect(getOnboarding().completed).toBe(true)
   })
 
   it.each([
@@ -595,7 +598,7 @@ describe('the onboarding flow, from the sourced step to the summary', () => {
     ['language', '/language'],
   ] as const)('the %s row finishes and opens %s', (row, path) => {
     const onComplete = mock((_destination?: string) => {})
-    const { result } = flow({ widgets: true, onComplete })
+    const { result } = flow({ widgets: WIDGETS, onComplete })
     to(result, 'summary')
 
     act(() => result.current.onOpenSetting(row))

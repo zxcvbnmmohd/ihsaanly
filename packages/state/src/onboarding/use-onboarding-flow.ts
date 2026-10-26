@@ -18,6 +18,7 @@ import type {
   OnboardingStep,
   SetupRowId,
   StarterPreset,
+  WidgetGuide,
 } from '@ihsaanly/ui/screens/onboarding'
 import type { AccentName, ThemePreference } from '@ihsaanly/ui/types'
 import { useState } from 'react'
@@ -100,10 +101,12 @@ export interface OnboardingFlowActions {
    */
   enableAnnouncements?: () => Promise<unknown>
   /**
-   * The host can put Ihsaanly on the Home and Lock Screen (the mobile app).
-   * Omitted, the widget step and the summary's widget row are left out.
+   * The host can put Ihsaanly on the Home and Lock Screen (the mobile app):
+   * its platform, for the guide's steps, and the widgets' entry now, for the
+   * guide's live preview. Omitted, the widget step and the summary's widget
+   * row are left out.
    */
-  widgets?: boolean
+  widgets?: Omit<WidgetGuide, 'open'>
   /**
    * Where the current step lives when the host keeps it outside React state
    * (the web keeps it in the URL, so Back, Forward and reload work). Omitted,
@@ -113,7 +116,7 @@ export interface OnboardingFlowActions {
   /**
    * Called once onboarding is marked complete, e.g. to leave the flow's URL.
    * `destination` is set when the person asked to go somewhere from the
-   * summary (a setting, About) or to be shown the widget gallery.
+   * summary (a setting, About, the widget gallery).
    */
   onComplete?: (destination?: OnboardingDestination) => void
 }
@@ -125,8 +128,8 @@ interface Thing {
   locating: boolean
   /** The reminders step's Announcements choice, applied only on a grant. */
   announcements: boolean
-  /** "Show me how" on the widget step: open the gallery once setup is done. */
-  showWidgets: boolean
+  /** "Show me how" on the widget step: its guide is open over the step. */
+  widgetGuide: boolean
 }
 
 /**
@@ -142,7 +145,7 @@ export function useOnboardingFlow(actions: OnboardingFlowActions): OnboardingScr
     problem: null,
     locating: false,
     announcements: false,
-    showWidgets: false,
+    widgetGuide: false,
   })
   const place = usePlace()
   const onboarding = useOnboarding()
@@ -154,7 +157,7 @@ export function useOnboardingFlow(actions: OnboardingFlowActions): OnboardingScr
   const strings = useStrings()
   const signals = useSignals(PREVIEW_PLACE)
 
-  const steps = onboardingSteps(actions.widgets === true)
+  const steps = onboardingSteps(actions.widgets !== undefined)
   const index = actions.stepControl?.index ?? thing.index
   const step = steps[index] ?? 'summary'
   const anyReminder = notifications.windows || notifications.lookAhead || notifications.prayers
@@ -186,7 +189,7 @@ export function useOnboardingFlow(actions: OnboardingFlowActions): OnboardingScr
 
   const advance = (): void => {
     if (index >= steps.length - 1) {
-      finish(thing.showWidgets && actions.widgets ? SETTING_PATHS.widgets : undefined)
+      finish()
       return
     }
     go(index + 1)
@@ -268,7 +271,7 @@ export function useOnboardingFlow(actions: OnboardingFlowActions): OnboardingScr
         : null,
     widgetPreview:
       previewing && actions.widgets ? widgetPreview(previewing, items, strings, now) : null,
-    widgets: actions.widgets ? (thing.showWidgets ? 'show' : 'later') : null,
+    widgetGuide: actions.widgets ? { ...actions.widgets, open: thing.widgetGuide } : null,
     onSelectLanguage: chooseLanguage,
     onSelectTheme: actions.onSelectTheme,
     onSelectAccent: (chosen: AccentName) => setAccent(chosen),
@@ -289,15 +292,9 @@ export function useOnboardingFlow(actions: OnboardingFlowActions): OnboardingScr
     onNext: next,
     onBack: () => go(Math.max(0, index - 1)),
     onSkipIntro: () => go(steps.indexOf('location')),
-    onNotNow: () => {
-      // "Later" on the widget step takes back an earlier "Show me how".
-      if (step === 'widgets') setThing((current) => ({ ...current, showWidgets: false }))
-      advance()
-    },
-    onShowWidgets: () => {
-      setThing((current) => ({ ...current, showWidgets: true }))
-      go(index + 1)
-    },
+    onNotNow: advance,
+    onShowWidgets: () => setThing((current) => ({ ...current, widgetGuide: true })),
+    onCloseWidgets: () => setThing((current) => ({ ...current, widgetGuide: false })),
     onOpenSetting: (row: SetupRowId) => finish(SETTING_PATHS[row]),
     onOpenAbout: () => finish(ABOUT_PATH),
     announcements: enableAnnouncements

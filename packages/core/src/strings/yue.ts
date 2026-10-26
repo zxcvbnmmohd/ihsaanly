@@ -202,7 +202,7 @@ export const yue: Strings = {
     title: '帳戶',
     notSignedIn: '未登入',
     explanation:
-      '可選。除非你登入，否則你嘅資料只會留喺呢部裝置。登入之後，你嘅紀錄、進度同設定（包括你嘅位置）會喺你所有裝置之間同步。',
+      '可選。除非你登入，否則你嘅資料只會留喺呢部裝置。登入之後，你嘅紀錄、進度、設定（包括你嘅位置）同你自己寫或者釘選嘅祈禱詞會喺你所有裝置之間同步。',
     continueWithApple: '用 Apple 繼續',
     continueWithGoogle: '用 Google 繼續',
     signInWithApple: '透過 Apple 登入',
@@ -211,7 +211,7 @@ export const yue: Strings = {
     terms: '使用條款',
     privacy: '私隱政策',
     notice:
-      '為咗同步，你嘅功課紀錄、設定同大概位置，會連同 Apple 或 Google 提供嘅名同電郵，一齊儲存喺 Google Firebase（美國）。你一定要年滿 13 歲，或者你所在國家要求嘅年齡（最高 16 歲）。你隨時可以刪除帳戶。',
+      '為咗同步，你嘅功課紀錄、設定、大概位置同你自己寫或者釘選嘅祈禱詞，會連同 Apple 或 Google 提供嘅名同電郵，一齊儲存喺 Google Firebase（美國）。你一定要年滿 13 歲，或者你所在國家要求嘅年齡（最高 16 歲）。你隨時可以刪除帳戶。',
     signingIn: '登入緊…',
     signInFailed: '登入未完成。呢部裝置上嘅嘢一啲都冇變。',
     errors: {
@@ -384,7 +384,7 @@ export const yue: Strings = {
     termsOfUse: '使用條款',
     privacyTitle: '你嘅資料留喺呢部裝置',
     privacyBody:
-      '冇數據分析，亦冇廣告。你嘅位置喺呢部裝置上用嚟計禮拜時間，你嘅功課紀錄同設定都儲存喺度。App 會去 ihsaanly.app 檢查內容更新，但唔會傳送任何關於你嘅資料。除此之外，除非你自己揀，否則乜都唔會離開呢部裝置：匯出或者分享、傳送意見、開啟當機報告或者公告（iOS 同 Android app），或者登入同步。用 Apple 或 Google 登入係可選嘅：登入之後，你嘅名同電郵、功課紀錄、進度、設定同大概位置（準確到大約 1 公里）會儲存喺美國嘅 Google Firebase，等佢哋喺你嘅裝置之間同步。你隨時可以喺「帳戶」刪除帳戶。喺 Android 上，捐款會打開你嘅瀏覽器，嗰個網頁唔屬於 Ihsaanly。',
+      '冇數據分析，亦冇廣告。你嘅位置喺呢部裝置上用嚟計禮拜時間，你嘅功課紀錄同設定都儲存喺度。App 會去 ihsaanly.app 檢查內容更新，但唔會傳送任何關於你嘅資料。除此之外，除非你自己揀，否則乜都唔會離開呢部裝置：匯出或者分享、傳送意見、開啟當機報告或者公告（iOS 同 Android app），或者登入同步。用 Apple 或 Google 登入係可選嘅：登入之後，你嘅名同電郵、功課紀錄、進度、設定、你自己寫或者釘選嘅祈禱詞同大概位置（準確到大約 1 公里）會儲存喺美國嘅 Google Firebase，等佢哋喺你嘅裝置之間同步。你隨時可以喺「帳戶」刪除帳戶。喺 Android 上，捐款會打開你嘅瀏覽器，嗰個網頁唔屬於 Ihsaanly。',
     licences: '採用技術',
     licencesBody:
       'Expo 同 React Native、計算禮拜時間嘅 adhan 程式庫、烏姆庫拉曆法表、來自 city-timezones 嘅城市資料（以 GeoNames 為基礎），以及地圖用嘅 Natural Earth。每一樣都按照佢自己嘅開源授權使用，詳列於原始碼庫。',

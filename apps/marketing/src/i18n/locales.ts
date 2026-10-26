@@ -104,7 +104,7 @@ export const PAGES: Record<PageId, Page> = {
     path: 'legal/privacy/',
     titleKey: 'privacy.pageTitle',
     descriptionKey: 'privacy.description',
-    updated: new Date(Date.UTC(2026, 9, 9)),
+    updated: new Date(Date.UTC(2026, 9, 26)),
   },
   terms: {
     id: 'terms',
@@ -118,7 +118,7 @@ export const PAGES: Record<PageId, Page> = {
     path: 'legal/delete-account/',
     titleKey: 'deleteAccount.pageTitle',
     descriptionKey: 'deleteAccount.description',
-    updated: new Date(Date.UTC(2026, 9, 7)),
+    updated: new Date(Date.UTC(2026, 9, 26)),
   },
 }
 

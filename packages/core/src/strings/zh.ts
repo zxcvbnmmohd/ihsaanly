@@ -203,7 +203,7 @@ export const zh: Strings = {
     title: '账户',
     notSignedIn: '未登录',
     explanation:
-      '可选。除非你登录，否则你的数据只会留在这台设备上。登录后，你的记录、进度和设置（包括你的位置）会在你的所有设备之间同步。',
+      '可选。除非你登录，否则你的数据只会留在这台设备上。登录后，你的记录、进度、设置（包括你的位置）以及你自己写下或置顶的杜阿会在你的所有设备之间同步。',
     continueWithApple: '通过 Apple 继续',
     continueWithGoogle: '通过 Google 继续',
     signInWithApple: '通过 Apple 登录',
@@ -212,7 +212,7 @@ export const zh: Strings = {
     terms: '使用条款',
     privacy: '隐私政策',
     notice:
-      '为了同步，你的功课记录、设置和大致位置会连同 Apple 或 Google 提供的姓名和邮箱，一起存储在 Google Firebase（美国）上。你必须年满 13 岁，或达到你所在国家要求的年龄（最高 16 岁）。你可以随时删除账户。',
+      '为了同步，你的功课记录、设置、大致位置以及你自己写下或置顶的杜阿会连同 Apple 或 Google 提供的姓名和邮箱，一起存储在 Google Firebase（美国）上。你必须年满 13 岁，或达到你所在国家要求的年龄（最高 16 岁）。你可以随时删除账户。',
     signingIn: '正在登录…',
     signInFailed: '登录未完成。这台设备上的内容没有任何变化。',
     errors: {
@@ -385,7 +385,7 @@ export const zh: Strings = {
     termsOfUse: '使用条款',
     privacyTitle: '你的数据留在这台设备上',
     privacyBody:
-      '没有统计分析，也没有广告。你的位置在这台设备上用于推算礼拜时间，你的功课记录和设置也保存在这里。应用会向 ihsaanly.app 检查内容更新，但不会发送任何关于你的信息。除此之外，除非你自己选择，否则什么都不会离开这台设备：导出或分享、发送反馈、开启崩溃报告或公告（iOS 和 Android 应用），或登录以同步。使用 Apple 或 Google 登录是可选的：登录后，你的姓名和邮箱、功课记录、进度、设置以及大致位置（精确到约 1 公里）会存储在美国的 Google Firebase 上，以便在你的设备之间同步。你可以随时在“账户”中删除账户。在 Android 上，捐赠会打开你的浏览器，那个页面不属于 Ihsaanly。',
+      '没有统计分析，也没有广告。你的位置在这台设备上用于推算礼拜时间，你的功课记录和设置也保存在这里。应用会向 ihsaanly.app 检查内容更新，但不会发送任何关于你的信息。除此之外，除非你自己选择，否则什么都不会离开这台设备：导出或分享、发送反馈、开启崩溃报告或公告（iOS 和 Android 应用），或登录以同步。使用 Apple 或 Google 登录是可选的：登录后，你的姓名和邮箱、功课记录、进度、设置、你自己写下或置顶的杜阿以及大致位置（精确到约 1 公里）会存储在美国的 Google Firebase 上，以便在你的设备之间同步。你可以随时在“账户”中删除账户。在 Android 上，捐赠会打开你的浏览器，那个页面不属于 Ihsaanly。',
     licences: '构建所用',
     licencesBody:
       'Expo 与 React Native，用于礼拜时间的 adhan 库，乌姆古拉历法表，来自 city-timezones 的城市数据（基于 GeoNames），以及用于地图的 Natural Earth。每一项都依照各自的开源许可使用，许可列表见源代码仓库。',

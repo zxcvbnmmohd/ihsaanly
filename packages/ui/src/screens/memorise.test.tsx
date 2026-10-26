@@ -53,28 +53,45 @@ describe('MemoriseScreen', () => {
     expect(onToggleKnown).toHaveBeenCalledTimes(1)
   })
 
-  it('plays and loops when there is audio, and shows it is known', async () => {
+  it('plays, and sets speed and repeat, when there is audio; shows it is known', async () => {
     const onTogglePlay = mock(() => {})
-    const onToggleLoop = mock(() => {})
+    const onSpeed = mock((_speed: number) => {})
+    const onRepeat = mock((_repeat: number | 'always') => {})
     const { user, strings } = renderScreen(
       <MemoriseScreen
         {...memoriseFixture}
         hasAudio
         known
         onTogglePlay={onTogglePlay}
-        onToggleLoop={onToggleLoop}
+        onSpeed={onSpeed}
+        onRepeat={onRepeat}
       />,
     )
     expect(screen.getByRole('button', { name: named(strings.memorise.known) })).toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: strings.memorise.play }))
-    await user.click(screen.getByRole('button', { name: named(strings.memorise.loop) }))
     expect(onTogglePlay).toHaveBeenCalledTimes(1)
-    expect(onToggleLoop).toHaveBeenCalledTimes(1)
+
+    expect(screen.getByText(strings.memorise.speed)).toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: strings.memorise.rate(1) }).getAttribute('aria-pressed'),
+    ).toBe('true')
+    await user.click(screen.getByRole('button', { name: strings.memorise.rate(0.5) }))
+    await user.click(screen.getByRole('button', { name: strings.memorise.rate(0.75) }))
+    expect(onSpeed.mock.calls).toEqual([[0.5], [0.75]])
+
+    expect(screen.getByText(strings.memorise.loop)).toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: strings.memorise.repeatOff }).getAttribute('aria-pressed'),
+    ).toBe('true')
+    await user.click(screen.getByRole('button', { name: strings.memorise.repeatTimes(5) }))
+    await user.click(screen.getByRole('button', { name: strings.memorise.repeatAlways }))
+    await user.click(screen.getByRole('button', { name: strings.memorise.repeatOff }))
+    expect(onRepeat.mock.calls).toEqual([[5], ['always'], [1]])
   })
 
   it('offers stop while playing', () => {
     const { strings } = renderScreen(
-      <MemoriseScreen {...memoriseFixture} hasAudio playing looping />,
+      <MemoriseScreen {...memoriseFixture} hasAudio playing repeat="always" />,
     )
     expect(screen.getByRole('button', { name: strings.memorise.stop })).toBeInTheDocument()
   })

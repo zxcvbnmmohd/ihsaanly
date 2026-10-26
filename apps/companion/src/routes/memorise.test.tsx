@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'bun:test'
 import { itemById } from '@ihsaanly/core/content'
 import { en } from '@ihsaanly/core/strings/en'
 import { getKnownItems, setKnownItems } from '@ihsaanly/state/memorise/store'
-import { screen, waitFor } from '@testing-library/react'
+import { act, screen, waitFor } from '@testing-library/react'
 import { renderApp, resetApp, startUsing } from '../../test/app'
 
 beforeEach(async () => {
@@ -46,6 +46,8 @@ describe('a recitation', () => {
   class FakeAudio extends EventTarget {
     static created: FakeAudio[] = []
     loop = false
+    currentTime = 0
+    playbackRate = 1
     calls: string[] = []
     constructor(readonly source: string) {
       super()
@@ -88,7 +90,31 @@ describe('a recitation', () => {
     await app.user.click(await screen.findByRole('button', { name: en.memorise.stop }))
     expect(element?.calls).toEqual(['play', 'pause'])
 
-    await app.user.click(screen.getByRole('button', { name: new RegExp(en.memorise.loop) }))
+    await app.user.click(screen.getByRole('button', { name: en.memorise.repeatOff }))
     await waitFor(() => expect(element?.loop).toBe(false))
+  })
+
+  it('plays at the chosen speed, and again until the chosen count', async () => {
+    const app = await renderApp('/item/memorise/dua-leaving-home')
+    await app.user.click(await screen.findByRole('button', { name: en.memorise.rate(0.5) }))
+    const element = FakeAudio.created[0]
+    await waitFor(() => expect(element?.playbackRate).toBe(0.5))
+
+    await app.user.click(screen.getByRole('button', { name: en.memorise.repeatTimes(2) }))
+    await waitFor(() => expect(element?.loop).toBe(false))
+    await app.user.click(screen.getByRole('button', { name: en.memorise.play }))
+    expect(element?.calls).toEqual(['play'])
+
+    // The first play ends: it plays once more, from the start.
+    if (element) element.currentTime = 9
+    act(() => void element?.dispatchEvent(new Event('ended')))
+    await waitFor(() => expect(element?.calls).toEqual(['play', 'play']))
+    expect(element?.currentTime).toBe(0)
+
+    // The second ends: that was two, so it stops, back at the start.
+    if (element) element.currentTime = 9
+    act(() => void element?.dispatchEvent(new Event('ended')))
+    await waitFor(() => expect(element?.currentTime).toBe(0))
+    expect(element?.calls).toEqual(['play', 'play'])
   })
 })

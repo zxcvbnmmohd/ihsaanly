@@ -416,6 +416,17 @@ export const fr: Strings = {
     play: 'Écouter',
     stop: 'Arrêter',
     loop: 'Répéter',
+    speed: 'Vitesse',
+    rate: (rate: number): string => `${String(rate).replace('.', ',')}×`,
+    repeatOff: 'Non',
+    repeatTimes: (times: number): string => `×${times}`,
+    repeatAlways: '∞',
+  },
+  reader: {
+    more: 'En savoir plus',
+    previous: 'Précédent',
+    next: 'Suivant',
+    page: (page: number, total: number): string => `${page} sur ${total}`,
   },
   language: {
     title: 'Langue',

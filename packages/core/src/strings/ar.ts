@@ -325,6 +325,17 @@ export const ar: Strings = {
     play: 'تشغيل',
     stop: 'إيقاف',
     loop: 'تكرار',
+    speed: 'السرعة',
+    rate: (rate: number): string => `${rate}×`,
+    repeatOff: 'بلا تكرار',
+    repeatTimes: (times: number): string => `×${times}`,
+    repeatAlways: '∞',
+  },
+  reader: {
+    more: 'المزيد عن هذا',
+    previous: 'السابق',
+    next: 'التالي',
+    page: (page: number, total: number): string => `${page} من ${total}`,
   },
   language: {
     title: 'اللغة',

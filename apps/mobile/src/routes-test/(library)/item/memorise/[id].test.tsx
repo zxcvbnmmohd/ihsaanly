@@ -20,18 +20,27 @@ mock.module('@ihsaanly/ui/screens/memorise', () => ({
 
 const audio = {
   playing: false,
+  didJustFinish: false,
   sources: [] as unknown[],
   calls: [] as string[],
-  player: { loop: undefined as boolean | undefined, play: () => {}, pause: () => {} },
+  player: {
+    loop: undefined as boolean | undefined,
+    play: () => {},
+    pause: () => {},
+    seekTo: async (_seconds: number) => {},
+    setPlaybackRate: (_rate: number) => {},
+  },
 }
 audio.player.play = () => void audio.calls.push('play')
 audio.player.pause = () => void audio.calls.push('pause')
+audio.player.seekTo = async (seconds) => void audio.calls.push(`seek:${seconds}`)
+audio.player.setPlaybackRate = (rate) => void audio.calls.push(`rate:${rate}`)
 mock.module('expo-audio', () => ({
   useAudioPlayer: (source: unknown) => {
     audio.sources.push(source)
     return audio.player
   },
-  useAudioPlayerStatus: () => ({ playing: audio.playing }),
+  useAudioPlayerStatus: () => ({ playing: audio.playing, didJustFinish: audio.didJustFinish }),
 }))
 
 const { default: MemoriseRoute } = await import('../../../../app/(library)/item/memorise/[id]')
@@ -48,6 +57,7 @@ const last = (): MemoriseProps => {
 beforeEach(() => {
   screens.length = 0
   audio.playing = false
+  audio.didJustFinish = false
   audio.sources.length = 0
   audio.calls.length = 0
   audio.player.loop = undefined
@@ -66,12 +76,14 @@ it('shows Not found for an unknown item', () => {
   expect(screens).toEqual([])
 })
 
-it('presents the item fully revealed, looping, without audio', () => {
+it('presents the item fully revealed, repeating without end at full speed, without audio', () => {
   renderScreen(<MemoriseRoute />)
   const item = itemById(ID)
   expect(last().arabic).toBe(item?.arabic ?? null)
   expect(last().reveal).toEqual(FULLY_REVEALED)
-  expect(last().looping).toBe(true)
+  expect(last().repeat).toBe('always')
+  expect(last().speed).toBe(1)
+  expect(audio.calls).toEqual(['rate:1'])
   expect(last().hasAudio).toBe(false)
   expect(last().known).toBe(false)
   expect(last().playing).toBe(false)
@@ -87,18 +99,46 @@ it('hides one more step each time', () => {
   expect(last().reveal).not.toEqual(FULLY_REVEALED)
 })
 
-it('toggles looping and tells the player', () => {
-  renderScreen(<MemoriseRoute />)
-  act(() => last().onToggleLoop())
-  expect(last().looping).toBe(false)
+it('repeats without end through the player loop, and a count by hand', () => {
+  const { rerender } = renderScreen(<MemoriseRoute />)
+  act(() => last().onRepeat(2))
+  expect(last().repeat).toBe(2)
   expect(audio.player.loop).toBe(false)
-  act(() => last().onToggleLoop())
-  expect(last().looping).toBe(true)
+  act(() => last().onTogglePlay())
+  audio.calls.length = 0
+
+  // The first play ends: once more from the start.
+  audio.didJustFinish = true
+  rerender(<MemoriseRoute />)
+  expect(audio.calls).toEqual(['seek:0', 'play'])
+
+  // The second ends: two plays, so it rests at the start.
+  audio.didJustFinish = false
+  rerender(<MemoriseRoute />)
+  audio.didJustFinish = true
+  rerender(<MemoriseRoute />)
+  expect(audio.calls).toEqual(['seek:0', 'play', 'seek:0'])
+
+  act(() => last().onRepeat('always'))
   expect(audio.player.loop).toBe(true)
+  // Without end, a finish is the loop's to handle.
+  audio.didJustFinish = false
+  rerender(<MemoriseRoute />)
+  audio.didJustFinish = true
+  rerender(<MemoriseRoute />)
+  expect(audio.calls).toEqual(['seek:0', 'play', 'seek:0'])
+})
+
+it('sets the chosen speed on the player', () => {
+  renderScreen(<MemoriseRoute />)
+  act(() => last().onSpeed(0.5))
+  expect(last().speed).toBe(0.5)
+  expect(audio.calls).toEqual(['rate:1', 'rate:0.5'])
 })
 
 it('plays when stopped and pauses when playing', () => {
   renderScreen(<MemoriseRoute />)
+  audio.calls.length = 0
   act(() => last().onTogglePlay())
   expect(audio.calls).toEqual(['play'])
 
@@ -106,7 +146,7 @@ it('plays when stopped and pauses when playing', () => {
   renderScreen(<MemoriseRoute />)
   expect(last().playing).toBe(true)
   act(() => last().onTogglePlay())
-  expect(audio.calls).toEqual(['play', 'pause'])
+  expect(audio.calls).toEqual(['play', 'rate:1', 'pause'])
 })
 
 it('marks the item known and unknown', () => {

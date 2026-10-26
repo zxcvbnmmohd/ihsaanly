@@ -420,6 +420,17 @@ export const it: Strings = {
     play: 'Riproduci',
     stop: 'Ferma',
     loop: 'Ripeti',
+    speed: 'Velocità',
+    rate: (rate: number): string => `${String(rate).replace('.', ',')}×`,
+    repeatOff: 'No',
+    repeatTimes: (times: number): string => `×${times}`,
+    repeatAlways: '∞',
+  },
+  reader: {
+    more: 'Approfondisci',
+    previous: 'Precedente',
+    next: 'Successivo',
+    page: (page: number, total: number): string => `${page} di ${total}`,
   },
   language: {
     title: 'Lingua',

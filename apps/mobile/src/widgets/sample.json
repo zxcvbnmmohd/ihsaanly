@@ -53,7 +53,7 @@
   "rightNow": {
     "title": "Morning adhkar",
     "detail": null,
-    "url": "ihsaanly://item/morning-adhkar",
+    "url": "ihsaanly://item/read/morning-adhkar",
     "id": "morning-adhkar"
   },
   "alsoNow": [],
@@ -73,7 +73,7 @@
       {
         "title": "Tasbih after prayer",
         "detail": null,
-        "url": "ihsaanly://item/tasbih-after-prayer"
+        "url": "ihsaanly://item/read/tasbih-after-prayer"
       },
       {
         "title": "Two rak’ah after Dhuhr",
@@ -131,12 +131,12 @@
     {
       "title": "Leaving home",
       "detail": null,
-      "url": "ihsaanly://item/dua-leaving-home"
+      "url": "ihsaanly://item/read/dua-leaving-home"
     },
     {
       "title": "Setting out on a journey",
       "detail": null,
-      "url": "ihsaanly://item/dua-travel"
+      "url": "ihsaanly://item/read/dua-travel"
     },
     {
       "title": "Shortening the prayer",
@@ -146,19 +146,19 @@
     {
       "title": "Going up",
       "detail": null,
-      "url": "ihsaanly://item/takbir-ascending"
+      "url": "ihsaanly://item/read/takbir-ascending"
     },
     {
       "title": "Going down",
       "detail": null,
-      "url": "ihsaanly://item/tasbih-descending"
+      "url": "ihsaanly://item/read/tasbih-descending"
     }
   ],
   "duaOfTheDay": {
     "title": "Coming home",
     "arabic": "بِسْمِ اللَّهِ",
     "translation": "In the name of Allah.",
-    "url": "ihsaanly://item/dua-entering-home"
+    "url": "ihsaanly://item/read/dua-entering-home"
   },
   "makeUp": {
     "prayers": 1,

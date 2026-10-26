@@ -695,6 +695,10 @@ export const zh: Strings = {
     moreNow: (n: number): string => `此刻还有 ${n} 项`,
     markDone: '标记完成',
     markedDone: '已标记完成',
+    saidIt: '已念',
+    marked: '已标记',
+    addOne: '+1',
+    countOf: '{count} / {total}',
   },
   web: {
     remindersUnavailable: '提醒需要手机 App。网页关闭后浏览器无法提醒你。',

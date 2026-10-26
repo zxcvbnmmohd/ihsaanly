@@ -745,6 +745,10 @@ export const fr: Strings = {
       n === 1 ? '+1 autre en ce moment' : `+${n} autres en ce moment`,
     markDone: 'Marquer comme fait',
     markedDone: 'Marqué comme fait',
+    saidIt: 'Je l’ai dite',
+    marked: 'Noté',
+    addOne: '+1',
+    countOf: '{count} sur {total}',
   },
   web: {
     remindersUnavailable:

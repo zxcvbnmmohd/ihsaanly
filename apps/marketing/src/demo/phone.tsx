@@ -192,7 +192,14 @@ export function Phone({ pack }: { pack: LanguagePack }): ReactElement {
   } else if (state.view === 'item') {
     const id = state.selectedItemId
     const props = buildItem(
-      { id, signals, count: state.count, remind: state.remind, enabled: state.enabled },
+      {
+        id,
+        signals,
+        count: state.count,
+        remind: state.remind,
+        enabled: state.enabled,
+        detail: state.detail,
+      },
       strings,
     )
     const shareText = (): void => {
@@ -220,6 +227,7 @@ export function Phone({ pack }: { pack: LanguagePack }): ReactElement {
         }}
         onShareText={shareText}
         onShareImage={shareText}
+        onDetail={(detail) => dispatch({ type: 'set-detail', detail })}
       />
     )
   } else {

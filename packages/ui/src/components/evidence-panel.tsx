@@ -19,9 +19,11 @@ function citationFor(evidence: Evidence, strings: Strings): string {
 
 interface EvidencePanelProps {
   evidence: Evidence[]
+  /** Citations only, without the narrations: the item screen's Brief. */
+  brief?: boolean
 }
 
-export function EvidencePanel({ evidence }: EvidencePanelProps): ReactElement {
+export function EvidencePanel({ evidence, brief = false }: EvidencePanelProps): ReactElement {
   const { strings } = useUi()
   const colors = useColors()
 
@@ -36,7 +38,7 @@ export function EvidencePanel({ evidence }: EvidencePanelProps): ReactElement {
       </Text>
 
       {evidence.map((entry, index) => {
-        const narration = resolveText(entry.text)
+        const narration = brief ? null : resolveText(entry.text)
 
         return (
           <View key={`${entry.type}-${index}`} className="gap-1">

@@ -33,4 +33,11 @@ describe('EvidencePanel', () => {
     const { strings } = renderScreen(<EvidencePanel evidence={evidence} />)
     expect(screen.getByText(`Sahih Muslim 2692 · ${strings.grading.sahih}`)).toBeInTheDocument()
   })
+
+  it('keeps the citations and drops the narrations when brief', () => {
+    const { strings } = renderScreen(<EvidencePanel evidence={itemFixture.evidence} brief />)
+    expect(screen.getByText(strings.item.quranReference(2, 255))).toBeInTheDocument()
+    expect(screen.queryByText('A narration.')).toBeNull()
+    expect(screen.queryByText('A verse.')).toBeNull()
+  })
 })

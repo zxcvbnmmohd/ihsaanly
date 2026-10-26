@@ -2,6 +2,10 @@
   "at": 1790152200000,
   "stale": false,
   "rtl": false,
+  "reading": {
+    "arabicFirst": true,
+    "centred": true
+  },
   "ink": {
     "light": {
       "background": "#f7f0e9",

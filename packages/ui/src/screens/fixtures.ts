@@ -260,7 +260,7 @@ export const itemFixture: ItemDetail = {
   ruling: 'sunnah',
   rulingHref: '/glossary?term=sunnah',
   reviewed: false,
-  why: 'Naming Allah over food is the difference between eating and eating with gratitude.',
+  why: 'Naming Allah over food is the difference between eating and eating with gratitude. It also keeps Shaytan from sharing the meal.',
   how: ['Say Bismillah before the first bite.'],
   repeat: 3,
   arabic: 'بِسْمِ اللَّهِ',
@@ -316,6 +316,9 @@ export const itemScreenFixture: ItemScreenProps = {
   onToggleRemind: noop,
   onShareText: noop,
   onShareImage: noop,
+  reading: { arabicFirst: true, align: 'center' },
+  detail: 'detailed',
+  onDetail: noop,
 }
 
 export const missingItemFixture: ItemDetail | null = null
@@ -450,6 +453,8 @@ export const onboardingFixture: OnboardingScreenProps = {
 export const appearanceFixture: AppearanceScreenProps = {
   preference: 'system',
   onSelect: noop,
+  reading: { arabicFirst: true, align: 'center' },
+  onReading: noop,
 }
 
 export const startingPointFixture: StartingPointScreenProps = {

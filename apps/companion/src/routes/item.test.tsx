@@ -3,6 +3,7 @@ import { itemById } from '@ihsaanly/core/content'
 import { en } from '@ihsaanly/core/strings/en'
 import { getNotificationPreferences } from '@ihsaanly/state/notifications/store'
 import { getEnabledItems, setEnabledItems } from '@ihsaanly/state/plan/enabled-store'
+import { getReaderPreferences } from '@ihsaanly/state/reader/store'
 import { allActions } from '@ihsaanly/state/storage/events'
 import { screen, waitFor } from '@testing-library/react'
 import { renderApp, resetApp, startUsing } from '../../test/app'
@@ -100,6 +101,18 @@ describe('an item', () => {
     await app.user.click(await screen.findByRole('switch', { name: en.item.remind }))
     expect(getNotificationPreferences().perItem['morning-adhkar']).toBe(
       before === undefined ? false : !before,
+    )
+  })
+})
+
+describe('brief and detailed', () => {
+  it('remembers the choice', async () => {
+    const app = await renderApp('/item/dua-leaving-home')
+    await app.user.click(await screen.findByRole('button', { name: en.item.brief }))
+    expect(getReaderPreferences().detail).toBe('brief')
+    expect(screen.getByRole('button', { name: en.item.brief })).toHaveAttribute(
+      'aria-pressed',
+      'true',
     )
   })
 })

@@ -451,6 +451,14 @@ export const so: Strings = {
     light: 'Iftiin',
     dark: 'Mugdi',
     note: 'Midabbadu weli nidaamka ayey ka yimaadaan, sidaa darteed dejintiisa kala-soocidda midabka way shaqeysaa labada xaaladoodba.',
+    reading: 'Akhriska',
+    arabicFirst: 'Carabiga marka hore',
+    arabicFirstDetail:
+      'Carabiga waxaa ka hooseeya turjumaaddiisa; haddii la damiyo macnaha ayaa hormara',
+    alignment: 'Toosinta qoraalka',
+    alignStart: 'Bilowga',
+    alignCenter: 'Dhexda',
+    readingNote: 'Ducooyinka iyo dikriga ee bogga shayga, akhriyaha iyo widget-yada.',
   },
   startingPoint: {
     title: 'Meel laga bilaabo',
@@ -610,6 +618,8 @@ export const so: Strings = {
     repeat: (times: number): string => `Ku celi ${times} jeer`,
     parts: 'Waxa la yiraahdo',
     partRepeat: (times: number): string => `${times} jeer`,
+    brief: 'Kooban',
+    detailed: 'Faahfaahsan',
     gradedBy: (grader: string): string => `waxaa darajeeyey ${grader}`,
     quranReference: (surah: number, ayah: number): string => `Qur’aanka ${surah}:${ayah}`,
   },

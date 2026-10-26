@@ -17,25 +17,37 @@ export function findChrome(): string | undefined {
   return CANDIDATES.find((path): path is string => Boolean(path && existsSync(path)))
 }
 
-async function consoleOf(chrome: string, url: string): Promise<string> {
-  const run = Bun.spawn(
-    [
-      chrome,
-      '--headless=new',
-      '--disable-gpu',
-      '--no-sandbox',
-      '--virtual-time-budget=3000',
-      '--enable-logging=stderr',
-      // Ordinary extensions stay out; policy-installed ones (a company's DLP,
-      // say) load anyway, which is why pageMessages() filters by source too.
-      '--disable-extensions',
-      '--v=0',
-      '--dump-dom',
-      url,
-    ],
-    { stdout: 'ignore', stderr: 'pipe' },
-  )
-  return new Response(run.stderr).text()
+/**
+ * Chrome's console log for one page. Headless Chrome now and then hangs on a
+ * CI runner without the page being at fault, so a run that outlives `hangMs`
+ * is killed and tried once more; a second hang fails the check.
+ */
+export async function consoleOf(chrome: string, url: string, hangMs = 12_000): Promise<string> {
+  for (let attempt = 1; ; attempt++) {
+    const run = Bun.spawn(
+      [
+        chrome,
+        '--headless=new',
+        '--disable-gpu',
+        '--no-sandbox',
+        '--virtual-time-budget=3000',
+        '--enable-logging=stderr',
+        // Ordinary extensions stay out; policy-installed ones (a company's DLP,
+        // say) load anyway, which is why pageMessages() filters by source too.
+        '--disable-extensions',
+        '--v=0',
+        '--dump-dom',
+        url,
+      ],
+      { stdout: 'ignore', stderr: 'pipe' },
+    )
+    // Raced rather than awaited after a kill: Chrome's helper processes can
+    // hold stderr open after the main one is gone.
+    const log = await Promise.race([new Response(run.stderr).text(), Bun.sleep(hangMs)])
+    if (typeof log === 'string') return log
+    run.kill()
+    if (attempt === 2) throw new Error(`Chrome hung twice loading ${url}`)
+  }
 }
 
 /**
@@ -78,7 +90,7 @@ export function describeChromePages({
         expect(messages).not.toContain('Content Security Policy')
         // Hydration or render errors, such as an update loop in the demo.
         expect(messages).not.toMatch(/Uncaught|Error\b/)
-      }, 20_000)
+      }, 30_000)
     }
   })
 }

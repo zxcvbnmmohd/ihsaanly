@@ -293,10 +293,10 @@ describe('reminders across a Friday', () => {
 
     const [fridayDhuhr] = friday
     if (!fridayDhuhr) throw new Error('no Friday dhuhr reminder')
-    expect(notificationContent(fridayDhuhr, items, en)?.title).toBe("Jumu'ah")
+    expect(notificationContent(fridayDhuhr, items, en)?.title).toBe("Jumu'ah has come in")
     const [otherDhuhr] = others
     if (!otherDhuhr) throw new Error('no other dhuhr reminder')
-    expect(notificationContent(otherDhuhr, items, en)?.title).toBe('Dhuhr')
+    expect(notificationContent(otherDhuhr, items, en)?.title).toBe('Dhuhr has come in')
   })
 
   it("says Friday's morning adhkar are open until Jumu'ah", () => {

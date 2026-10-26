@@ -129,6 +129,8 @@ export interface PrayerNotification {
   /** This window opens on the user's Jumu'ah day. */
   jumuah: boolean
   at: Date
+  /** When this prayer's window closes, past which asking again is pointless. */
+  endsAt: Date
 }
 
 /**

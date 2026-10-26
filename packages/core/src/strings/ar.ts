@@ -110,6 +110,8 @@ export const ar: Strings = {
     quietHours: 'ساعات الهدوء',
     quietHoursDetail: (from: number, to: number): string => `من ${from}:00 إلى ${to}:00`,
     quietHoursOff: 'معطَّل',
+    quietHoursNote:
+      'تؤجّل الساعات الهادئة التذكيرات وأنت نائم. أما ما يخصّ الليل فيصل مع ذلك: الفجر والعشاء والوتر وتذكيرات الليل. يمكنك إيقاف أيٍّ منها وحده.',
     perDay: 'الحد اليومي',
     permission: 'الإذن',
     permissionGranted: 'مسموح',

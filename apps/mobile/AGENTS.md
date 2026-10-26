@@ -334,6 +334,14 @@ an hour after Isha opens, under the windows switch (`reminderCategoryOf`),
 asking "Have you prayed Witr?" with "Until Fajr.", and not once it is done
 that night.
 
+Quiet hours (default 22:00 to 7:00) never silence what belongs to the night:
+`isNightWorship` in `packages/core/src/plan/plan.ts` lets through the Fajr and
+Isha prayer reminders (and the paused remembrance at those moments) and any
+item reminder whose window closes at Fajr, which covers Witr, the night
+window's items and a future night prayer or suhur. Each still answers to its
+own switch; everything else waits out the quiet hours. No copy may promise
+silence between those hours; the Notifications screen says what still comes.
+
 Taps are answered once, in `src/notifications/respond.ts`, from three doors:
 the warm listener, the cold-start replay (read then cleared) and the Android
 background task. The task is defined in `index.ts`, the app entry, because a

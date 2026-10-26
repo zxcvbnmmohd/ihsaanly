@@ -9,7 +9,7 @@ import { prayerTimesAcross } from '../prayer/times'
 import { buildWindows, type PrayerWindow, type WindowName } from '../prayer/windows'
 
 import { DEFAULT_NOTIFICATION_PREFERENCES } from './notification-preferences'
-import { plan, reminderCategoryOf } from './plan'
+import { isNightWorship, plan, reminderCategoryOf } from './plan'
 import type { DayContext, ScheduledNotification, Signals } from './signals'
 
 const toronto: Place = {
@@ -699,7 +699,7 @@ describe('the night Witr reminder', () => {
     expect(witrs(off({ witr: true }, false)).length).toBeGreaterThan(0)
   })
 
-  it('keeps to quiet hours, and never asks while tracking is paused', () => {
+  it('comes through quiet hours, and never asks while tracking is paused', () => {
     const quiet = makeSignals([witr], {
       preferences: {
         enabledItemIds: ['witr'],
@@ -707,8 +707,9 @@ describe('the night Witr reminder', () => {
         notifications: { ...DEFAULT_NOTIFICATION_PREFERENCES, quietHours: { from: 0, to: 23 } },
       },
     })
-    // Isha in Toronto in September is well before 23:00, so the hour after it is quiet.
-    expect(witrs(quiet)).toEqual([])
+    // Isha in Toronto in September is well before 23:00, so the hour after it is
+    // quiet, but Witr belongs to the night.
+    expect(witrs(quiet)[0]?.at).toEqual(new Date(windowOf('isha').startsAt.getTime() + 60 * 60_000))
     const paused = makeSignals([witr], {
       userState: { travelling: false, trackingPaused: true, jumuah: 'auto' },
     })
@@ -1014,5 +1015,92 @@ describe('the pause', () => {
       expect(none.today.checkInDue).toBe(false)
       expect(none.notifications).toEqual([])
     })
+  })
+})
+
+describe('quiet hours and the night', () => {
+  const morningAdhkar = makeItem('morning-adhkar', { kind: 'window', window: 'morning' })
+  const nightDua = makeItem('night-dua', { kind: 'window', window: 'night' })
+  const allDay = { ...DEFAULT_NOTIFICATION_PREFERENCES, quietHours: { from: 0, to: 23 } }
+
+  function scheduled(items: Item[], prayers: boolean, paused = false): ScheduledNotification[] {
+    return plan(
+      makeSignals(items, {
+        userState: { travelling: false, trackingPaused: paused, jumuah: 'auto' },
+        preferences: {
+          enabledItemIds: items.map((item) => item.id),
+          knownItemIds: [],
+          notifications: { ...allDay, prayers },
+        },
+      }),
+    ).notifications
+  }
+
+  it('lets the Fajr and Isha reminders through, and holds back the daytime prayers', () => {
+    const prayers = scheduled([morningAdhkar], true).flatMap((entry) =>
+      entry.kind === 'prayer' ? [entry.prayer] : [],
+    )
+    expect(prayers).toContain('fajr')
+    expect(prayers).toContain('isha')
+    expect(prayers).not.toContain('dhuhr')
+    expect(prayers).not.toContain('asr')
+    expect(prayers).not.toContain('maghrib')
+  })
+
+  it("lets the night's own items through and holds back the morning's", () => {
+    const ids = itemIds(scheduled([morningAdhkar, nightDua], false))
+    expect(ids).toContain('night-dua')
+    expect(ids).not.toContain('morning-adhkar')
+  })
+
+  it('keeps the night item to its own switch', () => {
+    const result = plan(
+      makeSignals([nightDua], {
+        preferences: {
+          enabledItemIds: ['night-dua'],
+          knownItemIds: [],
+          notifications: { ...allDay, perItem: { 'night-dua': false } },
+        },
+      }),
+    )
+    expect(itemIds(result.notifications)).toEqual([])
+  })
+
+  it('treats the remembrance at the night prayers like the prayers themselves', () => {
+    const remembrance = makeItem(
+      'remembrance',
+      { kind: 'prayer', prayer: 'any', when: 'before' },
+      { onlyWhilePaused: true },
+    )
+    const prayers = scheduled([remembrance], true, true).flatMap((entry) =>
+      entry.kind === 'remembrance' ? [entry.prayer] : [],
+    )
+    expect(prayers).toContain('fajr')
+    expect(prayers).not.toContain('dhuhr')
+  })
+
+  it('names what belongs to the night', () => {
+    const at = anchor
+    const endsAt = anchor
+    expect(isNightWorship({ kind: 'prayer', prayer: 'fajr', at, endsAt, jumuah: false })).toBe(true)
+    expect(isNightWorship({ kind: 'prayer', prayer: 'asr', at, endsAt, jumuah: false })).toBe(false)
+    expect(isNightWorship({ kind: 'remembrance', itemId: 'r', prayer: 'isha', at, endsAt })).toBe(
+      true,
+    )
+    expect(
+      isNightWorship({
+        kind: 'item',
+        itemId: 'suhur',
+        at,
+        reason: 'current-window',
+        window: { closes: 'fajr', endsAt, jumuah: false },
+      }),
+    ).toBe(true)
+    expect(
+      isNightWorship({ kind: 'item', itemId: 'fast', at, reason: 'upcoming', window: null }),
+    ).toBe(false)
+    expect(isNightWorship({ kind: 'check-in', at })).toBe(false)
+    const unknown = { kind: 'alarm', at } as unknown as ScheduledNotification
+    expect(() => isNightWorship(unknown)).toThrow('Unhandled case')
   })
 })

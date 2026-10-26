@@ -45,6 +45,11 @@ describe('NotificationsScreen', () => {
     expect(screen.getByRole('radio', { name: '3' })).toHaveAttribute('aria-checked', 'true')
   })
 
+  it('says quiet hours never hold back what belongs to the night', () => {
+    const { strings } = renderScreen(<NotificationsScreen {...notificationsFixture} />)
+    expect(screen.getByText(strings.notifications.quietHoursNote)).toBeInTheDocument()
+  })
+
   it('reports every preference change', async () => {
     const onChange = mock((_change: Partial<NotificationPreferences>) => {})
     const { user, strings } = renderScreen(

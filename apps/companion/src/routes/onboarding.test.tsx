@@ -7,6 +7,7 @@ import { getPlace } from '@ihsaanly/state/location/store'
 import { getNotificationPreferences } from '@ihsaanly/state/notifications/store'
 import { getOnboarding } from '@ihsaanly/state/onboarding/store'
 import { getEnabledItems } from '@ihsaanly/state/plan/enabled-store'
+import { getAccent } from '@ihsaanly/state/theme/accent-store'
 import { screen, waitFor } from '@testing-library/react'
 import { renderApp, resetApp } from '../../test/app'
 import { getThemePreference, setThemePreference } from '../theme/store'
@@ -111,16 +112,31 @@ describe('finishing', () => {
     expect(getOnboarding().gender).toBe('female')
     await next(app.user)
 
-    await waitFor(() => expect(path(app)).toBe('/onboarding/reminders'))
-    await app.user.click((await screen.findAllByRole('switch'))[0] as HTMLElement)
-    expect(getNotificationPreferences().windows).toBe(false)
-    await app.user.click(screen.getByRole('button', { name: en.onboarding.continue }))
-
     await waitFor(() => expect(path(app)).toBe('/onboarding/start'))
     await app.user.click(
       await screen.findByRole('radio', { name: new RegExp(`^${en.onboarding.starting}`) }),
     )
     expect(getEnabledItems().length).toBeGreaterThan(0)
+    await next(app.user)
+
+    await waitFor(() => expect(path(app)).toBe('/onboarding/reminders'))
+    // A browser cannot be notified, so there is nothing to preview.
+    expect(screen.queryByTestId('notification-preview')).toBeNull()
+    await app.user.click((await screen.findAllByRole('switch'))[0] as HTMLElement)
+    expect(getNotificationPreferences().windows).toBe(false)
+    await next(app.user)
+
+    await waitFor(() => expect(path(app)).toBe('/onboarding/accent'))
+    await app.user.click(await screen.findByRole('radio', { name: en.appearance.accents.sage }))
+    expect(getAccent()).toBe('sage')
+    await next(app.user)
+
+    // No widget step on the web: straight to the summary, which has no widget row.
+    await waitFor(() => expect(path(app)).toBe('/onboarding/summary'))
+    expect(await screen.findByText(en.onboarding.summaryTitle)).toBeInTheDocument()
+    expect(
+      screen.queryByRole('button', { name: new RegExp(`^${en.onboarding.summary.widgets}`) }),
+    ).toBeNull()
     await app.user.click(screen.getByRole('button', { name: en.onboarding.done }))
 
     await waitFor(() => expect(path(app)).toBe('/today'))
@@ -131,13 +147,34 @@ describe('finishing', () => {
   it('"Not now" on the reminders step moves on without asking for permission', async () => {
     const app = await renderApp('/onboarding/reminders')
     await app.user.click(await screen.findByRole('button', { name: en.onboarding.notNow }))
-    await waitFor(() => expect(path(app)).toBe('/onboarding/start'))
+    await waitFor(() => expect(path(app)).toBe('/onboarding/accent'))
   })
 
   it('goes back from the last step to the one before', async () => {
-    const app = await renderApp('/onboarding/start')
+    const app = await renderApp('/onboarding/summary')
     await app.user.click(await screen.findByRole('button', { name: en.onboarding.back }))
-    await waitFor(() => expect(path(app)).toBe('/onboarding/reminders'))
+    await waitFor(() => expect(path(app)).toBe('/onboarding/accent'))
+  })
+
+  it('has no widget step on the web', async () => {
+    const app = await renderApp('/onboarding/widgets')
+    await waitFor(() => expect(path(app)).toBe('/onboarding/welcome'))
+  })
+
+  it('a summary row finishes and opens its setting', async () => {
+    const app = await renderApp('/onboarding/summary')
+    await app.user.click(
+      await screen.findByRole('button', { name: new RegExp(`^${en.onboarding.summary.location}`) }),
+    )
+    await waitFor(() => expect(path(app)).toBe('/location'))
+    expect(getOnboarding().completed).toBe(true)
+  })
+
+  it('the free card finishes and opens About', async () => {
+    const app = await renderApp('/onboarding/summary')
+    await app.user.click(await screen.findByRole('link', { name: en.onboarding.freeLink }))
+    await waitFor(() => expect(path(app)).toBe('/about'))
+    expect(getOnboarding().completed).toBe(true)
   })
 })
 

@@ -405,8 +405,8 @@ export const notificationsFixture: NotificationsScreenProps = {
 
 export const onboardingFixture: OnboardingScreenProps = {
   step: 'location',
-  stepIndex: 2,
-  stepCount: 6,
+  stepIndex: 3,
+  stepCount: 10,
   language: 'en',
   theme: 'system',
   place: null,
@@ -444,6 +444,50 @@ export const onboardingFixture: OnboardingScreenProps = {
   onBack: noop,
   onSkipIntro: noop,
   onNotNow: noop,
+  enabledCount: 14,
+  trackingPaused: false,
+  accent: 'terracotta',
+  sourced: {
+    title: 'Leaving home',
+    reminder: 'Said at the door, before the day takes over.',
+    evidence: {
+      type: 'hadith',
+      collection: 'Sunan Abi Dawud',
+      reference: '5095',
+      grading: 'sahih',
+      gradedBy: 'al-Albani',
+      text: { en: 'Whoever says, when he leaves his house…' },
+    },
+    why: 'A sentence at the door that hands the day to Allah before it starts.',
+  },
+  reminderPreview: {
+    item: {
+      title: 'Evening adhkar',
+      body: 'The evening remembrance, from Asr until the light goes. Open until Maghrib.',
+    },
+    prayer: {
+      title: 'Asr has come in',
+      body: "Have you prayed? It's the one that's easiest to lose track of.",
+    },
+  },
+  widgetPreview: {
+    home: {
+      caption: 'Afternoon',
+      title: 'Evening adhkar',
+      detail: 'The evening remembrance, from Asr until the light goes.',
+    },
+    lock: { title: 'Maghrib', detail: 'In about 2 hours' },
+    notification: {
+      title: 'Evening adhkar',
+      body: 'The evening remembrance, from Asr until the light goes. Open until Maghrib.',
+    },
+  },
+  widgets: 'later',
+  onSelectAccent: noop,
+  onTogglePrayers: noop,
+  onShowWidgets: noop,
+  onOpenSetting: noop,
+  onOpenAbout: noop,
 }
 
 export const appearanceFixture: AppearanceScreenProps = {

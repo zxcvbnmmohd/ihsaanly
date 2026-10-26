@@ -725,6 +725,10 @@ export const ja: Strings = {
     moreNow: (n: number): string => `ほかに今${n}件`,
     markDone: '完了にする',
     markedDone: '完了にしました',
+    saidIt: '唱えました',
+    marked: '記録済み',
+    addOne: '+1',
+    countOf: '{count}/{total}',
   },
   web: {
     remindersUnavailable:

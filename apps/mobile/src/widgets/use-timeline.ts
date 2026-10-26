@@ -1,9 +1,11 @@
+import { items } from '@ihsaanly/core/content'
 import { isRightToLeft } from '@ihsaanly/core/i18n/locale'
 import type { Plan, Signals } from '@ihsaanly/core/plan/signals'
 import { useFastsOutstanding } from '@ihsaanly/state/fasting/store'
 import { useHijriOffset } from '@ihsaanly/state/hijri/store'
 import { useLocale } from '@ihsaanly/state/i18n/store'
 import { useQada } from '@ihsaanly/state/prayer/marks'
+import { getItemProgress } from '@ihsaanly/state/progress/store'
 import { useStrings } from '@ihsaanly/state/strings'
 import { useAccent } from '@ihsaanly/state/theme/accent-store'
 import { useEffect } from 'react'
@@ -13,6 +15,21 @@ import { takeWidgetTaps, useWidgetTapsThrough } from './drain'
 import { widgetTimeline } from './model'
 import { publishTimeline } from './publish'
 import { onWidgetTap } from './taps'
+
+/**
+ * Counted items (the tasbih): what the widget's +1 counts on top of. Read at
+ * each republish rather than watched, so counting in the app does not
+ * rebuild the widgets' day on every tap; taking widget counts in republishes.
+ */
+const COUNTED = items.filter((item) => item.repeat > 1 && (item.parts ?? []).length === 0)
+
+function counts(): Partial<Record<string, number>> {
+  return Object.fromEntries(
+    COUNTED.map((item) => [item.id, getItemProgress(item.id).count] as const).filter(
+      ([, count]) => count > 0,
+    ),
+  )
+}
 
 /** Never throws: a widget tap that cannot be read now is read on the next launch. */
 function take(): void {
@@ -37,7 +54,7 @@ export function useWidgetTimeline(
   const tapsThrough = useWidgetTapsThrough()
   const accent = useAccent()
 
-  // Done taps on the Right now widget wait in its timeline until the app runs:
+  // Widget taps (done, prayed, +1) wait where the widget keeps them until the app runs:
   // taken in on launch, on every return to the foreground, and on a press
   // heard while the app is open. Each one moves the cursor, which republishes.
   useEffect(() => {
@@ -82,6 +99,7 @@ export function useWidgetTimeline(
         qada,
         fastsOwed,
         accent,
+        counts: counts(),
       })
       void publishTimeline(timeline).catch(() => {})
     } catch {

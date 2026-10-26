@@ -1,3 +1,4 @@
+import type { Prayer } from '@ihsaanly/core/plan/signals'
 import type { NotificationContent } from '@ihsaanly/state/notifications/content'
 import {
   PRAYER_AGAIN_CATEGORY,
@@ -214,13 +215,17 @@ async function scheduleOne(api: NotificationsApi, content: NotificationContent):
 /**
  * Diff, not cancel-all. Only entries the plan owns (`plan:`) are touched, so a
  * snooze made while the app was killed survives the next sync, unless it is a
- * prayer's second ask and tracking is `paused`. Re-arming is still idempotent
- * however often it runs.
+ * prayer's second ask and tracking is `paused` or that prayer is already
+ * `marked` today. Re-arming is still idempotent however often it runs.
  *
  * Nothing scheduled here ever tells the user they failed at something: a
  * reminder names what is available and when, and never scores what was not done.
  */
-export async function sync(contents: NotificationContent[], paused = false): Promise<number> {
+export async function sync(
+  contents: NotificationContent[],
+  paused = false,
+  marked: readonly Prayer[] = [],
+): Promise<number> {
   const api = await notifications()
   if (!api) return 0
 
@@ -231,6 +236,7 @@ export async function sync(contents: NotificationContent[], paused = false): Pro
       pending.map((request) => request.identifier),
       Date.now(),
       paused,
+      marked,
     )
 
     await Promise.all(cancel.map((id) => api.cancelScheduledNotificationAsync(id)))

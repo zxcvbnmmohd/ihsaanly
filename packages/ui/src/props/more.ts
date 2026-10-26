@@ -15,6 +15,13 @@ import type { MoreGroup, ThemePreference } from '../types'
  */
 export const SHOW_ME_AROUND_HREF = '/today?tour=1'
 
+/**
+ * More → Widgets, the gallery of the home and lock screen widgets. Onboarding,
+ * Today and the reminder settings link here; outside the app it opens as
+ * `ihsaanly://widgets`.
+ */
+export const WIDGET_GALLERY_HREF = '/widgets'
+
 export interface MoreGroupsInput {
   strings: Strings
   placeLabel: string | null
@@ -32,6 +39,8 @@ export interface MoreGroupsInput {
    * config, and then there is no Account or Send feedback row: a local-only build never mentions accounts.
    */
   accountDetail?: string
+  /** Whether this host has home screen widgets, and so a Widgets row. Only the phone app does. */
+  widgets?: boolean
 }
 
 /**
@@ -52,6 +61,7 @@ export function moreGroups(input: MoreGroupsInput): MoreGroup[] {
     qadaOwed,
     startingPoint,
     accountDetail,
+    widgets = false,
   } = input
 
   const tracking = [
@@ -84,6 +94,9 @@ export function moreGroups(input: MoreGroupsInput): MoreGroup[] {
       title: strings.more.app,
       rows: [
         { href: '/notifications', title: strings.notifications.title, detail: null },
+        ...(widgets
+          ? [{ href: WIDGET_GALLERY_HREF, title: strings.widgetGallery.title, detail: null }]
+          : []),
         {
           href: '/tracking',
           title: strings.tracking.title,

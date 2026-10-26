@@ -15,11 +15,12 @@ describe('the destination after onboarding', () => {
     expect(router.calls).toEqual([])
   })
 
-  it('opens what was asked for, once', () => {
+  it('opens what was asked for, once, over the index of its tab', () => {
     openAfterOnboarding('/widgets')
     openPendingDestination()
     openPendingDestination()
-    expect(router.calls).toEqual([['push', '/widgets']])
+    // Without the anchor the More stack held only Widgets, with no way back to its list.
+    expect(router.calls).toEqual([['push', '/widgets', { withAnchor: true }]])
   })
 
   it('stays on Today when the navigator refuses', () => {

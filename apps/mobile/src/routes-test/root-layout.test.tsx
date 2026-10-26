@@ -181,7 +181,7 @@ describe('root layout', () => {
       act(() => last(onboarding).onOpenSetting('tracking'))
 
       expect(tabs.names).toEqual(['(home)', '(library)', '(more)'])
-      expect(router.calls).toEqual([['push', '/tracking']])
+      expect(router.calls).toEqual([['push', '/tracking', { withAnchor: true }]])
     })
 
     it('keeps the gate shut after a restore of an unfinished setup, then continues', () => {

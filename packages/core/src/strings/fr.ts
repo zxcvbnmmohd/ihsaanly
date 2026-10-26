@@ -121,16 +121,26 @@ export const fr: Strings = {
     testTitle: 'Un rappel test',
     testBody: 'Voici à quoi ressemble un rappel d’Ihsaanly.',
     pausedRemembrance: 'Un moment pour le dhikr',
+    prayerArrived: (prayer: string): string => `L’heure de ${prayer} est entrée`,
+    prayerAsk: {
+      fajr: 'Avez-vous prié ? Quelques minutes calmes, avant que la journée ne vous réclame.',
+      dhuhr: 'Avez-vous prié ? Une pause au milieu de la journée, avant qu’elle ne reprenne.',
+      asr: 'Avez-vous prié ? C’est celle qu’on perd le plus facilement de vue.',
+      maghrib: 'Avez-vous prié ? Son temps est court, c’est le bon moment.',
+      isha: 'Avez-vous prié ? Une dernière avant la fin de la journée.',
+      jumuah: 'Avez-vous prié ? Une fois par semaine, ensemble.',
+    },
     checkIn: 'Un petit mot d’Ihsaanly',
     action: {
       done: 'Fait',
       later: 'Plus tard',
+      prayed: 'Oui, j’ai prié',
+      notYet: 'Pas encore',
     },
     body: {
       window: 'Maintenant, jusqu’à la fin de la plage.',
       windowUntil: (closes: string): string => `Ouvert jusqu’à ${closes}.`,
       tomorrow: 'Demain.',
-      prayerWindow: 'L’heure est entrée. La plage reste ouverte jusqu’à la prière suivante.',
     },
   },
   event: {
@@ -729,6 +739,10 @@ export const fr: Strings = {
       n === 1 ? '+1 autre en ce moment' : `+${n} autres en ce moment`,
     markDone: 'Marquer comme fait',
     markedDone: 'Marqué comme fait',
+    saidIt: 'Je l’ai dite',
+    marked: 'Noté',
+    addOne: '+1',
+    countOf: '{count} sur {total}',
   },
   web: {
     remindersUnavailable:
@@ -749,5 +763,15 @@ export const fr: Strings = {
     markAll: 'Tout marquer comme fait',
     progress: (count: number, target: number): string => `${count} sur ${target}`,
     tapToCount: 'Touchez pour compter',
+  },
+  remoteMarks: {
+    doneFromWidget: 'Marqué comme fait depuis votre widget',
+    doneFromNotification: 'Marqué comme fait depuis une notification',
+    prayerFromWidget: (prayer: string): string => `${prayer} marquée depuis votre widget`,
+    prayerFromNotification: (prayer: string): string => `${prayer} marquée depuis une notification`,
+    countedFromWidget: (n: number): string => `${n} compté${n > 1 ? 's' : ''} depuis votre widget`,
+    manyFromWidgets: (n: number): string => `${n} marqués depuis vos widgets`,
+    manyFromNotifications: (n: number): string => `${n} marqués depuis des notifications`,
+    manyFromBoth: (n: number): string => `${n} marqués depuis des widgets et des notifications`,
   },
 }

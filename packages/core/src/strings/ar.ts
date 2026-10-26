@@ -127,16 +127,26 @@ export const ar: Strings = {
     testTitle: 'تنبيه تجريبي',
     testBody: 'هكذا يبدو التنبيه من إحسانلي.',
     pausedRemembrance: 'حان وقت الذكر',
+    prayerArrived: (prayer: string): string => `دخل وقت ${prayer}`,
+    prayerAsk: {
+      fajr: 'هل صلّيت؟ دقائق هادئة قبل أن يبدأ النهار.',
+      dhuhr: 'هل صلّيت؟ وقفة في منتصف النهار قبل أن يمضي.',
+      asr: 'هل صلّيت؟ هي الصلاة التي يسهل أن تغيب عن البال.',
+      maghrib: 'هل صلّيت؟ وقتها قصير، فالآن وقت مناسب.',
+      isha: 'هل صلّيت؟ صلاة أخيرة قبل أن ينتهي اليوم.',
+      jumuah: 'هل صلّيت؟ مرة في الأسبوع، مع الجماعة.',
+    },
     checkIn: 'اطمئنان سريع من إحسانلي',
     action: {
       done: 'تم',
       later: 'لاحقًا',
+      prayed: 'نعم، صلّيت',
+      notYet: 'ليس بعد',
     },
     body: {
       window: 'الآن، حتى ينتهي الوقت.',
       windowUntil: (closes: string): string => `مفتوح حتى ${closes}.`,
       tomorrow: 'غدًا.',
-      prayerWindow: 'دخل الوقت. تبقى النافذة مفتوحة حتى الصلاة التالية.',
     },
   },
   event: {
@@ -708,6 +718,10 @@ export const ar: Strings = {
     moreNow: (n: number): string => `+${n} أيضًا الآن`,
     markDone: 'ضع علامة «تم»',
     markedDone: 'تم التسجيل',
+    saidIt: 'قلتُه',
+    marked: 'تم',
+    addOne: '+1',
+    countOf: '{count} من {total}',
   },
   web: {
     remindersUnavailable:
@@ -727,5 +741,15 @@ export const ar: Strings = {
     markAll: 'تسجيل الكل كمكتمل',
     progress: (count: number, target: number): string => `${count} من ${target}`,
     tapToCount: 'انقر للعد',
+  },
+  remoteMarks: {
+    doneFromWidget: 'تم التسجيل من الأداة',
+    doneFromNotification: 'تم التسجيل من إشعار',
+    prayerFromWidget: (prayer: string): string => `تم تسجيل ${prayer} من الأداة`,
+    prayerFromNotification: (prayer: string): string => `تم تسجيل ${prayer} من إشعار`,
+    countedFromWidget: (n: number): string => `تم عدّ ${n} من الأداة`,
+    manyFromWidgets: (n: number): string => `تم تسجيل ${n} من الأدوات`,
+    manyFromNotifications: (n: number): string => `تم تسجيل ${n} من الإشعارات`,
+    manyFromBoth: (n: number): string => `تم تسجيل ${n} من الأدوات والإشعارات`,
   },
 }

@@ -123,16 +123,26 @@ export const so: Strings = {
     testTitle: 'Xusuusiye tijaabo ah',
     testBody: 'Sidan ayuu u eg yahay xusuusiye ka yimaada Ihsaanly.',
     pausedRemembrance: 'Waa waqtigii adkaarta',
+    prayerArrived: (prayer: string): string => `Waqtigii ${prayer} waa galay`,
+    prayerAsk: {
+      fajr: 'Ma tukatay? Daqiiqado degan ka hor inta maalintu aysan bilaabmin.',
+      dhuhr: 'Ma tukatay? Hakad yar oo maalinta dhexdeeda ah.',
+      asr: 'Ma tukatay? Waa tan ugu fudud in laga illoobo.',
+      maghrib: 'Ma tukatay? Waqtigeedu waa gaaban yahay, hadda waa wakhti fiican.',
+      isha: 'Ma tukatay? Mid kale ka hor inta maalintu aysan dhammaan.',
+      jumuah: 'Ma tukatay? Toddobaadkii mar, si wadajir ah.',
+    },
     checkIn: 'Salaan kooban oo ka yimid Ihsaanly',
     action: {
       done: 'Waa la sameeyey',
       later: 'Goor dambe',
+      prayed: 'Haa, waan tukaday',
+      notYet: 'Weli',
     },
     body: {
       window: 'Hadda, ilaa waqtigu ka dhammaanayo.',
       windowUntil: (closes: string): string => `Furan ilaa ${closes}.`,
       tomorrow: 'Berri.',
-      prayerWindow: 'Waqtigii waa galay. Wuu furnaanayaa ilaa salaadda xigta.',
     },
   },
   event: {
@@ -726,6 +736,10 @@ export const so: Strings = {
     moreNow: (n: number): string => `+${n} kale hadda`,
     markDone: 'Calaamadi inay dhammaatay',
     markedDone: 'Waa la calaamadeeyey',
+    saidIt: 'Waan akhriyey',
+    marked: 'La calaamadeeyey',
+    addOne: '+1',
+    countOf: '{count} ka mid ah {total}',
   },
   web: {
     remindersUnavailable:
@@ -745,5 +759,16 @@ export const so: Strings = {
     markAll: 'Dhammaan calaamadi',
     progress: (count: number, target: number): string => `${count} ka mid ah ${target}`,
     tapToCount: 'Taabo si aad u tirisid',
+  },
+  remoteMarks: {
+    doneFromWidget: 'Waxaa laga calaamadeeyey widget-kaaga',
+    doneFromNotification: 'Waxaa laga calaamadeeyey ogeysiis',
+    prayerFromWidget: (prayer: string): string => `${prayer} waxaa laga calaamadeeyey widget-kaaga`,
+    prayerFromNotification: (prayer: string): string =>
+      `${prayer} waxaa laga calaamadeeyey ogeysiis`,
+    countedFromWidget: (n: number): string => `${n} ayaa laga tiriyey widget-kaaga`,
+    manyFromWidgets: (n: number): string => `${n} ayaa laga calaamadeeyey widget-yadaada`,
+    manyFromNotifications: (n: number): string => `${n} ayaa laga calaamadeeyey ogeysiisyo`,
+    manyFromBoth: (n: number): string => `${n} ayaa laga calaamadeeyey widget-yo iyo ogeysiisyo`,
   },
 }

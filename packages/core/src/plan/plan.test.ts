@@ -597,6 +597,30 @@ describe('marking an item done', () => {
     expect(result.today.rightNow?.itemId).toBe('after-any')
   })
 
+  it('counts a named prayer\'s "before" done ahead, from when that prayer was up next', () => {
+    const beforeMaghrib = makeItem('before-maghrib', {
+      kind: 'prayer',
+      prayer: 'maghrib',
+      when: 'before',
+    })
+    const atMaghrib = startOf('maghrib')
+    const duringAsr = (at: Date): Signals =>
+      makeSignals([beforeMaghrib], { now: atMaghrib, completedToday: { 'before-maghrib': at } })
+    expect(plan(duringAsr(now)).today.rightNow).toBeNull()
+    expect(plan(duringAsr(now)).today.done.map((entry) => entry.itemId)).toEqual(['before-maghrib'])
+    // Before Asr's window opened, Maghrib was not yet up next.
+    const beforeAsr = new Date(windowOf('asr').startsAt.getTime() - 60_000)
+    expect(plan(duringAsr(beforeAsr)).today.rightNow?.itemId).toBe('before-maghrib')
+  })
+
+  it('still owes "before any prayer" again at the next prayer', () => {
+    const siwak = makeItem('siwak', { kind: 'prayer', prayer: 'any', when: 'before' })
+    const result = plan(
+      makeSignals([siwak], { now: startOf('maghrib'), completedToday: { siwak: now } }),
+    )
+    expect(result.today.rightNow?.itemId).toBe('siwak')
+  })
+
   it('leaves what the next prayer asks untouched', () => {
     const result = plan(makeSignals([dhikr], { now, completedToday: { 'after-any': now } }))
     expect(result.today.next?.after).toEqual(['after-any'])
@@ -624,6 +648,21 @@ describe('prayer reminders', () => {
       expect.arrayContaining(['fajr', 'dhuhr', 'asr', 'maghrib', 'isha']),
     )
     expect(prayers).not.toContain('sunrise')
+  })
+
+  it('carry the moment their window closes, so a second ask can respect it', () => {
+    const result = plan(makeSignals([morningAdhkar], { preferences: on }))
+    const prayers = result.notifications.flatMap((entry) =>
+      entry.kind === 'prayer' ? [entry] : [],
+    )
+    const maghrib = prayers.find((entry) => entry.prayer === 'maghrib')
+    const isha = prayers.find((entry) => entry.prayer === 'isha')
+    const fajr = prayers.find((entry) => entry.prayer === 'fajr')
+    const dhuhr = prayers.find((entry) => entry.prayer === 'dhuhr')
+    // Maghrib closes as Isha opens; Fajr closes at sunrise, well before Dhuhr.
+    expect(maghrib?.endsAt).toEqual(isha?.at as Date)
+    expect(fajr?.endsAt.getTime()).toBeGreaterThan(fajr?.at.getTime() ?? Infinity)
+    expect(fajr?.endsAt.getTime()).toBeLessThan(dhuhr?.at.getTime() ?? 0)
   })
 
   it('do not spend the daily budget', () => {

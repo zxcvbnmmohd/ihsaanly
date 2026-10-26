@@ -116,16 +116,26 @@ export const ja: Strings = {
     testTitle: 'テストのリマインダー',
     testBody: 'Ihsaanlyのリマインダーはこのように届きます。',
     pausedRemembrance: 'ズィクルの時間です',
+    prayerArrived: (prayer: string): string => `${prayer}の時間になりました`,
+    prayerAsk: {
+      fajr: '礼拝はお済みですか？一日が動き出す前の、静かなひとときです。',
+      dhuhr: '礼拝はお済みですか？一日の真ん中で、ひと息つきましょう。',
+      asr: '礼拝はお済みですか？いちばん忘れやすい礼拝です。',
+      maghrib: '礼拝はお済みですか？時間が短いので、今がちょうどよい時です。',
+      isha: '礼拝はお済みですか？一日を終える前に、もうひとつ。',
+      jumuah: '礼拝はお済みですか？週に一度、皆と共に。',
+    },
     checkIn: 'Ihsaanlyからのひとこと',
     action: {
       done: '完了',
       later: 'あとで',
+      prayed: 'はい、礼拝しました',
+      notYet: 'まだです',
     },
     body: {
       window: '今です。時間帯が終わるまで。',
       windowUntil: (closes: string): string => `${closes}まで開いています。`,
       tomorrow: '明日です。',
-      prayerWindow: '礼拝の時間に入りました。次の礼拝まで時間帯は続きます。',
     },
   },
   event: {
@@ -710,6 +720,10 @@ export const ja: Strings = {
     moreNow: (n: number): string => `ほかに今${n}件`,
     markDone: '完了にする',
     markedDone: '完了にしました',
+    saidIt: '唱えました',
+    marked: '記録済み',
+    addOne: '+1',
+    countOf: '{count}/{total}',
   },
   web: {
     remindersUnavailable:
@@ -730,5 +744,15 @@ export const ja: Strings = {
     markAll: 'すべて完了にする',
     progress: (count: number, target: number): string => `${count}/${target}`,
     tapToCount: 'タップして数える',
+  },
+  remoteMarks: {
+    doneFromWidget: 'ウィジェットから完了にしました',
+    doneFromNotification: '通知から完了にしました',
+    prayerFromWidget: (prayer: string): string => `ウィジェットから${prayer}を記録しました`,
+    prayerFromNotification: (prayer: string): string => `通知から${prayer}を記録しました`,
+    countedFromWidget: (n: number): string => `ウィジェットから${n}回数えました`,
+    manyFromWidgets: (n: number): string => `ウィジェットから${n}件を記録しました`,
+    manyFromNotifications: (n: number): string => `通知から${n}件を記録しました`,
+    manyFromBoth: (n: number): string => `ウィジェットと通知から${n}件を記録しました`,
   },
 }

@@ -1,6 +1,18 @@
-import { AccessoryWidgetBackground, Image, Spacer, Text, VStack, ZStack } from '@expo/ui/swift-ui'
 import {
+  AccessoryWidgetBackground,
+  Button,
+  HStack,
+  Image,
+  Spacer,
+  Text,
+  VStack,
+  ZStack,
+} from '@expo/ui/swift-ui'
+import {
+  buttonBorderShape,
+  buttonStyle,
   containerBackground,
+  controlSize,
   font,
   foregroundStyle,
   frame,
@@ -8,6 +20,7 @@ import {
   minimumScaleFactor,
   multilineTextAlignment,
   padding,
+  tint,
   type ViewModifier,
   widgetURL,
 } from '@expo/ui/swift-ui/modifiers'
@@ -159,6 +172,34 @@ function DuaOfTheDayWidget(props: WidgetModel, environment: WidgetEnvironment): 
     </Text>
   )
 
+  // "Said it" marks today's dua done without opening the app; until the app
+  // files the tap the widget shows it said.
+  const taps = props.taps ?? []
+  const said =
+    dua.done === true ||
+    taps.some(
+      (tap) => (tap.kind ?? 'done') === 'done' && tap.id === dua.id && tap.at >= (dua.since ?? 0),
+    )
+  const saidIt = said ? (
+    <HStack spacing={4}>
+      <Image systemName="checkmark.circle.fill" size={15} modifiers={[paint('accent')]} />
+      {say(props.labels.marked, 'caption', 'secondary', 1, 'semibold')}
+    </HStack>
+  ) : (
+    <Button
+      target="said-it"
+      label={props.labels.saidIt}
+      systemImage="checkmark"
+      onPress={() => ({ taps: [...taps, { kind: 'done', id: dua.id, at: Date.now() }] })}
+      modifiers={[
+        buttonStyle(plain ? 'bordered' : 'borderedProminent'),
+        buttonBorderShape('capsule'),
+        controlSize('small'),
+        ...(plain ? [] : [tint(ink.accent)]),
+      ]}
+    />
+  )
+
   if (family === 'accessoryInline') return inline(dua.title, dua.url)
   if (family === 'accessoryCircular') {
     return circle(
@@ -204,6 +245,7 @@ function DuaOfTheDayWidget(props: WidgetModel, environment: WidgetEnvironment): 
         {arabic('title', 2)}
         <Spacer />
         {say(dua.title, 'subheadline', 'label', 1, 'medium')}
+        {saidIt}
       </>,
       dua.url,
     )
@@ -216,6 +258,7 @@ function DuaOfTheDayWidget(props: WidgetModel, environment: WidgetEnvironment): 
       <Spacer />
       {say(dua.title, 'headline', 'label', 1)}
       {dua.translation ? say(dua.translation, 'body', 'secondary', 4) : null}
+      {saidIt}
     </>,
     dua.url,
   )

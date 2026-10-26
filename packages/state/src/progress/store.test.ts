@@ -55,6 +55,12 @@ describe('counting', () => {
     expect(written).toEqual(['progress:tasbih', 'progress:tasbih'])
   })
 
+  it('names the period it counts in now', () => {
+    expect(progress.currentPeriod('tasbih')).toBe(`${TODAY}:morning`)
+    period = `${TODAY}:evening`
+    expect(progress.currentPeriod('tasbih')).toBe(`${TODAY}:evening`)
+  })
+
   it('never counts below zero', () => {
     progress.addCount('tasbih', 2)
     expect(progress.addCount('tasbih', -5).count).toBe(0)

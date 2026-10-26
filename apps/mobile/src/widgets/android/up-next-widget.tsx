@@ -2,9 +2,23 @@
 
 import type { ReactElement } from 'react'
 
-import { Caption, Frame, LinkList, ROW_HEIGHT, rowsFit, Secondary, type WidgetProps } from './parts'
+import {
+  Caption,
+  Frame,
+  LinkList,
+  MarkButton,
+  ROW_HEIGHT,
+  rowsFit,
+  Secondary,
+  standing,
+  type WidgetProps,
+} from './parts'
 
-/** What the next prayer asks before it and after it. */
+/**
+ * What the next prayer asks before it and after it. A named prayer's "before"
+ * can be marked done ahead, from its row; "after" is not owed yet, so those
+ * rows only open the item.
+ */
 export function UpNextWidget({ model, paint, layout }: WidgetProps): ReactElement {
   const { rtl, labels, next } = model
   const caption = next ? `${labels.upNext} · ${next.prayer}` : labels.upNext
@@ -20,7 +34,28 @@ export function UpNextWidget({ model, paint, layout }: WidgetProps): ReactElemen
       {before.length === 0 && after.length === 0 ? (
         <Secondary text={labels.nothingNow} paint={paint} rtl={rtl} maxLines={2} />
       ) : null}
-      <LinkList links={before} paint={paint} rtl={rtl} limit={beforeLimit} tag={labels.before} />
+      <LinkList
+        links={before}
+        paint={paint}
+        rtl={rtl}
+        limit={beforeLimit}
+        tag={labels.before}
+        markFor={(_, index) => {
+          const item = before[index]
+          if (!item || item.since === undefined) return null
+          return (
+            <MarkButton
+              paint={paint}
+              kind="done"
+              id={item.id}
+              label={labels.markDone}
+              doneLabel={labels.markedDone}
+              done={standing(model, item).done}
+              compact
+            />
+          )
+        }}
+      />
       <LinkList links={after} paint={paint} rtl={rtl} limit={afterLimit} tag={labels.after} />
       {large && next ? <Secondary text={next.distance} paint={paint} rtl={rtl} /> : null}
     </Frame>

@@ -1,5 +1,9 @@
 import type { NotificationContent } from '@ihsaanly/state/notifications/content'
-import { REMINDER_CATEGORY } from '@ihsaanly/state/notifications/payload'
+import {
+  PRAYER_AGAIN_CATEGORY,
+  PRAYER_CATEGORY,
+  REMINDER_CATEGORY,
+} from '@ihsaanly/state/notifications/payload'
 import { planSync } from '@ihsaanly/state/notifications/sync-plan'
 import type { Strings } from '@ihsaanly/state/strings'
 import Constants, { ExecutionEnvironment } from 'expo-constants'
@@ -100,6 +104,21 @@ async function prepare(api: NotificationsApi, strings: Strings): Promise<void> {
     },
   ])
 
+  const prayed = {
+    identifier: 'done',
+    buttonTitle: strings.notifications.action.prayed,
+    options: { opensAppToForeground: false },
+  }
+  await api.setNotificationCategoryAsync(PRAYER_CATEGORY, [
+    prayed,
+    {
+      identifier: 'later',
+      buttonTitle: strings.notifications.action.notYet,
+      options: { opensAppToForeground: false },
+    },
+  ])
+  await api.setNotificationCategoryAsync(PRAYER_AGAIN_CATEGORY, [prayed])
+
   try {
     await api.registerTaskAsync(NOTIFICATION_TASK)
   } catch {
@@ -194,13 +213,14 @@ async function scheduleOne(api: NotificationsApi, content: NotificationContent):
 
 /**
  * Diff, not cancel-all. Only entries the plan owns (`plan:`) are touched, so a
- * snooze made while the app was killed survives the next sync. Re-arming is
- * still idempotent however often it runs.
+ * snooze made while the app was killed survives the next sync, unless it is a
+ * prayer's second ask and tracking is `paused`. Re-arming is still idempotent
+ * however often it runs.
  *
  * Nothing scheduled here ever tells the user they failed at something: a
  * reminder names what is available and when, and never scores what was not done.
  */
-export async function sync(contents: NotificationContent[]): Promise<number> {
+export async function sync(contents: NotificationContent[], paused = false): Promise<number> {
   const api = await notifications()
   if (!api) return 0
 
@@ -210,6 +230,7 @@ export async function sync(contents: NotificationContent[]): Promise<number> {
       contents,
       pending.map((request) => request.identifier),
       Date.now(),
+      paused,
     )
 
     await Promise.all(cancel.map((id) => api.cancelScheduledNotificationAsync(id)))

@@ -11,7 +11,7 @@ import {
   tree,
   widgetUrls,
 } from '../../../test/widgets'
-import type { WidgetLink, WidgetModel } from '../model'
+import type { WidgetItem, WidgetLink, WidgetModel, WidgetTap } from '../model'
 
 const FILES = {
   RightNowWidget: 'right-now',
@@ -47,6 +47,11 @@ function draw(name: Name, entry: WidgetModel, env: Env = {}): Node {
 
 function link(n: number, detail: string | null = null): WidgetLink {
   return { title: `Item ${n}`, detail, url: `ihsaanly://item/i${n}` }
+}
+
+/** A row the widget cannot mark: an id, and no `since`. */
+function asItem(entry: WidgetLink): WidgetItem {
+  return { ...entry, id: entry.url.replace('ihsaanly://item/', '') }
 }
 
 const empty: Partial<WidgetModel> = {
@@ -483,14 +488,19 @@ describe('iOS widgets with a full day', () => {
     alsoNow: links.slice(0, 3),
     allDay: links,
     comingUp: links,
-    quickDuas: links,
-    next: { prayer: 'Jumu’ah', distance: 'Soon', before: links, after: links.slice(0, 2) },
+    quickDuas: links.map(asItem),
+    next: {
+      prayer: 'Jumu’ah',
+      distance: 'Soon',
+      before: links.map(asItem),
+      after: links.slice(0, 2),
+    },
     prayers: [
-      { name: 'Fajr', short: 'F', done: true, passed: true },
-      { name: 'Dhuhr', short: 'D', done: false, passed: true },
-      { name: 'Asr', short: 'A', done: false, passed: false },
-      { name: 'Maghrib', short: 'M', done: true, passed: false },
-      { name: 'Isha', short: 'I', done: false, passed: false },
+      { id: 'fajr', name: 'Fajr', short: 'F', done: true, passed: true },
+      { id: 'dhuhr', name: 'Dhuhr', short: 'D', done: false, passed: true },
+      { id: 'asr', name: 'Asr', short: 'A', done: false, passed: false },
+      { id: 'maghrib', name: 'Maghrib', short: 'M', done: true, passed: false },
+      { id: 'isha', name: 'Isha', short: 'I', done: false, passed: false },
     ],
     makeUp: {
       prayers: 3,
@@ -498,7 +508,15 @@ describe('iOS widgets with a full day', () => {
       summary: '3 prayers owed · 2 fasts owed',
       url: 'ihsaanly://qada',
     },
-    duaOfTheDay: { title: 'T', arabic: 'ع', translation: null, url: 'ihsaanly://item/t' },
+    duaOfTheDay: {
+      id: 't',
+      title: 'T',
+      arabic: 'ع',
+      translation: null,
+      url: 'ihsaanly://item/t',
+      since: 0,
+      done: false,
+    },
   })
 
   for (const name of NAMES) {
@@ -737,5 +755,186 @@ describe('RightNowWidget, what else is open and the date', () => {
     }
     expect(footer(false)).toEqual(['Text', 'Spacer', 'Button'])
     expect(footer(true)).toEqual(['Button', 'Spacer', 'Text'])
+  })
+})
+
+describe('iOS widgets, marking from the widget', () => {
+  const buttons = (root: Node): Node[] => nodes(root).filter((n) => n.type === 'Button')
+  const pressed = (button: Node | undefined): WidgetTap[] => {
+    const onPress = button?.props.onPress
+    if (typeof onPress !== 'function') throw new Error('no button')
+    return (onPress() as Partial<WidgetModel>).taps ?? []
+  }
+  const target = (root: Node, name: string): Node | undefined =>
+    buttons(root).find((n) => n.props.target === name)
+  const opened = model().openedAt ?? 0
+  const tasbih = (count: number): WidgetItem => ({
+    id: 'tasbih-after-prayer',
+    title: 'Tasbih after prayer',
+    detail: null,
+    url: 'ihsaanly://item/tasbih-after-prayer',
+    since: opened,
+    done: false,
+    repeat: 33,
+    count,
+  })
+  const tap = (kind: WidgetTap['kind'], id: string, at = opened + 1): WidgetTap => ({
+    kind,
+    id,
+    at,
+  })
+
+  it('gives every button in a widget a target of its own', () => {
+    for (const name of NAMES) {
+      for (const family of FAMILIES) {
+        const all = buttons(draw(name, model(), { widgetFamily: family })).map(
+          (n) => n.props.target,
+        )
+        expect(new Set(all).size).toBe(all.length)
+      }
+    }
+  })
+
+  it('RightNowWidget files a done press with its kind', () => {
+    const [first] = pressed(target(draw('RightNowWidget', model()), 'mark-done'))
+    expect(first?.kind).toBe('done')
+  })
+
+  it('RightNowWidget counts a counted item with +1 from medium up, and how far it has got', () => {
+    const entry = model({ rightNow: tasbih(10), taps: [tap('count', 'tasbih-after-prayer')] })
+    for (const family of ['systemMedium', 'systemLarge'] as const) {
+      const root = draw('RightNowWidget', entry, { widgetFamily: family })
+      expect(texts(root)).toContain('11 of 33')
+      const add = target(root, 'count-one')
+      expect(add?.props.label).toBe('+1')
+      const taps = pressed(add)
+      expect(taps).toHaveLength(2)
+      expect(taps[1]).toMatchObject({ kind: 'count', id: 'tasbih-after-prayer' })
+      expect(target(root, 'mark-done')).toBeUndefined()
+    }
+    // A small widget has room for the check alone, which marks the whole item.
+    const small = draw('RightNowWidget', entry, { widgetFamily: 'systemSmall' })
+    expect(target(small, 'mark-done')).toBeDefined()
+    expect(target(small, 'count-one')).toBeUndefined()
+  })
+
+  it('RightNowWidget shows a count done once its taps reach the repeat', () => {
+    const entry = model({
+      rightNow: tasbih(32),
+      taps: [tap('count', 'tasbih-after-prayer'), tap('count', 'tasbih-after-prayer', opened - 1)],
+      rtl: true,
+    })
+    const root = draw('RightNowWidget', entry, { widgetFamily: 'systemMedium' })
+    expect(buttons(root)).toEqual([])
+    expect(texts(root)).toContain('Marked done')
+    const rtl = draw('RightNowWidget', model({ rightNow: tasbih(3), rtl: true }), {
+      widgetFamily: 'systemMedium',
+    })
+    const row = nodes(rtl).find(
+      (n) =>
+        n.type === 'HStack' &&
+        n.children.some((child) => typeof child !== 'string' && child.props.target === 'count-one'),
+    )
+    expect(row?.children.map((child) => (typeof child === 'string' ? child : child.type))).toEqual([
+      'Button',
+      'Text',
+    ])
+  })
+
+  it('PrayersWidget makes an opened, unmarked prayer a button that marks it', () => {
+    const prayers = model().prayers.map((prayer) =>
+      prayer.id === 'dhuhr' ? { ...prayer, since: opened } : prayer,
+    )
+    for (const family of ['systemMedium', 'systemLarge'] as const) {
+      const root = draw('PrayersWidget', model({ prayers }), { widgetFamily: family })
+      expect(buttons(root).map((n) => n.props.target)).toEqual(['prayer-dhuhr'])
+      const [made] = pressed(target(root, 'prayer-dhuhr'))
+      expect(made).toMatchObject({ kind: 'prayer', id: 'dhuhr' })
+    }
+    // Small circles are too small to aim at; the Lock Screen has no buttons.
+    for (const family of ['systemSmall', 'accessoryRectangular'] as const) {
+      expect(buttons(draw('PrayersWidget', model({ prayers }), { widgetFamily: family }))).toEqual(
+        [],
+      )
+    }
+  })
+
+  it('PrayersWidget shows a prayer marked on the widget as done', () => {
+    const prayers = model().prayers.map((prayer) =>
+      prayer.id === 'dhuhr' ? { ...prayer, since: opened } : prayer,
+    )
+    const marked = model({ prayers, taps: [tap('prayer', 'dhuhr')] })
+    const root = draw('PrayersWidget', marked, { widgetFamily: 'systemMedium' })
+    expect(buttons(root)).toEqual([])
+    expect(texts(root)).toContain('Prayers · 2/5')
+    // A tap before this prayer's window, or for another, does not count.
+    const early = model({
+      prayers,
+      taps: [tap('prayer', 'dhuhr', opened - 1), tap('done', 'dhuhr')],
+    })
+    expect(buttons(draw('PrayersWidget', early, { widgetFamily: 'systemMedium' }))).toHaveLength(1)
+  })
+
+  it('UpNextWidget marks a named prayer’s “before” from its row, and leaves “after” a link', () => {
+    for (const family of ['systemMedium', 'systemLarge'] as const) {
+      const root = draw('UpNextWidget', model(), { widgetFamily: family })
+      expect(buttons(root).map((n) => n.props.target)).toEqual(['done-sunnah-before-dhuhr'])
+      const [made] = pressed(buttons(root)[0])
+      expect(made).toMatchObject({ kind: 'done', id: 'sunnah-before-dhuhr' })
+    }
+    expect(buttons(draw('UpNextWidget', model(), { widgetFamily: 'systemSmall' }))).toEqual([])
+  })
+
+  it('UpNextWidget shows a row marked, from the widget or the app, with a check', () => {
+    const since = model().next?.before[0]?.since ?? 0
+    const tapped = model({ taps: [tap('done', 'sunnah-before-dhuhr', since + 1)] })
+    const next = model().next
+    const done = next
+      ? model({ next: { ...next, before: next.before.map((b) => ({ ...b, done: true })) } })
+      : model()
+    for (const entry of [tapped, done]) {
+      const root = draw('UpNextWidget', { ...entry, rtl: true }, { widgetFamily: 'systemLarge' })
+      expect(buttons(root)).toEqual([])
+      expect(nodes(root).some((n) => n.props.systemName === 'checkmark.circle.fill')).toBe(true)
+    }
+  })
+
+  it('QuickDuasWidget gives each dua a mark of its own from medium up', () => {
+    const duas = model().quickDuas
+    for (const family of ['systemMedium', 'systemLarge'] as const) {
+      const root = draw('QuickDuasWidget', model(), { widgetFamily: family })
+      const shown = family === 'systemMedium' ? duas.slice(0, 4) : duas
+      expect(buttons(root).map((n) => n.props.target)).toEqual(shown.map((dua) => `done-${dua.id}`))
+    }
+    const first = duas[0]
+    const large = draw('QuickDuasWidget', model(), { widgetFamily: 'systemLarge' })
+    expect(pressed(target(large, `done-${first?.id}`))[0]).toMatchObject({
+      kind: 'done',
+      id: first?.id,
+    })
+    const tapped = model({ taps: [tap('done', first?.id ?? '')] })
+    const root = draw('QuickDuasWidget', tapped, { widgetFamily: 'systemLarge' })
+    expect(target(root, `done-${first?.id}`)).toBeUndefined()
+    expect(buttons(root)).toHaveLength(duas.length - 1)
+  })
+
+  it('DuaOfTheDayWidget says it from medium up, then shows it marked', () => {
+    const dua = model().duaOfTheDay
+    for (const family of ['systemMedium', 'systemLarge'] as const) {
+      const root = draw('DuaOfTheDayWidget', model(), { widgetFamily: family })
+      const said = target(root, 'said-it')
+      expect(said?.props.label).toBe('Said it')
+      expect(pressed(said)[0]).toMatchObject({ kind: 'done', id: dua?.id })
+    }
+    expect(buttons(draw('DuaOfTheDayWidget', model(), { widgetFamily: 'systemSmall' }))).toEqual([])
+    const marked = model({ taps: [tap('done', dua?.id ?? '', (dua?.since ?? 0) + 1)] })
+    const root = draw('DuaOfTheDayWidget', marked, { widgetFamily: 'systemLarge' })
+    expect(buttons(root)).toEqual([])
+    expect(texts(root)).toContain('Marked')
+    // Yesterday's tap for the same dua is not today's.
+    const yesterday = model({ taps: [tap('done', dua?.id ?? '', (dua?.since ?? 0) - 1)] })
+    expect(
+      target(draw('DuaOfTheDayWidget', yesterday, { widgetFamily: 'systemLarge' }), 'said-it'),
+    ).toBeDefined()
   })
 })

@@ -121,16 +121,26 @@ export const ur: Strings = {
     testTitle: 'ایک آزمائشی یاد دہانی',
     testBody: 'احسانلی کی یاد دہانی ایسی دکھتی ہے۔',
     pausedRemembrance: 'اذکار کا وقت',
+    prayerArrived: (prayer: string): string => `${prayer} کا وقت ہو گیا ہے`,
+    prayerAsk: {
+      fajr: 'کیا آپ نے نماز پڑھ لی؟ دن شروع ہونے سے پہلے چند پُرسکون لمحے۔',
+      dhuhr: 'کیا آپ نے نماز پڑھ لی؟ دن کے بیچ ایک ٹھہراؤ۔',
+      asr: 'کیا آپ نے نماز پڑھ لی؟ یہی وہ نماز ہے جس کا دھیان سب سے آسانی سے چھوٹ جاتا ہے۔',
+      maghrib: 'کیا آپ نے نماز پڑھ لی؟ اس کا وقت مختصر ہے، ابھی اچھا موقع ہے۔',
+      isha: 'کیا آپ نے نماز پڑھ لی؟ دن ختم ہونے سے پہلے ایک اور۔',
+      jumuah: 'کیا آپ نے نماز پڑھ لی؟ ہفتے میں ایک بار، سب کے ساتھ۔',
+    },
     checkIn: 'Ihsaanly کی طرف سے ایک مختصر پیغام',
     action: {
       done: 'ہو گیا',
       later: 'بعد میں',
+      prayed: 'جی، پڑھ لی',
+      notYet: 'ابھی نہیں',
     },
     body: {
       window: 'ابھی، جب تک وقت باقی ہے۔',
       windowUntil: (closes: string): string => `${closes} تک کھلا ہے۔`,
       tomorrow: 'کل۔',
-      prayerWindow: 'وقت داخل ہو گیا ہے۔ اگلی نماز تک وقت باقی رہتا ہے۔',
     },
   },
   event: {
@@ -712,6 +722,10 @@ export const ur: Strings = {
     moreNow: (n: number): string => `ابھی +${n} اور`,
     markDone: 'مکمل نشان زد کریں',
     markedDone: 'مکمل نشان زد',
+    saidIt: 'پڑھ لی',
+    marked: 'نشان زد',
+    addOne: '+1',
+    countOf: '{total} میں سے {count}',
   },
   web: {
     remindersUnavailable:
@@ -732,5 +746,15 @@ export const ur: Strings = {
     markAll: 'سب مکمل نشان زد کریں',
     progress: (count: number, target: number): string => `${target} میں سے ${count}`,
     tapToCount: 'گننے کے لیے ٹیپ کریں',
+  },
+  remoteMarks: {
+    doneFromWidget: 'آپ کے ویجٹ سے مکمل نشان زد',
+    doneFromNotification: 'ایک اطلاع سے مکمل نشان زد',
+    prayerFromWidget: (prayer: string): string => `${prayer} آپ کے ویجٹ سے نشان زد`,
+    prayerFromNotification: (prayer: string): string => `${prayer} ایک اطلاع سے نشان زد`,
+    countedFromWidget: (n: number): string => `آپ کے ویجٹ سے ${n} گنے گئے`,
+    manyFromWidgets: (n: number): string => `آپ کے ویجٹس سے ${n} نشان زد`,
+    manyFromNotifications: (n: number): string => `اطلاعات سے ${n} نشان زد`,
+    manyFromBoth: (n: number): string => `ویجٹس اور اطلاعات سے ${n} نشان زد`,
   },
 }

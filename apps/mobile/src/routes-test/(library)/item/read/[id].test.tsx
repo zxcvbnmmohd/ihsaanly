@@ -30,6 +30,8 @@ const { expoRouter } = await import('../../../../../test/router')
 const { uncompleteItem, useCompletedToday } = await import('@ihsaanly/state/plan/completions')
 const { clearProgress, getItemProgress } = await import('@ihsaanly/state/progress/store')
 const tours = await import('@ihsaanly/state/coach/tours')
+const { updateReaderPreferences } = await import('@ihsaanly/state/reader/store')
+const { DEFAULT_READER_PREFERENCES } = await import('@ihsaanly/core/content/reading')
 
 const TASBIH = 'tasbih-after-prayer'
 const MORNING = 'morning-adhkar'
@@ -66,6 +68,19 @@ afterEach(() => {
     }
   })
   expoRouter.router.canGoBack = () => true
+})
+
+describe('the reading preference', () => {
+  it('lays the reader out as the Appearance screen chose, and follows a change', () => {
+    open(LEAVING)
+    expect(last().reading).toEqual({ arabicFirst: true, align: 'center' })
+    act(() => updateReaderPreferences({ arabicFirst: false, align: 'start', detail: 'brief' }))
+    try {
+      expect(last().reading).toEqual({ arabicFirst: false, align: 'start' })
+    } finally {
+      act(() => updateReaderPreferences(DEFAULT_READER_PREFERENCES))
+    }
+  })
 })
 
 describe('an unknown item', () => {

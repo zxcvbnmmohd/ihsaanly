@@ -792,6 +792,94 @@ export const it: Strings = {
     addOne: '+1',
     countOf: '{count} di {total}',
   },
+  widgetGallery: {
+    title: 'Widget',
+    intro:
+      'Tieni ciò che la giornata ti chiede sulla schermata Home e sulla schermata di blocco, e segnalo da lì.',
+    updates: 'Si aggiorna da solo con il passare della giornata. Non serve aprire Ihsaanly.',
+    placement: 'Dove',
+    size: 'Dimensione',
+    homeScreen: 'Schermata Home',
+    lockScreen: 'Schermata di blocco',
+    small: 'Piccolo',
+    medium: 'Medio',
+    large: 'Grande',
+    circular: 'Tondo',
+    rectangular: 'Largo',
+    inline: 'In linea',
+    preview: (name: string): string => `Anteprima del widget ${name}`,
+    tap: 'Cosa puoi toccare',
+    howToAdd: 'Come aggiungerlo',
+    iosHomeSteps: [
+      'Tieni premuto uno spazio vuoto della schermata Home finché le app non tremano.',
+      'Tocca Modifica, poi Aggiungi widget.',
+      'Cerca "Ihsaanly".',
+      'Scegli un widget e una dimensione, poi tocca Aggiungi widget.',
+    ],
+    iosLockSteps: [
+      'Tieni premuta la schermata di blocco, poi tocca Personalizza.',
+      "Scegli la schermata di blocco, poi tocca l'area dei widget sotto l'ora.",
+      'Trova Ihsaanly e tocca un widget per aggiungerlo.',
+    ],
+    androidSteps: [
+      'Tieni premuto uno spazio vuoto della schermata Home.',
+      'Tocca Widget.',
+      'Trova Ihsaanly.',
+      'Tieni premuto un widget, poi trascinalo dove vuoi.',
+    ],
+    widgets: {
+      rightNow: {
+        name: 'Adesso',
+        purpose: 'Ciò che questo momento della giornata ti chiede.',
+        taps: 'Segnalo come fatto, o conta +1 per un dhikr su Medio e Grande.',
+      },
+      nextPrayer: {
+        name: 'Prossima preghiera',
+        purpose: 'La prossima preghiera e quanto manca, più o meno.',
+        taps: 'Apri Oggi.',
+      },
+      prayers: {
+        name: 'Preghiere',
+        purpose: 'Le cinque preghiere di oggi e quali hai segnato.',
+        taps: "Segna una preghiera compiuta quando è giunta l'ora, su Medio e Grande.",
+      },
+      hijriDate: {
+        name: 'Data dell’Egira',
+        purpose: "La data dell'Egira, con la data gregoriana e il tuo luogo.",
+        taps: "Apri la data dell'Egira.",
+      },
+      upNext: {
+        name: 'Poi',
+        purpose: 'Ciò che la prossima preghiera chiede prima e dopo.',
+        taps: 'Segna in anticipo come fatto ciò che viene prima della preghiera, su Medio e Grande.',
+      },
+      alsoToday: {
+        name: 'Anche oggi',
+        purpose: 'La sunna di tutta la giornata, come un digiuno.',
+        taps: 'Aprine una.',
+      },
+      quickDuas: {
+        name: "Du'a rapide",
+        purpose: "Le tue du'a fissate, o quelle per uscire, viaggiare, salire e scendere.",
+        taps: "Segna una du'a detta su Medio e Grande, o aprila per leggerla.",
+      },
+      duaOfTheDay: {
+        name: "Du'a del giorno",
+        purpose: "Una du'a al giorno, in arabo.",
+        taps: 'Tocca "L\'ho detta" su Medio e Grande, o aprila per leggerla.',
+      },
+      makeUp: {
+        name: 'Da recuperare',
+        purpose: 'Preghiere e digiuni ancora da recuperare.',
+        taps: 'Apri Da recuperare.',
+      },
+      comingUp: {
+        name: 'Più avanti in settimana',
+        purpose: 'Cosa arriva nei prossimi giorni.',
+        taps: 'Aprine uno.',
+      },
+    },
+  },
   web: {
     remindersUnavailable:
       "I promemoria richiedono l'app. Un browser non può ricordartelo a pagina chiusa.",

@@ -788,6 +788,95 @@ export const so: Strings = {
     addOne: '+1',
     countOf: '{count} ka mid ah {total}',
   },
+  widgetGallery: {
+    title: 'Widgets',
+    intro:
+      'Ku hay waxa maalintu kaa rabto shaashadda hore iyo shaashadda quful, oo halkaas ka calaamadi.',
+    updates: 'Iskiis ayuu u cusboonaadaa marka maalintu socoto. Uma baahnid inaad furto Ihsaanly.',
+    placement: 'Halkee',
+    size: 'Cabbir',
+    homeScreen: 'Shaashadda hore',
+    lockScreen: 'Shaashadda quful',
+    small: 'Yar',
+    medium: 'Dhexe',
+    large: 'Weyn',
+    circular: 'Wareeg',
+    rectangular: 'Ballaaran',
+    inline: 'Hal sadar',
+    preview: (name: string): string => `Muuqaalka widget-ka ${name}`,
+    tap: 'Waxaad taaban karto',
+    howToAdd: 'Sida loogu daro',
+    iosHomeSteps: [
+      'Taabo oo hay meel bannaan oo shaashadda hore ah ilaa apps-ku gariiraan.',
+      'Taabo Edit, kadibna Add Widget.',
+      'Raadi "Ihsaanly".',
+      'Dooro widget iyo cabbir, kadibna taabo Add Widget.',
+    ],
+    iosLockSteps: [
+      'Taabo oo hay shaashadda quful, kadibna taabo Customize.',
+      'Dooro shaashadda quful, kadibna taabo meesha widgets-ka ee saacadda hoosteeda.',
+      'Hel Ihsaanly oo taabo widget si aad ugu darto.',
+    ],
+    androidSteps: [
+      'Taabo oo hay meel bannaan oo shaashadda hore ah.',
+      'Taabo Widgets.',
+      'Hel Ihsaanly.',
+      'Taabo oo hay widget, kadibna u jiid meesha aad rabto.',
+    ],
+    widgets: {
+      rightNow: {
+        name: 'Hadda',
+        purpose: 'Waxa qaybtan maalintu kaa rabto.',
+        taps: 'Calaamadi inay dhammaatay, ama ku tiri +1 dhikriga Dhexe iyo Weyn.',
+      },
+      nextPrayer: {
+        name: 'Salaadda xigta',
+        purpose: 'Salaadda xigta iyo qiyaas ahaan inta u dhiman.',
+        taps: 'Fur Maanta.',
+      },
+      prayers: {
+        name: 'Salaadaha',
+        purpose: 'Shanta salaadood ee maanta iyo kuwa aad calaamadisay.',
+        taps: 'Calaamadi salaad la tukaday marka waqtigeedu yimaado, Dhexe iyo Weyn.',
+      },
+      hijriDate: {
+        name: 'Taariikhda Hijriga',
+        purpose: 'Taariikhda Hijriga, iyo taariikhda miilaadiga iyo meeshaada.',
+        taps: 'Fur taariikhda Hijriga.',
+      },
+      upNext: {
+        name: 'Xiga',
+        purpose: 'Waxa salaadda xigta ay rabto ka hor iyo ka dib.',
+        taps: 'Calaamadi waxa salaadda ka horreeya ka hor intaanay imaan, Dhexe iyo Weyn.',
+      },
+      alsoToday: {
+        name: 'Sidoo kale maanta',
+        purpose: 'Sunnada maalinta oo dhan, sida soonka.',
+        taps: 'Fur midkood.',
+      },
+      quickDuas: {
+        name: 'Duco degdeg ah',
+        purpose:
+          'Ducooyinkaaga aad dhejisay, ama kuwa ka bixidda guriga, safarka, kor u bixidda iyo hoos u degidda.',
+        taps: 'Calaamadi duco aad tiri Dhexe iyo Weyn, ama fur si aad u akhrido.',
+      },
+      duaOfTheDay: {
+        name: 'Ducada maanta',
+        purpose: 'Hal duco maalin kasta, Carabi ahaan.',
+        taps: 'Taabo "Waan iri" Dhexe iyo Weyn, ama fur si aad u akhrido.',
+      },
+      makeUp: {
+        name: 'Qadaa',
+        purpose: 'Salaadaha iyo soonka weli qadaa ah.',
+        taps: 'Fur Qadaa.',
+      },
+      comingUp: {
+        name: 'Toddobaadkan dambe',
+        purpose: 'Waxa imanaya maalmaha soo socda.',
+        taps: 'Fur midkood.',
+      },
+    },
+  },
   web: {
     remindersUnavailable:
       'Xasuusinta waxay u baahan tahay abka taleefanka. Biraawsarku kuma xasuusin karo marka boggu xirmo.',

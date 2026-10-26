@@ -769,6 +769,93 @@ export const en = {
     /** Filled in on the widget, which counts taps itself: `{count}` and `{total}`. */
     countOf: '{count} of {total}',
   },
+  widgetGallery: {
+    title: 'Widgets',
+    intro: 'Keep what the day asks of you on your Home Screen and Lock Screen, and mark it there.',
+    updates: 'Updates itself as the day moves. No need to open Ihsaanly.',
+    placement: 'Where',
+    size: 'Size',
+    homeScreen: 'Home Screen',
+    lockScreen: 'Lock Screen',
+    small: 'Small',
+    medium: 'Medium',
+    large: 'Large',
+    circular: 'Round',
+    rectangular: 'Wide',
+    inline: 'Inline',
+    preview: (name: string): string => `${name} widget preview`,
+    tap: 'What you can tap',
+    howToAdd: 'How to add it',
+    iosHomeSteps: [
+      'Touch and hold an empty spot on your Home Screen until the apps jiggle.',
+      'Tap Edit, then Add Widget.',
+      'Search for "Ihsaanly".',
+      'Choose a widget and a size, then tap Add Widget.',
+    ],
+    iosLockSteps: [
+      'Touch and hold your Lock Screen, then tap Customize.',
+      'Choose Lock Screen, then tap the widgets area under the time.',
+      'Find Ihsaanly and tap a widget to add it.',
+    ],
+    androidSteps: [
+      'Touch and hold an empty spot on your home screen.',
+      'Tap Widgets.',
+      'Find Ihsaanly.',
+      'Touch and hold a widget, then drag it where you want it.',
+    ],
+    widgets: {
+      rightNow: {
+        name: 'Right now',
+        purpose: 'What this part of the day asks of you.',
+        taps: 'Mark it done, or count +1 for a dhikr on Medium and Large.',
+      },
+      nextPrayer: {
+        name: 'Next prayer',
+        purpose: 'The next prayer and roughly how far away it is.',
+        taps: 'Open Today.',
+      },
+      prayers: {
+        name: 'Prayers',
+        purpose: "Today's five prayers and which you have marked.",
+        taps: 'Mark a prayer prayed once its time has come, on Medium and Large.',
+      },
+      hijriDate: {
+        name: 'Hijri date',
+        purpose: 'The Hijri date, with the Gregorian date and your place.',
+        taps: 'Open the Hijri date.',
+      },
+      upNext: {
+        name: 'Up next',
+        purpose: 'What the next prayer asks before and after it.',
+        taps: 'Mark what comes before the prayer done ahead of it, on Medium and Large.',
+      },
+      alsoToday: {
+        name: 'Also today',
+        purpose: "Today's all-day sunnah, such as a fast.",
+        taps: 'Open any of them.',
+      },
+      quickDuas: {
+        name: 'Quick duas',
+        purpose: 'Your pinned duas, or those for leaving home, travel, going up and coming down.',
+        taps: 'Mark a dua said on Medium and Large, or open it to read.',
+      },
+      duaOfTheDay: {
+        name: 'Dua of the day',
+        purpose: 'One dua a day, in Arabic.',
+        taps: 'Mark it "Said it" on Medium and Large, or open it to read.',
+      },
+      makeUp: {
+        name: 'To make up',
+        purpose: 'Prayers and fasts still to make up.',
+        taps: 'Open To make up.',
+      },
+      comingUp: {
+        name: 'Later this week',
+        purpose: 'What is coming up in the days ahead.',
+        taps: 'Open any of them.',
+      },
+    },
+  },
   web: {
     remindersUnavailable:
       "Reminders need the phone app. A browser can't remind you while this page is closed.",

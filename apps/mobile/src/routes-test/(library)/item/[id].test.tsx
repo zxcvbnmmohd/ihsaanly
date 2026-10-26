@@ -71,6 +71,9 @@ const { setEnabledItems } = await import('@ihsaanly/state/plan/enabled-store')
 const { setPlace } = await import('@ihsaanly/state/location/store')
 const { toggleKnown } = await import('@ihsaanly/state/memorise/store')
 const { uncompleteItem } = await import('@ihsaanly/state/plan/completions')
+const { getReaderPreferences, updateReaderPreferences } = await import(
+  '@ihsaanly/state/reader/store'
+)
 
 const TASBIH = 'tasbih-after-prayer'
 const MORNING = 'morning-adhkar'
@@ -185,6 +188,22 @@ describe('an unknown item', () => {
     expect(shares).toEqual([])
     expect(capture.calls).toEqual([])
     expect(getNotificationPreferences()).toEqual(initialPreferences)
+  })
+})
+
+describe('reader preferences', () => {
+  afterEach(() => {
+    act(() => updateReaderPreferences({ arabicFirst: true, align: 'center', detail: 'detailed' }))
+  })
+
+  it('lays the item out as the reader prefers and remembers brief or detailed', () => {
+    act(() => updateReaderPreferences({ arabicFirst: false, align: 'start' }))
+    open(TASBIH)
+    expect(last().reading).toEqual({ arabicFirst: false, align: 'start' })
+    expect(last().detail).toBe('detailed')
+    act(() => last().onDetail('brief'))
+    expect(last().detail).toBe('brief')
+    expect(getReaderPreferences().detail).toBe('brief')
   })
 })
 

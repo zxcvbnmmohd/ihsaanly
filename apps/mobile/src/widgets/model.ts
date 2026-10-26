@@ -1,5 +1,6 @@
 import { itemById, items, resolveText } from '@ihsaanly/core/content'
 import { itemOpenPath } from '@ihsaanly/core/content/reader'
+import type { ReadingLayout } from '@ihsaanly/core/content/reading'
 import { civilDateIn, civilDateKey } from '@ihsaanly/core/day/boundaries'
 import { dayContextFor } from '@ihsaanly/core/plan/day-context'
 import { prayerName, windowName } from '@ihsaanly/core/plan/jumuah'
@@ -78,6 +79,12 @@ export interface WidgetModel {
   /** Past the end of the timeline: the widget only asks for the app to be opened. */
   stale: boolean
   rtl: boolean
+  /**
+   * The reader's Arabic-first and alignment preference, for widgets that show
+   * Arabic. A boolean rather than the preference's union: the gallery sample
+   * is JSON, which would widen it to a string.
+   */
+  reading: { arabicFirst: boolean; centred: boolean }
   ink: { light: WidgetInk; dark: WidgetInk }
   labels: {
     app: string
@@ -156,6 +163,7 @@ export interface WidgetInput {
   strings: Strings
   locale: string
   rtl: boolean
+  reading: ReadingLayout
   placeLabel: string | null
   hijriOffset: number
   qada: Partial<Record<Prayer, number>>
@@ -402,6 +410,7 @@ function modelAt(input: WidgetInput, at: Date): WidgetModel {
     at: at.getTime(),
     stale: false,
     rtl: input.rtl,
+    reading: { arabicFirst: input.reading.arabicFirst, centred: input.reading.align === 'center' },
     ink: { light: inkFor('light', input.accent), dark: inkFor('dark', input.accent) },
     labels: {
       app: 'Ihsaanly',

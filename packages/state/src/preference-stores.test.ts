@@ -24,6 +24,7 @@ const calculation = await import('./prayer/store')
 const fasting = await import('./fasting/store')
 const optIns = await import('./opt-ins/store')
 const accent = await import('./theme/accent-store')
+const reader = await import('./reader/store')
 const contentModule = await import('@ihsaanly/core/content')
 const { glossary } = await import('@ihsaanly/core/content/glossary')
 const { DEFAULT_SUGGESTION } = await import('@ihsaanly/core/plan/suggest')
@@ -33,6 +34,7 @@ const { DEFAULT_NOTIFICATION_PREFERENCES } = await import(
   '@ihsaanly/core/plan/notification-preferences'
 )
 const { items } = await import('@ihsaanly/core/content')
+const { DEFAULT_READER_PREFERENCES } = await import('@ihsaanly/core/content/reading')
 
 const place = {
   label: 'London',
@@ -203,6 +205,17 @@ const cases: Case<unknown>[] = [
     value: 'sage',
     invalid: '"chartreuse"',
   },
+  {
+    name: 'reader preferences',
+    key: 'reader',
+    get: reader.getReaderPreferences,
+    set: ((value: Partial<typeof DEFAULT_READER_PREFERENCES>) =>
+      reader.updateReaderPreferences(value)) as (value: unknown) => void,
+    use: reader.useReaderPreferences,
+    fallback: DEFAULT_READER_PREFERENCES,
+    value: { arabicFirst: false, align: 'start', detail: 'brief' },
+    invalid: '{"arabicFirst":true,"align":"left","detail":"brief"}',
+  },
 ]
 
 describe.each(cases)('the $name store', (store) => {
@@ -300,5 +313,15 @@ describe('toggling', () => {
 
     act(() => fasting.setFastBacklog(-3))
     expect(result.current).toBe(0)
+  })
+
+  it('changes one reader preference and keeps the others', () => {
+    reader.updateReaderPreferences({ detail: 'brief' })
+    reader.updateReaderPreferences({ align: 'start' })
+    expect(reader.getReaderPreferences()).toEqual({
+      ...DEFAULT_READER_PREFERENCES,
+      detail: 'brief',
+      align: 'start',
+    })
   })
 })

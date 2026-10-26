@@ -25,4 +25,17 @@ describe('ArabicText', () => {
     )
     expect(screen.getByText('سُبْحَانَ اللَّهِ').style.color).toBe('rgba(1, 2, 3, 1.00)')
   })
+
+  it('follows a stated alignment over its variant', () => {
+    renderScreen(
+      <>
+        <ArabicText variant="hero" align="start">
+          سُبْحَانَ اللَّهِ
+        </ArabicText>
+        <ArabicText align="center">اللَّهُ أَكْبَرُ</ArabicText>
+      </>,
+    )
+    expect(screen.getByText('سُبْحَانَ اللَّهِ')).toHaveStyle({ textAlign: 'right' })
+    expect(screen.getByText('اللَّهُ أَكْبَرُ')).toHaveStyle({ textAlign: 'center' })
+  })
 })

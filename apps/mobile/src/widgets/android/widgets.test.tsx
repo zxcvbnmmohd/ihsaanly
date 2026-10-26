@@ -636,6 +636,64 @@ describe('Android widgets with a full day', () => {
   })
 })
 
+describe('Android Dua of the day and the reading preference', () => {
+  const dua = {
+    id: 'd',
+    title: 'T',
+    arabic: 'ع',
+    translation: 'Meaning',
+    url: 'ihsaanly://item/d',
+    since: 0,
+    done: false,
+  }
+  const aligns = (entry: WidgetModel): Record<string, string | undefined> =>
+    Object.fromEntries(
+      nodes(light('DuaOfTheDayWidget', entry, 'large')).flatMap((n) =>
+        typeof n.props.text === 'string'
+          ? [[n.props.text, (n.props.style as { textAlign?: string } | undefined)?.textAlign]]
+          : [],
+      ),
+    )
+
+  it('centres the Arabic and its meaning, Arabic first, by default', () => {
+    const entry = model({ duaOfTheDay: dua })
+    expect(texts(light('DuaOfTheDayWidget', entry, 'large'))).toEqual([
+      'T',
+      'ع',
+      'Meaning',
+      'Said it',
+    ])
+    expect(aligns(entry)).toMatchObject({ ع: 'center', Meaning: 'center' })
+  })
+
+  it('puts the meaning first and aligns each to its start when asked', () => {
+    const entry = model({ duaOfTheDay: dua, reading: { arabicFirst: false, centred: false } })
+    expect(texts(light('DuaOfTheDayWidget', entry, 'large'))).toEqual([
+      'T',
+      'Meaning',
+      'ع',
+      'Said it',
+    ])
+    expect(aligns(entry)).toMatchObject({ ع: 'right', Meaning: 'left' })
+    const rtl = model({
+      rtl: true,
+      duaOfTheDay: dua,
+      reading: { arabicFirst: true, centred: false },
+    })
+    expect(aligns(rtl)).toMatchObject({ ع: 'right', Meaning: 'right' })
+  })
+
+  it('reads a timeline stored before the preference existed as the default', () => {
+    const entry = { ...model({ duaOfTheDay: dua }), reading: undefined } as unknown as WidgetModel
+    expect(texts(light('DuaOfTheDayWidget', entry, 'large'))).toEqual([
+      'T',
+      'ع',
+      'Meaning',
+      'Said it',
+    ])
+  })
+})
+
 describe('Android widgets in a right-to-left language', () => {
   const rtl = model({ rtl: true })
 

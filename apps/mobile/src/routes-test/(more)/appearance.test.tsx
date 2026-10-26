@@ -9,12 +9,17 @@ interface Props {
   onSelect: (value: 'light' | 'dark' | 'system') => void
   accent: string
   onSelectAccent: (value: 'terracotta' | 'denim') => void
+  reading: { arabicFirst: boolean; align: 'start' | 'center' }
+  onReading: (change: { arabicFirst?: boolean; align?: 'start' | 'center' }) => void
 }
 const renders = mockScreen<Props>('@ihsaanly/ui/screens/appearance', 'AppearanceScreen')
 
 const { default: AppearanceRoute } = await import('../../app/(more)/appearance')
 const { getThemePreference, setThemePreference } = await import('@/theme/store')
 const { getAccent, setAccent } = await import('@ihsaanly/state/theme/accent-store')
+const { getReaderPreferences, updateReaderPreferences } = await import(
+  '@ihsaanly/state/reader/store'
+)
 
 const applied: unknown[] = []
 ;(Appearance as unknown as { setColorScheme: (v: unknown) => void }).setColorScheme = (v) =>
@@ -50,5 +55,16 @@ describe('appearance route', () => {
     expect(getThemePreference()).toBe('system')
     expect(applied).toEqual([])
     act(() => setAccent('terracotta'))
+  })
+
+  it('shows and stores the reading layout, keeping the brief or detailed choice', () => {
+    act(() => updateReaderPreferences({ arabicFirst: true, align: 'center', detail: 'brief' }))
+    render(<AppearanceRoute />)
+    expect(last(renders).reading).toEqual({ arabicFirst: true, align: 'center' })
+    act(() => last(renders).onReading({ arabicFirst: false }))
+    act(() => last(renders).onReading({ align: 'start' }))
+    expect(last(renders).reading).toEqual({ arabicFirst: false, align: 'start' })
+    expect(getReaderPreferences()).toEqual({ arabicFirst: false, align: 'start', detail: 'brief' })
+    act(() => updateReaderPreferences({ arabicFirst: true, align: 'center', detail: 'detailed' }))
   })
 })

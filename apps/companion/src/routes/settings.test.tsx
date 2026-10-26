@@ -14,6 +14,7 @@ import { setOnboarding } from '@ihsaanly/state/onboarding/store'
 import { getEnabledItems, setEnabledItems } from '@ihsaanly/state/plan/enabled-store'
 import { getUserState } from '@ihsaanly/state/plan/user-state-store'
 import { getCalculationPreferences } from '@ihsaanly/state/prayer/store'
+import { getReaderPreferences } from '@ihsaanly/state/reader/store'
 import { getAccent } from '@ihsaanly/state/theme/accent-store'
 import { accents } from '@ihsaanly/tailwind/tokens'
 import { screen, waitFor, within } from '@testing-library/react'
@@ -50,6 +51,14 @@ describe('Appearance', () => {
     expect(screen.getByRole('radio', { name: 'System' })).toBeChecked()
     await app.user.click(screen.getByRole('radio', { name: 'Terracotta' }))
     expect(document.documentElement.style.getPropertyValue('--color-accent')).toBe('')
+  })
+
+  it('saves Arabic first and the alignment', async () => {
+    const app = await renderApp('/appearance')
+    await app.user.click(await screen.findByRole('switch', { name: en.appearance.arabicFirst }))
+    await app.user.click(screen.getByRole('radio', { name: en.appearance.alignStart }))
+    expect(screen.getByRole('radio', { name: en.appearance.alignStart })).toBeChecked()
+    expect(getReaderPreferences()).toMatchObject({ arabicFirst: false, align: 'start' })
   })
 })
 

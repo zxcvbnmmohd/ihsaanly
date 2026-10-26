@@ -50,6 +50,7 @@ function input(overrides: Partial<Signals> = {}, at: Date = now): WidgetInput {
     strings: en,
     locale: 'en-GB',
     rtl: false,
+    reading: { arabicFirst: true, align: 'center' },
     placeLabel: 'London',
     hijriOffset: 0,
     qada: { dhuhr: 2 },

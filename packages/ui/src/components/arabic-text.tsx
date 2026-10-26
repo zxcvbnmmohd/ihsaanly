@@ -15,6 +15,11 @@ export interface ArabicTextProps extends TextProps {
   variant?: 'inline' | 'hero'
   /** Defaults to the system label colour. The share card paints its own. */
   color?: ColorValue
+  /**
+   * Overrides the variant's own alignment: 'start' is the right edge, where
+   * Arabic starts; 'center' centres it. The reader's alignment preference.
+   */
+  align?: 'start' | 'center'
 }
 
 /**
@@ -30,6 +35,7 @@ export function ArabicText({
   variant = 'inline',
   color,
   className,
+  align = variant === 'hero' ? 'center' : 'start',
   ...props
 }: ArabicTextProps): ReactElement {
   const colors = useColors()
@@ -51,7 +57,7 @@ export function ArabicText({
         color: color ?? colors.label,
         fontFamily: arabic,
         writingDirection: 'rtl',
-        textAlign: variant === 'hero' ? 'center' : 'right',
+        textAlign: align === 'center' ? 'center' : 'right',
       }}>
       {children}
     </Text>

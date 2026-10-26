@@ -14,6 +14,7 @@ import { completeItem, uncompleteItem, useCompletedToday } from '@ihsaanly/state
 import { toggleEnabled, useEnabledItems } from '@ihsaanly/state/plan/enabled-store'
 import { usePlan } from '@ihsaanly/state/plan/use-plan'
 import { useCalculationPreferences } from '@ihsaanly/state/prayer/store'
+import { updateReaderPreferences, useReaderPreferences } from '@ihsaanly/state/reader/store'
 import { useStrings } from '@ihsaanly/state/strings'
 import { useAccent } from '@ihsaanly/state/theme/accent-store'
 import { useNow } from '@ihsaanly/state/time/use-now'
@@ -79,6 +80,7 @@ function ContentItemRoute({ id }: ContentItemRouteProps): ReactElement {
   const known = useKnownItems()
   const notifications = useNotificationPreferences()
   const pinned = usePinnedItems()
+  const reader = useReaderPreferences()
 
   const title = item ? resolveText(item.title) : null
   const timeZone = place?.timeZone ?? 'UTC'
@@ -225,6 +227,9 @@ function ContentItemRoute({ id }: ContentItemRouteProps): ReactElement {
             : null
         }
         onToggleRemind={toggleRemind}
+        reading={{ arabicFirst: reader.arabicFirst, align: reader.align }}
+        detail={reader.detail}
+        onDetail={(detail) => updateReaderPreferences({ detail })}
         onShareText={shareText}
         onShareImage={() => {
           if (item) setThing((current) => ({ ...current, studio: true, notice: null }))

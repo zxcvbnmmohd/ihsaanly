@@ -1,3 +1,4 @@
+import { updateReaderPreferences, useReaderPreferences } from '@ihsaanly/state/reader/store'
 import { useStrings } from '@ihsaanly/state/strings'
 import { setAccent, useAccent } from '@ihsaanly/state/theme/accent-store'
 import { AppearanceScreen } from '@ihsaanly/ui/screens/appearance'
@@ -12,6 +13,7 @@ function AppearanceRoute(): ReactElement {
   const strings = useStrings()
   const preference = useThemePreference()
   const accent = useAccent()
+  const reader = useReaderPreferences()
 
   return (
     <>
@@ -21,6 +23,8 @@ function AppearanceRoute(): ReactElement {
         onSelect={setThemePreference}
         accent={accent}
         onSelectAccent={setAccent}
+        reading={{ arabicFirst: reader.arabicFirst, align: reader.align }}
+        onReading={updateReaderPreferences}
       />
     </>
   )

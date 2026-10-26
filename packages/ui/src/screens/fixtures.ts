@@ -21,6 +21,7 @@ import type { OnboardingScreenProps } from './onboarding'
 import type { OwnDuaScreenProps } from './own-dua'
 import type { OwnDuaFormScreenProps } from './own-dua-form'
 import type { QadaScreenProps } from './qada'
+import type { ReaderScreenProps } from './reader'
 import type { StartingPointScreenProps } from './starting-point'
 import type { TodayScreenProps } from './today'
 import type { TrackingScreenProps } from './tracking'
@@ -693,9 +694,37 @@ export const memoriseFixture: MemoriseScreenProps = {
   known: false,
   hasAudio: false,
   playing: false,
-  looping: false,
+  speed: 1,
+  repeat: 1,
   onHideOne: noop,
   onTogglePlay: noop,
-  onToggleLoop: noop,
+  onSpeed: noop,
+  onRepeat: noop,
   onToggleKnown: noop,
+}
+
+export const readerFixture: ReaderScreenProps = {
+  title: 'Morning adhkar',
+  pages: [
+    {
+      id: 'sayyid-al-istighfar',
+      title: 'The master of seeking forgiveness',
+      arabic: 'اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَهَ إِلَّا أَنْتَ',
+      transliteration: 'Allāhumma anta rabbī lā ilāha illā ant',
+      translation: 'O Allah, You are my Lord; there is no god but You.',
+    },
+    {
+      id: 'subhanallah-wa-bihamdihi',
+      title: 'Glory and praise',
+      arabic: 'سُبْحَانَ اللَّهِ وَبِحَمْدِهِ',
+      transliteration: null,
+      translation: null,
+    },
+  ],
+  page: 0,
+  onPage: noop,
+  counter: null,
+  onTapCounter: noop,
+  onDone: noop,
+  onMore: noop,
 }

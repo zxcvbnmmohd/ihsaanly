@@ -133,9 +133,16 @@ describe('handleResponse', () => {
     expect(fake.scheduled).toEqual([])
   })
 
-  it('opens the item on a tap', async () => {
+  it('opens an item with nothing to read (or unknown) on its screen on a tap', async () => {
     await handleResponse(response(DEFAULT_ACTION, itemData(NOW.getTime() + 1000)))
     expect(router.calls).toEqual([['push', '/item/dhikr-morning']])
+  })
+
+  it('opens a dua or dhikr in the focused reader on a tap', async () => {
+    await handleResponse(
+      response(DEFAULT_ACTION, { ...itemData(NOW.getTime() + 1000), itemId: 'morning-adhkar' }),
+    )
+    expect(router.calls).toEqual([['push', '/item/read/morning-adhkar']])
   })
 
   it('opens notification settings after a test reminder tap', async () => {

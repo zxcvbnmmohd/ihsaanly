@@ -1,8 +1,11 @@
+import { REPEATS, type Repeat, SPEEDS, type Speed } from '@ihsaanly/core/memorise/recitation'
 import type { Reveal } from '@ihsaanly/core/memorise/reveal'
-import type { ReactElement } from 'react'
+import type { Strings } from '@ihsaanly/core/strings/en'
+import type { ReactElement, ReactNode } from 'react'
 import { Text, View } from 'react-native'
 import { useColors, usePalette } from '../colors'
 import { ArabicText } from '../components/arabic-text'
+import { Chip } from '../components/chip'
 import { Row } from '../components/row'
 import { Screen } from '../components/screen'
 import { Surface } from '../components/surface'
@@ -16,11 +19,36 @@ export interface MemoriseScreenProps {
   known: boolean
   hasAudio: boolean
   playing: boolean
-  looping: boolean
+  speed: Speed
+  repeat: Repeat
   onHideOne: () => void
   onTogglePlay: () => void
-  onToggleLoop: () => void
+  onSpeed: (speed: Speed) => void
+  onRepeat: (repeat: Repeat) => void
   onToggleKnown: () => void
+}
+
+interface ChipGroupProps {
+  label: string
+  children: ReactNode
+}
+
+function ChipGroup({ label, children }: ChipGroupProps): ReactElement {
+  const colors = useColors()
+  return (
+    <View className="gap-2">
+      <Text className="font-semibold text-xs uppercase" style={{ color: colors.secondaryLabel }}>
+        {label}
+      </Text>
+      <View className="flex-row flex-wrap gap-2">{children}</View>
+    </View>
+  )
+}
+
+function repeatLabel(repeat: Repeat, strings: Strings['memorise']): string {
+  if (repeat === 'always') return strings.repeatAlways
+  if (repeat === 1) return strings.repeatOff
+  return strings.repeatTimes(repeat)
 }
 
 export function MemoriseScreen(props: MemoriseScreenProps): ReactElement {
@@ -57,11 +85,28 @@ export function MemoriseScreen(props: MemoriseScreenProps): ReactElement {
               title={props.playing ? strings.memorise.stop : strings.memorise.play}
               onPress={props.onTogglePlay}
             />
-            <Row
-              title={strings.memorise.loop}
-              selected={props.looping}
-              onPress={props.onToggleLoop}
-            />
+            <ChipGroup label={strings.memorise.speed}>
+              {SPEEDS.map((speed) => (
+                <Chip
+                  key={speed}
+                  label={strings.memorise.rate(speed)}
+                  selected={props.speed === speed}
+                  onPress={() => props.onSpeed(speed)}
+                  palette={palette}
+                />
+              ))}
+            </ChipGroup>
+            <ChipGroup label={strings.memorise.loop}>
+              {REPEATS.map((repeat) => (
+                <Chip
+                  key={repeat}
+                  label={repeatLabel(repeat, strings.memorise)}
+                  selected={props.repeat === repeat}
+                  onPress={() => props.onRepeat(repeat)}
+                  palette={palette}
+                />
+              ))}
+            </ChipGroup>
           </>
         ) : (
           <Text className="text-sm" style={{ color: colors.secondaryLabel }}>

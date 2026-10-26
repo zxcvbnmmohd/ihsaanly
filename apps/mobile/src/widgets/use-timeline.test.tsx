@@ -183,7 +183,7 @@ describe('useWidgetTimeline', () => {
       expect(published).toHaveBeenCalledTimes(3)
       const timeline = published.mock.calls[2]?.[0] as { quickDuas: { url: string }[] }[]
       expect(timeline[0]?.quickDuas.map((link) => link.url)).toEqual([
-        'ihsaanly://item/evening-adhkar',
+        'ihsaanly://item/read/evening-adhkar',
         'ihsaanly://item/mine-widget',
       ])
     } finally {

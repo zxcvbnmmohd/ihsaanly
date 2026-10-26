@@ -402,6 +402,17 @@ export const zh: Strings = {
     play: '播放',
     stop: '停止',
     loop: '重复',
+    speed: '速度',
+    rate: (rate: number): string => `${rate}×`,
+    repeatOff: '关',
+    repeatTimes: (times: number): string => `×${times}`,
+    repeatAlways: '∞',
+  },
+  reader: {
+    more: '了解更多',
+    previous: '上一个',
+    next: '下一个',
+    page: (page: number, total: number): string => `${page} / ${total}`,
   },
   language: {
     title: '语言',

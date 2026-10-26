@@ -413,6 +413,17 @@ export const hi: Strings = {
     play: 'चलाएँ',
     stop: 'रोकें',
     loop: 'दोहराएँ',
+    speed: 'गति',
+    rate: (rate: number): string => `${rate}×`,
+    repeatOff: 'बंद',
+    repeatTimes: (times: number): string => `×${times}`,
+    repeatAlways: '∞',
+  },
+  reader: {
+    more: 'इसके बारे में और',
+    previous: 'पिछला',
+    next: 'अगला',
+    page: (page: number, total: number): string => `${total} में से ${page}`,
   },
   language: {
     title: 'भाषा',

@@ -18,7 +18,7 @@ export const unstable_settings = { anchor: 'index' }
 
 /**
  * The reader panel's title: the glossary's, the item's (looked up the same
- * way `item/[id].tsx` does), or the memorised item's — `null` at the group
+ * way `item/[id].tsx` and `item/read/[id].tsx` do), or the memorised item's — `null` at the group
  * index, where the panel does not render at all.
  */
 function detailTitle(parts: string[] | null, strings: Strings, own: OwnDua[]): string | null {
@@ -27,9 +27,11 @@ function detailTitle(parts: string[] | null, strings: Strings, own: OwnDua[]): s
   if (parts[0] === 'my-dua') return strings.myDuas.title
   if (parts[0] === 'item' && parts[1] === 'memorise') return strings.memorise.title
   if (parts[0] === 'item' && parts[1]) {
-    const dua = ownDuaById(own, parts[1])
+    // The focused reader at `item/read/<id>` is titled by its item too.
+    const id = (parts[1] === 'read' ? parts[2] : parts[1]) ?? ''
+    const dua = ownDuaById(own, id)
     if (dua) return dua.title
-    const item = itemById(parts[1])
+    const item = itemById(id)
     return item ? (resolveText(item.title) ?? strings.notFound.title) : strings.notFound.title
   }
   return null

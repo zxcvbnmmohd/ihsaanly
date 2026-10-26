@@ -270,8 +270,9 @@ describe('what else is open, and the done button', () => {
       },
     })
     const entry = chosen[0]
+    // A pinned dua opens in the reader; the user's own keeps its own page.
     expect(entry?.quickDuas.map((link) => link.url)).toEqual([
-      'ihsaanly://item/evening-adhkar',
+      'ihsaanly://item/read/evening-adhkar',
       'ihsaanly://item/mine-parents',
     ])
     expect(entry?.quickDuas[1]).toEqual({

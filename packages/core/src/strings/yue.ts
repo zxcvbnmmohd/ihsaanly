@@ -401,6 +401,17 @@ export const yue: Strings = {
     play: '播放',
     stop: '停止',
     loop: '重複',
+    speed: '速度',
+    rate: (rate: number): string => `${rate}×`,
+    repeatOff: '關',
+    repeatTimes: (times: number): string => `×${times}`,
+    repeatAlways: '∞',
+  },
+  reader: {
+    more: '了解更多',
+    previous: '上一個',
+    next: '下一個',
+    page: (page: number, total: number): string => `${page} / ${total}`,
   },
   language: {
     title: '語言',

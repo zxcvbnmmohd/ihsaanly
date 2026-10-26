@@ -8,6 +8,8 @@ export interface AudioPlayer {
   element: HTMLAudioElement | null
   play: () => void
   pause: () => void
+  seekTo: (seconds: number) => Promise<void>
+  setPlaybackRate: (rate: number) => void
   loop: boolean
 }
 
@@ -21,6 +23,12 @@ export function useAudioPlayer(source: string | null): AudioPlayer {
       element: ref.current,
       play: (): void => void ref.current?.play(),
       pause: (): void => ref.current?.pause(),
+      seekTo: async (seconds: number): Promise<void> => {
+        if (ref.current) ref.current.currentTime = seconds
+      },
+      setPlaybackRate: (rate: number): void => {
+        if (ref.current) ref.current.playbackRate = rate
+      },
       get loop(): boolean {
         return ref.current?.loop ?? false
       },
@@ -34,21 +42,26 @@ export function useAudioPlayer(source: string | null): AudioPlayer {
 
 interface Thing {
   playing: boolean
+  /** True from the moment a play reaches its end until the next one starts, as in expo-audio. */
+  didJustFinish: boolean
 }
 
-export function useAudioPlayerStatus(player: AudioPlayer): { playing: boolean } {
-  const [thing, setThing] = useState<Thing>({ playing: false })
+export function useAudioPlayerStatus(player: AudioPlayer): Thing {
+  const [thing, setThing] = useState<Thing>({ playing: false, didJustFinish: false })
 
   useEffect(() => {
     const element = player.element
     if (!element) return undefined
-    const onPlay = (): void => setThing({ playing: true })
-    const onPause = (): void => setThing({ playing: false })
+    const onPlay = (): void => setThing({ playing: true, didJustFinish: false })
+    const onPause = (): void => setThing((current) => ({ ...current, playing: false }))
+    const onEnded = (): void => setThing({ playing: false, didJustFinish: true })
     element.addEventListener('play', onPlay)
     element.addEventListener('pause', onPause)
+    element.addEventListener('ended', onEnded)
     return (): void => {
       element.removeEventListener('play', onPlay)
       element.removeEventListener('pause', onPause)
+      element.removeEventListener('ended', onEnded)
     }
   }, [player.element])
 

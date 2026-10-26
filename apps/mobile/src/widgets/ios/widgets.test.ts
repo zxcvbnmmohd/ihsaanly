@@ -69,16 +69,16 @@ const empty: Partial<WidgetModel> = {
 describe('iOS widgets on the sample entry', () => {
   const expected: Record<Name, Record<(typeof FAMILIES)[number], [string[], string]>> = {
     RightNowWidget: {
-      accessoryInline: [['Morning adhkar'], 'ihsaanly://item/morning-adhkar'],
-      accessoryCircular: [['1'], 'ihsaanly://item/morning-adhkar'],
-      accessoryRectangular: [['Morning', 'Morning adhkar'], 'ihsaanly://item/morning-adhkar'],
+      accessoryInline: [['Morning adhkar'], 'ihsaanly://item/read/morning-adhkar'],
+      accessoryCircular: [['1'], 'ihsaanly://item/read/morning-adhkar'],
+      accessoryRectangular: [['Morning', 'Morning adhkar'], 'ihsaanly://item/read/morning-adhkar'],
       systemSmall: [
         ['Morning', 'Morning adhkar', 'Open for about 3 more hours', '12 Rabi’ ath-Thani 1448'],
-        'ihsaanly://item/morning-adhkar',
+        'ihsaanly://item/read/morning-adhkar',
       ],
       systemMedium: [
         ['Morning · Open for about 3 more hours', 'Morning adhkar', '12 Rabi’ ath-Thani 1448'],
-        'ihsaanly://item/morning-adhkar',
+        'ihsaanly://item/read/morning-adhkar',
       ],
       systemLarge: [
         [
@@ -90,7 +90,7 @@ describe('iOS widgets on the sample entry', () => {
           'Dhuhr · In about 3 hours',
           '12 Rabi’ ath-Thani 1448',
         ],
-        'ihsaanly://item/morning-adhkar',
+        'ihsaanly://item/read/morning-adhkar',
       ],
       systemExtraLarge: [
         [
@@ -102,7 +102,7 @@ describe('iOS widgets on the sample entry', () => {
           'Dhuhr · In about 3 hours',
           '12 Rabi’ ath-Thani 1448',
         ],
-        'ihsaanly://item/morning-adhkar',
+        'ihsaanly://item/read/morning-adhkar',
       ],
     },
     NextPrayerWidget: {
@@ -242,15 +242,15 @@ describe('iOS widgets on the sample entry', () => {
       systemExtraLarge: [['Also today', 'Nothing asked of you right now'], 'ihsaanly://'],
     },
     QuickDuasWidget: {
-      accessoryInline: [['Quick duas'], 'ihsaanly://item/dua-leaving-home'],
-      accessoryCircular: [[], 'ihsaanly://item/dua-leaving-home'],
+      accessoryInline: [['Quick duas'], 'ihsaanly://item/read/dua-leaving-home'],
+      accessoryCircular: [[], 'ihsaanly://item/read/dua-leaving-home'],
       accessoryRectangular: [
         ['Quick duas', 'Leaving home', 'Setting out on a journey'],
-        'ihsaanly://item/dua-leaving-home',
+        'ihsaanly://item/read/dua-leaving-home',
       ],
       systemSmall: [
         ['Quick duas', 'Leaving home', 'Setting out on a journey', 'Shortening the prayer'],
-        'ihsaanly://item/dua-leaving-home',
+        'ihsaanly://item/read/dua-leaving-home',
       ],
       systemMedium: [
         [
@@ -260,7 +260,7 @@ describe('iOS widgets on the sample entry', () => {
           'Shortening the prayer',
           'Going up',
         ],
-        'ihsaanly://item/dua-leaving-home',
+        'ihsaanly://item/read/dua-leaving-home',
       ],
       systemLarge: [
         [
@@ -271,7 +271,7 @@ describe('iOS widgets on the sample entry', () => {
           'Going up',
           'Going down',
         ],
-        'ihsaanly://item/dua-leaving-home',
+        'ihsaanly://item/read/dua-leaving-home',
       ],
       systemExtraLarge: [
         [
@@ -282,25 +282,28 @@ describe('iOS widgets on the sample entry', () => {
           'Going up',
           'Going down',
         ],
-        'ihsaanly://item/dua-leaving-home',
+        'ihsaanly://item/read/dua-leaving-home',
       ],
     },
     DuaOfTheDayWidget: {
-      accessoryInline: [['Coming home'], 'ihsaanly://item/dua-entering-home'],
-      accessoryCircular: [['Coming home'], 'ihsaanly://item/dua-entering-home'],
-      accessoryRectangular: [[ARABIC, 'Coming home'], 'ihsaanly://item/dua-entering-home'],
-      systemSmall: [['Dua of the day', ARABIC, 'Coming home'], 'ihsaanly://item/dua-entering-home'],
+      accessoryInline: [['Coming home'], 'ihsaanly://item/read/dua-entering-home'],
+      accessoryCircular: [['Coming home'], 'ihsaanly://item/read/dua-entering-home'],
+      accessoryRectangular: [[ARABIC, 'Coming home'], 'ihsaanly://item/read/dua-entering-home'],
+      systemSmall: [
+        ['Dua of the day', ARABIC, 'Coming home'],
+        'ihsaanly://item/read/dua-entering-home',
+      ],
       systemMedium: [
         ['Dua of the day', ARABIC, 'Coming home'],
-        'ihsaanly://item/dua-entering-home',
+        'ihsaanly://item/read/dua-entering-home',
       ],
       systemLarge: [
         ['Dua of the day', ARABIC, 'Coming home', 'In the name of Allah.'],
-        'ihsaanly://item/dua-entering-home',
+        'ihsaanly://item/read/dua-entering-home',
       ],
       systemExtraLarge: [
         ['Dua of the day', ARABIC, 'Coming home', 'In the name of Allah.'],
-        'ihsaanly://item/dua-entering-home',
+        'ihsaanly://item/read/dua-entering-home',
       ],
     },
     MakeUpWidget: {

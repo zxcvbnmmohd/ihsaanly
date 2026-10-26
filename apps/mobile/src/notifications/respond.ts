@@ -1,3 +1,4 @@
+import { itemOpenPath } from '@ihsaanly/core/content/reader'
 import { civilDateKey, logDay } from '@ihsaanly/core/day/boundaries'
 import { getPlace } from '@ihsaanly/state/location/store'
 import type { NotificationContent } from '@ihsaanly/state/notifications/content'
@@ -118,7 +119,8 @@ export async function handleResponse(response: Response, navigate = true): Promi
     case DEFAULT_ACTION:
     default:
       if (!navigate) return
-      if (data.kind === 'item') router.push(`/item/${data.itemId}`)
+      // Something to say opens in the focused reader; anything else on its screen.
+      if (data.kind === 'item') router.push(itemOpenPath(data.itemId))
       else if (data.kind === 'test') router.push('/notifications')
       else if (data.kind === 'announcement') openAnnouncement(data)
       else router.push('/')

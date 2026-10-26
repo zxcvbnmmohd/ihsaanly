@@ -5,6 +5,8 @@ import { useAudioPlayer, useAudioPlayerStatus } from './audio'
 class FakeAudio extends EventTarget {
   static created: FakeAudio[] = []
   loop = false
+  currentTime = 7
+  playbackRate = 1
   calls: string[] = []
   constructor(readonly source: string) {
     super()
@@ -38,9 +40,11 @@ it('with no recitation there is no element and every control is a no-op', () => 
   result.current.pause()
   result.current.loop = true
   expect(result.current.loop).toBe(false)
+  result.current.setPlaybackRate(0.5)
+  void result.current.seekTo(0)
 })
 
-it('plays, pauses and loops one <audio> element built for the source', () => {
+it('plays, pauses, loops, seeks and sets the speed of one <audio> element', async () => {
   const { result, rerender } = renderHook(() => useAudioPlayer('/dua.mp3'))
   const element = FakeAudio.created[0]
   expect(element?.source).toBe('/dua.mp3')
@@ -54,6 +58,11 @@ it('plays, pauses and loops one <audio> element built for the source', () => {
   expect(element?.loop).toBe(true)
   expect(result.current.loop).toBe(true)
 
+  result.current.setPlaybackRate(0.75)
+  expect(element?.playbackRate).toBe(0.75)
+  await result.current.seekTo(0)
+  expect(element?.currentTime).toBe(0)
+
   rerender()
   expect(FakeAudio.created).toHaveLength(1)
 })
@@ -64,6 +73,8 @@ it('the status follows the element and stops listening on unmount', () => {
     element: element as unknown as HTMLAudioElement,
     play: () => {},
     pause: () => {},
+    seekTo: async () => {},
+    setPlaybackRate: () => {},
     loop: false,
   }
   const { result, unmount } = renderHook(() => useAudioPlayerStatus(player))
@@ -73,6 +84,11 @@ it('the status follows the element and stops listening on unmount', () => {
   expect(result.current.playing).toBe(true)
   act(() => void element.dispatchEvent(new Event('pause')))
   expect(result.current.playing).toBe(false)
+  act(() => void element.dispatchEvent(new Event('ended')))
+  expect(result.current).toEqual({ playing: false, didJustFinish: true })
+  act(() => void element.dispatchEvent(new Event('play')))
+  expect(result.current).toEqual({ playing: true, didJustFinish: false })
+  act(() => void element.dispatchEvent(new Event('pause')))
 
   unmount()
   element.dispatchEvent(new Event('play'))
@@ -80,7 +96,14 @@ it('the status follows the element and stops listening on unmount', () => {
 })
 
 it('the status of a player without an element is never playing', () => {
-  const player = { element: null, play: () => {}, pause: () => {}, loop: false }
+  const player = {
+    element: null,
+    play: () => {},
+    pause: () => {},
+    seekTo: async () => {},
+    setPlaybackRate: () => {},
+    loop: false,
+  }
   const { result } = renderHook(() => useAudioPlayerStatus(player))
   expect(result.current.playing).toBe(false)
 })

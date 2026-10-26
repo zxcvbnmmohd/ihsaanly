@@ -57,7 +57,7 @@
   "rightNow": {
     "title": "Morning adhkar",
     "detail": null,
-    "url": "ihsaanly://item/morning-adhkar",
+    "url": "ihsaanly://item/read/morning-adhkar",
     "id": "morning-adhkar",
     "since": 1790142480000,
     "done": false
@@ -82,7 +82,7 @@
       {
         "title": "Tasbih after prayer",
         "detail": null,
-        "url": "ihsaanly://item/tasbih-after-prayer"
+        "url": "ihsaanly://item/read/tasbih-after-prayer"
       },
       {
         "title": "Two rak’ah after Dhuhr",
@@ -145,7 +145,7 @@
     {
       "title": "Leaving home",
       "detail": null,
-      "url": "ihsaanly://item/dua-leaving-home",
+      "url": "ihsaanly://item/read/dua-leaving-home",
       "id": "dua-leaving-home",
       "since": 1790142480000,
       "done": false
@@ -153,7 +153,7 @@
     {
       "title": "Setting out on a journey",
       "detail": null,
-      "url": "ihsaanly://item/dua-travel",
+      "url": "ihsaanly://item/read/dua-travel",
       "id": "dua-travel",
       "since": 1790142480000,
       "done": false
@@ -169,7 +169,7 @@
     {
       "title": "Going up",
       "detail": null,
-      "url": "ihsaanly://item/takbir-ascending",
+      "url": "ihsaanly://item/read/takbir-ascending",
       "id": "takbir-ascending",
       "since": 1790142480000,
       "done": false
@@ -177,7 +177,7 @@
     {
       "title": "Going down",
       "detail": null,
-      "url": "ihsaanly://item/tasbih-descending",
+      "url": "ihsaanly://item/read/tasbih-descending",
       "id": "tasbih-descending",
       "since": 1790142480000,
       "done": false
@@ -188,7 +188,7 @@
     "title": "Coming home",
     "arabic": "بِسْمِ اللَّهِ",
     "translation": "In the name of Allah.",
-    "url": "ihsaanly://item/dua-entering-home",
+    "url": "ihsaanly://item/read/dua-entering-home",
     "since": 1790118000000,
     "done": false
   },

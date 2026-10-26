@@ -157,8 +157,8 @@ bump `react`, `react-native`, `react-native-screens`, `react-native-reanimated`,
   (`ms-`/`pe-`/`start-`/`text-start`); a lint plugin rejects left/right ones.
 - **Colours and font families → `style`, from JavaScript.** Inside
   `@ihsaanly/ui` call `useColors()` (`src/colors.ts`: brand colours from
-  `paletteFor(scheme, accent)` / `brand` in `@ihsaanly/tailwind/tokens`, system colours
-  from `useUi().systemColors`) and use `serif` / `arabic` from `src/fonts.ts`
+  `paletteFor(scheme, theme)` in `@ihsaanly/tailwind/tokens`, system colours
+  from `useUi().systemColors`, or a named theme's own via `useSystemColors()`) and use `serif` / `arabic` from `src/fonts.ts`
   for `fontFamily`; where a component already takes a `palette` prop, use it.
   In this app's routes use `colors` (`src/theme/colors.ts`) and
   `usePalette()`. Never write raw hex; `tooling/tailwind/tokens.ts` is the
@@ -493,24 +493,61 @@ cannot be expressed as `PlatformColor`, which has no notion of either. Use the b
 classes (`bg-accent`, `text-ink-secondary`, `bg-surface`) wherever a className fits;
 for a raw value call `usePalette()` from `src/colors.ts` in `@ihsaanly/ui`, or `usePalette()`
 from `src/theme/store.ts` in this app, both resolving against the scheme the app is
-actually rendering in and the chosen accent.
+actually rendering in and the named theme, if one is chosen.
 
-### Accents are a second choice beside the theme
+### One appearance: System, Light, Dark or one of ten themes
 
-Ten named accents (`ACCENTS` in `tooling/tailwind/tokens.ts`, Terracotta the default)
-recolour only `accent`, `accent-ink`, `on-accent`, `indicator` and `tint`; the wash,
-paper and ink never change. `tokens.test.ts` holds each one to WCAG AA on the wash
-in both schemes, so a new accent that fails cannot land. The choice is the `accent`
-preference (`@ihsaanly/state/theme/accent-store`), synced like `theme`. Hosts pass it
-to `UiProvider` as `accent`; never read `palettes[scheme]` directly in a screen, which
-is always terracotta. The widget timeline takes it as `WidgetInput.accent` and
-`useWidgetTimeline` republishes when it changes. On the web `WebUiProvider` writes the
-accent's `--color-*` variables inline on `<html>` so Tailwind classes follow it too.
-`AccentPicker` (`@ihsaanly/ui/components/accent-picker`) is the reusable grid.
+The `theme` preference (`src/theme/preference.ts`, synced) is one of
+`THEME_PREFERENCES` (`APPEARANCES` in `tooling/tailwind/tokens.ts`): System, Light
+and Dark, which are the brand's terracotta palettes (`brand`), then ten named
+themes (`THEMES`): Obsidian, Espresso, Midnight, Forest and Dusk (dark), Ivory,
+Parchment, Sage, Rose and Sky (light). A theme is a whole canvas in one fixed
+scheme, DeenDrops style: wash, paper, card veil, ink, secondary ink, rules, field
+borders, accent, accent-ink, on-accent and the tints all change. `tokens.test.ts`
+holds every one to WCAG AA (ink, secondary ink, accent and accent-ink 4.5:1 on the
+wash's top and bottom and on paper; on-accent 4.5:1 on the accent; outlines 3:1),
+so a theme that fails cannot land. Add a theme there, its `COUNTERPARTS` sibling
+in the other scheme, and its name in all ten string tables.
 
-Text, separators and system surfaces still use the `system-*` colours, so light,
-dark and contrast settings remain the OS's business. Use the accent for
-selection, marks, section captions and primary actions; never for body text.
+- **Scheme.** `schemeOf(appearance, system)`: a theme forces its own, so
+  `applyThemePreference` sets the Android night mode and `Appearance` to it (a
+  dark theme gets the dark status bar and dark system chrome). Switching between
+  two themes of one scheme recreates nothing.
+- **Colours.** Hosts pass the theme to `UiProvider` as `theme` (with its scheme as
+  `scheme`); `useColors()`/`usePalette()` resolve it. Under a theme the system
+  roles (label, secondary label, separator, backgrounds, tint) are the theme's ink,
+  rule and paper (`themeSystemColors`): in `@ihsaanly/ui` through `useColors()` or
+  `useSystemColors()` (never `useUi().systemColors` directly), in this app through
+  the `colors` getters, which read the preference. System, Light and Dark still
+  leave those to the OS and its contrast settings. iOS glass `Surface`s are tinted
+  with the theme's veil (`tintColor`); without glass a theme uses its veil rather
+  than the system material. React Navigation's colours come from
+  `navigationTheme` (`src/theme/navigation.ts`).
+- **Pairs.** `palettePair(theme)` is a theme and its counterpart, for the share
+  studio's paper styles and the inverted toast's action; the brand's two otherwise.
+- **Widgets.** `WidgetInput.theme`; `widgetInk` gives a theme the same ink in both
+  slots, so iOS and Android widgets wear it whatever the Home Screen's scheme.
+  `useWidgetTimeline` republishes when it changes; the gallery previews follow.
+- **Web.** `applyMode` and the pre-paint `THEME_SCRIPT` (`@ihsaanly/web/theme`) set
+  `data-theme` to the scheme and `data-palette` to the theme; `web.css` carries a
+  `:root[data-palette=…]` block per theme (brand and system variables), so
+  Tailwind classes follow. `WebUiProvider` reads both attributes. The web hosts
+  keep the choice in localStorage (`ihsaanly.theme`), as before.
+- **Pickers.** `ThemePicker` (`@ihsaanly/ui/components/theme-picker`) is the grid:
+  System, Light and Dark three to a row, then the ten themes, each card its wash,
+  a paper card and "Aa" in its accent. More → Appearance and onboarding's "Make it
+  yours" step (`theme`, after reminders) both use it; onboarding's first step has
+  the quick version, a `Dropdown` of all thirteen with a swatch each (native only;
+  the web's `<select>` cannot draw one). All write the same preference, so the
+  flow recolours live.
+- **Migration.** The pre-themes `accent` preference no longer exists or syncs.
+  `migrateLegacyAccent` (`@ihsaanly/state/theme/legacy-accent`) runs once at launch
+  (root layout; the web theme stores at load): under an explicit Light or Dark a
+  named accent becomes the theme of its family in that scheme; under System the
+  accent is dropped and System kept; then the row is deleted.
+
+Use the accent for selection, marks, section captions and primary actions;
+never for body text.
 
 The SPEC's "nothing on the home screen is decorative" rule was dropped
 deliberately on 2026-09-20 at the user's direction. Today carries the wash and
@@ -519,7 +556,7 @@ the accent like every other tab.
 ### Onboarding: one idea per step, previews from the real planner
 
 `ONBOARDING_STEPS` in `packages/state/src/onboarding/use-onboarding-flow.ts` is
-welcome, how, sourced, location, you, start, reminders, accent, widgets,
+welcome, how, sourced, location, you, start, reminders, theme, widgets,
 summary. The web companion uses `onboardingSteps(false)`, without widgets.
 Starting point comes before reminders so the reminder preview is the person's
 own plan. Every preview is built in `onboarding/previews.ts` from `plan()`,
@@ -557,7 +594,7 @@ one now sorts first.
 
 ### The theme override recreates the Android activity
 
-`src/theme/store.ts` persists System / Light / Dark and applies it with
+`src/theme/store.ts` persists System / Light / Dark / a named theme and applies its scheme with
 `Appearance.setColorScheme`, at module scope in the root layout and again in
 its setter. In this React Native release the reset value is `'auto'`, not
 `null`. Read the scheme through `useEffectiveColorScheme()`, never
@@ -728,7 +765,7 @@ platform like any iOS-only module.
   (`@ihsaanly/ui/components/widget-preview`) draws each widget in React Native from
   `currentWidgetModel`, the first timeline entry built from the same stores
   (`useWidgetPreview`), so the previews say what the widgets say, in the chosen
-  accent. They approximate the iOS layouts; when a widget's layout changes, change
+  theme. They approximate the iOS layouts; when a widget's layout changes, change
   its preview too. Lock Screen previews are iOS only, per `LOCK_FAMILIES_BY_WIDGET`,
   which `names.test.ts` holds to `app.json`. The Widgets row is opt-in
   (`useMoreGroups(theme, cloud, true)`), since the web hosts have no widgets.
@@ -746,5 +783,6 @@ platform like any iOS-only module.
   and renders by widget size. Every file starts with `'use no memo'`: the
   library calls components as plain functions and the compiler's cache is a
   hook. Light and dark are both rendered and the launcher's night mode picks,
-  so the app's own theme override does not reach widgets. No logical
+  so the app's Light or Dark override does not reach widgets; a named theme
+  does, since both slots carry its ink. No logical
   direction exists, so RTL reverses rows by hand.

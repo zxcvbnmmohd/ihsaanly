@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, mock } from 'bun:test'
-import { act, screen, waitFor } from '@testing-library/react'
+import { act, screen } from '@testing-library/react'
 import { AccessibilityInfo, Text } from 'react-native'
 import { renderScreen } from '../../test/render'
 import { useColors } from '../colors'
@@ -176,7 +176,10 @@ describe('Surface (native)', () => {
         <Text>In</Text>
       </Native>,
     )
-    await waitFor(() => expect(screen.queryByTestId('blur')).toBeNull())
+    // The setting is read once the effect runs; act settles it, as for the
+    // rejected query below. A waitFor poll here hung past the timeout on CI.
+    await settle()
+    expect(screen.queryByTestId('blur')).toBeNull()
     expect(screen.getByText('In')).toBeInTheDocument()
   })
 

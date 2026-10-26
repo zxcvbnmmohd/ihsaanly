@@ -681,6 +681,15 @@ platform like any iOS-only module.
   passed. The device-only `widgetTapsThrough` cursor then moves past them, so
   none is filed twice. The app's counts reach the widget through
   `WidgetInput.counts`, read at each republish rather than watched.
+- **The gallery** (More → Widgets, `/widgets`, `ihsaanly://widgets`; link to it with
+  `WIDGET_GALLERY_HREF` from `@ihsaanly/ui/props/more`): `WidgetPreview`
+  (`@ihsaanly/ui/components/widget-preview`) draws each widget in React Native from
+  `currentWidgetModel`, the first timeline entry built from the same stores
+  (`useWidgetPreview`), so the previews say what the widgets say, in the chosen
+  accent. They approximate the iOS layouts; when a widget's layout changes, change
+  its preview too. Lock Screen previews are iOS only, per `LOCK_FAMILIES_BY_WIDGET`,
+  which `names.test.ts` holds to `app.json`. The Widgets row is opt-in
+  (`useMoreGroups(theme, cloud, true)`), since the web hosts have no widgets.
 - **Android** (`src/widgets/android/`, `react-native-android-widget`): the task
   handler registered from `index.ts` (via `register.android.ts`; the library
   throws at import on iOS) reads `widget-timeline.json` from `Paths.document`

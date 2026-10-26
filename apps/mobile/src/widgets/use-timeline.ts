@@ -6,14 +6,14 @@ import { useHijriOffset } from '@ihsaanly/state/hijri/store'
 import { useLocale } from '@ihsaanly/state/i18n/store'
 import { useOwnDuas, usePinnedItems } from '@ihsaanly/state/my-duas/store'
 import { useQada } from '@ihsaanly/state/prayer/marks'
-import { getItemProgress } from '@ihsaanly/state/progress/store'
+import { getItemProgress, useProgressRevision } from '@ihsaanly/state/progress/store'
 import { useStrings } from '@ihsaanly/state/strings'
 import { useAccent } from '@ihsaanly/state/theme/accent-store'
 import { useEffect } from 'react'
 import { AppState } from 'react-native'
 
 import { takeWidgetTaps, useWidgetTapsThrough } from './drain'
-import { widgetTimeline } from './model'
+import { type WidgetInput, widgetTimeline } from './model'
 import { publishTimeline } from './publish'
 import { onWidgetTap } from './taps'
 
@@ -24,12 +24,48 @@ import { onWidgetTap } from './taps'
  */
 const COUNTED = items.filter((item) => item.repeat > 1 && (item.parts ?? []).length === 0)
 
-function counts(): Partial<Record<string, number>> {
+export function widgetCounts(): Partial<Record<string, number>> {
   return Object.fromEntries(
     COUNTED.map((item) => [item.id, getItemProgress(item.id).count] as const).filter(
       ([, count]) => count > 0,
     ),
   )
+}
+
+/**
+ * The counts as a hook, for a screen that shows them live. `revision` is passed
+ * only so the compiler, which memoises on arguments, reads again on a change.
+ */
+export function useWidgetCounts(): Partial<Record<string, number>> {
+  return countsAt(useProgressRevision())
+}
+
+function countsAt(_revision: number): Partial<Record<string, number>> {
+  return widgetCounts()
+}
+
+/** What every widget entry reads besides the plan and the place, from the app's stores. */
+export type WidgetSettings = Omit<WidgetInput, 'signals' | 'placeLabel' | 'counts'>
+
+export function useWidgetSettings(): WidgetSettings {
+  const strings = useStrings()
+  const locale = useLocale()
+  const hijriOffset = useHijriOffset()
+  const qada = useQada()
+  const fastsOwed = useFastsOutstanding()
+  const accent = useAccent()
+  const pinned = usePinnedItems()
+  const myDuas = { pinned, own: useOwnDuas().map(({ id, title }) => ({ id, title })) }
+  return {
+    strings,
+    locale,
+    rtl: isRightToLeft(locale),
+    hijriOffset,
+    qada,
+    fastsOwed,
+    accent,
+    myDuas,
+  }
 }
 
 /** Never throws: a widget tap that cannot be read now is read on the next launch. */
@@ -47,15 +83,9 @@ export function useWidgetTimeline(
   planned: Plan | null,
   placeLabel: string | null,
 ): void {
-  const strings = useStrings()
-  const locale = useLocale()
-  const hijriOffset = useHijriOffset()
-  const qada = useQada()
-  const fastsOwed = useFastsOutstanding()
+  const settings = useWidgetSettings()
+  const { locale, hijriOffset, qada, fastsOwed, accent, myDuas } = settings
   const tapsThrough = useWidgetTapsThrough()
-  const accent = useAccent()
-  const pinned = usePinnedItems()
-  const myDuas = { pinned, own: useOwnDuas().map(({ id, title }) => ({ id, title })) }
 
   // Widget taps (done, prayed, +1) wait where the widget keeps them until the app runs:
   // taken in on launch, on every return to the foreground, and on a press
@@ -94,17 +124,10 @@ export function useWidgetTimeline(
     // A widget that cannot be updated is no reason to break Today.
     try {
       const timeline = widgetTimeline({
+        ...settings,
         signals,
-        strings,
-        locale,
-        rtl: isRightToLeft(locale),
         placeLabel,
-        hijriOffset,
-        qada,
-        fastsOwed,
-        accent,
-        myDuas,
-        counts: counts(),
+        counts: widgetCounts(),
       })
       void publishTimeline(timeline).catch(() => {})
     } catch {

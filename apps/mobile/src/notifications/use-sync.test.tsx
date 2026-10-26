@@ -6,6 +6,7 @@ import { fake, installReminderFakes, resetReminderFakes } from '../../test/remin
 
 installReminderFakes()
 const { useNotificationSync } = await import('./use-sync')
+const { markPrayer, unmarkPrayer } = await import('@ihsaanly/state/prayer/marks')
 
 let listeners: ((state: string) => void)[] = []
 let removed = 0
@@ -123,6 +124,25 @@ describe('useNotificationSync', () => {
     const paused = { today: { pausedNotice: { fastingResumes: false } }, notifications: [] }
     renderHook(() => useNotificationSync(paused as never))
     await waitFor(() => expect(fake.cancelled).toEqual(['later:prayer:asr@1']))
+  })
+
+  it("withdraws a prayer's second ask once it is marked in the app, and only that one", async () => {
+    fake.permissions = { granted: true, canAskAgain: true }
+    fake.scheduled = [
+      { identifier: 'later:prayer:asr@1', content: {}, trigger: null },
+      { identifier: 'later:prayer:maghrib@2', content: {}, trigger: null },
+    ]
+    const empty = { today: { pausedNotice: null }, notifications: [] }
+    renderHook(() => useNotificationSync(empty as never))
+    await new Promise((resolve) => setTimeout(resolve, 10))
+    expect(fake.cancelled).toEqual([])
+    try {
+      // As the Today strip, or a widget tap taken in, would mark it.
+      await run(() => markPrayer('asr', new Date(), 'UTC'))
+      await waitFor(() => expect(fake.cancelled).toEqual(['later:prayer:asr@1']))
+    } finally {
+      await run(() => unmarkPrayer('asr', new Date(), 'UTC'))
+    }
   })
 
   it('stops listening on unmount', async () => {

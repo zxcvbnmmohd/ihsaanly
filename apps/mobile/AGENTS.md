@@ -325,7 +325,10 @@ strip does, and its `later` ("Not yet") asks once more 30 minutes on, filed as
 `later:prayer:` under `prayer-again`, which has only the first button. No
 second ask with under ten minutes of the window left. While tracking is
 paused neither action does anything, and `sync()` withdraws any pending
-`later:prayer:`, the one snooze it touches.
+`later:prayer:`, the one snooze it touches. It also withdraws a prayer's own
+`later:prayer:<prayer>@…` once that prayer is marked today, wherever the mark
+came from: `useNotificationSync` keys on today's marks, so the Today strip, a
+widget tap taken in or another device's mark re-runs the sync.
 
 Taps are answered once, in `src/notifications/respond.ts`, from three doors:
 the warm listener, the cold-start replay (read then cleared) and the Android

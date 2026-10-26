@@ -42,6 +42,12 @@ export const en = {
     skip: 'Skip',
     next: 'Next',
     done: 'Got it',
+    readerCount: 'Tap anywhere in the circle to count. Each tap is one.',
+    readerDone: (done: string): string => `${done} marks it and takes you back`,
+    readerMore: (more: string): string => `${more} has why it matters and where it comes from`,
+    galleryChoose: 'Choose a size to see each widget as it will look on your phone',
+    galleryLive:
+      'Every preview is live: what that widget shows right now, and what you can tap on it',
   },
   plan: {
     rightNow: 'Right now',

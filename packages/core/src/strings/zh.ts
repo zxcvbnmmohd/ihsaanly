@@ -47,6 +47,11 @@ export const zh: Strings = {
     skip: '跳过',
     next: '下一步',
     done: '知道了',
+    readerCount: '点按圆圈内任意位置即可计数，每点一次算一次。',
+    readerDone: (done: string): string => `“${done}”会标记它并带你返回`,
+    readerMore: (more: string): string => `“${more}”介绍它为何重要以及出处`,
+    galleryChoose: '选择一个尺寸，看看每个小组件在你手机上的样子',
+    galleryLive: '每个预览都是实时的：显示该小组件此刻的内容，以及你可以在上面点按什么',
   },
   plan: {
     rightNow: '此刻',

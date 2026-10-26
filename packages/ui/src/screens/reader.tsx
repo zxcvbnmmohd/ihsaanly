@@ -4,6 +4,7 @@ import { Pressable, Text, View } from 'react-native'
 import { useColors } from '../colors'
 import { ArabicText } from '../components/arabic-text'
 import { Button } from '../components/button'
+import { CoachMark } from '../components/coach-mark'
 import { EmptyState } from '../components/empty-state'
 import { Screen } from '../components/screen'
 import { serif } from '../fonts'
@@ -20,6 +21,19 @@ export interface ReaderPage {
   translation: string | null
 }
 
+/** What a first-use coach mark on the reader points at. */
+export type ReaderCoachTarget = 'counter' | 'done' | 'more'
+
+/** One step of the reader's first-use tour; the route decides the steps and keeps the place. */
+export interface ReaderCoach {
+  target: ReaderCoachTarget
+  /** 0-based. */
+  step: number
+  total: number
+  onNext: () => void
+  onSkip: () => void
+}
+
 export interface ReaderScreenProps {
   /** The item's name, for the counter's spoken label. */
   title: string
@@ -34,6 +48,8 @@ export interface ReaderScreenProps {
   onDone: () => void
   /** Opens the full item screen: why, evidence, reminders. */
   onMore: () => void
+  /** The first-use tour's step, or null when it is not showing. */
+  coach?: ReaderCoach | null
 }
 
 interface TapAreaProps {
@@ -107,11 +123,33 @@ export function ReaderScreen({
   onTapCounter,
   onDone,
   onMore,
+  coach = null,
 }: ReaderScreenProps): ReactElement {
   const colors = useColors()
   const { strings, scheme } = useUi()
   const palette = palettes[scheme]
   const current = pages[page]
+
+  // Drawn in the flow just under what it explains, as Today's tour is.
+  const coachUnder = (target: ReaderCoachTarget): ReactElement | null => {
+    if (coach?.target !== target) return null
+    const text =
+      target === 'counter'
+        ? strings.tour.readerCount
+        : target === 'done'
+          ? strings.tour.readerDone(strings.item.done)
+          : strings.tour.readerMore(strings.reader.more)
+    return (
+      <CoachMark
+        text={text}
+        step={coach.step}
+        total={coach.total}
+        onNext={coach.onNext}
+        onSkip={coach.onSkip}
+        arrowAt="50%"
+      />
+    )
+  }
 
   if (!current) return <EmptyState message={strings.notFound.body} />
 
@@ -152,6 +190,7 @@ export function ReaderScreen({
         </View>
 
         {counter ? <TapArea label={title} counter={counter} onTap={onTapCounter} /> : null}
+        {counter ? coachUnder('counter') : null}
       </View>
 
       <View className="gap-3">
@@ -179,6 +218,7 @@ export function ReaderScreen({
           color={palette.accent}
           onColor={palette.onAccent}
         />
+        {coachUnder('done')}
         <Pressable accessibilityRole="link" onPress={onMore} className="items-center py-2">
           <Text
             className="font-semibold text-sm"
@@ -186,6 +226,7 @@ export function ReaderScreen({
             {strings.reader.more}
           </Text>
         </Pressable>
+        {coachUnder('more')}
       </View>
     </Screen>
   )

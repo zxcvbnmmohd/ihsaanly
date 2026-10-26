@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, mock, setSystemTime } from 'bun:test'
 import { DEFAULT_USER_STATE } from '@ihsaanly/core/plan/user-state'
 import { en } from '@ihsaanly/core/strings/en'
-import { act, cleanup } from '@testing-library/react'
+import { act, cleanup, renderHook } from '@testing-library/react'
 import type { ComponentProps, ReactElement } from 'react'
 import { renderScreen } from '../../../../../packages/ui/test/render'
 import { actAsync } from '../../../test/library'
@@ -53,6 +53,7 @@ const { setEnabledItems, getEnabledItems, defaultEnabled } = await import(
 const { setBacklog } = await import('@ihsaanly/state/prayer/backlog-store')
 const { configureProgress, getItemProgress } = await import('@ihsaanly/state/progress/store')
 const { getTodayHints } = await import('@ihsaanly/state/today/hints')
+const tours = await import('@ihsaanly/state/coach/tours')
 const { TODAY_HINTS_KEY } = await import('@ihsaanly/state/cloud/keys')
 const { writePreference } = await import('@ihsaanly/state/storage/preferences')
 const { reloadPreferences } = await import('@ihsaanly/state/storage/preference-store')
@@ -468,12 +469,15 @@ describe('sunnah rows', () => {
     expect(router.calls).toContainEqual(['setParams', { tour: undefined }])
   })
 
-  it('replays the tour from ?tour=1 even once seen', () => {
+  it('replays the tour from ?tour=1 even once seen, and every other tour with it', () => {
+    tours.markCoachTourSeen('reader')
     router.params = { tour: '1' }
     open()
     expect(last().tour?.step).toBe(0)
     act(() => last().tour?.onNext())
     expect(last().tour?.step).toBe(1)
+    const seen = renderHook(() => tours.useCoachTourSeen('reader'))
+    expect(seen.result.current).toBe(false)
   })
 
   it('shows the pause notice and a check-in that resumes or waits', () => {

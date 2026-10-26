@@ -29,6 +29,7 @@ const { default: ReaderRoute } = await import('../../../../app/(library)/item/re
 const { expoRouter } = await import('../../../../../test/router')
 const { uncompleteItem, useCompletedToday } = await import('@ihsaanly/state/plan/completions')
 const { clearProgress, getItemProgress } = await import('@ihsaanly/state/progress/store')
+const tours = await import('@ihsaanly/state/coach/tours')
 
 const TASBIH = 'tasbih-after-prayer'
 const MORNING = 'morning-adhkar'
@@ -221,5 +222,38 @@ describe('adhkar in parts', () => {
     act(() => last().onDone())
     expect(doneRecorded(MORNING)).toBe(true)
     expect(getItemProgress(MORNING)).toEqual({ count: 0, parts: [] })
+  })
+})
+
+describe('the first-use tour', () => {
+  beforeEach(() => act(() => tours.resetCoachTours()))
+  afterEach(() => act(() => tours.markCoachTourSeen('reader')))
+
+  it('points at the counter, Done, then More about this, and is seen once finished', () => {
+    open(TASBIH)
+    expect(last().coach).toMatchObject({ target: 'counter', step: 0, total: 3 })
+    // Counting is the tip taken.
+    act(() => last().onTapCounter())
+    expect(last().coach).toMatchObject({ target: 'done', step: 1 })
+    act(() => last().coach?.onNext())
+    expect(last().coach).toMatchObject({ target: 'more', step: 2 })
+    act(() => last().coach?.onNext())
+    expect(last().coach).toBeNull()
+
+    readerProps.length = 0
+    open(TASBIH)
+    expect(last().coach).toBeNull()
+  })
+
+  it('skips the counter for something said once, and Skip ends it', () => {
+    open(LEAVING)
+    expect(last().coach).toMatchObject({ target: 'done', step: 0, total: 2 })
+    act(() => last().coach?.onSkip())
+    expect(last().coach).toBeNull()
+  })
+
+  it('shows nothing with nothing to read', () => {
+    open('no-such-item')
+    expect(last().coach).toBeNull()
   })
 })

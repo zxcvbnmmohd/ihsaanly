@@ -46,6 +46,11 @@ export const yue: Strings = {
     skip: '略過',
     next: '下一步',
     done: '明白',
+    readerCount: '㩒圓圈入面任何位置就可以計數，㩒一下算一次。',
+    readerDone: (done: string): string => `「${done}」會標記咗佢，再帶你返去`,
+    readerMore: (more: string): string => `「${more}」講佢點解重要同出處`,
+    galleryChoose: '揀個尺寸，睇吓每個小工具喺你部手機上面會係點',
+    galleryLive: '每個預覽都係即時嘅：顯示嗰個小工具而家顯示緊乜，同埋你可以喺上面撳啲乜',
   },
   plan: {
     rightNow: '而家',

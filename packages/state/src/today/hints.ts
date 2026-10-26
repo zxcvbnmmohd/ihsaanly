@@ -24,6 +24,11 @@ export function setTourSeen(): void {
   store.set({ ...store.get(), tourSeen: true })
 }
 
+/** Today's tour plays again on its own, as on a first run. */
+export function resetTourSeen(): void {
+  store.set({ ...store.get(), tourSeen: false })
+}
+
 /** One more prayer marked; counting stops once the hint has stopped. */
 export function notePrayerMarked(): void {
   const current = store.get()

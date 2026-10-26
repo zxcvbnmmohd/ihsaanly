@@ -53,6 +53,13 @@ export const so: Strings = {
     skip: 'Ka bood',
     next: 'Xiga',
     done: 'Waan fahmay',
+    readerCount: 'Taabo meel kasta oo goobada ah si aad u tiriso. Taabasho kastaa waa hal.',
+    readerDone: (done: string): string => `“${done}” ayaa calaamadiya oo dib kuu celiya`,
+    readerMore: (more: string): string =>
+      `“${more}” waxay sheegaysaa sababta ay muhiim u tahay iyo halka ay ka timid`,
+    galleryChoose: 'Dooro cabbir si aad u aragto sida widget kastaa uga muuqan doono taleefankaaga',
+    galleryLive:
+      'Muuqaal kastaa waa toos: waxa widget-kaasi hadda muujinayo, iyo waxa aad ku taaban karto',
   },
   plan: {
     rightNow: 'Hadda',

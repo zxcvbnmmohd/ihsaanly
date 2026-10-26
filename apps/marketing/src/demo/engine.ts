@@ -5,6 +5,11 @@
 // for the browser: no storage, no device, state lives in state.ts.
 
 import { resolveText } from '@ihsaanly/core/content/language'
+import {
+  DEFAULT_READER_PREFERENCES,
+  type DetailLevel,
+  type ReadingLayout,
+} from '@ihsaanly/core/content/reading'
 import type { Item } from '@ihsaanly/core/content/schema'
 import { groupByCategory, searchItems } from '@ihsaanly/core/content/search'
 import { formatShareText, sourceFor } from '@ihsaanly/core/content/share-text'
@@ -315,6 +320,14 @@ export interface ItemInput {
   count: number
   remind: Partial<Record<string, boolean>>
   enabled: string[]
+  /** Brief or detailed why and evidence, as the visitor last chose. */
+  detail: DetailLevel
+}
+
+/** The app's own default layout: the demo has no Appearance screen to change it. */
+const DEMO_READING: ReadingLayout = {
+  arabicFirst: DEFAULT_READER_PREFERENCES.arabicFirst,
+  align: DEFAULT_READER_PREFERENCES.align,
 }
 
 export function buildItem(input: ItemInput, strings: Strings): Data<ItemScreenProps> {
@@ -329,6 +342,8 @@ export function buildItem(input: ItemInput, strings: Strings): Data<ItemScreenPr
       counter: null,
       onToday: false,
       remind: null,
+      reading: DEMO_READING,
+      detail: input.detail,
     }
   }
 
@@ -350,6 +365,8 @@ export function buildItem(input: ItemInput, strings: Strings): Data<ItemScreenPr
       DEFAULT_NOTIFICATION_PREFERENCES,
       strings,
     ),
+    reading: DEMO_READING,
+    detail: input.detail,
   }
 }
 

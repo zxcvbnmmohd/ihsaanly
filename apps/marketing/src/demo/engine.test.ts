@@ -171,7 +171,13 @@ describe('buildLibrary', () => {
 
 describe('buildItem', () => {
   const signals = buildSignals(place, NOON, user)
-  const input = { signals, count: 0, remind: {}, enabled: DEFAULT_ENABLED }
+  const input = {
+    signals,
+    count: 0,
+    remind: {},
+    enabled: DEFAULT_ENABLED,
+    detail: 'detailed' as const,
+  }
 
   test('without an item it is the not-found screen', () => {
     const missing = buildItem({ ...input, id: null }, strings)
@@ -179,6 +185,14 @@ describe('buildItem', () => {
     expect(missing.title).toBe(strings.notFound.title)
     expect(missing.counter).toBeNull()
     expect(buildItem({ ...input, id: 'nope' }, strings).item).toBeNull()
+  })
+
+  test("lays the item out as the app does by default, in the visitor's chosen detail", () => {
+    const id = DEFAULT_ENABLED[0] ?? null
+    const brief = buildItem({ ...input, id, detail: 'brief' }, strings)
+    expect(brief.reading).toEqual({ arabicFirst: true, align: 'center' })
+    expect(brief.detail).toBe('brief')
+    expect(buildItem({ ...input, id: null }, strings).detail).toBe('detailed')
   })
 
   test('an item has its text, evidence, parts and links', () => {

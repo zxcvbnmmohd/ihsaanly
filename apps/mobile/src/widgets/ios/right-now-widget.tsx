@@ -174,8 +174,18 @@ function RightNowWidget(props: WidgetModel, environment: WidgetEnvironment): Rea
   // Taps the app has not taken in yet. A tap from an earlier occasion of the
   // same item (the tasbih after Dhuhr, seen again after Asr) does not count.
   const taps = props.taps ?? []
+  const since = item?.since ?? props.openedAt ?? 0
+  const tapped = (kind: string): number =>
+    item
+      ? taps.filter((tap) => (tap.kind ?? 'done') === kind && tap.id === item.id && tap.at >= since)
+          .length
+      : 0
+  // A counted item (the tasbih) counts its +1s on top of what the app had
+  // counted, and is done once they reach its repeat.
+  const repeat = item?.repeat ?? 0
+  const count = Math.min(repeat, (item?.count ?? 0) + tapped('count'))
   const done = item
-    ? taps.some((tap) => tap.id === item.id && tap.at >= (props.openedAt ?? 0))
+    ? item.done === true || tapped('done') > 0 || (repeat > 0 && count >= repeat)
     : false
 
   if (family === 'accessoryInline') return inline(title, url)
@@ -216,12 +226,39 @@ function RightNowWidget(props: WidgetModel, environment: WidgetEnvironment): Rea
         </HStack>
       )
     }
+    if (repeat > 0 && !compact) {
+      const counted = props.labels.countOf
+        .replace('{count}', `${count}`)
+        .replace('{total}', `${repeat}`)
+      const add = (
+        <Button
+          key="add"
+          target="count-one"
+          label={props.labels.addOne}
+          systemImage="plus"
+          onPress={() => ({ taps: [...taps, { kind: 'count', id: item.id, at: Date.now() }] })}
+          modifiers={[
+            buttonStyle(plain ? 'bordered' : 'borderedProminent'),
+            buttonBorderShape('capsule'),
+            controlSize('small'),
+            ...(plain ? [] : [tint(ink.accent)]),
+          ]}
+        />
+      )
+      const label = say(counted, 'caption', 'secondary', 1, 'semibold')
+      return (
+        <HStack spacing={6}>
+          {props.rtl ? add : label}
+          {props.rtl ? label : add}
+        </HStack>
+      )
+    }
     return (
       <Button
         target="mark-done"
         label={props.labels.markDone}
         systemImage="checkmark"
-        onPress={() => ({ taps: [...taps, { id: item.id, at: Date.now() }] })}
+        onPress={() => ({ taps: [...taps, { kind: 'done', id: item.id, at: Date.now() }] })}
         modifiers={[
           buttonStyle(plain ? 'bordered' : 'borderedProminent'),
           buttonBorderShape(compact ? 'circle' : 'capsule'),

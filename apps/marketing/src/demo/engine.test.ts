@@ -222,7 +222,9 @@ describe('buildItem', () => {
     expect(buildItem({ ...input, id: closed.id }, strings).done).toBe(false)
     const open = plan(signals).today.now[0]
     if (!open) throw new Error('expected an item open at midday')
-    const marked = buildSignals(place, NOON, { ...user, completed: { [open.itemId]: dayAt(3) } })
+    // Before Fajr: earlier than any occasion the open item can have, a named
+    // prayer's "before" included (that one opens with the prayer before it).
+    const marked = buildSignals(place, NOON, { ...user, completed: { [open.itemId]: dayAt(0) } })
     expect(buildItem({ ...input, signals: marked, id: open.itemId }, strings).done).toBe(false)
   })
 })

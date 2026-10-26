@@ -726,6 +726,10 @@ export const so: Strings = {
     moreNow: (n: number): string => `+${n} kale hadda`,
     markDone: 'Calaamadi inay dhammaatay',
     markedDone: 'Waa la calaamadeeyey',
+    saidIt: 'Waan akhriyey',
+    marked: 'La calaamadeeyey',
+    addOne: '+1',
+    countOf: '{count} ka mid ah {total}',
   },
   web: {
     remindersUnavailable:

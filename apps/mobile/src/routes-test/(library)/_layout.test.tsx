@@ -12,6 +12,7 @@ mock.module('@ihsaanly/ui/screens/library', () => ({
 }))
 
 const { default: LibraryLayout, unstable_settings } = await import('../../app/(library)/_layout')
+const { deleteOwnDua, saveOwnDua } = await import('@ihsaanly/state/my-duas/store')
 
 const item = items[0]
 const itemTitle = item ? (resolveText(item.title) ?? '') : ''
@@ -67,6 +68,29 @@ describe('regular and wide', () => {
     open(['(library)', 'item', '[id]'], `/item/${item?.id}`)
     const { getByText } = renderScreen(<LibraryLayout />, { layout: 'wide' })
     expect(getByText(itemTitle)).toBeTruthy()
+  })
+
+  it('titles the panel with an own dua’s title, and the form with My duas', () => {
+    saveOwnDua({
+      id: 'mine-panel',
+      title: 'Written here',
+      arabic: null,
+      transliteration: null,
+      text: 'Words',
+      repeat: 1,
+      moment: null,
+    })
+    try {
+      open(['(library)', 'item', '[id]'], '/item/mine-panel')
+      const first = renderScreen(<LibraryLayout />, { layout: 'wide' })
+      expect(first.getByText('Written here')).toBeTruthy()
+      first.unmount()
+      open(['(library)', 'my-dua'], '/my-dua')
+      const { getByText } = renderScreen(<LibraryLayout />, { layout: 'wide' })
+      expect(getByText(en.myDuas.title)).toBeTruthy()
+    } finally {
+      deleteOwnDua('mine-panel')
+    }
   })
 
   it('titles the panel Not found for an unknown item', () => {

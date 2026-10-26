@@ -71,6 +71,8 @@ export interface ItemScreenProps {
   onToggleRemind: (value: boolean) => void
   onShareText: () => void
   onShareImage: () => void
+  /** Set by a host that keeps My duas: whether this item is pinned there. */
+  pin?: { value: boolean; onToggle: () => void }
 }
 
 interface LabelledProps {
@@ -149,6 +151,7 @@ export function ItemScreen({
   onToggleRemind,
   onShareText,
   onShareImage,
+  pin,
 }: ItemScreenProps): ReactElement {
   const colors = useColors()
   const { strings, scheme, Link } = useUi()
@@ -293,6 +296,17 @@ export function ItemScreen({
               detail={remind.detail}
               value={remind.value}
               onValueChange={onToggleRemind}
+              accent={palette.accent}
+              knob={palette.knob}
+              track={palette.wash[1]}
+            />
+          ) : null}
+          {pin ? (
+            <SwitchRow
+              title={strings.myDuas.pin}
+              detail={strings.myDuas.pinDetail}
+              value={pin.value}
+              onValueChange={pin.onToggle}
               accent={palette.accent}
               knob={palette.knob}
               track={palette.wash[1]}

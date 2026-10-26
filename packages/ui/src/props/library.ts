@@ -9,7 +9,9 @@ export function passes(
   filter: LibraryFilter,
   enabled: string[],
   known: string[],
+  pinned: string[] = [],
 ): boolean {
+  if (filter === 'mine') return pinned.includes(item.id)
   if (filter === 'onToday') return enabled.includes(item.id)
   if (filter === 'known') return known.includes(item.id)
   return true

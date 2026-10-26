@@ -1,7 +1,7 @@
 import { describe, expect, it, mock } from 'bun:test'
 import { screen } from '@testing-library/react'
 import { named, renderScreen } from '../../test/render'
-import { emptyLibraryFixture, libraryFixture } from './fixtures'
+import { emptyLibraryFixture, libraryFixture, libraryMine } from './fixtures'
 import { LIBRARY_FILTERS, type LibraryFilter, LibraryScreen } from './library'
 
 describe.each(['compact', 'regular', 'wide'] as const)('LibraryScreen at %s', (layout) => {
@@ -63,6 +63,45 @@ describe.each(['compact', 'regular', 'wide'] as const)('LibraryScreen at %s', (l
     )
     expect(screen.queryByRole('link', { name: named(strings.library.terms) })).toBeNull()
     expect(screen.getByText(strings.library.emptyKnown)).toBeInTheDocument()
+  })
+
+  it('offers My duas only to a host that keeps them, with its count', async () => {
+    const onFilterChange = mock((_filter: LibraryFilter) => {})
+    const { user, strings } = renderScreen(
+      <LibraryScreen {...libraryFixture} mine={libraryMine} onFilterChange={onFilterChange} />,
+      { layout },
+    )
+    await user.click(screen.getByRole('button', { name: `${strings.myDuas.title} · 2` }))
+    expect(onFilterChange).toHaveBeenCalledWith('mine')
+    expect(screen.queryByRole('link', { name: named(strings.myDuas.write) })).toBeNull()
+  })
+
+  it('lists the own duas and the way to write one under My duas', async () => {
+    const { user, navigations, strings } = renderScreen(
+      <LibraryScreen {...libraryFixture} filter="mine" mine={libraryMine} />,
+      { layout },
+    )
+    expect(screen.getByRole('heading', { name: strings.myDuas.yours })).toBeInTheDocument()
+    expect(screen.getByText('My Lord, have mercy on them')).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: named('Leaving home') })).toBeInTheDocument()
+    await user.click(screen.getByRole('link', { name: named('For my parents') }))
+    await user.click(screen.getByRole('link', { name: named(strings.myDuas.write) }))
+    expect(navigations).toEqual(['/item/mine-parents', '/my-dua'])
+  })
+
+  it('explains an empty My duas, and still offers to write one', () => {
+    const { strings } = renderScreen(
+      <LibraryScreen
+        {...emptyLibraryFixture}
+        query=""
+        filter="mine"
+        mine={{ ...libraryMine, count: 0, own: [] }}
+      />,
+      { layout },
+    )
+    expect(screen.getByText(strings.myDuas.empty)).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: named(strings.myDuas.write) })).toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: strings.myDuas.yours })).toBeNull()
   })
 
   it.each([

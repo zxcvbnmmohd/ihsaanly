@@ -12,12 +12,14 @@ import type { HijriScreenProps } from './hijri'
 import type { HistoryScreenProps } from './history'
 import type { ItemDetail, ItemScreenProps } from './item'
 import type { LanguageScreenProps } from './language'
-import type { LibraryScreenProps } from './library'
+import type { LibraryMine, LibraryScreenProps } from './library'
 import type { LocationScreenProps } from './location'
 import type { MemoriseScreenProps } from './memorise'
 import type { MoreScreenProps } from './more'
 import type { NotificationsScreenProps } from './notifications'
 import type { OnboardingScreenProps } from './onboarding'
+import type { OwnDuaScreenProps } from './own-dua'
+import type { OwnDuaFormScreenProps } from './own-dua-form'
 import type { QadaScreenProps } from './qada'
 import type { StartingPointScreenProps } from './starting-point'
 import type { TodayScreenProps } from './today'
@@ -233,6 +235,19 @@ export const libraryFixture: LibraryScreenProps = {
   },
 }
 
+export const libraryMine: LibraryMine = {
+  count: 2,
+  writeHref: '/my-dua',
+  own: [
+    {
+      id: 'mine-parents',
+      title: 'For my parents',
+      detail: 'My Lord, have mercy on them',
+      href: '/item/mine-parents',
+    },
+  ],
+}
+
 export const libraryCardFixture: LibraryCardProps = {
   entry: {
     id: 'dua-leaving-home',
@@ -315,6 +330,39 @@ export const itemScreenFixture: ItemScreenProps = {
   onToggleRemind: noop,
   onShareText: noop,
   onShareImage: noop,
+}
+
+export const ownDuaFixture: OwnDuaScreenProps = {
+  dua: {
+    title: 'For my parents',
+    arabic: 'رَبِّ ارْحَمْهُمَا كَمَا رَبَّيَانِي صَغِيرًا',
+    transliteration: 'Rabbi irhamhuma kama rabbayani saghira',
+    text: 'My Lord, have mercy on them as they raised me when I was small.',
+    repeat: 3,
+    moment: 'Evening',
+  },
+  done: false,
+  onToggleDone: noop,
+  counter: { count: 0, target: 3 },
+  onTapCounter: noop,
+  onResetCounter: noop,
+  editHref: '/my-dua?id=mine-parents',
+  onDelete: noop,
+}
+
+export const ownDuaFormFixture: OwnDuaFormScreenProps = {
+  draft: {
+    title: 'For my parents',
+    arabic: '',
+    transliteration: '',
+    text: 'My Lord, have mercy on them.',
+    repeat: 1,
+    moment: 'evening',
+  },
+  onChange: noop,
+  problem: null,
+  full: false,
+  onSave: noop,
 }
 
 export const missingItemFixture: ItemDetail | null = null

@@ -1,4 +1,5 @@
 import { items } from '@ihsaanly/core/content'
+import { ownDuaItems } from '@ihsaanly/core/content/my-duas'
 import { dayContextFor } from '@ihsaanly/core/plan/day-context'
 import { attendsJumuah } from '@ihsaanly/core/plan/jumuah'
 import { plan } from '@ihsaanly/core/plan/plan'
@@ -10,6 +11,7 @@ import { useEventSettings } from '../events/store'
 import { useHijriOffset } from '../hijri/store'
 import { usePlace } from '../location/store'
 import { useKnownItems } from '../memorise/store'
+import { useOwnDuas } from '../my-duas/store'
 import { useNotificationPreferences } from '../notifications/store'
 import { useOnboarding } from '../onboarding/store'
 import { runRollover, useTodayMarks } from '../prayer/marks'
@@ -42,6 +44,7 @@ export function useSignals(): Signals | null {
   const knownItemIds = useKnownItems()
   const prayedToday = useTodayMarks(place?.timeZone ?? 'UTC', now)
   const completedToday = useCompletedToday(place?.timeZone ?? 'UTC', now)
+  const ownDuas = useOwnDuas()
 
   useEffect(() => {
     if (place) runRollover(place, preferences, new Date(), userState.trackingPaused)
@@ -51,10 +54,16 @@ export function useSignals(): Signals | null {
 
   const { maghrib } = prayerTimesFor(place, now, preferences)
 
+  // An own dua with a moment is on Today at that moment, and the moment is
+  // the reminder the user asked for: its own per-item yes, which still goes
+  // through quiet hours and the daily cap like every other item reminder.
+  const personal = ownDuaItems(ownDuas)
+  const personalIds = personal.map((item) => item.id)
+
   const signals: Signals = {
     now,
     timeZone: place.timeZone,
-    items,
+    items: [...items, ...personal],
     prayerTimes: prayerTimesAcross(place, now, preferences, HORIZON_DAYS),
     today: dayContextFor(now, place.timeZone, 0, hijriOffset, maghrib),
     upcoming: Array.from({ length: LOOK_AHEAD_DAYS }, (_, index) =>
@@ -70,9 +79,15 @@ export function useSignals(): Signals | null {
     // Resolved here so the planner decides Friday without ever seeing gender.
     attendsJumuah: attendsJumuah(userState.jumuah, userState.travelling, onboarding.gender),
     preferences: {
-      enabledItemIds,
+      enabledItemIds: [...enabledItemIds, ...personalIds],
       knownItemIds,
-      notifications,
+      notifications: {
+        ...notifications,
+        perItem: {
+          ...notifications.perItem,
+          ...Object.fromEntries(personalIds.map((id) => [id, true])),
+        },
+      },
     },
   }
 

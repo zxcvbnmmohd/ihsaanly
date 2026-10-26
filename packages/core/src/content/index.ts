@@ -25,8 +25,25 @@ export let content: ContentDocument = applyTranslations(
 
 export let items: Item[] = content.items
 
+/**
+ * Items made on the device rather than shipped: the user's own duas that have
+ * a moment (`my-duas.ts`). Never part of `items`, so the Library, search and
+ * suggestions never list them as content; `itemById` still finds them, so
+ * Today, the counter sheet and a widget tap resolve one like any other item.
+ * Installed by the store that holds them, each time they change.
+ */
+let personal: Item[] = []
+
+export function installPersonalItems(list: Item[]): void {
+  personal = list
+}
+
+export function personalItems(): Item[] {
+  return personal
+}
+
 export function itemById(id: string): Item | undefined {
-  return items.find((item) => item.id === id)
+  return items.find((item) => item.id === id) ?? personal.find((item) => item.id === id)
 }
 
 /** A downloaded bundle, as it arrives: nothing about it is trusted until it parses. */

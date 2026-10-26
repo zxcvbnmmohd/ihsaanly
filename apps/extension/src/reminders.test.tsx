@@ -54,8 +54,10 @@ describe('useReminderSync', () => {
     expect(stored).toMatchObject({
       itemId: item?.id,
       endsAt: soon,
-      actions: en.notifications.action,
+      actions: { done: en.notifications.action.done, later: en.notifications.action.later },
     })
+    // The phone's prayer answers stay on the phone.
+    expect(Object.keys(stored.actions)).toEqual(['done', 'later'])
     expect(stored.body).not.toBe('')
   })
 

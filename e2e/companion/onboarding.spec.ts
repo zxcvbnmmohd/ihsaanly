@@ -60,6 +60,7 @@ test('Back walks the steps in reverse, keeping what was chosen', async ({ page }
   await page.goto('/')
   await page.getByRole('button', { name: en.onboarding.continue }).click()
   await page.getByRole('button', { name: en.onboarding.continue }).click()
+  await page.getByRole('button', { name: en.onboarding.continue }).click()
   await expect(page).toHaveURL(/\/onboarding\/location$/)
   await page.getByRole('textbox', { name: en.location.searchLabel }).fill('London')
   await page.getByRole('button', { name: /^London Westminster, United Kingdom/ }).click()
@@ -71,6 +72,8 @@ test('Back walks the steps in reverse, keeping what was chosen', async ({ page }
   await expect(
     page.getByRole('button', { name: /^London Westminster, United Kingdom/ }),
   ).toBeVisible()
+  await page.getByRole('button', { name: en.onboarding.back }).click()
+  await expect(page).toHaveURL(/\/onboarding\/sourced$/)
   await page.getByRole('button', { name: en.onboarding.back }).click()
   await expect(page).toHaveURL(/\/onboarding\/how$/)
   await page.getByRole('button', { name: en.onboarding.back }).click()

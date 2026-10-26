@@ -344,6 +344,21 @@ snooze made while the app was killed survives the next sync. Do not go back to
 cancel-all. The `data` payload is versioned and narrowed by
 `parseNotificationData`; nothing reads it raw.
 
+A prayer reminder asks "Have you prayed?" under the `prayer` category: its
+`done` ("Yes, I've prayed") marks the prayer through `markPrayer`, as the Today
+strip does, and its `later` ("Not yet") asks once more 30 minutes on, filed as
+`later:prayer:` under `prayer-again`, which has only the first button. No
+second ask with under ten minutes of the window left. While tracking is
+paused neither action does anything, and `sync()` withdraws any pending
+`later:prayer:`, the one snooze it touches.
+
+A window reminder's body is the item's `reminder` plus a rough cue ("Open
+until Dhuhr."), never a clock time, and no cue when the sentence already
+names the closing prayer. Witr is the one prayer item that sends a reminder:
+an hour after Isha opens, under the windows switch (`reminderCategoryOf`),
+asking "Have you prayed Witr?" with "Until Fajr.", and not once it is done
+that night.
+
 Taps are answered once, in `src/notifications/respond.ts`, from three doors:
 the warm listener, the cold-start replay (read then cleared) and the Android
 background task. The task is defined in `index.ts`, the app entry, because a
@@ -494,6 +509,27 @@ selection, marks, section captions and primary actions; never for body text.
 The SPEC's "nothing on the home screen is decorative" rule was dropped
 deliberately on 2026-09-20 at the user's direction. Today carries the wash and
 the accent like every other tab.
+
+### Onboarding: one idea per step, previews from the real planner
+
+`ONBOARDING_STEPS` in `packages/state/src/onboarding/use-onboarding-flow.ts` is
+welcome, how, sourced, location, you, start, reminders, accent, widgets,
+summary. The web companion uses `onboardingSteps(false)`, without widgets.
+Starting point comes before reminders so the reminder preview is the person's
+own plan. Every preview is built in `onboarding/previews.ts` from `plan()`,
+`notificationContent` and content, never hand-written copy: the sourced step
+walks `dua-leaving-home`; the reminders step plans with every reminder on (only
+where the host can notify) and draws the item and prayer notification with
+their buttons; the widget step draws the Right now widget, the next prayer and
+a reminder. Until a place is chosen they use `PREVIEW_PLACE` through
+`useSignals(standIn)`, which never runs the rollover for it.
+
+The summary's rows and the free card finish onboarding and hand the host a
+path (`SETTING_PATHS`, `/about`); "Show me how" does the same with `/widgets`
+when Start is pressed. Onboarding replaces the tab bar, so mobile leaves the
+path in `src/onboarding/destination.ts` and the root layout pushes it once the
+tabs mount. `/widgets` is the gallery route from a separate branch; where it
+does not exist the push lands on not-found.
 
 ### The tab bar is native and branded, never reimplemented
 

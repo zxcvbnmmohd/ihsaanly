@@ -1,4 +1,5 @@
 import { assertNever } from '@ihsaanly/core/assert-never'
+import type { Evidence } from '@ihsaanly/core/content/schema'
 import {
   isRightToLeft,
   SUPPORTED_LANGUAGES,
@@ -6,7 +7,8 @@ import {
 } from '@ihsaanly/core/i18n/locale'
 import { cityOf, type Place } from '@ihsaanly/core/location/place'
 import type { NotificationPreferences } from '@ihsaanly/core/plan/notification-preferences'
-import type { Palette } from '@ihsaanly/tailwind/tokens'
+import type { Strings } from '@ihsaanly/core/strings/en'
+import type { AccentName, Palette } from '@ihsaanly/tailwind/tokens'
 import { LinearGradient } from 'expo-linear-gradient'
 import { type ReactElement, type ReactNode, useState } from 'react'
 import {
@@ -22,9 +24,11 @@ import {
 import Animated, { FadeInRight, useReducedMotion } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useColors, usePalette } from '../colors'
+import { AccentPicker } from '../components/accent-picker'
 import { Button } from '../components/button'
 import { ChoiceRow } from '../components/choice-row'
 import { Dropdown } from '../components/dropdown'
+import { citationFor } from '../components/evidence-panel'
 import { OnboardingArt } from '../components/onboarding-art'
 import { PlaceMap } from '../components/place-map'
 import { Row } from '../components/row'
@@ -36,7 +40,57 @@ import { useUi } from '../provider'
 import type { Gender, OptIn } from '../types'
 import { THEME_PREFERENCES, type ThemePreference } from '../types'
 
-export type OnboardingStep = 'welcome' | 'how' | 'location' | 'you' | 'reminders' | 'start'
+export type OnboardingStep =
+  | 'welcome'
+  | 'how'
+  | 'sourced'
+  | 'location'
+  | 'you'
+  | 'start'
+  | 'reminders'
+  | 'accent'
+  | 'widgets'
+  | 'summary'
+
+/** A notification as it would arrive: the words only, never a clock time. */
+export interface NotificationPreview {
+  title: string
+  body: string
+}
+
+/** The two kinds of notification the reminders step shows, from the person's own plan. */
+export interface ReminderPreview {
+  item: NotificationPreview
+  prayer: NotificationPreview
+}
+
+/** What the widget step draws: the Right now widget, a Lock Screen one, and a notification. */
+export interface WidgetPreview {
+  home: { caption: string; title: string; detail: string | null }
+  lock: { title: string; detail: string }
+  notification: NotificationPreview
+}
+
+/** One real item, laid out the way "Every sunnah, sourced" walks through it. */
+export interface SourcedExample {
+  title: string
+  reminder: string | null
+  evidence: Evidence
+  why: string | null
+}
+
+/** A row of the setup summary; each leads to its own setting once onboarding is done. */
+export type SetupRowId =
+  | 'location'
+  | 'reminders'
+  | 'tracking'
+  | 'start'
+  | 'accent'
+  | 'widgets'
+  | 'language'
+
+/** The widget step's answer: open the gallery after setup, or later. */
+export type WidgetsChoice = 'show' | 'later'
 
 import type { StarterPreset } from '@ihsaanly/core/plan/presets'
 
@@ -57,8 +111,23 @@ export interface OnboardingScreenProps {
   gender: Gender
   notifications: NotificationPreferences
   preset: StarterPreset | null
+  /** How many items are switched on, for the summary's starting point. */
+  enabledCount: number
+  /** Prayer tracking is paused (the summary says so). */
+  trackingPaused: boolean
+  accent: AccentName
+  /** The sourced step's example; null only if content has nothing citing a hadith. */
+  sourced: SourcedExample | null
+  /** The reminders step's notifications; null where the host cannot notify (the web). */
+  reminderPreview: ReminderPreview | null
+  /** The widget step's three surfaces; null where the host has no widgets. */
+  widgetPreview: WidgetPreview | null
+  /** The widget step's answer so far, or null where the host has no widgets. */
+  widgets: WidgetsChoice | null
   onSelectLanguage: (language: SupportedLanguage) => void
   onSelectTheme: (theme: ThemePreference) => void
+  /** Stored at once, so the whole flow recolours as the person chooses. */
+  onSelectAccent: (accent: AccentName) => void
   onQueryChange: (query: string) => void
   onUseDevice: () => void
   onSelectPlace: (place: Place) => void
@@ -68,11 +137,19 @@ export interface OnboardingScreenProps {
    * (the default categories) or off (every category).
    */
   onToggleReminders: (on: boolean) => void
+  /** The "Prayer reminders" switch: "Have you prayed?" as each prayer comes in. */
+  onTogglePrayers: (on: boolean) => void
   onSelectPreset: (preset: StarterPreset) => void
   onNext: () => void
   onBack: () => void
   onSkipIntro: () => void
   onNotNow: () => void
+  /** "Show me how" on the widget step: the gallery opens once setup is done. */
+  onShowWidgets: () => void
+  /** Finishes onboarding and opens the setting behind a summary row. */
+  onOpenSetting: (row: SetupRowId) => void
+  /** Finishes onboarding and opens About, where donating lives. */
+  onOpenAbout: () => void
   /**
    * Opens sign-in for someone who already has an account, whose synced setup
    * then replaces this flow. Omitted in a local-only build, which hides it.
@@ -441,6 +518,330 @@ function ChoiceTile({
   )
 }
 
+interface CaptionProps {
+  children: string
+  color: ColorValue
+}
+
+/** The small capitals over each card: "WHERE IT COMES FROM", "RIGHT NOW". */
+function Caption({ children, color }: CaptionProps): ReactElement {
+  return (
+    <Text className="font-semibold text-xs uppercase tracking-wide" style={{ color }}>
+      {children}
+    </Text>
+  )
+}
+
+interface SourcedCardProps {
+  caption: string
+  body: string
+  palette: Palette
+  /** The reminder line is the item's own voice, so it is set in the serif. */
+  quote?: boolean
+}
+
+function SourcedCard({ caption, body, palette, quote = false }: SourcedCardProps): ReactElement {
+  const colors = useColors()
+  return (
+    <Surface style={{ borderRadius: 20, padding: 16 }}>
+      <View className="gap-1.5">
+        <Caption color={palette.accent}>{caption}</Caption>
+        <Text
+          className={quote ? 'text-lg leading-snug' : 'text-sm leading-snug'}
+          style={{
+            color: colors.label,
+            fontFamily: quote ? serif : undefined,
+            fontWeight: quote ? '600' : undefined,
+          }}>
+          {body}
+        </Text>
+      </View>
+    </Surface>
+  )
+}
+
+interface AppGlyphProps {
+  palette: Palette
+}
+
+/** The app's icon as a notification header draws it: a small accent tile. */
+function AppGlyph({ palette }: AppGlyphProps): ReactElement {
+  return (
+    <View
+      className="items-center justify-center"
+      style={{ width: 20, height: 20, borderRadius: 5, backgroundColor: palette.accent }}>
+      <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: palette.onAccent }} />
+    </View>
+  )
+}
+
+interface NotificationCardProps {
+  preview: NotificationPreview
+  /** The two buttons the notification carries, drawn as the system would. */
+  actions: readonly [string, string]
+  palette: Palette
+}
+
+/**
+ * A notification as it arrives, with its buttons drawn under it, so someone
+ * can see that it can be ticked off from there. It is a picture: nothing on
+ * it can be pressed.
+ */
+function NotificationCard({ preview, actions, palette }: NotificationCardProps): ReactElement {
+  const colors = useColors()
+  const { strings } = useUi()
+  return (
+    <View testID="notification-preview" className="gap-1.5">
+      <Surface style={{ borderRadius: 18, padding: 12 }}>
+        <View className="gap-1">
+          <View className="flex-row items-center gap-2">
+            <AppGlyph palette={palette} />
+            <Text className="flex-1 text-xs uppercase" style={{ color: colors.secondaryLabel }}>
+              Ihsaanly
+            </Text>
+            <Text className="text-xs" style={{ color: colors.secondaryLabel }}>
+              {strings.onboarding.previewNow}
+            </Text>
+          </View>
+          <Text numberOfLines={1} className="font-semibold text-sm" style={{ color: colors.label }}>
+            {preview.title}
+          </Text>
+          <Text numberOfLines={2} className="text-sm leading-snug" style={{ color: colors.label }}>
+            {preview.body}
+          </Text>
+        </View>
+      </Surface>
+      <View className="flex-row gap-1.5">
+        {actions.map((action) => (
+          <Surface key={action} style={{ flex: 1, borderRadius: 14, paddingVertical: 8 }}>
+            <Text
+              numberOfLines={1}
+              className="text-center font-medium text-sm"
+              style={{ color: palette.accent }}>
+              {action}
+            </Text>
+          </Surface>
+        ))}
+      </View>
+    </View>
+  )
+}
+
+interface WidgetMocksProps {
+  preview: WidgetPreview
+  palette: Palette
+}
+
+/** The three places Ihsaanly can live outside the app, drawn from today's plan. */
+function WidgetMocks({ preview, palette }: WidgetMocksProps): ReactElement {
+  const { strings } = useUi()
+  const { home, lock } = preview
+  return (
+    <View className="gap-3">
+      <View className="flex-row gap-3">
+        <View
+          accessibilityLabel={strings.onboarding.widgetHome}
+          testID="home-widget-preview"
+          className="flex-1 justify-between gap-2"
+          style={{
+            aspectRatio: 1,
+            maxHeight: 170,
+            borderRadius: 22,
+            padding: 14,
+            backgroundColor: palette.widgetSurface,
+          }}>
+          <Caption color={palette.accent}>{home.caption}</Caption>
+          <View className="gap-1">
+            <Text
+              numberOfLines={2}
+              className="text-base leading-tight"
+              style={{ color: palette.ink, fontFamily: serif, fontWeight: '600' }}>
+              {home.title}
+            </Text>
+            {home.detail ? (
+              <Text numberOfLines={2} className="text-xs" style={{ color: palette.inkSecondary }}>
+                {home.detail}
+              </Text>
+            ) : null}
+          </View>
+        </View>
+        <View className="flex-1 justify-center" style={{ maxHeight: 170 }}>
+          <View
+            accessibilityLabel={strings.onboarding.widgetLock}
+            testID="lock-widget-preview"
+            className="justify-center gap-0.5"
+            style={{
+              borderRadius: 18,
+              paddingVertical: 12,
+              paddingHorizontal: 14,
+              backgroundColor: palette.accent,
+            }}>
+            <Text
+              numberOfLines={1}
+              className="font-semibold text-base"
+              style={{ color: palette.onAccent }}>
+              {lock.title}
+            </Text>
+            <Text numberOfLines={2} className="text-xs" style={{ color: palette.onAccent }}>
+              {lock.detail}
+            </Text>
+          </View>
+        </View>
+      </View>
+      <NotificationCard
+        preview={preview.notification}
+        actions={[strings.notifications.action.done, strings.notifications.action.later]}
+        palette={palette}
+      />
+    </View>
+  )
+}
+
+interface SummaryLine {
+  id: SetupRowId
+  title: string
+  status: string
+  done: boolean
+}
+
+function summaryLines(props: OnboardingScreenProps, strings: Strings): SummaryLine[] {
+  const { onboarding } = strings
+  const { summary, status } = onboarding
+  const paused = props.trackingPaused
+  const presetName = props.preset ? onboarding[props.preset] : status.custom
+  const lines: (SummaryLine | null)[] = [
+    {
+      id: 'location',
+      title: summary.location,
+      status: props.place ? cityOf(props.place.label) : status.later,
+      done: props.place !== null,
+    },
+    {
+      id: 'reminders',
+      title: summary.reminders,
+      status: remindersOn(props.notifications) ? status.on : status.later,
+      done: remindersOn(props.notifications),
+    },
+    {
+      id: 'tracking',
+      title: summary.tracking,
+      status: paused ? status.paused : status.on,
+      done: !paused,
+    },
+    {
+      id: 'start',
+      title: summary.start,
+      status: `${presetName} · ${onboarding.sunnahCount(props.enabledCount)}`,
+      done: true,
+    },
+    {
+      id: 'accent',
+      title: summary.accent,
+      status: strings.appearance.accents[props.accent],
+      done: true,
+    },
+    props.widgets
+      ? {
+          id: 'widgets',
+          title: summary.widgets,
+          status: props.widgets === 'show' ? status.afterStart : status.addNow,
+          done: false,
+        }
+      : null,
+    {
+      id: 'language',
+      title: summary.language,
+      status: strings.language.names[props.language],
+      done: true,
+    },
+  ]
+  return lines.filter((line): line is SummaryLine => line !== null)
+}
+
+interface SummaryRowProps {
+  line: SummaryLine
+  palette: Palette
+  last: boolean
+  onPress: () => void
+}
+
+/** One line of the summary: a check (or an open ring), the setting, and where it stands. */
+function SummaryRow({ line, palette, last, onPress }: SummaryRowProps): ReactElement {
+  const colors = useColors()
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={`${line.title}, ${line.status}`}
+      onPress={onPress}
+      className="flex-row items-center gap-3 py-3"
+      style={{
+        minHeight: 44,
+        borderBottomWidth: last ? 0 : StyleSheet.hairlineWidth,
+        borderBottomColor: colors.separator,
+      }}>
+      <View
+        className="items-center justify-center"
+        style={{
+          width: 22,
+          height: 22,
+          borderRadius: 11,
+          borderWidth: line.done ? 0 : 1.5,
+          borderColor: palette.accent,
+          backgroundColor: line.done ? palette.accent : undefined,
+        }}>
+        {line.done ? (
+          <Text className="font-bold text-xs" style={{ color: palette.onAccent }}>
+            ✓
+          </Text>
+        ) : null}
+      </View>
+      <Text className="font-medium text-base" style={{ color: colors.label }}>
+        {line.title}
+      </Text>
+      <Text
+        numberOfLines={1}
+        className="flex-1 text-end text-sm"
+        style={{ color: line.done ? colors.secondaryLabel : palette.accent }}>
+        {line.status}
+      </Text>
+    </Pressable>
+  )
+}
+
+interface FreeCardProps {
+  palette: Palette
+  onAbout: () => void
+}
+
+/** The honest close: no trial, no subscription, and where the support comes from. */
+function FreeCard({ palette, onAbout }: FreeCardProps): ReactElement {
+  const colors = useColors()
+  const { onboarding } = useUi().strings
+  return (
+    <Surface style={{ borderRadius: 20, padding: 16 }}>
+      <View className="gap-1">
+        <Text
+          className="text-lg"
+          style={{ color: colors.label, fontFamily: serif, fontWeight: '600' }}>
+          {onboarding.freeTitle}
+        </Text>
+        <Text className="text-sm leading-snug" style={{ color: colors.secondaryLabel }}>
+          {onboarding.freeBody}
+        </Text>
+        <Pressable
+          accessibilityRole="link"
+          onPress={onAbout}
+          className="justify-center self-start"
+          style={{ minHeight: 44 }}>
+          <Text className="font-semibold text-sm" style={{ color: palette.accent }}>
+            {onboarding.freeLink}
+          </Text>
+        </Pressable>
+      </View>
+    </Surface>
+  )
+}
+
 interface StepBodyProps extends OnboardingScreenProps {
   palette: Palette
 }
@@ -455,7 +856,15 @@ function StepBody(props: StepBodyProps): ReactElement {
       return (
         <>
           <WelcomeArt palette={palette} />
-          <Heading title={strings.onboarding.welcomeTitle} body={strings.onboarding.welcomeBody} />
+          <View className="gap-2">
+            <Heading
+              title={strings.onboarding.welcomeTitle}
+              body={strings.onboarding.welcomeBody}
+            />
+            <Text className="font-semibold text-sm" style={{ color: palette.accent }}>
+              {strings.onboarding.free}
+            </Text>
+          </View>
           <View className="w-full flex-row gap-3" style={{ maxWidth: 480 }}>
             <View className="flex-1">
               <Field label={strings.onboarding.language}>
@@ -512,6 +921,44 @@ function StepBody(props: StepBodyProps): ReactElement {
           </Text>
         </>
       )
+
+    case 'sourced': {
+      const example = props.sourced
+      return (
+        <>
+          <Text
+            accessibilityRole="header"
+            className="text-4xl leading-tight"
+            style={{ fontFamily: serif, color: colors.label, fontWeight: '600' }}>
+            {strings.onboarding.sourcedTitle}
+          </Text>
+          {example ? (
+            <View className="gap-3">
+              {example.reminder ? (
+                <SourcedCard
+                  caption={strings.onboarding.sourcedSee}
+                  body={example.reminder}
+                  palette={palette}
+                  quote
+                />
+              ) : null}
+              <SourcedCard
+                caption={strings.onboarding.sourcedFrom}
+                body={citationFor(example.evidence, strings)}
+                palette={palette}
+              />
+              {example.why ? (
+                <SourcedCard
+                  caption={strings.onboarding.sourcedWhy}
+                  body={example.why}
+                  palette={palette}
+                />
+              ) : null}
+            </View>
+          ) : null}
+        </>
+      )
+    }
 
     case 'location':
       return (
@@ -604,20 +1051,45 @@ function StepBody(props: StepBodyProps): ReactElement {
 
     case 'reminders': {
       const quiet = props.notifications.quietHours
-      const daily = remindersOn(props.notifications)
+      const daily = props.notifications.windows || props.notifications.lookAhead
       const announcements = props.announcements
+      const preview = props.reminderPreview
+      const { action } = strings.notifications
 
       return (
         <>
           <Heading
             title={strings.onboarding.remindersStep}
-            body={strings.onboarding.remindersWhy}
+            body={preview ? strings.onboarding.remindersTick : strings.onboarding.remindersWhy}
           />
+          {preview ? (
+            <View className="gap-3">
+              <NotificationCard
+                preview={preview.item}
+                actions={[action.done, action.later]}
+                palette={palette}
+              />
+              <NotificationCard
+                preview={preview.prayer}
+                actions={[action.prayed, action.notYet]}
+                palette={palette}
+              />
+            </View>
+          ) : null}
           <SwitchRow
             title={strings.onboarding.dailyReminders}
             detail={strings.onboarding.dailyRemindersDetail}
             value={daily}
             onValueChange={props.onToggleReminders}
+            accent={palette.accent}
+            knob={palette.knob}
+            track={palette.wash[1]}
+          />
+          <SwitchRow
+            title={strings.onboarding.prayerReminders}
+            detail={strings.onboarding.prayerRemindersDetail}
+            value={props.notifications.prayers}
+            onValueChange={props.onTogglePrayers}
             accent={palette.accent}
             knob={palette.knob}
             track={palette.wash[1]}
@@ -633,7 +1105,7 @@ function StepBody(props: StepBodyProps): ReactElement {
               track={palette.wash[1]}
             />
           ) : null}
-          {daily && quiet ? (
+          {remindersOn(props.notifications) && quiet ? (
             <Text className="pt-1 text-xs leading-snug" style={{ color: colors.secondaryLabel }}>
               {strings.onboarding.reminderQuiet(quiet.from, quiet.to)}
             </Text>
@@ -670,6 +1142,45 @@ function StepBody(props: StepBodyProps): ReactElement {
         </>
       )
 
+    case 'accent':
+      return (
+        <>
+          <Heading title={strings.onboarding.accentStep} body={strings.onboarding.accentWhy} />
+          <AccentPicker value={props.accent} onSelect={props.onSelectAccent} />
+        </>
+      )
+
+    case 'widgets':
+      return (
+        <>
+          <Heading title={strings.onboarding.widgetsStep} body={strings.onboarding.widgetsWhy} />
+          {props.widgetPreview ? (
+            <WidgetMocks preview={props.widgetPreview} palette={palette} />
+          ) : null}
+        </>
+      )
+
+    case 'summary': {
+      const lines = summaryLines(props, strings)
+      return (
+        <>
+          <Heading title={strings.onboarding.summaryTitle} body={strings.onboarding.summaryWhy} />
+          <Surface style={{ borderRadius: 20, paddingHorizontal: 16, paddingVertical: 4 }}>
+            {lines.map((line, position) => (
+              <SummaryRow
+                key={line.id}
+                line={line}
+                palette={palette}
+                last={position === lines.length - 1}
+                onPress={() => props.onOpenSetting(line.id)}
+              />
+            ))}
+          </Surface>
+          <FreeCard palette={palette} onAbout={props.onOpenAbout} />
+        </>
+      )
+    }
+
     default:
       return assertNever(step)
   }
@@ -683,26 +1194,31 @@ export function OnboardingScreen(props: OnboardingScreenProps): ReactElement {
   const reduceMotion = useReducedMotion()
 
   const { step } = props
-  const intro = step === 'welcome' || step === 'how'
+  const intro = step === 'welcome' || step === 'how' || step === 'sourced'
   const asking = step === 'reminders' && wantsNotifications(props)
   const needsPlace = step === 'location' && props.place === null
+  const widgets = step === 'widgets'
 
   // Every way past a step sits beside Back, so the footer is the same height
-  // on all six and the primary button never moves under the thumb.
+  // on every step and the primary button never moves under the thumb.
   const escape = intro
     ? { title: strings.onboarding.skipIntro, onPress: props.onSkipIntro }
     : asking
       ? { title: strings.onboarding.notNow, onPress: props.onNotNow }
       : needsPlace
         ? { title: strings.onboarding.skipLocation, onPress: props.onNext }
-        : null
+        : widgets
+          ? { title: strings.onboarding.later, onPress: props.onNotNow }
+          : null
 
   const primary =
-    step === 'start'
+    step === 'summary'
       ? strings.onboarding.done
       : asking
         ? strings.onboarding.allowNotifications
-        : strings.onboarding.continue
+        : widgets
+          ? strings.onboarding.showMeHow
+          : strings.onboarding.continue
 
   return (
     <View className="flex-1" style={{ backgroundColor: colors.systemBackground }}>
@@ -769,7 +1285,7 @@ export function OnboardingScreen(props: OnboardingScreenProps): ReactElement {
         <View className="pt-2">
           <Button
             title={primary}
-            onPress={props.onNext}
+            onPress={widgets ? props.onShowWidgets : props.onNext}
             color={palette.accent}
             onColor={palette.onAccent}
             disabled={needsPlace}

@@ -73,7 +73,8 @@ describe('a formatter that omits a part', () => {
     }
     Intl.DateTimeFormat = Empty as unknown as typeof Intl.DateTimeFormat
     try {
-      expect(() => civilDateIn(new Date(), 'UTC')).toThrow('missing its month')
+      // A zone nothing else here formats, so no cached real formatter answers instead.
+      expect(() => civilDateIn(new Date(), 'Pacific/Chatham')).toThrow('missing its month')
     } finally {
       Intl.DateTimeFormat = original
     }

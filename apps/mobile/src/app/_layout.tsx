@@ -16,6 +16,7 @@ import { cloudEnabled, startMobileCloud } from '@/cloud'
 import { startMobileContentUpdates } from '@/content/updates'
 import { startCrashReporting } from '@/crash/crash'
 import { useNotificationResponse } from '@/notifications/use-response'
+import { openPendingDestination } from '@/onboarding/destination'
 import { OnboardingFlow } from '@/onboarding/flow'
 import { useAnnouncements } from '@/push/use-announcements'
 import { colors } from '@/theme/colors'
@@ -112,6 +113,13 @@ export default function RootLayout(): ReactElement {
       stop()
     }
   }, [])
+
+  // A summary row (or "Show me how") asked for somewhere other than Today: go
+  // there once the tabs exist, which is after the render that mounts them.
+  const settled = onboarding.completed && !thing.restoring
+  useEffect(() => {
+    if (settled) openPendingDestination()
+  }, [settled])
 
   // Onboarding replaces the tab bar rather than sitting over it: there is
   // nothing to navigate to until it is done.

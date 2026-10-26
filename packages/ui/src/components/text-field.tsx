@@ -8,7 +8,7 @@ import {
   View,
 } from 'react-native'
 
-import { useColors } from '../colors'
+import { useColors, useSystemColors } from '../colors'
 import { useUi } from '../provider'
 
 interface Thing {
@@ -86,7 +86,8 @@ export function TextField({
   keyboardType,
 }: TextFieldProps): ReactElement {
   const [thing, setThing] = useState<Thing>({ focused: false })
-  const { strings, systemColors } = useUi()
+  const { strings } = useUi()
+  const systemColors = useSystemColors()
   const colors = useColors()
   const ring = accent ?? systemColors.tint
 

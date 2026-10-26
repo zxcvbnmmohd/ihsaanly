@@ -2,9 +2,9 @@ import { afterEach, describe, expect, it } from 'bun:test'
 import type { Place } from '@ihsaanly/core/location/place'
 import { setPlace } from '@ihsaanly/state/location/store'
 import { resumeTracking } from '@ihsaanly/state/plan/user-state-store'
-import { setAccent } from '@ihsaanly/state/theme/accent-store'
 import { act, renderHook } from '@testing-library/react'
 
+import { themePreferenceStore } from '@/theme/preference'
 import { widgetInk } from './model'
 import sample from './sample.json'
 import { useWidgetPreview } from './use-preview'
@@ -19,25 +19,29 @@ const london: Place = {
 
 afterEach(() => {
   act(() => {
-    setAccent('terracotta')
+    themePreferenceStore.set('system')
     setPlace(null)
   })
 })
 
 describe('useWidgetPreview', () => {
-  it('shows the sample in the chosen accent until there is a place', () => {
-    act(() => setAccent('denim'))
+  it('shows the sample in the chosen theme until there is a place', () => {
+    // Another file may leave a place behind.
+    act(() => {
+      setPlace(null)
+      themePreferenceStore.set('midnight')
+    })
     const { result } = renderHook(() => useWidgetPreview())
     expect(result.current.rightNow?.title).toBe(sample.rightNow.title)
-    expect(result.current.ink).toEqual(widgetInk('denim'))
+    expect(result.current.ink).toEqual(widgetInk('midnight'))
   })
 
-  it("is the widgets' current entry once there is a place, in the city and accent chosen", () => {
+  it("is the widgets' current entry once there is a place, in the city and theme chosen", () => {
     // Prayers are listed only while tracking runs; another file may leave it paused.
     act(() => {
       resumeTracking()
       setPlace(london)
-      setAccent('sage')
+      themePreferenceStore.set('sage')
     })
     const { result } = renderHook(() => useWidgetPreview())
     expect(result.current.stale).toBe(false)

@@ -1,6 +1,6 @@
 // Turns tokens.ts into the two stylesheets every app imports. Kept apart from
 // generate.ts so the test can render in memory and compare with the files.
-import { brand, fonts, system } from '../tokens'
+import { brand, fonts, system, THEMES, type ThemeName, themeSystemColors, themes } from '../tokens'
 
 type Scheme = 'light' | 'dark'
 
@@ -19,7 +19,17 @@ function systemVars(scheme: Scheme): string[] {
   return Object.entries(system).map(([name, value]) => `--color-${name}: ${value.web[scheme]};`)
 }
 
-/** theme.css: the Tailwind theme for every app, native and web. */
+/** Every colour variable a named theme sets, the system ones included, and its scheme. */
+function themeVars(name: ThemeName): string[] {
+  const { colors, scheme } = themes[name]
+  return [
+    ...Object.entries(colors).map(([key, value]) => `--color-${key}: ${value};`),
+    ...Object.entries(themeSystemColors(name)).map(([key, value]) => `--color-${key}: ${value};`),
+    `color-scheme: ${scheme};`,
+  ]
+}
+
+/** theme.css:the Tailwind theme for every app, native and web. */
 export function renderTheme(): string {
   // Values sit on the --color-* and --font-* names themselves, overridden below
   // for dark mode and each platform. A variable defined once would be inlined
@@ -63,6 +73,10 @@ ${block(":root[data-theme='dark']", [...dark, 'color-scheme: dark;'])}
 @media (prefers-color-scheme: dark) {
 ${block(":root[data-theme='light']", [...light, 'color-scheme: light;'], '  ')}
 }
+
+/* A named theme: data-palette on <html> beside data-theme (its scheme). Later
+   than the rules above and as specific, so it wins in either scheme. */
+${THEMES.map((name) => block(`:root[data-palette='${name}']`, themeVars(name))).join('\n\n')}
 
 /* Dark when data-theme="dark", or when the system prefers dark and the page
    has not forced light. */

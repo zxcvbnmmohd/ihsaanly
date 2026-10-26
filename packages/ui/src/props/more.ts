@@ -8,6 +8,7 @@ import type { StarterPreset } from '@ihsaanly/core/plan/presets'
 import type { CalculationPreferences } from '@ihsaanly/core/prayer/calculation'
 import type { Strings } from '@ihsaanly/core/strings/en'
 import type { MoreGroup, ThemePreference } from '../types'
+import { appearanceName } from './appearance'
 
 /**
  * "Show me around" restarts the first-run tour on Today. A plain href, so a
@@ -108,7 +109,11 @@ export function moreGroups(input: MoreGroupsInput): MoreGroup[] {
           title: strings.language.title,
           detail: strings.language.names[language],
         },
-        { href: '/appearance', title: strings.appearance.title, detail: strings.appearance[theme] },
+        {
+          href: '/appearance',
+          title: strings.appearance.title,
+          detail: appearanceName(strings, theme),
+        },
         ...(accountDetail === undefined
           ? []
           : [{ href: '/feedback', title: strings.feedback.title, detail: null }]),

@@ -1,8 +1,7 @@
 import type { ReactElement } from 'react'
 import { type ColorValue, Pressable, Text, View } from 'react-native'
 
-import { useColors } from '../colors'
-import { useUi } from '../provider'
+import { useColors, useSystemColors } from '../colors'
 import { onSpace } from './space-press'
 import { Surface } from './surface'
 import { SwitchPicture } from './switch-picture'
@@ -30,7 +29,7 @@ export function SwitchRow({
   knob,
   track,
 }: SwitchRowProps): ReactElement {
-  const { systemColors } = useUi()
+  const systemColors = useSystemColors()
   const colors = useColors()
   const trackOn = accent ?? systemColors.tint
   const knobColor = knob ?? systemColors.onTint

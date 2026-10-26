@@ -1,7 +1,6 @@
 import type { CSSProperties, ReactElement } from 'react'
 
-import { useColors } from '../colors'
-import { useUi } from '../provider'
+import { useColors, useSystemColors } from '../colors'
 import type { DropdownProps } from './dropdown'
 
 /**
@@ -17,7 +16,7 @@ export function Dropdown<T extends string>({
   onChange,
   accent,
 }: DropdownProps<T>): ReactElement {
-  const { systemColors } = useUi()
+  const systemColors = useSystemColors()
   const colors = useColors()
 
   const style: CSSProperties = {

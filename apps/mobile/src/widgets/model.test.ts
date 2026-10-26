@@ -110,21 +110,27 @@ describe('the widget timeline', () => {
 })
 
 describe('the widget colours', () => {
-  it('are terracotta when no accent is given', () => {
+  it('are terracotta when no theme is named', () => {
     const [entry] = widgetTimeline(input())
     expect(entry?.ink.light).toMatchObject({ accent: '#a94a32', onAccent: '#fff6f0' })
     expect(entry?.ink.dark).toMatchObject({ accent: '#e28c6f', onAccent: '#1d120d' })
   })
 
-  it('take the chosen accent in both schemes, on every entry, over the same wash', () => {
-    const plain = widgetTimeline(input())
-    const timeline = widgetTimeline({ ...input(), accent: 'teal' })
+  it('wear a named theme whole in both schemes, on every entry', () => {
+    const timeline = widgetTimeline({ ...input(), theme: 'parchment' })
     for (const entry of timeline) {
-      expect(entry.ink.light).toMatchObject({ accent: '#1f6b6b', onAccent: '#f0fbfa' })
-      expect(entry.ink.dark).toMatchObject({ accent: '#6fc2bd', onAccent: '#0c1918' })
+      for (const ink of [entry.ink.light, entry.ink.dark]) {
+        expect(ink).toEqual({
+          background: '#f4ead3',
+          backgroundEnd: '#e2cfa6',
+          surface: '#fbf4e4',
+          accent: '#8a2e1e',
+          onAccent: '#fff7ea',
+          label: '#2e2416',
+          secondaryLabel: '#5a4c37',
+        })
+      }
     }
-    expect(timeline[0]?.ink.light.background).toBe(plain[0]?.ink.light.background ?? '')
-    expect(timeline[0]?.ink.dark.label).toBe(plain[0]?.ink.dark.label ?? '')
   })
 })
 
@@ -411,9 +417,9 @@ describe('the current entry', () => {
     expect(currentWidgetModel(at)).toEqual(widgetTimeline(at)[0] as never)
   })
 
-  it('carries both schemes in the chosen accent', () => {
-    const entry = currentWidgetModel({ ...input(), accent: 'denim' })
-    expect(entry.ink).toEqual(widgetInk('denim'))
+  it('carries both schemes in the chosen theme', () => {
+    const entry = currentWidgetModel({ ...input(), theme: 'midnight' })
+    expect(entry.ink).toEqual(widgetInk('midnight'))
     expect(entry.ink.light.accent).not.toBe(widgetInk(undefined).light.accent)
   })
 })

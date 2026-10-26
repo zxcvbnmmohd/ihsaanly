@@ -2,9 +2,10 @@ import { describe, expect, it, mock } from 'bun:test'
 import { SUPPORTED_LANGUAGES } from '@ihsaanly/core/i18n/locale'
 import type { Place } from '@ihsaanly/core/location/place'
 import type { Strings } from '@ihsaanly/core/strings/en'
-import { ACCENTS, paletteFor } from '@ihsaanly/tailwind/tokens'
+import { paletteFor, themes } from '@ihsaanly/tailwind/tokens'
 import { screen, within } from '@testing-library/react'
 import { fireLayout, named, renderScreen } from '../../test/render'
+import { appearanceName } from '../props/appearance'
 import { THEME_PREFERENCES } from '../types'
 import { onboardingFixture } from './fixtures'
 import { OnboardingScreen, type OnboardingScreenProps } from './onboarding'
@@ -48,7 +49,7 @@ const steps: Step[] = [
   'you',
   'start',
   'reminders',
-  'accent',
+  'theme',
   'widgets',
   'summary',
 ]
@@ -86,7 +87,7 @@ describe('OnboardingScreen, welcome step options', () => {
       within(theme)
         .getAllByRole('option')
         .map((option) => option.textContent),
-    ).toEqual(THEME_PREFERENCES.map((option) => strings.appearance[option]))
+    ).toEqual(THEME_PREFERENCES.map((option) => appearanceName(strings, option)))
 
     await user.selectOptions(language, 'fr')
     await user.selectOptions(theme, 'dark')
@@ -615,29 +616,36 @@ describe('OnboardingScreen, reminders step previews', () => {
   })
 })
 
-describe('OnboardingScreen, accent step', () => {
-  it('offers every accent, the chosen one marked, and reports a choice', async () => {
-    const onSelectAccent = mock((_accent: string) => {})
+describe('OnboardingScreen, theme step', () => {
+  it('offers every appearance as a grid, the chosen one marked, and reports a choice', async () => {
+    const onSelectTheme = mock((_theme: string) => {})
     const { user, strings } = renderScreen(
-      <OnboardingScreen {...at('accent', { accent: 'sage' })} onSelectAccent={onSelectAccent} />,
+      <OnboardingScreen {...at('theme', { theme: 'sage' })} onSelectTheme={onSelectTheme} />,
+      { theme: 'sage' },
     )
-    expect(screen.getByText(strings.onboarding.accentStep)).toBeInTheDocument()
-    expect(screen.getByText(strings.onboarding.accentWhy)).toBeInTheDocument()
-    expect(screen.getAllByRole('radio')).toHaveLength(ACCENTS.length)
-    expect(screen.getByRole('radio', { name: strings.appearance.accents.sage })).toHaveAttribute(
+    expect(screen.getByText(strings.onboarding.themeStep)).toBeInTheDocument()
+    expect(screen.getByText(strings.onboarding.themeWhy)).toBeInTheDocument()
+    expect(screen.getAllByRole('radio')).toHaveLength(THEME_PREFERENCES.length)
+    expect(screen.getByRole('radio', { name: strings.appearance.themes.sage })).toHaveAttribute(
       'aria-checked',
       'true',
     )
-    await user.click(screen.getByRole('radio', { name: strings.appearance.accents.plum }))
-    expect(onSelectAccent).toHaveBeenCalledWith('plum')
+    await user.click(screen.getByRole('radio', { name: strings.appearance.themes.obsidian }))
+    expect(onSelectTheme).toHaveBeenCalledWith('obsidian')
   })
 
-  it('recolours the flow with the accent the host provides', () => {
+  it('recolours the whole flow with the theme the host provides', () => {
     const rgb = (hex: string): string =>
       `rgba(${[1, 3, 5].map((at) => Number.parseInt(hex.slice(at, at + 2), 16)).join(', ')}, 1.00)`
-    const { strings } = renderScreen(<OnboardingScreen {...at('welcome')} />, { accent: 'plum' })
+    const { strings } = renderScreen(<OnboardingScreen {...at('welcome')} />, {
+      theme: 'espresso',
+    })
     expect(getComputedStyle(screen.getByText(strings.onboarding.free)).color).toBe(
-      rgb(paletteFor('light', 'plum').accent),
+      rgb(paletteFor('dark', 'espresso').accent),
+    )
+    // The heading is the theme's ink, not the system's label.
+    expect(getComputedStyle(screen.getByText(strings.onboarding.welcomeTitle)).color).toBe(
+      rgb(themes.espresso.colors.ink),
     )
   })
 })
@@ -720,9 +728,9 @@ describe('OnboardingScreen, summary step', () => {
       'aria-label',
       `${summary.start}, ${strings.onboarding.essentials} · ${strings.onboarding.sunnahCount(14)}`,
     )
-    expect(row(summary.accent)).toHaveAttribute(
+    expect(row(summary.theme)).toHaveAttribute(
       'aria-label',
-      `${summary.accent}, ${strings.appearance.accents.terracotta}`,
+      `${summary.theme}, ${strings.appearance.system}`,
     )
     expect(row(summary.widgets)).toHaveAttribute(
       'aria-label',
@@ -796,7 +804,7 @@ describe('OnboardingScreen, summary step', () => {
       summary.reminders,
       summary.tracking,
       summary.start,
-      summary.accent,
+      summary.theme,
       summary.widgets,
       summary.language,
     ]) {
@@ -807,7 +815,7 @@ describe('OnboardingScreen, summary step', () => {
       'reminders',
       'tracking',
       'start',
-      'accent',
+      'theme',
       'widgets',
       'language',
     ])

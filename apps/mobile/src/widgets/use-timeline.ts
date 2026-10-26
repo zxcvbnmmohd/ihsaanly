@@ -9,9 +9,9 @@ import { useQada } from '@ihsaanly/state/prayer/marks'
 import { getItemProgress, useProgressRevision } from '@ihsaanly/state/progress/store'
 import { useReaderPreferences } from '@ihsaanly/state/reader/store'
 import { useStrings } from '@ihsaanly/state/strings'
-import { useAccent } from '@ihsaanly/state/theme/accent-store'
 import { useEffect } from 'react'
 import { AppState } from 'react-native'
+import { useTheme } from '@/theme/store'
 
 import { takeWidgetTaps, useWidgetTapsThrough } from './drain'
 import { type WidgetInput, widgetTimeline } from './model'
@@ -54,7 +54,7 @@ export function useWidgetSettings(): WidgetSettings {
   const hijriOffset = useHijriOffset()
   const qada = useQada()
   const fastsOwed = useFastsOutstanding()
-  const accent = useAccent()
+  const theme = useTheme()
   const pinned = usePinnedItems()
   const myDuas = { pinned, own: useOwnDuas().map(({ id, title }) => ({ id, title })) }
   const reader = useReaderPreferences()
@@ -66,7 +66,7 @@ export function useWidgetSettings(): WidgetSettings {
     hijriOffset,
     qada,
     fastsOwed,
-    accent,
+    theme,
     myDuas,
   }
 }
@@ -78,7 +78,7 @@ function take(): void {
 
 /**
  * Republishes the widgets' day whenever something they show could have
- * changed: the moment's item, a mark, what is owed, the language, the accent. Not every
+ * changed: the moment's item, a mark, what is owed, the language, the theme. Not every
  * minute — the timeline already carries the day forward on its own.
  */
 export function useWidgetTimeline(
@@ -87,7 +87,7 @@ export function useWidgetTimeline(
   placeLabel: string | null,
 ): void {
   const settings = useWidgetSettings()
-  const { locale, hijriOffset, qada, fastsOwed, accent, myDuas } = settings
+  const { locale, hijriOffset, qada, fastsOwed, theme, myDuas } = settings
   const tapsThrough = useWidgetTapsThrough()
 
   // Widget taps (done, prayed, +1) wait where the widget keeps them until the app runs:
@@ -117,7 +117,7 @@ export function useWidgetTimeline(
     locale,
     placeLabel,
     hijriOffset,
-    accent,
+    theme,
     myDuas,
     settings.reading.arabicFirst,
     settings.reading.align,

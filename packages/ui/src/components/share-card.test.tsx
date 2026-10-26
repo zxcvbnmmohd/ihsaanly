@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { paletteFor, palettes } from '@ihsaanly/tailwind/tokens'
+import { paletteFor, palettePair, palettes } from '@ihsaanly/tailwind/tokens'
 import { screen } from '@testing-library/react'
 import { renderScreen } from '../../test/render'
 import { shareCardTheme } from '../props/share-card'
@@ -74,16 +74,12 @@ describe('ShareCard', () => {
     expect(screen.getByText(SHARE_WATERMARK)).toBeInTheDocument()
   })
 
-  it('signs the card in the chosen accent', () => {
-    const plum = paletteFor('dark', 'plum')
-    const plumTheme = shareCardTheme('paper-dark', {
-      light: paletteFor('light', 'plum'),
-      dark: plum,
-      current: plum,
-    })
+  it('signs the card in the chosen theme’s accent', () => {
+    const dusk = paletteFor('dark', 'dusk')
+    const duskTheme = shareCardTheme('paper-dark', { ...palettePair('dusk'), current: dusk })
     renderScreen(
       <ShareCard
-        theme={plumTheme}
+        theme={duskTheme}
         background="solid"
         aspect="story"
         card={{
@@ -94,10 +90,10 @@ describe('ShareCard', () => {
           source: null,
         }}
       />,
-      { scheme: 'dark', accent: 'plum' },
+      { theme: 'dusk' },
     )
-    // #d79acb, the plum accent in the dark scheme.
-    expect(plum.accent).toBe('#d79acb')
-    expect(screen.getByText(SHARE_WATERMARK).style.color).toBe(rgba(plum.accent))
+    // #e8a0ca, Dusk's rose accent.
+    expect(dusk.accent).toBe('#e8a0ca')
+    expect(screen.getByText(SHARE_WATERMARK).style.color).toBe(rgba(dusk.accent))
   })
 })

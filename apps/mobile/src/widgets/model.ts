@@ -9,7 +9,7 @@ import type { PlannedItem, Signals } from '@ihsaanly/core/plan/signals'
 import { PRAYERS, type Prayer } from '@ihsaanly/core/prayer/qada'
 import { buildWindows, type PrayerWindow, windowAt } from '@ihsaanly/core/prayer/windows'
 import type { Strings } from '@ihsaanly/core/strings/en'
-import { type AccentName, paletteFor } from '@ihsaanly/tailwind/tokens'
+import { paletteFor, type ThemeName } from '@ihsaanly/tailwind/tokens'
 
 /**
  * Everything every widget can show, resolved to plain strings and hex colours.
@@ -168,8 +168,8 @@ export interface WidgetInput {
   hijriOffset: number
   qada: Partial<Record<Prayer, number>>
   fastsOwed: number
-  /** The chosen accent; widgets cannot read the app's preferences, so it is resolved here. */
-  accent?: AccentName
+  /** The named theme chosen, if any; widgets cannot read the app's preferences, so it is resolved here. */
+  theme?: ThemeName
   /**
    * What the user chose for the Quick duas widget: pinned library items, then
    * their own duas. Absent or empty, the widget offers the duas for the
@@ -219,8 +219,8 @@ function quickDuas(
     .flatMap((item) => actionable(item.id) ?? [])
 }
 
-function inkFor(scheme: 'light' | 'dark', accent: AccentName | undefined): WidgetInk {
-  const palette = paletteFor(scheme, accent)
+function inkFor(scheme: 'light' | 'dark', theme: ThemeName | undefined): WidgetInk {
+  const palette = paletteFor(scheme, theme)
   return {
     background: palette.wash[0],
     backgroundEnd: palette.wash[1],
@@ -411,7 +411,7 @@ function modelAt(input: WidgetInput, at: Date): WidgetModel {
     stale: false,
     rtl: input.rtl,
     reading: { arabicFirst: input.reading.arabicFirst, centred: input.reading.align === 'center' },
-    ink: widgetInk(input.accent),
+    ink: widgetInk(input.theme),
     labels: {
       app: 'Ihsaanly',
       rightNow: strings.plan.rightNow,
@@ -516,9 +516,13 @@ function modelAt(input: WidgetInput, at: Date): WidgetModel {
   }
 }
 
-/** Both schemes' widget colours under an accent, as every timeline entry carries them. */
-export function widgetInk(accent: AccentName | undefined): WidgetModel['ink'] {
-  return { light: inkFor('light', accent), dark: inkFor('dark', accent) }
+/**
+ * The widget colours for each scheme, as every timeline entry carries them.
+ * The Home Screen picks by its own light or dark; a named theme is one
+ * canvas, so it fills both and the widgets wear it whatever the Home Screen is.
+ */
+export function widgetInk(theme: ThemeName | undefined): WidgetModel['ink'] {
+  return { light: inkFor('light', theme), dark: inkFor('dark', theme) }
 }
 
 /**

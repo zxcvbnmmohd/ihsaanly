@@ -2,7 +2,7 @@ import * as Haptics from 'expo-haptics'
 import type { ReactElement } from 'react'
 import { type ColorValue, Pressable, Text } from 'react-native'
 
-import { useUi } from '../provider'
+import { useSystemColors } from '../colors'
 
 interface ButtonProps {
   title: string
@@ -22,7 +22,7 @@ export function Button({
   onColor,
   disabled = false,
 }: ButtonProps): ReactElement {
-  const { systemColors } = useUi()
+  const systemColors = useSystemColors()
   const tint = color ?? systemColors.tint
   const onTint = onColor ?? systemColors.onTint
 

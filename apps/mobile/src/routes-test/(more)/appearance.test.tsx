@@ -6,9 +6,7 @@ import { last, mockScreen } from '../../../test/more'
 
 interface Props {
   preference: string
-  onSelect: (value: 'light' | 'dark' | 'system') => void
-  accent: string
-  onSelectAccent: (value: 'terracotta' | 'denim') => void
+  onSelect: (value: 'light' | 'dark' | 'system' | 'obsidian') => void
   reading: { arabicFirst: boolean; align: 'start' | 'center' }
   onReading: (change: { arabicFirst?: boolean; align?: 'start' | 'center' }) => void
 }
@@ -16,7 +14,6 @@ const renders = mockScreen<Props>('@ihsaanly/ui/screens/appearance', 'Appearance
 
 const { default: AppearanceRoute } = await import('../../app/(more)/appearance')
 const { getThemePreference, setThemePreference } = await import('@/theme/store')
-const { getAccent, setAccent } = await import('@ihsaanly/state/theme/accent-store')
 const { getReaderPreferences, updateReaderPreferences } = await import(
   '@ihsaanly/state/reader/store'
 )
@@ -46,15 +43,12 @@ describe('appearance route', () => {
     expect(applied).toEqual(['light'])
   })
 
-  it('shows the stored accent and stores a new one, leaving the theme alone', () => {
+  it('stores a named theme as the one preference and applies its scheme', () => {
     render(<AppearanceRoute />)
-    expect(last(renders).accent).toBe('terracotta')
-    act(() => last(renders).onSelectAccent('denim'))
-    expect(getAccent()).toBe('denim')
-    expect(last(renders).accent).toBe('denim')
-    expect(getThemePreference()).toBe('system')
-    expect(applied).toEqual([])
-    act(() => setAccent('terracotta'))
+    act(() => last(renders).onSelect('obsidian'))
+    expect(getThemePreference()).toBe('obsidian')
+    expect(last(renders).preference).toBe('obsidian')
+    expect(applied).toEqual(['dark'])
   })
 
   it('shows and stores the reading layout, keeping the brief or detailed choice', () => {

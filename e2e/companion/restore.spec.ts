@@ -36,7 +36,7 @@ test('after onboarding, More has an Account row', async ({ page }) => {
   await page.goto('/onboarding/location')
   await page.getByRole('textbox', { name: en.location.searchLabel }).fill('London')
   await page.getByRole('button', { name: /^London Westminster, United Kingdom/ }).click()
-  // On to you, start and reminders; then accent, then the summary's Start.
+  // On to you, start and reminders; then theme, then the summary's Start.
   await page.getByRole('button', { name: en.onboarding.continue }).click()
   await page.getByRole('button', { name: en.onboarding.continue }).click()
   await page.getByRole('button', { name: en.onboarding.continue }).click()

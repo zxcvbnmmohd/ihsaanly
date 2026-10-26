@@ -222,7 +222,7 @@ describe('the reminders step', () => {
     act(() => screen().onNext())
     await settle()
     expect(fake.categories.length).toBeGreaterThan(0)
-    expect(screen().step).toBe('accent')
+    expect(screen().step).toBe('theme')
   })
 
   it('offers announcements, off until chosen', async () => {
@@ -230,7 +230,7 @@ describe('the reminders step', () => {
     expect(screen().announcements?.on).toBe(false)
     await run(() => screen().onNext())
     await settle()
-    expect(screen().step).toBe('accent')
+    expect(screen().step).toBe('theme')
     expect(getAnnouncements().enabled).toBe(false)
   })
 
@@ -244,7 +244,7 @@ describe('the reminders step', () => {
     await settle()
     await settle()
 
-    expect(screen().step).toBe('accent')
+    expect(screen().step).toBe('theme')
     expect(getAnnouncements().enabled).toBe(true)
     expect(push.topics.has('announcements')).toBe(true)
   })
@@ -258,7 +258,7 @@ describe('the reminders step', () => {
     await run(() => screen().onNext())
     await settle()
 
-    expect(screen().step).toBe('accent')
+    expect(screen().step).toBe('theme')
     expect(getAnnouncements()).toEqual(DEFAULT_ANNOUNCEMENTS)
     expect(push.topics.size).toBe(0)
   })
@@ -268,7 +268,7 @@ describe('the reminders step', () => {
     toReminders()
     act(() => screen().onNext())
     await settle()
-    expect(screen().step).toBe('accent')
+    expect(screen().step).toBe('theme')
   })
 })
 

@@ -19,7 +19,7 @@ import type {
   SetupRowId,
   StarterPreset,
 } from '@ihsaanly/ui/screens/onboarding'
-import type { AccentName, ThemePreference } from '@ihsaanly/ui/types'
+import type { ThemePreference } from '@ihsaanly/ui/types'
 import { useState } from 'react'
 import { chooseLanguage, useLocale } from '../i18n/store'
 import { setPlace, usePlace } from '../location/store'
@@ -28,7 +28,6 @@ import { setEnabledItems, useEnabledItems } from '../plan/enabled-store'
 import { useSignals } from '../plan/use-plan'
 import { useUserState } from '../plan/user-state-store'
 import { useStrings } from '../strings'
-import { setAccent, useAccent } from '../theme/accent-store'
 import { PREVIEW_PLACE, reminderPreview, sourcedExample, widgetPreview } from './previews'
 import { type Gender, setOnboarding, useOnboarding } from './store'
 
@@ -44,7 +43,7 @@ export const ONBOARDING_STEPS: OnboardingStep[] = [
   'you',
   'start',
   'reminders',
-  'accent',
+  'theme',
   'widgets',
   'summary',
 ]
@@ -64,7 +63,7 @@ export const SETTING_PATHS = {
   reminders: '/notifications',
   tracking: '/tracking',
   start: '/starting-point',
-  accent: '/appearance',
+  theme: '/appearance',
   widgets: '/widgets',
   language: '/language',
 } as const satisfies Record<SetupRowId, string>
@@ -149,7 +148,6 @@ export function useOnboardingFlow(actions: OnboardingFlowActions): OnboardingScr
   const notifications = useNotificationPreferences()
   const enabled = useEnabledItems()
   const locale = useLocale()
-  const accent = useAccent()
   const userState = useUserState()
   const strings = useStrings()
   const signals = useSignals(PREVIEW_PLACE)
@@ -260,7 +258,6 @@ export function useOnboardingFlow(actions: OnboardingFlowActions): OnboardingScr
     preset: presetFor(enabled, items),
     enabledCount: enabled.length,
     trackingPaused: userState.trackingPaused,
-    accent,
     sourced: sourcedExample(items),
     reminderPreview:
       previewing && actions.ensureReminderPermission
@@ -271,7 +268,6 @@ export function useOnboardingFlow(actions: OnboardingFlowActions): OnboardingScr
     widgets: actions.widgets ? (thing.showWidgets ? 'show' : 'later') : null,
     onSelectLanguage: chooseLanguage,
     onSelectTheme: actions.onSelectTheme,
-    onSelectAccent: (chosen: AccentName) => setAccent(chosen),
     onQueryChange: (query: string) => setThing((current) => ({ ...current, query })),
     onUseDevice: useDevice,
     onSelectPlace: choosePlace,

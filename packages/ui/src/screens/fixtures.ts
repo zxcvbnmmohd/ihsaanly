@@ -501,7 +501,6 @@ export const onboardingFixture: OnboardingScreenProps = {
   onNotNow: noop,
   enabledCount: 14,
   trackingPaused: false,
-  accent: 'terracotta',
   sourced: {
     title: 'Leaving home',
     reminder: 'Said at the door, before the day takes over.',
@@ -538,7 +537,6 @@ export const onboardingFixture: OnboardingScreenProps = {
     },
   },
   widgets: 'later',
-  onSelectAccent: noop,
   onTogglePrayers: noop,
   onShowWidgets: noop,
   onOpenSetting: noop,
@@ -548,8 +546,6 @@ export const onboardingFixture: OnboardingScreenProps = {
 export const appearanceFixture: AppearanceScreenProps = {
   preference: 'system',
   onSelect: noop,
-  accent: 'terracotta',
-  onSelectAccent: noop,
   reading: { arabicFirst: true, align: 'center' },
   onReading: noop,
 }

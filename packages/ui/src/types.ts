@@ -1,11 +1,17 @@
 // The shapes screens take that the host app owns. Structural on purpose: the
 // app's own zod-inferred types satisfy them without ui importing the app.
 
-export const THEME_PREFERENCES = ['system', 'light', 'dark'] as const
-export type ThemePreference = (typeof THEME_PREFERENCES)[number]
-
-/** The named accents, independent of the theme; tokens.ts defines their colours. */
-export { ACCENTS, type AccentName, DEFAULT_ACCENT } from '@ihsaanly/tailwind/tokens'
+/**
+ * The one appearance preference: System, Light, Dark, then the named themes
+ * (tokens.ts defines their colours).
+ */
+export {
+  APPEARANCES as THEME_PREFERENCES,
+  type AppearanceName as ThemePreference,
+  BRAND_APPEARANCES,
+  THEMES,
+  type ThemeName,
+} from '@ihsaanly/tailwind/tokens'
 
 export type Gender = 'female' | 'male' | 'unspecified'
 

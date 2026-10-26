@@ -1,12 +1,11 @@
 import { useStrings } from '@ihsaanly/state/strings'
-import { useAccent } from '@ihsaanly/state/theme/accent-store'
 import type { SystemColors, UiLinkProps } from '@ihsaanly/ui/provider'
 import { UiProvider } from '@ihsaanly/ui/provider'
 import { type Href, Link } from 'expo-router'
 import { type ReactElement, type ReactNode, useEffect } from 'react'
 import { colorScheme } from 'react-native-css'
 import { colors } from '@/theme/colors'
-import { useEffectiveColorScheme } from '@/theme/store'
+import { useEffectiveColorScheme, useTheme } from '@/theme/store'
 
 function RouterLink({ href, ...props }: UiLinkProps): ReactNode {
   return <Link href={href as Href} {...props} />
@@ -35,8 +34,8 @@ interface MobileUiProviderProps {
 
 /**
  * Feeds @ihsaanly/ui from the app: strings from the locale store, the scheme
- * the theme preference resolves to, the chosen accent, expo-router's Link, and
- * the OS colours.
+ * the theme preference resolves to, the named theme if one is chosen,
+ * expo-router's Link, and the OS colours (a theme's own stand in for them).
  * Screens paint with these in `style` (useColors in @ihsaanly/ui): NativeWind 5
  * (RC) did not apply stylesheet colour variables on native, nor runtime ones
  * supplied through its VariableContextProvider.
@@ -44,7 +43,7 @@ interface MobileUiProviderProps {
 export function MobileUiProvider({ children }: MobileUiProviderProps): ReactElement {
   const strings = useStrings()
   const scheme = useEffectiveColorScheme()
-  const accent = useAccent()
+  const theme = useTheme()
   const systemColors = systemColorsFor(scheme)
 
   // NativeWind's `dark:` and prefers-color-scheme follow Appearance, which
@@ -56,7 +55,7 @@ export function MobileUiProvider({ children }: MobileUiProviderProps): ReactElem
   })
 
   return (
-    <UiProvider value={{ strings, scheme, accent, Link: RouterLink, systemColors }}>
+    <UiProvider value={{ strings, scheme, theme, Link: RouterLink, systemColors }}>
       {children}
     </UiProvider>
   )

@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, mock } from 'bun:test'
+import { themes } from '@ihsaanly/tailwind/tokens'
 import { act, screen } from '@testing-library/react'
 import { AccessibilityInfo, Text } from 'react-native'
 import { renderScreen } from '../../test/render'
@@ -91,8 +92,10 @@ describe('Surface (native)', () => {
   let glassAvailable = false
   const load = async (): Promise<typeof Surface> => {
     mock.module('expo-glass-effect', () => ({
-      GlassView: ({ children }: { children?: unknown }) => (
-        <div data-testid="glass">{children as never}</div>
+      GlassView: ({ children, tintColor }: { children?: unknown; tintColor?: string }) => (
+        <div data-testid="glass" data-tint={tintColor}>
+          {children as never}
+        </div>
       ),
       isLiquidGlassAvailable: () => glassAvailable,
       isGlassEffectAPIAvailable: () => glassAvailable,
@@ -120,6 +123,42 @@ describe('Surface (native)', () => {
     )
     await settle()
     expect(screen.getByTestId('glass')).toHaveTextContent('In')
+  })
+
+  it('tints the glass with a named theme’s card colour, and only then', async () => {
+    const Native = await load()
+    process.env.EXPO_OS = 'ios'
+    glassAvailable = true
+    const { container } = renderScreen(
+      <Native>
+        <Text>In</Text>
+      </Native>,
+      { theme: 'forest' },
+    )
+    await settle()
+    expect(screen.getByTestId('glass').dataset.tint).toBe(themes.forest.colors.surface)
+    container.remove()
+    renderScreen(
+      <Native>
+        <Text>In</Text>
+      </Native>,
+    )
+    await settle()
+    expect(screen.getByTestId('glass').dataset.tint).toBeUndefined()
+  })
+
+  it('is the theme’s veil, not the system material, on older iOS under a named theme', async () => {
+    const Native = await load()
+    process.env.EXPO_OS = 'ios'
+    renderScreen(
+      <Native>
+        <Text>In</Text>
+      </Native>,
+      { theme: 'ivory' },
+    )
+    await settle()
+    expect(screen.queryByTestId('blur')).toBeNull()
+    expect(screen.getByText('In').parentElement?.style.backgroundColor).toBeTruthy()
   })
 
   it('draws a ring beside the glass, never as its border', async () => {

@@ -1,5 +1,5 @@
 import type { Strings } from '@ihsaanly/core/strings/en'
-import type { AccentName } from '@ihsaanly/tailwind/tokens'
+import type { ThemeName } from '@ihsaanly/tailwind/tokens'
 import { createContext, type ReactElement, type ReactNode, use } from 'react'
 import type { AccessibilityProps, ColorValue } from 'react-native'
 
@@ -38,8 +38,11 @@ export interface UiContextValue {
   scheme: 'light' | 'dark'
   Link: (props: UiLinkProps) => ReactNode
   systemColors: SystemColors
-  /** The chosen accent; terracotta, the brand's own, when the host gives none. */
-  accent?: AccentName
+  /**
+   * The named theme chosen, if any. Absent, the brand's own palette for
+   * `scheme` applies (System, Light, Dark). Present, `scheme` is its scheme.
+   */
+  theme?: ThemeName
   /** Fixtures and tests set it to render any size without a window; see `useLayout()`. */
   layout?: Layout
 }

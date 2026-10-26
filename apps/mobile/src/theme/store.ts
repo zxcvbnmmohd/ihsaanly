@@ -1,17 +1,23 @@
-import { createPreferenceStore } from '@ihsaanly/state/storage/preference-store'
-import { useAccent } from '@ihsaanly/state/theme/accent-store'
-import { THEME_PREFERENCES, type ThemePreference } from '@ihsaanly/ui/types'
+import { migrateLegacyAccent } from '@ihsaanly/state/theme/legacy-accent'
+import { schemeOf, type ThemeName, themeOf } from '@ihsaanly/tailwind/tokens'
+import type { ThemePreference } from '@ihsaanly/ui/types'
 import { useSyncExternalStore } from 'react'
 import { Appearance, Platform } from 'react-native'
-import { z } from 'zod'
 import { type Palette, paletteFor } from '@/theme/colors'
+import { themePreferenceStore as store } from '@/theme/preference'
 
 import { ThemeOverride } from '../../modules/theme-override'
 
-const store = createPreferenceStore<ThemePreference>('theme', z.enum(THEME_PREFERENCES), 'system')
-
 export const useThemePreference = store.use
 export const getThemePreference = store.get
+
+/**
+ * The OS mode an appearance asks for: a named theme forces its own scheme
+ * (a dark theme, a dark status bar and dark system chrome), System hands back.
+ */
+function modeOf(preference: ThemePreference): 'system' | 'light' | 'dark' {
+  return preference === 'system' ? 'system' : schemeOf(preference, 'light')
+}
 
 /**
  * On Android the local theme-override module persists the mode where the
@@ -23,14 +29,15 @@ export const getThemePreference = store.get
  */
 export function applyThemePreference(preference: ThemePreference): void {
   // Persist for the next cold start. Android only; elsewhere the module is absent.
-  if (Platform.OS === 'android' && ThemeOverride) ThemeOverride.setNightMode(preference)
+  const mode = modeOf(preference)
+  if (Platform.OS === 'android' && ThemeOverride) ThemeOverride.setNightMode(mode)
 
   // Apply now. This must run on every platform even when the module already
   // applied the same mode natively: React Native caches the scheme in
   // JavaScript and only this call refreshes it, and that context survives the
   // Android activity recreation. Skipping it leaves every colors.* getter
   // resolving to the previous scheme. Setting the same mode twice is a no-op.
-  Appearance.setColorScheme(preference === 'system' ? 'auto' : preference)
+  Appearance.setColorScheme(mode === 'system' ? 'auto' : mode)
 }
 
 export function setThemePreference(preference: ThemePreference): void {
@@ -68,7 +75,7 @@ function systemScheme(): 'light' | 'dark' {
 
 /**
  * The scheme the app should render in. An explicit preference is its own
- * answer; System asks the device.
+ * answer, a named theme its own scheme; System asks the device.
  *
  * Through `useSyncExternalStore` rather than `useColorScheme` because this
  * reads mutable state from outside React, which React Compiler would otherwise
@@ -78,12 +85,24 @@ function systemScheme(): 'light' | 'dark' {
 export function useEffectiveColorScheme(): 'light' | 'dark' {
   const preference = useThemePreference()
   const system = useSyncExternalStore(subscribeToScheme, systemScheme, systemScheme)
-  return preference === 'system' ? system : preference
+  return schemeOf(preference, system)
 }
 
-/** The brand palette for the scheme the app is actually rendering in, under the chosen accent. */
+/** The named theme chosen, if any; System, Light and Dark have none. */
+export function useTheme(): ThemeName | undefined {
+  return themeOf(useThemePreference())
+}
+
+/**
+ * Folds an accent chosen before full themes into the appearance, once (see
+ * `migrateLegacyAccent`). Called at launch, before the preference is applied.
+ */
+export function migrateAccent(): void {
+  migrateLegacyAccent(getThemePreference, (preference) => store.set(preference))
+}
+
+/** The palette the app is painting with: the named theme's, or the brand's for the scheme. */
 export function usePalette(): Palette {
   const scheme = useEffectiveColorScheme()
-  const accent = useAccent()
-  return paletteFor(scheme, accent)
+  return paletteFor(scheme, useTheme())
 }

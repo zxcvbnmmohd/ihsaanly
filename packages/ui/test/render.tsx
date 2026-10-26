@@ -13,7 +13,7 @@ import { so } from '@ihsaanly/core/strings/so'
 import { ur } from '@ihsaanly/core/strings/ur'
 import { yue } from '@ihsaanly/core/strings/yue'
 import { zh } from '@ihsaanly/core/strings/zh'
-import { type AccentName, system } from '@ihsaanly/tailwind/tokens'
+import { system, type ThemeName, themes } from '@ihsaanly/tailwind/tokens'
 import { act, type RenderResult, render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Children, cloneElement, isValidElement, type ReactElement, type ReactNode } from 'react'
@@ -38,8 +38,8 @@ export interface RenderScreenOptions {
   /** Which string table the screen reads; English by default. */
   locale?: SupportedLanguage
   scheme?: 'light' | 'dark'
-  /** The chosen accent; the host's default (terracotta) when left out. */
-  accent?: AccentName
+  /** A named theme; its own scheme then wins over `scheme`. The brand's palette when left out. */
+  theme?: ThemeName
   /** Forces compact/regular/wide instead of measuring the (zero-sized) window. */
   layout?: Layout
 }
@@ -101,16 +101,17 @@ const NO_INSETS = {
 /** Renders `ui` inside SafeAreaProvider and UiProvider; see RenderScreenOptions. */
 export function renderScreen(
   ui: ReactElement,
-  { locale = 'en', scheme = 'light', accent, layout }: RenderScreenOptions = {},
+  { locale = 'en', scheme, theme, layout }: RenderScreenOptions = {},
 ): RenderScreenResult {
   const navigations: string[] = []
   const strings = STRINGS[locale]
+  const resolved = theme ? themes[theme].scheme : (scheme ?? 'light')
   const value: UiContextValue = {
     strings,
-    scheme,
+    scheme: resolved,
     Link: fakeLink(navigations),
-    systemColors: systemColorsFor(scheme),
-    accent,
+    systemColors: systemColorsFor(resolved),
+    theme,
     layout,
   }
   // react-native-web draws a disabled control with pointer-events: none;

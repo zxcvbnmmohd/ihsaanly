@@ -1,4 +1,4 @@
-import { brand, paletteFor } from '@ihsaanly/tailwind/tokens'
+import { palettePair } from '@ihsaanly/tailwind/tokens'
 import type { ReactElement } from 'react'
 import { useEffect, useRef } from 'react'
 import { AccessibilityInfo, Pressable, Text, View } from 'react-native'
@@ -33,7 +33,7 @@ export interface ToastProps {
 /**
  * A short message in a pill along the bottom ("Marked done · Undo") that goes
  * away on its own. The pill is the scheme inverted, so its action takes the
- * other scheme's accent.
+ * other scheme's accent (a named theme's counterpart's).
  *
  * The live region stays mounted while empty so a screen reader announces each
  * new message politely, without taking focus from where the finger is. iOS
@@ -45,9 +45,11 @@ export function Toast({
   durationMs = UNDO_MS,
   offset = 16,
 }: ToastProps): ReactElement {
-  const { scheme, accent } = useUi()
+  const { scheme, theme } = useUi()
   const palette = usePalette()
-  const inverted = paletteFor(scheme === 'light' ? 'dark' : 'light', accent)
+  // The other scheme's accent: a named theme's counterpart (tokens.test.ts
+  // holds it to 4.5:1 on the theme's ink), else the brand's other scheme.
+  const action = palettePair(theme)[scheme === 'light' ? 'dark' : 'light'].accent
   const insets = useSafeAreaInsets()
   // The timer runs per toast (`toast.id`), not per render: a host that builds
   // a new handler each render must not keep the toast up forever.
@@ -77,7 +79,7 @@ export function Toast({
         <View
           className="w-full max-w-md flex-row items-center gap-3 rounded-full ps-5 pe-2"
           style={{ backgroundColor: palette.ink, minHeight: 52, borderCurve: 'continuous' }}>
-          <Text className="flex-1 py-3 text-base" style={{ color: brand.paper[scheme] }}>
+          <Text className="flex-1 py-3 text-base" style={{ color: palette.paper }}>
             {toast.text}
           </Text>
           {toast.action ? (
@@ -87,7 +89,7 @@ export function Toast({
               onPress={toast.action.onPress}
               className="items-center justify-center px-3"
               style={{ minHeight: 44 }}>
-              <Text className="font-semibold text-base" style={{ color: inverted.accent }}>
+              <Text className="font-semibold text-base" style={{ color: action }}>
                 {toast.action.label}
               </Text>
             </Pressable>

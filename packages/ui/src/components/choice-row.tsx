@@ -1,8 +1,7 @@
-import type { ReactElement } from 'react'
+import type { ReactElement, ReactNode } from 'react'
 import { type ColorValue, Pressable, Text, View } from 'react-native'
 
-import { useColors } from '../colors'
-import { useUi } from '../provider'
+import { useColors, useSystemColors } from '../colors'
 import { Surface } from './surface'
 
 interface ChoiceRowProps {
@@ -12,6 +11,8 @@ interface ChoiceRowProps {
   onPress: () => void
   /** Ring colour when selected. Defaults to the system tint. */
   accent?: ColorValue
+  /** Drawn before the title, such as a theme's swatch. */
+  leading?: ReactNode
 }
 
 /** One of several, so selection is a ring around the whole row. */
@@ -21,8 +22,9 @@ export function ChoiceRow({
   selected,
   onPress,
   accent,
+  leading,
 }: ChoiceRowProps): ReactElement {
-  const { systemColors } = useUi()
+  const systemColors = useSystemColors()
   const colors = useColors()
   const ring = accent ?? systemColors.tint
 
@@ -37,15 +39,18 @@ export function ChoiceRow({
         interactive
         ring={selected ? ring : 'transparent'}
         style={{ borderRadius: 20, padding: 18 }}>
-        <View className="gap-1">
-          <Text className="font-semibold text-base" style={{ color: colors.label }}>
-            {title}
-          </Text>
-          {detail ? (
-            <Text className="text-sm leading-snug" style={{ color: colors.secondaryLabel }}>
-              {detail}
+        <View className="flex-row items-center gap-3">
+          {leading}
+          <View className="flex-1 gap-1">
+            <Text className="font-semibold text-base" style={{ color: colors.label }}>
+              {title}
             </Text>
-          ) : null}
+            {detail ? (
+              <Text className="text-sm leading-snug" style={{ color: colors.secondaryLabel }}>
+                {detail}
+              </Text>
+            ) : null}
+          </View>
         </View>
       </Surface>
     </Pressable>

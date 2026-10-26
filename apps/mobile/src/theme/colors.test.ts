@@ -3,6 +3,8 @@ import { installColors, restoreOS, restoreRouter, setOS } from '../../test/theme
 
 installColors()
 const { colors, paletteFor, palettes } = await import('./colors')
+const { themePreferenceStore } = await import('./preference')
+const { themes } = await import('@ihsaanly/tailwind/tokens')
 
 const names = [
   'label',
@@ -46,6 +48,21 @@ describe('colors', () => {
     expect(colors.systemBackground).toBe('#ffffff')
   })
 
+  it('are a named theme’s own on every platform, and the OS’s again without one', () => {
+    setOS('ios')
+    themePreferenceStore.set('forest')
+    expect(colors.label).toBe(themes.forest.colors.ink)
+    expect(colors.secondaryLabel).toBe(themes.forest.colors['ink-secondary'])
+    expect(colors.separator).toBe(themes.forest.colors.rule)
+    expect(colors.systemBackground).toBe(themes.forest.colors['wash-top'])
+    expect(colors.secondarySystemBackground).toBe(themes.forest.colors.paper)
+    expect(colors.tint).toBe(themes.forest.colors.accent)
+    expect(colors.onTint).toBe(themes.forest.colors['on-accent'])
+    themePreferenceStore.set('dark')
+    expect(colors.label).toBe('ios:label')
+    themePreferenceStore.set('system')
+  })
+
   it('are read fresh each time, not frozen at import', () => {
     setOS('ios')
     const first = colors.label
@@ -61,9 +78,9 @@ describe('paletteFor', () => {
     expect(paletteFor(null)).toBe(palettes.light)
   })
 
-  it('resolves the chosen accent for the scheme', () => {
-    expect(paletteFor('dark', 'rose').accent).toBe('#ec90a6')
-    expect(paletteFor(null, 'graphite').accent).toBe('#2b2b2e')
-    expect(paletteFor('light', 'terracotta')).toBe(palettes.light)
+  it('resolves a named theme whatever the scheme', () => {
+    expect(paletteFor('dark', 'rose').accent).toBe('#a03752')
+    expect(paletteFor(null, 'obsidian').accent).toBe('#e3b65e')
+    expect(paletteFor('light', undefined)).toBe(palettes.light)
   })
 })

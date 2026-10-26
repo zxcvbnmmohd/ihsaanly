@@ -23,7 +23,6 @@ const backlog = await import('./prayer/backlog-store')
 const calculation = await import('./prayer/store')
 const fasting = await import('./fasting/store')
 const optIns = await import('./opt-ins/store')
-const accent = await import('./theme/accent-store')
 const reader = await import('./reader/store')
 const contentModule = await import('@ihsaanly/core/content')
 const { glossary } = await import('@ihsaanly/core/content/glossary')
@@ -194,16 +193,6 @@ const cases: Case<unknown>[] = [
     fallback: false,
     value: true,
     invalid: '"yes"',
-  },
-  {
-    name: 'accent',
-    key: 'accent',
-    get: accent.getAccent,
-    set: accent.setAccent as (value: unknown) => void,
-    use: accent.useAccent,
-    fallback: 'terracotta',
-    value: 'sage',
-    invalid: '"chartreuse"',
   },
   {
     name: 'reader preferences',

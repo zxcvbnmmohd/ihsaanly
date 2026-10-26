@@ -8,7 +8,7 @@ import {
 import { cityOf, type Place } from '@ihsaanly/core/location/place'
 import type { NotificationPreferences } from '@ihsaanly/core/plan/notification-preferences'
 import type { Strings } from '@ihsaanly/core/strings/en'
-import type { AccentName, Palette } from '@ihsaanly/tailwind/tokens'
+import type { Palette } from '@ihsaanly/tailwind/tokens'
 import { LinearGradient } from 'expo-linear-gradient'
 import { type ReactElement, type ReactNode, useState } from 'react'
 import {
@@ -23,8 +23,7 @@ import {
 } from 'react-native'
 import Animated, { FadeInRight, useReducedMotion } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { useColors, usePalette } from '../colors'
-import { AccentPicker } from '../components/accent-picker'
+import { useColors, usePalette, useSystemColors } from '../colors'
 import { Button } from '../components/button'
 import { ChoiceRow } from '../components/choice-row'
 import { Dropdown } from '../components/dropdown'
@@ -35,7 +34,9 @@ import { Row } from '../components/row'
 import { Surface } from '../components/surface'
 import { SwitchRow } from '../components/switch-row'
 import { TextField } from '../components/text-field'
+import { previewPalettes, ThemePicker } from '../components/theme-picker'
 import { serif } from '../fonts'
+import { appearanceName } from '../props/appearance'
 import { useUi } from '../provider'
 import type { Gender, OptIn } from '../types'
 import { THEME_PREFERENCES, type ThemePreference } from '../types'
@@ -48,7 +49,7 @@ export type OnboardingStep =
   | 'you'
   | 'start'
   | 'reminders'
-  | 'accent'
+  | 'theme'
   | 'widgets'
   | 'summary'
 
@@ -85,7 +86,7 @@ export type SetupRowId =
   | 'reminders'
   | 'tracking'
   | 'start'
-  | 'accent'
+  | 'theme'
   | 'widgets'
   | 'language'
 
@@ -115,7 +116,6 @@ export interface OnboardingScreenProps {
   enabledCount: number
   /** Prayer tracking is paused (the summary says so). */
   trackingPaused: boolean
-  accent: AccentName
   /** The sourced step's example; null only if content has nothing citing a hadith. */
   sourced: SourcedExample | null
   /** The reminders step's notifications; null where the host cannot notify (the web). */
@@ -125,9 +125,8 @@ export interface OnboardingScreenProps {
   /** The widget step's answer so far, or null where the host has no widgets. */
   widgets: WidgetsChoice | null
   onSelectLanguage: (language: SupportedLanguage) => void
-  onSelectTheme: (theme: ThemePreference) => void
   /** Stored at once, so the whole flow recolours as the person chooses. */
-  onSelectAccent: (accent: AccentName) => void
+  onSelectTheme: (theme: ThemePreference) => void
   onQueryChange: (query: string) => void
   onUseDevice: () => void
   onSelectPlace: (place: Place) => void
@@ -482,7 +481,7 @@ function ChoiceTile({
   onPress,
 }: ChoiceTileProps): ReactElement {
   const colors = useColors()
-  const { systemColors } = useUi()
+  const systemColors = useSystemColors()
   return (
     <Pressable
       accessibilityRole="radio"
@@ -735,9 +734,9 @@ function summaryLines(props: OnboardingScreenProps, strings: Strings): SummaryLi
       done: true,
     },
     {
-      id: 'accent',
-      title: summary.accent,
-      status: strings.appearance.accents[props.accent],
+      id: 'theme',
+      title: summary.theme,
+      status: appearanceName(strings, props.theme),
       done: true,
     },
     props.widgets
@@ -887,7 +886,11 @@ function StepBody(props: StepBodyProps): ReactElement {
                   value={props.theme}
                   options={THEME_PREFERENCES.map((option) => ({
                     value: option,
-                    label: strings.appearance[option],
+                    label: appearanceName(strings, option),
+                    swatch: previewPalettes(option).map((preview) => ({
+                      ground: preview.wash[0],
+                      mark: preview.accent,
+                    })),
                   }))}
                   onChange={props.onSelectTheme}
                   accent={palette.accent}
@@ -1142,11 +1145,11 @@ function StepBody(props: StepBodyProps): ReactElement {
         </>
       )
 
-    case 'accent':
+    case 'theme':
       return (
         <>
-          <Heading title={strings.onboarding.accentStep} body={strings.onboarding.accentWhy} />
-          <AccentPicker value={props.accent} onSelect={props.onSelectAccent} />
+          <Heading title={strings.onboarding.themeStep} body={strings.onboarding.themeWhy} />
+          <ThemePicker value={props.theme} onSelect={props.onSelectTheme} />
         </>
       )
 

@@ -1,6 +1,6 @@
 import type { ReactElement, ReactNode } from 'react'
 import { Platform, Text, View } from 'react-native'
-import { useColors, usePalette } from '../colors'
+import { useColors, usePalette, useSystemColors } from '../colors'
 import { Button } from '../components/button'
 import { Chip } from '../components/chip'
 import { Row } from '../components/row'
@@ -123,7 +123,8 @@ export function FeedbackScreen(props: FeedbackScreenProps): ReactElement {
     onOpenLink,
   } = props
   const colors = useColors()
-  const { strings, scheme, systemColors } = useUi()
+  const { strings, scheme } = useUi()
+  const systemColors = useSystemColors()
   const palette = usePalette()
   const copy = strings.feedback
   const errorColor = ERROR_COLOR[scheme === 'dark' ? 'dark' : 'light']

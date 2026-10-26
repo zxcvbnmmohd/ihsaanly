@@ -1,5 +1,6 @@
 import '../../test/more'
 import { afterAll, afterEach, beforeEach, describe, expect, it, mock } from 'bun:test'
+import { themes } from '@ihsaanly/tailwind/tokens'
 import { act, cleanup, render } from '@testing-library/react'
 import type { ReactElement, ReactNode } from 'react'
 import { AppState, I18nManager, Platform } from 'react-native'
@@ -229,6 +230,16 @@ describe('root layout', () => {
       expect(props.tintColor).toBeTruthy()
       expect(props.backgroundColor).toBeUndefined()
       expect(props.indicatorColor).toBe(props.rippleColor)
+    })
+
+    it('wears a named theme: its accent on the bar, its wash behind it', () => {
+      ;(Platform as { OS: string }).OS = 'android'
+      act(() => setThemePreference('forest'))
+      render(app())
+      const { colors } = themes.forest
+      expect(last(tabs.props).tintColor).toBe(colors.accent)
+      expect(last(tabs.props).backgroundColor).toBe(colors['wash-top'])
+      expect(last(tabs.props).indicatorColor).toBe(colors.indicator)
     })
 
     it('paints the Android bar with the top of the wash', () => {

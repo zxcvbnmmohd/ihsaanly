@@ -16,6 +16,7 @@
  * - `announcements`, `crashReports`: per-device opt-ins, below.
  */
 export const SYNCED_KEYS: ReadonlySet<string> = new Set([
+  'accent',
   'calculation',
   'enabledItems',
   'fastBacklog',

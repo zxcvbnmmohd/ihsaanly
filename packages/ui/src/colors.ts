@@ -1,4 +1,4 @@
-import { brand, palettes } from '@ihsaanly/tailwind/tokens'
+import { brand, type Palette, paletteFor } from '@ihsaanly/tailwind/tokens'
 import type { ColorValue } from 'react-native'
 
 import { useUi } from './provider'
@@ -37,15 +37,21 @@ export interface Colors {
   onTint: ColorValue
 }
 
+/** The brand palette for the scheme being rendered, under the chosen accent. */
+export function usePalette(): Palette {
+  const { scheme, accent } = useUi()
+  return paletteFor(scheme, accent)
+}
+
 export function useColors(): Colors {
-  const { scheme, systemColors } = useUi()
-  const palette = palettes[scheme]
+  const { scheme, accent, systemColors } = useUi()
+  const palette = paletteFor(scheme, accent)
 
   return {
     washTop: palette.wash[0],
     washBottom: palette.wash[1],
     accent: palette.accent,
-    accentInk: brand['accent-ink'][scheme],
+    accentInk: palette.accentInk,
     onAccent: palette.onAccent,
     paper: brand.paper[scheme],
     ink: palette.ink,
@@ -57,7 +63,7 @@ export function useColors(): Colors {
     rule: brand.rule[scheme],
     ruleStrong: brand['rule-strong'][scheme],
     fieldBorder: brand['field-border'][scheme],
-    tint: brand.tint[scheme],
+    tint: palette.tint,
     label: systemColors.label,
     secondaryLabel: systemColors.secondaryLabel,
     separator: systemColors.separator,

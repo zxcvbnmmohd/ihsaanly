@@ -440,6 +440,22 @@ export const so: Strings = {
     light: 'Iftiin',
     dark: 'Mugdi',
     note: 'Midabbadu weli nidaamka ayey ka yimaadaan, sidaa darteed dejintiisa kala-soocidda midabka way shaqeysaa labada xaaladoodba.',
+    accentTitle: 'Midabka astaanta',
+    accentNote:
+      'Calaamadaha, badhamada iyo xiriiriyeyaasha, halkan iyo widget-yada iyo kaararka la wadaago.',
+    accentSample: 'Aa',
+    accents: {
+      terracotta: 'Dhoobo dubban',
+      amber: 'Cambar',
+      sage: 'Caleen',
+      teal: 'Cagaar-buluug',
+      denim: 'Buluug jiinis',
+      indigo: 'Niili',
+      plum: 'Guduud',
+      rose: 'Casaan ubax',
+      clay: 'Dhoobo',
+      graphite: 'Dambas',
+    },
   },
   startingPoint: {
     title: 'Meel laga bilaabo',

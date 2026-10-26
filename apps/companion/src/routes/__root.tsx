@@ -7,7 +7,8 @@
 
 import { getOnboarding } from '@ihsaanly/state/onboarding/store'
 import { useStrings } from '@ihsaanly/state/strings'
-import { palettes } from '@ihsaanly/tailwind/tokens'
+import { useAccent } from '@ihsaanly/state/theme/accent-store'
+import { paletteFor } from '@ihsaanly/tailwind/tokens'
 import { EmptyState } from '@ihsaanly/ui/components/empty-state'
 import { Screen } from '@ihsaanly/ui/components/screen'
 import { useUi } from '@ihsaanly/ui/provider'
@@ -195,6 +196,7 @@ function AppShell(): ReactElement {
 
 function RootShell(): ReactElement {
   const strings = useStrings()
+  const accent = useAccent()
   useDocumentHead()
   const inOnboarding = useRouterState({
     select: (state) =>
@@ -202,7 +204,7 @@ function RootShell(): ReactElement {
   })
 
   return (
-    <WebUiProvider strings={strings} Link={RouterLink}>
+    <WebUiProvider strings={strings} Link={RouterLink} accent={accent}>
       {inOnboarding ? <Outlet /> : <AppShell />}
       <DevelopmentBadge />
     </WebUiProvider>
@@ -215,8 +217,8 @@ function RootShell(): ReactElement {
  * above it and does not need a second one.
  */
 function NotFoundRoute(): ReactNode {
-  const { strings, scheme } = useUi()
-  const palette = palettes[scheme]
+  const { strings, scheme, accent } = useUi()
+  const palette = paletteFor(scheme, accent)
   return (
     <Screen palette={palette} className="grow items-center justify-center gap-4 p-6">
       <EmptyState message={strings.notFound.body} />

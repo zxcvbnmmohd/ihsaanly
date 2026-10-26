@@ -3,10 +3,9 @@ import type {
   QuietHours,
 } from '@ihsaanly/core/plan/notification-preferences'
 import type { Strings } from '@ihsaanly/core/strings/en'
-import { palettes } from '@ihsaanly/tailwind/tokens'
 import type { ReactElement } from 'react'
 import { Text, View } from 'react-native'
-import { useColors } from '../colors'
+import { useColors, usePalette } from '../colors'
 import { Button } from '../components/button'
 import { ChoiceRow } from '../components/choice-row'
 import { Row } from '../components/row'
@@ -100,8 +99,8 @@ export function NotificationsScreen({
   onSendTest,
   announcements,
 }: NotificationsScreenProps): ReactElement {
-  const { strings, scheme } = useUi()
-  const palette = palettes[scheme]
+  const { strings } = useUi()
+  const palette = usePalette()
 
   return (
     <Screen palette={palette} className="gap-8 p-4">

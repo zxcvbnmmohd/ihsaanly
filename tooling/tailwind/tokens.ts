@@ -8,16 +8,132 @@ type Scheme = 'light' | 'dark'
 type PerScheme = Record<Scheme, string>
 
 /**
+ * The named accents a person can choose, independent of System / Light / Dark.
+ * Terracotta is the brand's own and the default. The wash, paper and ink stay
+ * the same under every accent; only the accent and what is derived from it
+ * change. Each one passes WCAG AA on that wash in both schemes (tokens.test.ts
+ * checks it): `accent` 4.5:1 on the wash's top and on paper and 3:1 on its
+ * deepest point, `accent-ink` 4.5:1 everywhere on the wash, `on-accent` 4.5:1
+ * on the accent.
+ */
+export const ACCENTS = [
+  'terracotta',
+  'amber',
+  'sage',
+  'teal',
+  'denim',
+  'indigo',
+  'plum',
+  'rose',
+  'clay',
+  'graphite',
+] as const
+export type AccentName = (typeof ACCENTS)[number]
+export const DEFAULT_ACCENT: AccentName = 'terracotta'
+
+/** An accent's own colours, before the tints derived from it. */
+interface AccentBase {
+  accent: PerScheme
+  /** Link text on the wash: the accent, deepened just enough for 4.5:1 there. */
+  'accent-ink': PerScheme
+  'on-accent': PerScheme
+}
+
+const accentBases: Record<AccentName, AccentBase> = {
+  terracotta: {
+    accent: { light: '#a94a32', dark: '#e28c6f' },
+    'accent-ink': { light: '#93402b', dark: '#eba088' },
+    'on-accent': { light: '#fff6f0', dark: '#1d120d' },
+  },
+  amber: {
+    accent: { light: '#8a5a12', dark: '#e3b65e' },
+    'accent-ink': { light: '#7a4f0f', dark: '#ebc47a' },
+    'on-accent': { light: '#fff8ec', dark: '#1e150d' },
+  },
+  sage: {
+    accent: { light: '#4f6b45', dark: '#a3c293' },
+    'accent-ink': { light: '#455e3c', dark: '#b4cfa6' },
+    'on-accent': { light: '#f6fbf3', dark: '#131a10' },
+  },
+  teal: {
+    accent: { light: '#1f6b6b', dark: '#6fc2bd' },
+    'accent-ink': { light: '#1a5d5d', dark: '#88cfca' },
+    'on-accent': { light: '#f0fbfa', dark: '#0c1918' },
+  },
+  denim: {
+    accent: { light: '#2f5f8f', dark: '#86b3e0' },
+    'accent-ink': { light: '#29537d', dark: '#9cc2e8' },
+    'on-accent': { light: '#f2f7fd', dark: '#0d1724' },
+  },
+  indigo: {
+    accent: { light: '#4a4fa3', dark: '#a3a8ec' },
+    'accent-ink': { light: '#41458f', dark: '#b5b9f0' },
+    'on-accent': { light: '#f5f5ff', dark: '#13132a' },
+  },
+  plum: {
+    accent: { light: '#7d3f73', dark: '#d79acb' },
+    'accent-ink': { light: '#6e3765', dark: '#e0aed6' },
+    'on-accent': { light: '#fdf3fb', dark: '#1f1020' },
+  },
+  rose: {
+    accent: { light: '#a33a55', dark: '#ec90a6' },
+    'accent-ink': { light: '#90334b', dark: '#f1a7b9' },
+    'on-accent': { light: '#fff3f5', dark: '#24100f' },
+  },
+  clay: {
+    accent: { light: '#8c5a43', dark: '#d4a48c' },
+    'accent-ink': { light: '#7c4f3b', dark: '#ddb49f' },
+    'on-accent': { light: '#fff7f2', dark: '#1e140f' },
+  },
+  /** High contrast: near-black on the light wash, near-white on the dark. */
+  graphite: {
+    accent: { light: '#2b2b2e', dark: '#ececf0' },
+    'accent-ink': { light: '#252528', dark: '#f4f4f6' },
+    'on-accent': { light: '#ffffff', dark: '#141416' },
+  },
+}
+
+/** `#a94a32` at 0.16 → `rgba(169, 74, 50, 0.16)`. */
+function withAlpha(hex: string, alpha: number): string {
+  const value = Number.parseInt(hex.slice(1), 16)
+  return `rgba(${(value >> 16) & 255}, ${(value >> 8) & 255}, ${value & 255}, ${alpha})`
+}
+
+/** Every colour an accent decides, the tints included. */
+export interface AccentTokens extends AccentBase {
+  /** The tab indicator and press ripple: a tint of the accent, not the accent itself. */
+  indicator: PerScheme
+  tint: PerScheme
+}
+
+function accentTokens(base: AccentBase): AccentTokens {
+  return {
+    ...base,
+    indicator: {
+      light: withAlpha(base.accent.light, 0.16),
+      dark: withAlpha(base.accent.dark, 0.22),
+    },
+    tint: { light: withAlpha(base.accent.light, 0.1), dark: withAlpha(base.accent.dark, 0.14) },
+  }
+}
+
+export const accents = Object.fromEntries(
+  ACCENTS.map((name) => [name, accentTokens(accentBases[name])]),
+) as Record<AccentName, AccentTokens>
+
+const terracotta = accents.terracotta
+
+/**
  * Brand colours, the same in every app. Each becomes a Tailwind colour:
  * `wash-top` → `bg-wash-top`, `text-wash-top` and so on.
  */
 export const brand = {
   'wash-top': { light: '#f7f0e9', dark: '#1b1411' },
   'wash-bottom': { light: '#e8cdbd', dark: '#3a241d' },
-  accent: { light: '#a94a32', dark: '#e28c6f' },
+  accent: terracotta.accent,
   /** Link text on the wash: the accent, deepened just enough for 4.5:1 there. */
-  'accent-ink': { light: '#93402b', dark: '#eba088' },
-  'on-accent': { light: '#fff6f0', dark: '#1d120d' },
+  'accent-ink': terracotta['accent-ink'],
+  'on-accent': terracotta['on-accent'],
   /** Cards and widgets: a warm paper, not a grey surface. */
   paper: { light: '#fffaf6', dark: '#2a1c17' },
   ink: { light: '#2b1f1a', dark: '#f7ece6' },
@@ -30,13 +146,13 @@ export const brand = {
   /** Android cards and the web: a warm veil over the wash instead of a grey surface. */
   surface: { light: 'rgba(255, 250, 246, 0.78)', dark: 'rgba(255, 246, 240, 0.08)' },
   /** The tab indicator and press ripple: a tint of the accent, not the accent itself. */
-  indicator: { light: 'rgba(169, 74, 50, 0.16)', dark: 'rgba(226, 140, 111, 0.22)' },
+  indicator: terracotta.indicator,
   rule: { light: 'rgba(43, 31, 26, 0.14)', dark: 'rgba(247, 236, 230, 0.16)' },
   /** The outline of an interactive control on the wash: 3:1 (WCAG 1.4.11), which `rule` is not. */
   'rule-strong': { light: '#7d6d63', dark: '#8c766c' },
   /** A text field's resting border, and an unmarked checkbox ring: 3:1 on the app's surfaces and the wash's deepest point. */
   'field-border': { light: '#717177', dark: '#85858a' },
-  tint: { light: 'rgba(169, 74, 50, 0.1)', dark: 'rgba(226, 140, 111, 0.14)' },
+  tint: terracotta.tint,
 } satisfies Record<string, PerScheme>
 
 /**
@@ -98,30 +214,45 @@ export const fonts = {
 export interface Palette {
   wash: readonly [string, string]
   accent: string
+  accentInk: string
   onAccent: string
   knob: string
   surface: string
   indicator: string
+  tint: string
   ink: string
   inkSecondary: string
   widgetSurface: string
 }
 
-function paletteOf(scheme: Scheme): Palette {
+function paletteOf(scheme: Scheme, accent: AccentTokens): Palette {
   return {
     wash: [brand['wash-top'][scheme], brand['wash-bottom'][scheme]],
-    accent: brand.accent[scheme],
-    onAccent: brand['on-accent'][scheme],
+    accent: accent.accent[scheme],
+    accentInk: accent['accent-ink'][scheme],
+    onAccent: accent['on-accent'][scheme],
     knob: brand.knob[scheme],
     surface: brand.surface[scheme],
-    indicator: brand.indicator[scheme],
+    indicator: accent.indicator[scheme],
+    tint: accent.tint[scheme],
     ink: brand.ink[scheme],
     inkSecondary: brand['ink-secondary'][scheme],
     widgetSurface: brand.paper[scheme],
   }
 }
 
-export const palettes: Record<Scheme, Palette> = {
-  light: paletteOf('light'),
-  dark: paletteOf('dark'),
+/** Built once, so the same scheme and accent always give the same object. */
+const accentPalettes = Object.fromEntries(
+  ACCENTS.map((name) => [
+    name,
+    { light: paletteOf('light', accents[name]), dark: paletteOf('dark', accents[name]) },
+  ]),
+) as Record<AccentName, Record<Scheme, Palette>>
+
+/** The default accent's palettes. */
+export const palettes: Record<Scheme, Palette> = accentPalettes[DEFAULT_ACCENT]
+
+/** The palette for a scheme under a chosen accent; the default accent when none is given. */
+export function paletteFor(scheme: Scheme, accent: AccentName = DEFAULT_ACCENT): Palette {
+  return accentPalettes[accent][scheme]
 }

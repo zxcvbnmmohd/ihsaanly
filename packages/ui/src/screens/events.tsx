@@ -1,7 +1,6 @@
-import { palettes } from '@ihsaanly/tailwind/tokens'
 import type { ReactElement } from 'react'
 import { Text, View } from 'react-native'
-import { useColors } from '../colors'
+import { useColors, usePalette } from '../colors'
 import { Row } from '../components/row'
 import { Screen } from '../components/screen'
 import { SwitchRow } from '../components/switch-row'
@@ -30,8 +29,8 @@ export function EventsScreen({
   onToggleManual,
 }: EventsScreenProps): ReactElement {
   const colors = useColors()
-  const { strings, scheme } = useUi()
-  const palette = palettes[scheme]
+  const { strings } = useUi()
+  const palette = usePalette()
 
   // On with nowhere to watch does nothing at all, and said nothing about it.
   const watchingNothing = settings.detectHome && !settings.home

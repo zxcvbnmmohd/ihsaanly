@@ -101,6 +101,25 @@ describe('the widget timeline', () => {
   })
 })
 
+describe('the widget colours', () => {
+  it('are terracotta when no accent is given', () => {
+    const [entry] = widgetTimeline(input())
+    expect(entry?.ink.light).toMatchObject({ accent: '#a94a32', onAccent: '#fff6f0' })
+    expect(entry?.ink.dark).toMatchObject({ accent: '#e28c6f', onAccent: '#1d120d' })
+  })
+
+  it('take the chosen accent in both schemes, on every entry, over the same wash', () => {
+    const plain = widgetTimeline(input())
+    const timeline = widgetTimeline({ ...input(), accent: 'teal' })
+    for (const entry of timeline) {
+      expect(entry.ink.light).toMatchObject({ accent: '#1f6b6b', onAccent: '#f0fbfa' })
+      expect(entry.ink.dark).toMatchObject({ accent: '#6fc2bd', onAccent: '#0c1918' })
+    }
+    expect(timeline[0]?.ink.light.background).toBe(plain[0]?.ink.light.background ?? '')
+    expect(timeline[0]?.ink.dark.label).toBe(plain[0]?.ink.dark.label ?? '')
+  })
+})
+
 describe('the widget timeline across a Friday', () => {
   // Thursday 21:00 in London, so the day ahead runs through Friday midday.
   const thursdayEvening = new Date('2026-09-24T20:00:00Z')

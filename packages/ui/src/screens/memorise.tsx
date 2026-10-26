@@ -1,8 +1,7 @@
 import type { Reveal } from '@ihsaanly/core/memorise/reveal'
-import { palettes } from '@ihsaanly/tailwind/tokens'
 import type { ReactElement } from 'react'
 import { Text, View } from 'react-native'
-import { useColors } from '../colors'
+import { useColors, usePalette } from '../colors'
 import { ArabicText } from '../components/arabic-text'
 import { Row } from '../components/row'
 import { Screen } from '../components/screen'
@@ -26,8 +25,8 @@ export interface MemoriseScreenProps {
 
 export function MemoriseScreen(props: MemoriseScreenProps): ReactElement {
   const colors = useColors()
-  const { strings, scheme } = useUi()
-  const palette = palettes[scheme]
+  const { strings } = useUi()
+  const palette = usePalette()
 
   return (
     <Screen palette={palette} className="gap-6 p-4">

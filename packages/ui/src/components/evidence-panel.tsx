@@ -6,7 +6,7 @@ import { Text, View } from 'react-native'
 import { useColors } from '../colors'
 import { useUi } from '../provider'
 
-function citationFor(evidence: Evidence, strings: Strings): string {
+export function citationFor(evidence: Evidence, strings: Strings): string {
   if (evidence.type === 'quran') {
     return strings.item.quranReference(evidence.surah, evidence.ayah)
   }

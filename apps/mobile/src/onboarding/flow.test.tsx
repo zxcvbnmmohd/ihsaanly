@@ -36,9 +36,13 @@ const { DEFAULT_ANNOUNCEMENTS, getAnnouncements, setAnnouncements } = await impo
   '@ihsaanly/state/opt-ins/store'
 )
 const { push } = await import('../../test/firebase')
+const { getOnboarding, setOnboarding } = await import('@ihsaanly/state/onboarding/store')
+const { openPendingDestination } = await import('./destination')
+const { router, resetRouter } = await import('../../test/router')
 
 interface Screen {
   step: string
+  onNotNow: () => void
   theme: string
   problem: string | null
   locating: boolean
@@ -48,6 +52,12 @@ interface Screen {
   onRestore: (() => void) | undefined
   onToggleReminders: (on: boolean) => void
   announcements: { on: boolean; onChange: (on: boolean) => void } | undefined
+  stepCount: number
+  widgets: string | null
+  reminderPreview: unknown
+  widgetPreview: unknown
+  onShowWidgets: () => void
+  onOpenSetting: (row: string) => void
 }
 const screen = (): Screen => onboardingScreens.at(-1) as unknown as Screen
 interface RestoreScreen {
@@ -94,6 +104,8 @@ beforeEach(() => {
   setPlace(null as never)
   setNotificationPreferences({ ...DEFAULT_NOTIFICATION_PREFERENCES, windows: true })
   setAnnouncements(DEFAULT_ANNOUNCEMENTS)
+  setOnboarding({ completed: false, gender: 'unspecified' })
+  resetRouter()
   spies.push(spyOn(restore, 'useRestoreOutcome').mockImplementation((() => outcome) as never))
   spies.push(
     spyOn(BackHandler, 'addEventListener').mockImplementation((() => ({
@@ -131,6 +143,40 @@ describe('OnboardingFlow steps', () => {
     act(() => screen().onNext())
     expect(screen().step).toBe('how')
   })
+
+  it('offers the widget step, previewed from the plan', () => {
+    mount()
+    expect(screen().stepCount).toBe(10)
+    expect(screen().widgets).toBe('later')
+    // "Not now" past the reminders step, which would otherwise wait on the OS.
+    for (let i = 0; i < 8; i++) act(() => screen().onNotNow())
+    expect(screen().step).toBe('widgets')
+    expect(screen().widgetPreview).not.toBeNull()
+  })
+
+  it('previews notifications on the reminders step, since it can ask for them', () => {
+    mount()
+    for (let i = 0; i < 6; i++) act(() => screen().onNext())
+    expect(screen().reminderPreview).not.toBeNull()
+  })
+
+  it('leaves the setting a summary row asked for to open once the tabs are up', () => {
+    mount()
+    act(() => screen().onOpenSetting('reminders'))
+    expect(getOnboarding().completed).toBe(true)
+    openPendingDestination()
+    expect(router.calls).toContainEqual(['push', '/notifications'])
+  })
+
+  it('finishing without a destination leaves nothing to open', () => {
+    mount()
+    for (let i = 0; i < 9; i++) act(() => screen().onNotNow())
+    expect(screen().step).toBe('summary')
+    act(() => screen().onNext())
+    expect(getOnboarding().completed).toBe(true)
+    openPendingDestination()
+    expect(router.calls).toEqual([])
+  })
 })
 
 describe('device location', () => {
@@ -166,7 +212,7 @@ describe('device location', () => {
 describe('the reminders step', () => {
   function toReminders(): ReturnType<typeof mount> {
     const mounted = mount()
-    for (let i = 0; i < 4; i++) act(() => screen().onNext())
+    for (let i = 0; i < 6; i++) act(() => screen().onNext())
     expect(screen().step).toBe('reminders')
     return mounted
   }
@@ -176,7 +222,7 @@ describe('the reminders step', () => {
     act(() => screen().onNext())
     await settle()
     expect(fake.categories.length).toBeGreaterThan(0)
-    expect(screen().step).toBe('start')
+    expect(screen().step).toBe('accent')
   })
 
   it('offers announcements, off until chosen', async () => {
@@ -184,7 +230,7 @@ describe('the reminders step', () => {
     expect(screen().announcements?.on).toBe(false)
     await run(() => screen().onNext())
     await settle()
-    expect(screen().step).toBe('start')
+    expect(screen().step).toBe('accent')
     expect(getAnnouncements().enabled).toBe(false)
   })
 
@@ -198,7 +244,7 @@ describe('the reminders step', () => {
     await settle()
     await settle()
 
-    expect(screen().step).toBe('start')
+    expect(screen().step).toBe('accent')
     expect(getAnnouncements().enabled).toBe(true)
     expect(push.topics.has('announcements')).toBe(true)
   })
@@ -212,7 +258,7 @@ describe('the reminders step', () => {
     await run(() => screen().onNext())
     await settle()
 
-    expect(screen().step).toBe('start')
+    expect(screen().step).toBe('accent')
     expect(getAnnouncements()).toEqual(DEFAULT_ANNOUNCEMENTS)
     expect(push.topics.size).toBe(0)
   })
@@ -222,7 +268,7 @@ describe('the reminders step', () => {
     toReminders()
     act(() => screen().onNext())
     await settle()
-    expect(screen().step).toBe('start')
+    expect(screen().step).toBe('accent')
   })
 })
 

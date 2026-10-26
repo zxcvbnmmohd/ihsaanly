@@ -111,16 +111,26 @@ export const en = {
     testTitle: 'A test reminder',
     testBody: 'This is what a reminder from Ihsaanly looks like.',
     pausedRemembrance: 'Time for remembrance',
+    prayerArrived: (prayer: string): string => `${prayer} has come in`,
+    prayerAsk: {
+      fajr: 'Have you prayed? A few quiet minutes before the day starts asking for you.',
+      dhuhr: 'Have you prayed? A pause in the middle of the day, before it carries on.',
+      asr: "Have you prayed? It's the one that's easiest to lose track of.",
+      maghrib: 'Have you prayed? Its time is short, so now is a good moment.',
+      isha: 'Have you prayed? One more before the day is done.',
+      jumuah: 'Have you prayed? Once a week, together.',
+    },
     checkIn: 'A quick check-in from Ihsaanly',
     action: {
       done: 'Done',
       later: 'Later',
+      prayed: "Yes, I've prayed",
+      notYet: 'Not yet',
     },
     body: {
       window: 'Now, until the window closes.',
       windowUntil: (closes: string): string => `Open until ${closes}.`,
       tomorrow: 'Tomorrow.',
-      prayerWindow: 'The time has entered. The window stays open until the next prayer.',
     },
   },
   event: {

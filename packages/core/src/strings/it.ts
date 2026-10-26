@@ -121,16 +121,26 @@ export const it: Strings = {
     testTitle: 'Un promemoria di prova',
     testBody: 'Ecco come appare un promemoria di Ihsaanly.',
     pausedRemembrance: 'È il momento del dhikr',
+    prayerArrived: (prayer: string): string => `È entrato il tempo di ${prayer}`,
+    prayerAsk: {
+      fajr: 'Hai pregato? Pochi minuti di calma, prima che la giornata ti chiami.',
+      dhuhr: 'Hai pregato? Una pausa a metà giornata, prima che riprenda.',
+      asr: 'Hai pregato? È quella che si perde di vista più facilmente.',
+      maghrib: 'Hai pregato? Il suo tempo è breve, questo è il momento giusto.',
+      isha: 'Hai pregato? Un’ultima, prima che la giornata finisca.',
+      jumuah: 'Hai pregato? Una volta a settimana, insieme.',
+    },
     checkIn: 'Un breve saluto da Ihsaanly',
     action: {
       done: 'Fatto',
       later: 'Più tardi',
+      prayed: 'Sì, ho pregato',
+      notYet: 'Non ancora',
     },
     body: {
       window: 'Adesso, finché la fascia non si chiude.',
       windowUntil: (closes: string): string => `Aperta fino alle ${closes}.`,
       tomorrow: 'Domani.',
-      prayerWindow: 'È entrato il tempo. La fascia resta aperta fino alla preghiera successiva.',
     },
   },
   event: {

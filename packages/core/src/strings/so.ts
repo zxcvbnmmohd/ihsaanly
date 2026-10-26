@@ -123,16 +123,26 @@ export const so: Strings = {
     testTitle: 'Xusuusiye tijaabo ah',
     testBody: 'Sidan ayuu u eg yahay xusuusiye ka yimaada Ihsaanly.',
     pausedRemembrance: 'Waa waqtigii adkaarta',
+    prayerArrived: (prayer: string): string => `Waqtigii ${prayer} waa galay`,
+    prayerAsk: {
+      fajr: 'Ma tukatay? Daqiiqado degan ka hor inta maalintu aysan bilaabmin.',
+      dhuhr: 'Ma tukatay? Hakad yar oo maalinta dhexdeeda ah.',
+      asr: 'Ma tukatay? Waa tan ugu fudud in laga illoobo.',
+      maghrib: 'Ma tukatay? Waqtigeedu waa gaaban yahay, hadda waa wakhti fiican.',
+      isha: 'Ma tukatay? Mid kale ka hor inta maalintu aysan dhammaan.',
+      jumuah: 'Ma tukatay? Toddobaadkii mar, si wadajir ah.',
+    },
     checkIn: 'Salaan kooban oo ka yimid Ihsaanly',
     action: {
       done: 'Waa la sameeyey',
       later: 'Goor dambe',
+      prayed: 'Haa, waan tukaday',
+      notYet: 'Weli',
     },
     body: {
       window: 'Hadda, ilaa waqtigu ka dhammaanayo.',
       windowUntil: (closes: string): string => `Furan ilaa ${closes}.`,
       tomorrow: 'Berri.',
-      prayerWindow: 'Waqtigii waa galay. Wuu furnaanayaa ilaa salaadda xigta.',
     },
   },
   event: {

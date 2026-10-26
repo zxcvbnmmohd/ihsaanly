@@ -8,6 +8,7 @@ import { type Phase, SUGGESTION_INTERVAL_MS, suggest } from '@ihsaanly/core/plan
 import { PRAYERS, type Prayer } from '@ihsaanly/core/prayer/qada'
 import { prayerTimesAcross } from '@ihsaanly/core/prayer/times'
 import { buildWindows } from '@ihsaanly/core/prayer/windows'
+import { resetCoachTours } from '@ihsaanly/state/coach/tours'
 import {
   clearFastOwed,
   recordFastOwed,
@@ -73,6 +74,11 @@ export default function TodayRoute(): ReactElement {
     replayTour: tour === '1',
     onTourEnd: () => router.setParams({ tour: undefined }),
   })
+  // More → Show me around replays Today's tour here and every other
+  // surface's (the focused reader's) the next time it opens.
+  useEffect(() => {
+    if (tour === '1') resetCoachTours()
+  }, [tour])
   const hijriOffset = useHijriOffset()
   const fastsOwed = useFastsOutstanding()
   const todayCivil = civilDateIn(now, timeZone)

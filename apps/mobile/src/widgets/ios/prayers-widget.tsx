@@ -1,5 +1,6 @@
 import {
   AccessoryWidgetBackground,
+  Button,
   Circle,
   Gauge,
   HStack,
@@ -10,6 +11,7 @@ import {
   ZStack,
 } from '@expo/ui/swift-ui'
 import {
+  buttonStyle,
   containerBackground,
   font,
   foregroundStyle,
@@ -146,7 +148,16 @@ function PrayersWidget(props: WidgetModel, environment: WidgetEnvironment): Reac
     return panel(say(props.labels.openApp, 'headline', 'label', 4), home)
   }
 
-  const prayers = props.prayers
+  // A prayer marked on this widget and not yet filed by the app reads as done.
+  const taps = props.taps ?? []
+  const prayers = props.prayers.map((prayer) =>
+    prayer.since !== undefined &&
+    taps.some(
+      (tap) => tap.kind === 'prayer' && tap.id === prayer.id && tap.at >= (prayer.since ?? 0),
+    )
+      ? { ...prayer, done: true }
+      : prayer,
+  )
   // Empty means tracking is paused: nothing is asked, so nothing is counted.
   if (prayers.length === 0) {
     if (family === 'accessoryInline') return inline(props.labels.nothingNow, home)
@@ -195,6 +206,21 @@ function PrayersWidget(props: WidgetModel, environment: WidgetEnvironment): Reac
       />
     )
   }
+  // Once its window has opened an unmarked prayer is a button that marks it
+  // prayed, as on Today's strip; each has its own target, which is how the
+  // press finds its handler.
+  const tappable = (prayer: (typeof prayers)[number], content: ReactElement): ReactElement =>
+    prayer.done || prayer.since === undefined ? (
+      content
+    ) : (
+      <Button
+        key={prayer.name}
+        target={`prayer-${prayer.id}`}
+        onPress={() => ({ taps: [...taps, { kind: 'prayer', id: prayer.id, at: Date.now() }] })}
+        modifiers={[buttonStyle('plain')]}>
+        {content}
+      </Button>
+    )
   const order = props.rtl ? [...prayers].reverse() : prayers
   const dots = (size: number): ReactElement => (
     <HStack spacing={size / 2}>{order.map((prayer) => mark(prayer, size))}</HStack>
@@ -240,17 +266,20 @@ function PrayersWidget(props: WidgetModel, environment: WidgetEnvironment): Reac
         {heading(`${props.labels.prayers} · ${count}`)}
         <Spacer />
         <HStack spacing={12}>
-          {order.map((prayer) => (
-            <VStack key={prayer.name} spacing={6}>
-              {mark(prayer, 28)}
-              {say(
-                prayer.name,
-                'caption',
-                prayer.passed && !prayer.done ? 'secondary' : 'label',
-                1,
-              )}
-            </VStack>
-          ))}
+          {order.map((prayer) =>
+            tappable(
+              prayer,
+              <VStack key={prayer.name} spacing={6}>
+                {mark(prayer, 28)}
+                {say(
+                  prayer.name,
+                  'caption',
+                  prayer.passed && !prayer.done ? 'secondary' : 'label',
+                  1,
+                )}
+              </VStack>,
+            ),
+          )}
         </HStack>
         <Spacer />
       </>,
@@ -262,16 +291,24 @@ function PrayersWidget(props: WidgetModel, environment: WidgetEnvironment): Reac
     <>
       {heading(props.labels.prayers)}
       {say(count, 'largeTitle', 'label', 1, 'bold')}
-      {prayers.map((prayer) => (
-        <HStack key={prayer.name} spacing={12}>
-          {props.rtl
-            ? say(prayer.name, 'title3', prayer.passed && !prayer.done ? 'secondary' : 'label', 1)
-            : mark(prayer, 24)}
-          {props.rtl
-            ? mark(prayer, 24)
-            : say(prayer.name, 'title3', prayer.passed && !prayer.done ? 'secondary' : 'label', 1)}
-        </HStack>
-      ))}
+      {prayers.map((prayer) =>
+        tappable(
+          prayer,
+          <HStack key={prayer.name} spacing={12}>
+            {props.rtl
+              ? say(prayer.name, 'title3', prayer.passed && !prayer.done ? 'secondary' : 'label', 1)
+              : mark(prayer, 24)}
+            {props.rtl
+              ? mark(prayer, 24)
+              : say(
+                  prayer.name,
+                  'title3',
+                  prayer.passed && !prayer.done ? 'secondary' : 'label',
+                  1,
+                )}
+          </HStack>,
+        ),
+      )}
     </>,
     home,
   )

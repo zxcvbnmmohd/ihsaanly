@@ -6,6 +6,7 @@ import { useOnboarding } from '@ihsaanly/state/onboarding/store'
 import { startProgress } from '@ihsaanly/state/progress/configure'
 import { useStrings } from '@ihsaanly/state/strings'
 import { RecedeProvider } from '@ihsaanly/ui/components/recede'
+import { Toast } from '@ihsaanly/ui/components/toast'
 import { NativeTabs } from 'expo-router/native-tabs'
 import { DarkTheme, DefaultTheme, ThemeProvider } from 'expo-router/react-navigation'
 import { StatusBar } from 'expo-status-bar'
@@ -16,8 +17,10 @@ import { cloudEnabled, startMobileCloud } from '@/cloud'
 import { startMobileContentUpdates } from '@/content/updates'
 import { startCrashReporting } from '@/crash/crash'
 import { useNotificationResponse } from '@/notifications/use-response'
+import { openPendingDestination } from '@/onboarding/destination'
 import { OnboardingFlow } from '@/onboarding/flow'
 import { useAnnouncements } from '@/push/use-announcements'
+import { REMOTE_MARK_TOAST_MS, useRemoteMarkToast } from '@/remote-marks/use-remote-mark-toast'
 import { colors } from '@/theme/colors'
 import {
   applyThemePreference,
@@ -43,6 +46,13 @@ startProgress()
  * outside the filesystem. `anchor` stays because it governs back behaviour.
  */
 export const unstable_settings = { anchor: '(home)' }
+
+/**
+ * Room for the native tab bar under a toast drawn over the whole app: UIKit's
+ * bar (49pt, a little more for iOS 26's floating one) and Material's
+ * navigation bar (80dp), plus a gap.
+ */
+const TAB_BAR_ROOM = Platform.OS === 'android' ? 88 : 64
 
 /**
  * Expo Router renders this instead of a white screen when a render throws.
@@ -91,6 +101,7 @@ export default function RootLayout(): ReactElement {
   const onboarding = useOnboarding()
   useNotificationResponse(onboarding.completed)
   useAnnouncements(onboarding.completed)
+  const remoteMarks = useRemoteMarkToast()
 
   // Crash reporting as the person left it; off unless they turned it on.
   useEffect(() => {
@@ -112,6 +123,13 @@ export default function RootLayout(): ReactElement {
       stop()
     }
   }, [])
+
+  // A summary row (or "Show me how") asked for somewhere other than Today: go
+  // there once the tabs exist, which is after the render that mounts them.
+  const settled = onboarding.completed && !thing.restoring
+  useEffect(() => {
+    if (settled) openPendingDestination()
+  }, [settled])
 
   // Onboarding replaces the tab bar rather than sitting over it: there is
   // nothing to navigate to until it is done.
@@ -170,6 +188,13 @@ export default function RootLayout(): ReactElement {
               <NativeTabs.Trigger.Label>{strings.tabs.more}</NativeTabs.Trigger.Label>
             </NativeTabs.Trigger>
           </NativeTabs>
+          {/* Marks made from a widget or a notification while the app was closed. */}
+          <Toast
+            toast={remoteMarks.toast}
+            onDismiss={remoteMarks.onDismiss}
+            durationMs={REMOTE_MARK_TOAST_MS}
+            offset={TAB_BAR_ROOM}
+          />
         </ThemeProvider>
       </RecedeProvider>
     </MobileUiProvider>

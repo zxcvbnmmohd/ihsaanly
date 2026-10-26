@@ -4,6 +4,9 @@
 export const THEME_PREFERENCES = ['system', 'light', 'dark'] as const
 export type ThemePreference = (typeof THEME_PREFERENCES)[number]
 
+/** The named accents, independent of the theme; tokens.ts defines their colours. */
+export { ACCENTS, type AccentName, DEFAULT_ACCENT } from '@ihsaanly/tailwind/tokens'
+
 export type Gender = 'female' | 'male' | 'unspecified'
 
 export type PermissionStatus = 'granted' | 'denied' | 'undetermined' | 'unavailable'

@@ -11,7 +11,9 @@ chmodSync(fakeChrome, 0o755)
 afterAll(() => rmSync(dir, { recursive: true, force: true }))
 
 process.env.CHROME_PATH = fakeChrome
-const { describeChromePages, findChrome, pageMessages } = await import('./chrome.ts')
+const { CHROME_ATTEMPTS, consoleOf, describeChromePages, findChrome, pageMessages } = await import(
+  './chrome.ts'
+)
 
 describe('findChrome', () => {
   test('prefers CHROME_PATH when it exists', () => {
@@ -49,3 +51,40 @@ describe('pageMessages', () => {
 describeChromePages({ baseUrl: 'http://localhost:1', pages: ['/', '/ar/'], chrome: fakeChrome })
 // And once more through the default discovery.
 describeChromePages({ baseUrl: 'http://localhost:1', pages: ['/default'] })
+
+describe('consoleOf', () => {
+  // Hangs on its first run (no marker yet), answers on the next.
+  const marker = join(dir, 'ran-once')
+  const flaky = join(dir, 'flaky-chrome')
+  writeFileSync(
+    flaky,
+    `#!/bin/sh\nif [ -e "${marker}" ]; then echo "[CONSOLE] second try" >&2; exit 0; fi\ntouch "${marker}"\nexec sleep 30\n`,
+  )
+  chmodSync(flaky, 0o755)
+  const stuck = join(dir, 'stuck-chrome')
+  writeFileSync(stuck, '#!/bin/sh\nexec sleep 30\n')
+  chmodSync(stuck, 0o755)
+
+  test('kills a hung Chrome and tries again', async () => {
+    expect(await consoleOf(flaky, 'http://localhost:1/', 300)).toContain('second try')
+  })
+
+  test('fails when Chrome hangs on every attempt', async () => {
+    await expect(consoleOf(stuck, 'http://localhost:1/', 300)).rejects.toThrow(
+      `Chrome hung ${CHROME_ATTEMPTS} times loading http://localhost:1/`,
+    )
+  })
+
+  test('ends when Chrome exits, even with a helper still holding stderr', async () => {
+    // Logs, leaves a child behind on stderr, and exits at once.
+    const lingering = join(dir, 'lingering-chrome')
+    writeFileSync(
+      lingering,
+      '#!/bin/sh\necho "[CONSOLE] page loaded" >&2\n(sleep 30 >&2 &)\nexit 0\n',
+    )
+    chmodSync(lingering, 0o755)
+    const started = Date.now()
+    expect(await consoleOf(lingering, 'http://localhost:1/', 5000)).toContain('page loaded')
+    expect(Date.now() - started).toBeLessThan(5000)
+  })
+})

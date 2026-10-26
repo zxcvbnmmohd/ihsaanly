@@ -1,6 +1,17 @@
-import { afterAll, beforeEach, describe, expect, it, mock, setSystemTime } from 'bun:test'
+import {
+  afterAll,
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  mock,
+  setSystemTime,
+  spyOn,
+} from 'bun:test'
 
 import { androidWidgetModule } from '../../test/widgets'
+import * as drain from './drain'
 import type { WidgetModel } from './model'
 import { WIDGET_NAMES } from './names'
 
@@ -15,7 +26,7 @@ mock.module('react-native-android-widget', () =>
   }),
 )
 mock.module('./android/render', () => ({
-  representation: (info: unknown, model: WidgetModel) => ({ info, at: model.at }),
+  representation: (info: unknown, model: WidgetModel) => ({ info, at: model.at, taps: model.taps }),
 }))
 mock.module('expo-file-system', () => ({
   Paths: { document: 'file:///documents', cache: 'file:///cache' },
@@ -39,11 +50,15 @@ const { publishTimeline } = await import('./publish.android')
 
 const entry = (at: number): WidgetModel => ({ at }) as unknown as WidgetModel
 
+let waiting: ReturnType<typeof spyOn>
+
 beforeEach(() => {
   updates.length = 0
   files.written = []
   files.failWrite = false
+  waiting = spyOn(drain, 'waitingTaps').mockResolvedValue([])
 })
+afterEach(() => waiting.mockRestore())
 afterAll(() => setSystemTime())
 
 describe('publishTimeline (Android)', () => {
@@ -56,6 +71,22 @@ describe('publishTimeline (Android)', () => {
     expect(updates.map((update) => update.widgetName)).toEqual([...WIDGET_NAMES])
     // The entry that has begun by now, not the first and not the last.
     expect(updates[0]?.renderWidget({ id: 7 })).toEqual({ info: { id: 7 }, at: 4_000 })
+  })
+
+  it('draws the taps the app has not filed yet, so a republish never undoes one', async () => {
+    setSystemTime(new Date(5_000))
+    const taps = [{ kind: 'prayer' as const, id: 'dhuhr', at: 4_500 }]
+    waiting.mockResolvedValue(taps)
+    await publishTimeline([entry(4_000)])
+    expect(updates[0]?.renderWidget({ id: 7 })).toEqual({ info: { id: 7 }, at: 4_000, taps })
+    // The file keeps the timeline as the app made it; the task draws the taps itself.
+    expect(JSON.parse(files.written[0] ?? '[]')).toEqual([entry(4_000)])
+  })
+
+  it('still redraws when the waiting taps cannot be read', async () => {
+    waiting.mockRejectedValue(new Error('unreadable'))
+    await publishTimeline([entry(1)])
+    expect(updates).toHaveLength(WIDGET_NAMES.length)
   })
 
   it('does not redraw anything if the timeline could not be saved', async () => {

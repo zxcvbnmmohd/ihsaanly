@@ -2,10 +2,9 @@ import { assertNever } from '@ihsaanly/core/assert-never'
 import type { HijriDate } from '@ihsaanly/core/hijri/calendar'
 import { prayerNames } from '@ihsaanly/core/plan/jumuah'
 import type { Prayer } from '@ihsaanly/core/prayer/qada'
-import { palettes } from '@ihsaanly/tailwind/tokens'
 import type { ReactElement, ReactNode } from 'react'
 import { Text, View } from 'react-native'
-import { useColors } from '../colors'
+import { useColors, usePalette } from '../colors'
 import { Button } from '../components/button'
 import { CoachMark } from '../components/coach-mark'
 import { OnboardingArt } from '../components/onboarding-art'
@@ -196,8 +195,8 @@ export function TodayScreen({
   checkIn,
 }: TodayScreenProps): ReactElement {
   const colors = useColors()
-  const { strings, scheme } = useUi()
-  const palette = palettes[scheme]
+  const { strings } = useUi()
+  const palette = usePalette()
   const layout = useLayout()
 
   const [rightNow = null, ...alsoNow] = now

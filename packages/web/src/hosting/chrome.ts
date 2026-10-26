@@ -17,25 +17,60 @@ export function findChrome(): string | undefined {
   return CANDIDATES.find((path): path is string => Boolean(path && existsSync(path)))
 }
 
-async function consoleOf(chrome: string, url: string): Promise<string> {
-  const run = Bun.spawn(
-    [
-      chrome,
-      '--headless=new',
-      '--disable-gpu',
-      '--no-sandbox',
-      '--virtual-time-budget=3000',
-      '--enable-logging=stderr',
-      // Ordinary extensions stay out; policy-installed ones (a company's DLP,
-      // say) load anyway, which is why pageMessages() filters by source too.
-      '--disable-extensions',
-      '--v=0',
-      '--dump-dom',
-      url,
-    ],
-    { stdout: 'ignore', stderr: 'pipe' },
-  )
-  return new Response(run.stderr).text()
+/** How many times one page is loaded before a hang fails the check. */
+export const CHROME_ATTEMPTS = 3
+
+/** How long stderr may stay open once Chrome itself has exited. */
+const STDERR_GRACE_MS = 1000
+
+/**
+ * Chrome's console log for one page. Headless Chrome now and then hangs on a
+ * CI runner without the page being at fault, so a run that outlives `hangMs`
+ * is killed and tried again, up to `CHROME_ATTEMPTS` times.
+ *
+ * The run ends when Chrome exits, not when its stderr closes: a helper
+ * process can hold stderr open after the main one is done, which used to
+ * read as a hang. What was logged by then is the page's log.
+ */
+export async function consoleOf(chrome: string, url: string, hangMs = 12_000): Promise<string> {
+  for (let attempt = 1; ; attempt++) {
+    const run = Bun.spawn(
+      [
+        chrome,
+        '--headless=new',
+        '--disable-gpu',
+        '--no-sandbox',
+        // The usual flags for Chrome in a container: no first-run work, and no
+        // reliance on a small /dev/shm.
+        '--no-first-run',
+        '--no-default-browser-check',
+        '--disable-dev-shm-usage',
+        '--virtual-time-budget=3000',
+        '--enable-logging=stderr',
+        // Ordinary extensions stay out; policy-installed ones (a company's DLP,
+        // say) load anyway, which is why pageMessages() filters by source too.
+        '--disable-extensions',
+        '--v=0',
+        '--dump-dom',
+        url,
+      ],
+      { stdout: 'ignore', stderr: 'pipe' },
+    )
+    const chunks: string[] = []
+    const decoder = new TextDecoder()
+    const reading = (async (): Promise<void> => {
+      for await (const chunk of run.stderr) chunks.push(decoder.decode(chunk, { stream: true }))
+    })()
+    const exited = await Promise.race([run.exited.then(() => true), Bun.sleep(hangMs)])
+    if (exited === true) {
+      await Promise.race([reading, Bun.sleep(STDERR_GRACE_MS)])
+      return chunks.join('')
+    }
+    run.kill()
+    if (attempt === CHROME_ATTEMPTS) {
+      throw new Error(`Chrome hung ${CHROME_ATTEMPTS} times loading ${url}`)
+    }
+  }
 }
 
 /**
@@ -78,7 +113,7 @@ export function describeChromePages({
         expect(messages).not.toContain('Content Security Policy')
         // Hydration or render errors, such as an update loop in the demo.
         expect(messages).not.toMatch(/Uncaught|Error\b/)
-      }, 20_000)
+      }, 30_000)
     }
   })
 }

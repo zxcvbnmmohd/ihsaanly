@@ -6,10 +6,27 @@ export const DEFAULT_ACTION = 'expo.modules.notifications.actions.DEFAULT'
 
 export const REMINDER_CATEGORY = 'reminder'
 
+/**
+ * A prayer reminder asks whether it has been prayed. Its two buttons reuse the
+ * item actions' identifiers, `done` and `later`, under their own words; the
+ * response tells them apart by the payload's kind. The second ask has only the
+ * first button, so "Not yet" is offered once.
+ */
+export const PRAYER_CATEGORY = 'prayer'
+export const PRAYER_AGAIN_CATEGORY = 'prayer-again'
+
+export type NotificationCategory =
+  | typeof REMINDER_CATEGORY
+  | typeof PRAYER_CATEGORY
+  | typeof PRAYER_AGAIN_CATEGORY
+
 export type ReminderAction = 'done' | 'later'
 
 /** A snooze re-arms the same words this much later, if the window is still open. */
 export const LATER_DELAY_MS = 30 * 60_000
+
+/** A prayer is not asked about again with less than this left of its window. */
+export const PRAYER_AGAIN_MIN_LEFT_MS = 10 * 60_000
 
 /**
  * What a notification carries so a tap can be answered later, from a cold
@@ -23,8 +40,21 @@ export type NotificationData =
       itemId: string
       endsAt: number
       reason: 'current-window' | 'upcoming'
+      /**
+       * Set on a reminder that asks whether an item was prayed (Witr): it has
+       * the prayer reminder's buttons, and its "Not yet" asks once more like
+       * a prayer's does. Absent from every other item reminder.
+       */
+      asks?: true
     }
-  | { v: 1; kind: 'prayer'; prayer: Prayer }
+  | {
+      v: 1
+      kind: 'prayer'
+      prayer: Prayer
+      /** The window, so a mark carries it and a second ask stays inside it.
+       * Absent from one an older version scheduled. */
+      window?: { startsAt: number; endsAt: number }
+    }
   | { v: 1; kind: 'test' }
   | { v: 1; kind: 'check-in' }
   | { v: 1; kind: 'announcement'; route: string | null; url: string | null }
@@ -54,16 +84,36 @@ export function parseNotificationData(value: unknown): NotificationData | null {
   if (!isRecord(value) || value.v !== 1) return null
 
   switch (value.kind) {
-    case 'item':
-      return typeof value.itemId === 'string' &&
-        typeof value.endsAt === 'number' &&
-        (value.reason === 'current-window' || value.reason === 'upcoming')
-        ? { v: 1, kind: 'item', itemId: value.itemId, endsAt: value.endsAt, reason: value.reason }
-        : null
-    case 'prayer':
-      return PRAYERS.includes(value.prayer as Prayer)
-        ? { v: 1, kind: 'prayer', prayer: value.prayer as Prayer }
-        : null
+    case 'item': {
+      if (
+        typeof value.itemId !== 'string' ||
+        typeof value.endsAt !== 'number' ||
+        (value.reason !== 'current-window' && value.reason !== 'upcoming')
+      ) {
+        return null
+      }
+      const item = {
+        v: 1,
+        kind: 'item',
+        itemId: value.itemId,
+        endsAt: value.endsAt,
+        reason: value.reason,
+      } as const
+      return value.asks === true ? { ...item, asks: true } : item
+    }
+    case 'prayer': {
+      if (!PRAYERS.includes(value.prayer as Prayer)) return null
+      const prayer = value.prayer as Prayer
+      const window = isRecord(value.window) ? value.window : null
+      return window && typeof window.startsAt === 'number' && typeof window.endsAt === 'number'
+        ? {
+            v: 1,
+            kind: 'prayer',
+            prayer,
+            window: { startsAt: window.startsAt, endsAt: window.endsAt },
+          }
+        : { v: 1, kind: 'prayer', prayer }
+    }
     case 'test':
       return { v: 1, kind: 'test' }
     case 'check-in':
@@ -108,3 +158,9 @@ export function identifierFor(entry: ScheduledNotification): string {
 }
 
 export const PLAN_PREFIX = 'plan:'
+
+/**
+ * A prayer's second ask. Like any snooze it outlives a sync, except while
+ * tracking is paused: then it is withdrawn, since a pause asks about no prayer.
+ */
+export const PRAYER_LATER_PREFIX = 'later:prayer:'

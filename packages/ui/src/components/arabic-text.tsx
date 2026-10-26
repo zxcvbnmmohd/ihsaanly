@@ -1,5 +1,5 @@
 import type { ReactElement } from 'react'
-import { Text, type TextProps } from 'react-native'
+import { type ColorValue, Text, type TextProps } from 'react-native'
 
 import { useColors } from '../colors'
 import { arabic } from '../fonts'
@@ -13,6 +13,13 @@ export interface ArabicTextProps extends TextProps {
    * Default ('inline') hugs the right edge at body size, as it always has.
    */
   variant?: 'inline' | 'hero'
+  /** Defaults to the system label colour. The share card paints its own. */
+  color?: ColorValue
+  /**
+   * Overrides the variant's own alignment: 'start' is the right edge, where
+   * Arabic starts; 'center' centres it. The reader's alignment preference.
+   */
+  align?: 'start' | 'center'
 }
 
 /**
@@ -26,6 +33,9 @@ export interface ArabicTextProps extends TextProps {
 export function ArabicText({
   children,
   variant = 'inline',
+  color,
+  className,
+  align = variant === 'hero' ? 'center' : 'start',
   ...props
 }: ArabicTextProps): ReactElement {
   const colors = useColors()
@@ -40,12 +50,14 @@ export function ArabicText({
       // the DOM attribute (and sets dir=rtl). React Native's types do not
       // list it, and native ignores it.
       {...WEB_LANG}
-      className={variant === 'hero' ? 'text-4xl leading-loose' : 'text-2xl leading-loose'}
+      className={
+        className ?? (variant === 'hero' ? 'text-4xl leading-loose' : 'text-2xl leading-loose')
+      }
       style={{
-        color: colors.label,
+        color: color ?? colors.label,
         fontFamily: arabic,
         writingDirection: 'rtl',
-        textAlign: variant === 'hero' ? 'center' : 'right',
+        textAlign: align === 'center' ? 'center' : 'right',
       }}>
       {children}
     </Text>

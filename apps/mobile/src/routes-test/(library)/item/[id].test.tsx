@@ -7,7 +7,7 @@ import {
 } from '@ihsaanly/state/notifications/store'
 import { act } from '@testing-library/react'
 import type { ComponentProps, ReactElement } from 'react'
-import { Share } from 'react-native'
+import { Clipboard, Share } from 'react-native'
 import { renderScreen } from '../../../../../../packages/ui/test/render'
 import { actAsync } from '../../../../test/library'
 import { router } from '../../../../test/router'
@@ -19,6 +19,24 @@ mock.module('@ihsaanly/ui/screens/item', () => ({
   ItemScreen: (props: ItemProps): ReactElement => {
     itemProps.push(props)
     return <div data-testid="item-screen" />
+  },
+}))
+
+type StudioProps = ComponentProps<typeof import('@ihsaanly/ui/components/share-studio').ShareStudio>
+
+const studioProps: StudioProps[] = []
+mock.module('@ihsaanly/ui/components/share-studio', () => ({
+  ShareStudio: (props: StudioProps): ReactElement => {
+    studioProps.push(props)
+    return <div data-testid="share-studio" />
+  },
+}))
+
+const ownProps: unknown[] = []
+mock.module('@ihsaanly/ui/screens/own-dua', () => ({
+  OwnDuaScreen: (props: unknown): ReactElement => {
+    ownProps.push(props)
+    return <div data-testid="own-dua-screen" />
   },
 }))
 
@@ -53,6 +71,9 @@ const { setEnabledItems } = await import('@ihsaanly/state/plan/enabled-store')
 const { setPlace } = await import('@ihsaanly/state/location/store')
 const { toggleKnown } = await import('@ihsaanly/state/memorise/store')
 const { uncompleteItem } = await import('@ihsaanly/state/plan/completions')
+const { getReaderPreferences, updateReaderPreferences } = await import(
+  '@ihsaanly/state/reader/store'
+)
 
 const TASBIH = 'tasbih-after-prayer'
 const MORNING = 'morning-adhkar'
@@ -60,6 +81,16 @@ const SIWAK = 'siwak-before-prayer'
 const initialPreferences = getNotificationPreferences()
 
 let shares: { message?: string }[] = []
+let copied: string[] = []
+let clipboardFails = false
+
+const studio = (): StudioProps | null => (studioOpen() ? (studioProps.at(-1) ?? null) : null)
+const studioOpen = (): boolean => document.querySelector('[data-testid="share-studio"]') !== null
+const lastStudio = (): StudioProps => {
+  const props = studio()
+  if (!props) throw new Error('ShareStudio is not open')
+  return props
+}
 
 const last = (): ItemProps => {
   const props = itemProps.at(-1)
@@ -74,6 +105,13 @@ function open(id: string): void {
 
 beforeEach(() => {
   itemProps.length = 0
+  studioProps.length = 0
+  copied = []
+  clipboardFails = false
+  spyOn(Clipboard, 'setString').mockImplementation((text: string) => {
+    if (clipboardFails) throw new Error('no clipboard')
+    copied.push(text)
+  })
   haptics.length = 0
   sharing.available = true
   sharing.shared.length = 0
@@ -93,6 +131,31 @@ afterEach(() => {
     for (const id of [TASBIH, MORNING, SIWAK]) uncompleteItem(id, new Date(), 'UTC')
   })
   mock.restore()
+})
+
+describe('pinning to My duas', () => {
+  it('pins and unpins the item', () => {
+    open(MORNING)
+    expect(last().pin?.value).toBe(false)
+    act(() => last().pin?.onToggle())
+    expect(last().pin?.value).toBe(true)
+    act(() => last().pin?.onToggle())
+    expect(last().pin?.value).toBe(false)
+  })
+
+  it('offers no pin for an unknown item', () => {
+    open('no-such-item')
+    expect(last().pin).toBeUndefined()
+  })
+})
+
+describe('an own dua', () => {
+  it('opens in the own-dua reader rather than as content', () => {
+    ownProps.length = 0
+    open('mine-anything')
+    expect(itemProps).toHaveLength(0)
+    expect(ownProps.length).toBeGreaterThan(0)
+  })
 })
 
 describe('an unknown item', () => {
@@ -125,6 +188,22 @@ describe('an unknown item', () => {
     expect(shares).toEqual([])
     expect(capture.calls).toEqual([])
     expect(getNotificationPreferences()).toEqual(initialPreferences)
+  })
+})
+
+describe('reader preferences', () => {
+  afterEach(() => {
+    act(() => updateReaderPreferences({ arabicFirst: true, align: 'center', detail: 'detailed' }))
+  })
+
+  it('lays the item out as the reader prefers and remembers brief or detailed', () => {
+    act(() => updateReaderPreferences({ arabicFirst: false, align: 'start' }))
+    open(TASBIH)
+    expect(last().reading).toEqual({ arabicFirst: false, align: 'start' })
+    expect(last().detail).toBe('detailed')
+    act(() => last().onDetail('brief'))
+    expect(last().detail).toBe('brief')
+    expect(getReaderPreferences().detail).toBe('brief')
   })
 })
 
@@ -238,10 +317,63 @@ describe('reminders', () => {
   })
 })
 
+describe('the share studio', () => {
+  it('opens on Share as image with the default card', () => {
+    open(TASBIH)
+    expect(studio()).toBeNull()
+    act(() => last().onShareImage())
+    const props = lastStudio()
+    expect(props.options).toEqual({ style: 'paper-light', background: 'solid', aspect: 'story' })
+    expect(props.card.arabic).toBe(itemById(TASBIH)?.arabic ?? '\0')
+    expect(props.onSaveImage).toBeNull()
+    expect(props.notice).toBeNull()
+    expect(document.querySelector('[data-testid="share-card"]')).not.toBeNull()
+  })
+
+  it('keeps the chosen options and closes', () => {
+    open(TASBIH)
+    act(() => last().onShareImage())
+    act(() =>
+      lastStudio().onChange({ style: 'accent', background: 'transparent', aspect: 'square' }),
+    )
+    expect(lastStudio().options).toEqual({
+      style: 'accent',
+      background: 'transparent',
+      aspect: 'square',
+    })
+    act(() => lastStudio().onClose())
+    expect(studio()).toBeNull()
+    expect(document.querySelector('[data-testid="share-card"]')).toBeNull()
+  })
+
+  it('copies the text and says so', () => {
+    open(TASBIH)
+    act(() => last().onShareImage())
+    act(() => lastStudio().onCopyText())
+    expect(copied).toHaveLength(1)
+    expect(copied[0]).toContain(itemById(TASBIH)?.arabic ?? '\0')
+    expect(lastStudio().notice).toBe(en.share.copied)
+    expect(shares).toEqual([])
+    // A new choice clears the notice.
+    act(() => lastStudio().onChange(lastStudio().options))
+    expect(lastStudio().notice).toBeNull()
+  })
+
+  it('falls back to the share sheet when the clipboard is missing', () => {
+    clipboardFails = true
+    open(TASBIH)
+    act(() => last().onShareImage())
+    act(() => lastStudio().onCopyText())
+    expect(shares).toHaveLength(1)
+    expect(lastStudio().notice).toBeNull()
+  })
+})
+
 describe('sharing the card as an image', () => {
   it('captures the card and hands the file to the share sheet', async () => {
     open(TASBIH)
-    await actAsync(() => last().onShareImage())
+    act(() => last().onShareImage())
+    await actAsync(() => lastStudio().onShareImage())
     expect(capture.calls).toEqual([{ format: 'png', result: 'tmpfile', width: 1080 }])
     expect(sharing.shared).toEqual([
       { uri: 'file:///tmp/card.png', options: { mimeType: 'image/png', UTI: 'public.png' } },
@@ -252,7 +384,8 @@ describe('sharing the card as an image', () => {
   it('shares text instead when the share sheet is unavailable', async () => {
     sharing.available = false
     open(TASBIH)
-    await actAsync(() => last().onShareImage())
+    act(() => last().onShareImage())
+    await actAsync(() => lastStudio().onShareImage())
     expect(sharing.shared).toEqual([])
     expect(shares).toHaveLength(1)
   })
@@ -260,7 +393,8 @@ describe('sharing the card as an image', () => {
   it('shares text instead when capturing fails', async () => {
     capture.fail = true
     open(TASBIH)
-    await actAsync(() => last().onShareImage())
+    act(() => last().onShareImage())
+    await actAsync(() => lastStudio().onShareImage())
     expect(sharing.shared).toEqual([])
     expect(shares).toHaveLength(1)
   })

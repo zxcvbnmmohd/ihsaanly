@@ -6,6 +6,9 @@ import { fake, installReminderFakes, resetReminderFakes } from '../../test/remin
 
 installReminderFakes()
 const { useNotificationSync } = await import('./use-sync')
+const { installPersonalItems } = await import('@ihsaanly/core/content')
+const { ownDuaItems } = await import('@ihsaanly/core/content/my-duas')
+const { markPrayer, unmarkPrayer } = await import('@ihsaanly/state/prayer/marks')
 
 let listeners: ((state: string) => void)[] = []
 let removed = 0
@@ -13,9 +16,12 @@ let spy: ReturnType<typeof spyOn>
 
 const at = new Date(Date.now() + 3_600_000)
 
+const endsAt = new Date(at.getTime() + 3_600_000)
+
 function planWith(...prayers: string[]): never {
   return {
-    notifications: prayers.map((prayer) => ({ kind: 'prayer', prayer, at, jumuah: false })),
+    today: { pausedNotice: null },
+    notifications: prayers.map((prayer) => ({ kind: 'prayer', prayer, at, endsAt, jumuah: false })),
   } as never
 }
 
@@ -62,6 +68,36 @@ describe('useNotificationSync', () => {
     expect(fake.scheduled[0]?.identifier.startsWith('plan:')).toBe(true)
   })
 
+  it('words a reminder for an own dua from the dua itself', async () => {
+    fake.permissions = { granted: true, canAskAgain: true }
+    installPersonalItems(
+      ownDuaItems([
+        {
+          id: 'mine-sync',
+          title: 'For my parents',
+          arabic: null,
+          transliteration: null,
+          text: 'Words',
+          repeat: 1,
+          moment: 'evening',
+        },
+      ]),
+    )
+    try {
+      const plan = {
+        today: { pausedNotice: null },
+        notifications: [
+          { kind: 'item', itemId: 'mine-sync', at, reason: 'current-window', window: null },
+        ],
+      } as never
+      renderHook(() => useNotificationSync(plan))
+      await waitFor(() => expect(fake.scheduled.length).toBeGreaterThan(0))
+      expect(JSON.stringify(fake.scheduled[0])).toContain('For my parents')
+    } finally {
+      installPersonalItems([])
+    }
+  })
+
   it('does not reschedule when only the plan object changes', async () => {
     fake.permissions = { granted: true, canAskAgain: true }
     const view = renderHook(({ plan }) => useNotificationSync(plan), {
@@ -95,6 +131,7 @@ describe('useNotificationSync', () => {
   it('skips entries whose item is not in the content', async () => {
     fake.permissions = { granted: true, canAskAgain: true }
     const plan = {
+      today: { pausedNotice: null },
       notifications: [{ kind: 'item', itemId: 'no-such-item', at, reason: 'upcoming' }],
     } as never
     renderHook(() => useNotificationSync(plan))
@@ -111,6 +148,33 @@ describe('useNotificationSync', () => {
     view.rerender({ plan: planWith('fajr', 'dhuhr') })
     await waitFor(() => expect(fake.scheduled).toHaveLength(2))
     expect(removed).toBe(1)
+  })
+
+  it("withdraws a prayer's second ask once tracking is paused", async () => {
+    fake.permissions = { granted: true, canAskAgain: true }
+    fake.scheduled = [{ identifier: 'later:prayer:asr@1', content: {}, trigger: null }]
+    const paused = { today: { pausedNotice: { fastingResumes: false } }, notifications: [] }
+    renderHook(() => useNotificationSync(paused as never))
+    await waitFor(() => expect(fake.cancelled).toEqual(['later:prayer:asr@1']))
+  })
+
+  it("withdraws a prayer's second ask once it is marked in the app, and only that one", async () => {
+    fake.permissions = { granted: true, canAskAgain: true }
+    fake.scheduled = [
+      { identifier: 'later:prayer:asr@1', content: {}, trigger: null },
+      { identifier: 'later:prayer:maghrib@2', content: {}, trigger: null },
+    ]
+    const empty = { today: { pausedNotice: null }, notifications: [] }
+    renderHook(() => useNotificationSync(empty as never))
+    await new Promise((resolve) => setTimeout(resolve, 10))
+    expect(fake.cancelled).toEqual([])
+    try {
+      // As the Today strip, or a widget tap taken in, would mark it.
+      await run(() => markPrayer('asr', new Date(), 'UTC'))
+      await waitFor(() => expect(fake.cancelled).toEqual(['later:prayer:asr@1']))
+    } finally {
+      await run(() => unmarkPrayer('asr', new Date(), 'UTC'))
+    }
   })
 
   it('stops listening on unmount', async () => {

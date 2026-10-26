@@ -16,6 +16,7 @@
       "!apps/mobile/ios",
       "!apps/mobile/android",
       "!**/.kilo",
+      "!**/.claude",
       "!**/*.svg",
       "!**/routeTree.gen.ts",
       "!tooling/tailwind/theme.css",

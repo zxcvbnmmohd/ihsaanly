@@ -224,19 +224,21 @@ Free on this public repo, and it replaces EAS.
 
 macOS runners are free on public repos.
 
-1. [ ] **You:**
-   1. Create an **App Store Connect API key**: App Store Connect → Users and
-      Access → Integrations → **App Store Connect API** → **+**, role **App
-      Manager**. Note the Issuer ID and Key ID, and download the `.p8`.
-   2. Add the `production` secrets `ASC_KEY_ID`, `ASC_ISSUER_ID` and
-      `ASC_KEY_P8`.
-2. [ ] **You:** create the app in App Store Connect with bundle
-   `app.ihsaanly.companion`.
-3. [ ] **Claude:** write `build-ios.yml`. It runs `expo prebuild -p ios`, then
-   fastlane `match` or automatic signing through the API key, then
-   `xcodebuild archive`, then uploads to **TestFlight**. Signing approach
-   (Claude will ask): fastlane match with a private certs repo, or
-   API-key-based cloud signing.
+1. [x] **App Store Connect API key** (Admin, `37XSUHRMJS`): `ASC_KEY_ID`,
+   `ASC_ISSUER_ID` and `ASC_KEY_P8` are in both the `development` and
+   `production` environments; the key is in 1Password ("Ihsaanly App Store
+   Connect API").
+2. [x] **Apps in App Store Connect:** "Ihsaanly" (`app.ihsaanly.companion`) and
+   "Ihsaanly Development" (`app.ihsaanly.companion.development`).
+3. [x] **`build-ios.yml`:** prebuild, archive with automatic signing through the
+   API key, export and upload to TestFlight (development → Ihsaanly
+   Development, production → Ihsaanly).
+   - [ ] **Both:** one long-lived **Apple Development certificate** for CI.
+     A fresh runner has an empty keychain, so without it Xcode made a new
+     certificate on every run until the team hit Apple's limit (2026-10-26).
+     Revoke the certificates CI made, create one certificate, keep its `.p12`
+     and password in 1Password, and set `IOS_DEVELOPMENT_P12` (base64) and
+     `IOS_DEVELOPMENT_P12_PASSWORD` in both environments.
 4. [ ] **You:** the App Privacy label (answers in
    `docs/store-privacy-forms.md`), the age rating questionnaire, and the
    listing (`apps/mobile/store.config.json`).

@@ -252,6 +252,17 @@ describe('Phone: an item', () => {
     expect(screen.getByRole('button', { name: en.item.undo })).toBeInTheDocument()
   })
 
+  test('brief and detailed switch the item screen', async () => {
+    const { user } = await openTasbih()
+    const brief = screen.getByRole('button', { name: en.item.brief })
+    expect(brief).toHaveAttribute('aria-pressed', 'false')
+    await user.click(brief)
+    expect(screen.getByRole('button', { name: en.item.brief })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    )
+  })
+
   test('Done and Undo toggle the item', async () => {
     const { user } = await openTasbih()
     await user.click(screen.getByRole('button', { name: en.item.done }))

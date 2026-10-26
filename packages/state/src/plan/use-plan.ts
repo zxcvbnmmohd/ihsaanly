@@ -1,4 +1,6 @@
 import { items } from '@ihsaanly/core/content'
+import { ownDuaItems } from '@ihsaanly/core/content/my-duas'
+import type { Place } from '@ihsaanly/core/location/place'
 import { dayContextFor } from '@ihsaanly/core/plan/day-context'
 import { attendsJumuah } from '@ihsaanly/core/plan/jumuah'
 import { plan } from '@ihsaanly/core/plan/plan'
@@ -10,6 +12,7 @@ import { useEventSettings } from '../events/store'
 import { useHijriOffset } from '../hijri/store'
 import { usePlace } from '../location/store'
 import { useKnownItems } from '../memorise/store'
+import { useOwnDuas } from '../my-duas/store'
 import { useNotificationPreferences } from '../notifications/store'
 import { useOnboarding } from '../onboarding/store'
 import { runRollover, useTodayMarks } from '../prayer/marks'
@@ -29,8 +32,14 @@ const LOOK_AHEAD_DAYS = 7
  */
 const HORIZON_DAYS = LOOK_AHEAD_DAYS + 1
 
-export function useSignals(): Signals | null {
-  const place = usePlace()
+/**
+ * The signals the planner reads, or null without a place. `standIn` is used in
+ * place of a missing one, for a preview (onboarding) that must show a real day
+ * before a place is chosen; the rollover only ever runs for the stored place.
+ */
+export function useSignals(standIn: Place | null = null): Signals | null {
+  const stored = usePlace()
+  const place = stored ?? standIn
   const preferences = useCalculationPreferences()
   const hijriOffset = useHijriOffset()
   const now = useNow()
@@ -42,19 +51,26 @@ export function useSignals(): Signals | null {
   const knownItemIds = useKnownItems()
   const prayedToday = useTodayMarks(place?.timeZone ?? 'UTC', now)
   const completedToday = useCompletedToday(place?.timeZone ?? 'UTC', now)
+  const ownDuas = useOwnDuas()
 
   useEffect(() => {
-    if (place) runRollover(place, preferences, new Date(), userState.trackingPaused)
-  }, [place, preferences, userState.trackingPaused])
+    if (stored) runRollover(stored, preferences, new Date(), userState.trackingPaused)
+  }, [stored, preferences, userState.trackingPaused])
 
   if (!place) return null
 
   const { maghrib } = prayerTimesFor(place, now, preferences)
 
+  // An own dua with a moment is on Today at that moment, and the moment is
+  // the reminder the user asked for: its own per-item yes, which still goes
+  // through quiet hours and the daily cap like every other item reminder.
+  const personal = ownDuaItems(ownDuas)
+  const personalIds = personal.map((item) => item.id)
+
   const signals: Signals = {
     now,
     timeZone: place.timeZone,
-    items,
+    items: [...items, ...personal],
     prayerTimes: prayerTimesAcross(place, now, preferences, HORIZON_DAYS),
     today: dayContextFor(now, place.timeZone, 0, hijriOffset, maghrib),
     upcoming: Array.from({ length: LOOK_AHEAD_DAYS }, (_, index) =>
@@ -70,9 +86,15 @@ export function useSignals(): Signals | null {
     // Resolved here so the planner decides Friday without ever seeing gender.
     attendsJumuah: attendsJumuah(userState.jumuah, userState.travelling, onboarding.gender),
     preferences: {
-      enabledItemIds,
+      enabledItemIds: [...enabledItemIds, ...personalIds],
       knownItemIds,
-      notifications,
+      notifications: {
+        ...notifications,
+        perItem: {
+          ...notifications.perItem,
+          ...Object.fromEntries(personalIds.map((id) => [id, true])),
+        },
+      },
     },
   }
 

@@ -56,7 +56,87 @@ describe('notification words', () => {
       en,
     )
 
-    expect(content?.body).toBe('The evening remembrance, from Asr until the light goes.')
+    expect(content?.body).toBe(
+      'The evening remembrance, from Asr until the light goes. Open until Maghrib.',
+    )
+  })
+
+  it('ends a window reminder on a rough cue, never a clock time, in every language', () => {
+    const duha: Item = { ...item, id: 'duha', reminder: { en: 'Charity for every joint.' } }
+    const entry = {
+      kind: 'item' as const,
+      itemId: 'duha',
+      at,
+      reason: 'current-window' as const,
+      window: { closes: 'dhuhr' as const, endsAt, jumuah: false },
+    }
+    expect(notificationContent(entry, [duha], en)?.body).toBe(
+      'Charity for every joint. Open until Dhuhr.',
+    )
+    for (const strings of [en, ar, fr, hi, italian, ja, so, ur, yue, zh]) {
+      const body = notificationContent(entry, [duha], strings)?.body ?? ''
+      expect(body).toContain(strings.notifications.body.windowUntil(strings.prayer.dhuhr))
+      expect(body).not.toMatch(/[0-9]/)
+    }
+  })
+
+  it('adds no cue to a sentence that already names the end of its window', () => {
+    const lastHour: Item = { ...item, reminder: { en: 'Ask for what you need before Maghrib.' } }
+    const content = notificationContent(
+      {
+        kind: 'item',
+        itemId: 'evening-adhkar',
+        at,
+        reason: 'current-window',
+        window: { closes: 'maghrib', endsAt, jumuah: false },
+      },
+      [lastHour],
+      en,
+    )
+    expect(content?.body).toBe('Ask for what you need before Maghrib.')
+  })
+
+  it('leaves the look-ahead without a window cue', () => {
+    const fast: Item = { ...item, reminder: { en: 'Tomorrow is Monday.' } }
+    const content = notificationContent(
+      { kind: 'item', itemId: 'evening-adhkar', at, reason: 'upcoming', window: null },
+      [fast],
+      en,
+    )
+    expect(content?.body).toBe('Tomorrow is Monday.')
+  })
+
+  it('asks about Witr at night, until Fajr', () => {
+    const witr: Item = {
+      ...item,
+      id: 'witr',
+      title: { en: 'Witr', ar: 'الوتر' },
+      trigger: { kind: 'prayer', prayer: 'isha', when: 'after' },
+      reminder: { en: 'The last prayer of the night.' },
+      isPrayer: true,
+    }
+    const entry = {
+      kind: 'item' as const,
+      itemId: 'witr',
+      at,
+      reason: 'after-prayer' as const,
+      window: { closes: 'fajr' as const, endsAt, jumuah: false },
+    }
+    const content = notificationContent(entry, [witr], en)
+    expect(content?.title).toBe('Have you prayed Witr?')
+    expect(content?.body).toBe('The last prayer of the night. Until Fajr.')
+    // Answered like a prayer: "Yes, I've prayed" or "Not yet".
+    expect(content?.categoryIdentifier).toBe('prayer')
+    expect(content?.data).toEqual({
+      v: 1,
+      kind: 'item',
+      itemId: 'witr',
+      endsAt: endsAt.getTime(),
+      reason: 'current-window',
+      asks: true,
+    })
+    // Without the item's sentence in the reader's language, the cue alone.
+    expect(notificationContent(entry, [{ ...witr, reminder: null }], en)?.body).toBe('Until Fajr.')
   })
 
   it('falls back to the status line for a language the content lacks', () => {
@@ -111,33 +191,53 @@ describe('notification words', () => {
     expect(content?.body).toBe(en.notifications.body.tomorrow)
   })
 
-  it('names the prayer on its own channel', () => {
+  it('asks whether the prayer is prayed, on its own channel, with the window it closes at', () => {
     const content = notificationContent(
-      { kind: 'prayer', prayer: 'fajr', at, jumuah: false },
+      { kind: 'prayer', prayer: 'asr', at, endsAt, jumuah: false },
       [item],
       en,
     )
-    expect(content?.title).toBe(en.prayer.fajr)
+    expect(content?.title).toBe('Asr has come in')
+    expect(content?.body).toBe("Have you prayed? It's the one that's easiest to lose track of.")
     expect(content?.channelId).toBe('prayers')
-    expect(content?.categoryIdentifier).toBeUndefined()
+    expect(content?.categoryIdentifier).toBe('prayer')
+    expect(content?.data).toEqual({
+      v: 1,
+      kind: 'prayer',
+      prayer: 'asr',
+      window: { startsAt: at.getTime(), endsAt: endsAt.getTime() },
+    })
+  })
+
+  it('gives each prayer its own why, in every language, and never a clock time', () => {
+    const prayers = ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha'] as const
+    for (const strings of [en, ar, fr, hi, italian, ja, so, ur, yue, zh]) {
+      const ask = (prayer: (typeof prayers)[number], jumuah: boolean): string | undefined =>
+        notificationContent({ kind: 'prayer', prayer, at, endsAt, jumuah }, [], strings)?.body
+      const bodies = [...prayers.map((prayer) => ask(prayer, false)), ask('dhuhr', true)]
+      expect(new Set(bodies).size).toBe(6)
+      bodies.forEach((body) => expect(body).not.toMatch(/[0-9]/))
+    }
   })
 
   it("names Jumu'ah, not Dhuhr, when the prayer falls on the user's Jumu'ah day", () => {
     const friday = notificationContent(
-      { kind: 'prayer', prayer: 'dhuhr', at, jumuah: true },
+      { kind: 'prayer', prayer: 'dhuhr', at, endsAt, jumuah: true },
       [item],
       en,
     )
     const otherDay = notificationContent(
-      { kind: 'prayer', prayer: 'dhuhr', at, jumuah: false },
+      { kind: 'prayer', prayer: 'dhuhr', at, endsAt, jumuah: false },
       [item],
       en,
     )
-    expect(friday?.title).toBe("Jumu'ah")
-    expect(otherDay?.title).toBe('Dhuhr')
+    expect(friday?.title).toBe("Jumu'ah has come in")
+    expect(friday?.body).toBe(en.notifications.prayerAsk.jumuah)
+    expect(otherDay?.title).toBe('Dhuhr has come in')
+    expect(otherDay?.body).toBe(en.notifications.prayerAsk.dhuhr)
     // The identifier and payload stay dhuhr: Jumu'ah is recorded as the dhuhr mark.
     expect(friday?.identifier).toBe(otherDay?.identifier ?? '')
-    expect(friday?.data).toEqual({ v: 1, kind: 'prayer', prayer: 'dhuhr' })
+    expect(friday?.data).toMatchObject({ v: 1, kind: 'prayer', prayer: 'dhuhr' })
   })
 
   it("says the morning window is open until Jumu'ah on a Friday", () => {

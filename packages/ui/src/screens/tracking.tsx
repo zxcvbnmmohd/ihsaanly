@@ -1,8 +1,7 @@
 import { JumuahChoice, type UserState } from '@ihsaanly/core/plan/user-state'
-import { palettes } from '@ihsaanly/tailwind/tokens'
 import type { ReactElement } from 'react'
 import { Text, View } from 'react-native'
-import { useColors } from '../colors'
+import { useColors, usePalette } from '../colors'
 import { ChoiceRow } from '../components/choice-row'
 import { Screen } from '../components/screen'
 import { Stepper } from '../components/stepper'
@@ -30,8 +29,8 @@ export function TrackingScreen({
   onCheckInDays,
 }: TrackingScreenProps): ReactElement {
   const colors = useColors()
-  const { strings, scheme } = useUi()
-  const palette = palettes[scheme]
+  const { strings } = useUi()
+  const palette = usePalette()
 
   return (
     <Screen palette={palette} className="gap-3 p-4">

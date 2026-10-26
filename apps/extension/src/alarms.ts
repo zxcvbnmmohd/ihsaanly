@@ -42,12 +42,15 @@ export function reminderFor(
   strings: Pick<Strings, 'notifications'>,
 ): Reminder {
   const item = content.data.kind === 'item' ? content.data : null
+  // Only the two buttons the worker shows: the table also carries the phone's
+  // prayer answers, which have no place in a browser reminder.
+  const { done, later } = strings.notifications.action
   return {
     title: content.title,
     body: content.body,
     itemId: item?.itemId ?? null,
     endsAt: item?.endsAt ?? null,
-    actions: strings.notifications.action,
+    actions: { done, later },
   }
 }
 

@@ -43,6 +43,26 @@ describe('planSync', () => {
     expect(plan.cancel).toEqual(['plan:b@2'])
   })
 
+  it("withdraws a prayer's second ask while tracking is paused, and no other snooze", () => {
+    const pending = ['later:prayer:asr@1', 'later:a@1', 'test:1']
+    expect(planSync([], pending, NOW, true).cancel).toEqual(['later:prayer:asr@1'])
+    expect(planSync([], pending, NOW, false).cancel).toEqual([])
+  })
+
+  it("withdraws a prayer's second ask once that prayer is marked, and only its own", () => {
+    const pending = ['later:prayer:asr@1', 'later:prayer:isha@2', 'later:asr-dhikr@3', 'test:1']
+    expect(planSync([], pending, NOW, false, ['asr']).cancel).toEqual(['later:prayer:asr@1'])
+    expect(planSync([], pending, NOW, false, ['asr', 'isha']).cancel).toEqual([
+      'later:prayer:asr@1',
+      'later:prayer:isha@2',
+    ])
+    // Paused and marked at once: each is withdrawn once.
+    expect(planSync([], pending, NOW, true, ['asr']).cancel).toEqual([
+      'later:prayer:asr@1',
+      'later:prayer:isha@2',
+    ])
+  })
+
   it('ignores anything already in the past rather than scheduling it', () => {
     const plan = planSync([entry('plan:gone@1', -30), entry('plan:soon@2', 30)], [], NOW)
 

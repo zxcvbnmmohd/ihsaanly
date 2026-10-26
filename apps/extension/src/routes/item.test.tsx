@@ -4,6 +4,7 @@ import type { Place } from '@ihsaanly/core/location/place'
 import { setPlace } from '@ihsaanly/state/location/store'
 import { getNotificationPreferences } from '@ihsaanly/state/notifications/store'
 import { getEnabledItems } from '@ihsaanly/state/plan/enabled-store'
+import { getReaderPreferences } from '@ihsaanly/state/reader/store'
 import { screen, waitFor } from '@testing-library/react'
 import { renderRoute, resetApp, strings } from '../../test/route'
 
@@ -101,6 +102,16 @@ describe('/item/$id', () => {
 
     await user.click(remind)
     expect(getNotificationPreferences().perItem['morning-adhkar']).toBe(!was)
+  })
+
+  it('remembers brief or detailed for every item', async () => {
+    const { user } = await renderRoute('/item/dua-leaving-home')
+    await user.click(await screen.findByRole('button', { name: strings.item.brief }))
+    expect(getReaderPreferences().detail).toBe('brief')
+    expect(screen.getByRole('button', { name: strings.item.brief })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    )
   })
 
   it('shares the card as text through the share sheet, for either button', async () => {

@@ -1,9 +1,8 @@
 import type { ActionSummary } from '@ihsaanly/core/plan/history'
 import type { Strings } from '@ihsaanly/core/strings/en'
-import { palettes } from '@ihsaanly/tailwind/tokens'
 import type { ReactElement } from 'react'
 import { Text, View } from 'react-native'
-import { useColors } from '../colors'
+import { useColors, usePalette } from '../colors'
 import { EmptyState } from '../components/empty-state'
 import { Screen } from '../components/screen'
 import { useUi } from '../provider'
@@ -68,8 +67,8 @@ export function HistoryScreen({
   labelFor,
 }: HistoryScreenProps): ReactElement {
   const colors = useColors()
-  const { strings, scheme } = useUi()
-  const palette = palettes[scheme]
+  const { strings } = useUi()
+  const palette = usePalette()
 
   if (daysActive === 0) {
     return <EmptyState message={strings.history.empty} />

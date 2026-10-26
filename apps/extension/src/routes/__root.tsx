@@ -4,7 +4,8 @@
 import { usePlace } from '@ihsaanly/state/location/store'
 import { usePlan } from '@ihsaanly/state/plan/use-plan'
 import { useCalculationPreferences } from '@ihsaanly/state/prayer/store'
-import { palettes } from '@ihsaanly/tailwind/tokens'
+import { useAccent } from '@ihsaanly/state/theme/accent-store'
+import { paletteFor } from '@ihsaanly/tailwind/tokens'
 import { EmptyState } from '@ihsaanly/ui/components/empty-state'
 import { Screen } from '@ihsaanly/ui/components/screen'
 import { useUi } from '@ihsaanly/ui/provider'
@@ -20,12 +21,13 @@ export const Route = createRootRoute({ component: RootShell, notFoundComponent: 
 function RootShell(): ReactElement {
   const strings = useExtensionStrings()
   const place = usePlace()
+  const accent = useAccent()
   useReminderSync(usePlan())
   useBadge(place, useCalculationPreferences(), strings)
   useQueuedDones(place?.timeZone ?? null)
 
   return (
-    <WebUiProvider strings={strings} Link={RouterLink}>
+    <WebUiProvider strings={strings} Link={RouterLink} accent={accent}>
       <main className="flex h-full min-h-0 flex-col">
         <Outlet />
       </main>
@@ -35,9 +37,11 @@ function RootShell(): ReactElement {
 
 /** Library, glossary and memorise live in the full app; a link to one lands here. */
 function NotFoundRoute(): ReactNode {
-  const { strings, scheme } = useUi()
+  const { strings, scheme, accent } = useUi()
   return (
-    <Screen palette={palettes[scheme]} className="grow items-center justify-center gap-4 p-6">
+    <Screen
+      palette={paletteFor(scheme, accent)}
+      className="grow items-center justify-center gap-4 p-6">
       <EmptyState message={strings.notFound.body} />
       <Link to="/" className="font-semibold text-accent-ink">
         {strings.tabs.today}

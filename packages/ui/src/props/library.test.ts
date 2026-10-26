@@ -19,4 +19,9 @@ describe('passes', () => {
     expect(passes(item, 'known', [], [item.id])).toBe(true)
     expect(passes(item, 'known', [], [])).toBe(false)
   })
+
+  it('filters "mine" to the pinned ids', () => {
+    expect(passes(item, 'mine', [], [], [item.id])).toBe(true)
+    expect(passes(item, 'mine', [item.id], [item.id])).toBe(false)
+  })
 })

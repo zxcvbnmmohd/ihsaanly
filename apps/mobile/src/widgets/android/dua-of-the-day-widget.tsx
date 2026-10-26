@@ -3,12 +3,15 @@
 import type { ReactElement } from 'react'
 import { TextWidget } from 'react-native-android-widget'
 
-import { Caption, Frame, Secondary, type WidgetProps } from './parts'
+import { Caption, Frame, MarkButton, Secondary, tapsFor, type WidgetProps } from './parts'
 
 /** Bundled by the expo-font plugin into assets/fonts, where the library looks it up by name. */
 const ARABIC_FONT = 'Amiri-Regular'
 
-/** Today's dua in Arabic, large and centred; its title, and the translation when there is room. */
+/**
+ * Today's dua in Arabic, large and centred; its title, the translation when
+ * there is room, and "Said it", which marks it done without opening the app.
+ */
 export function DuaOfTheDayWidget({ model, paint, layout }: WidgetProps): ReactElement {
   const { rtl, labels, duaOfTheDay: dua } = model
   if (!dua) {
@@ -21,6 +24,26 @@ export function DuaOfTheDayWidget({ model, paint, layout }: WidgetProps): ReactE
   }
   const compact = layout.size === 'compact'
   const large = layout.size === 'large'
+  const said = dua.done || tapsFor(model, 'done', dua.id, dua.since) > 0
+  // The reader's preference; a timeline stored before it existed has none.
+  const reading = model.reading ?? { arabicFirst: true, centred: true }
+  // Arabic starts at the right whatever the app's language.
+  const arabicAlign = reading.centred ? 'center' : 'right'
+  const meaningAlign = reading.centred ? 'center' : rtl ? 'right' : 'left'
+  const meaning =
+    large && dua.translation ? (
+      <TextWidget
+        text={dua.translation}
+        maxLines={4}
+        truncate="END"
+        style={{
+          width: 'match_parent',
+          fontSize: 13,
+          color: paint.secondary,
+          textAlign: meaningAlign,
+        }}
+      />
+    ) : null
   return (
     <Frame model={model} paint={paint} url={dua.url} label={dua.title} center>
       {compact ? null : (
@@ -31,6 +54,7 @@ export function DuaOfTheDayWidget({ model, paint, layout }: WidgetProps): ReactE
           style={{ fontSize: 12, fontWeight: 'bold', color: paint.accent, textAlign: 'center' }}
         />
       )}
+      {reading.arabicFirst ? null : meaning}
       <TextWidget
         text={dua.arabic}
         maxLines={compact ? 2 : large ? 6 : 3}
@@ -40,22 +64,20 @@ export function DuaOfTheDayWidget({ model, paint, layout }: WidgetProps): ReactE
           fontFamily: ARABIC_FONT,
           fontSize: compact ? 18 : large ? 26 : 22,
           color: paint.label,
-          textAlign: 'center',
+          textAlign: arabicAlign,
         }}
       />
-      {large && dua.translation ? (
-        <TextWidget
-          text={dua.translation}
-          maxLines={4}
-          truncate="END"
-          style={{
-            width: 'match_parent',
-            fontSize: 13,
-            color: paint.secondary,
-            textAlign: 'center',
-          }}
+      {reading.arabicFirst ? meaning : null}
+      {compact ? null : (
+        <MarkButton
+          paint={paint}
+          kind="done"
+          id={dua.id}
+          label={labels.saidIt}
+          doneLabel={labels.marked}
+          done={said}
         />
-      ) : null}
+      )}
     </Frame>
   )
 }

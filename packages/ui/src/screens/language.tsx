@@ -1,8 +1,7 @@
 import { SUPPORTED_LANGUAGES, type SupportedLanguage } from '@ihsaanly/core/i18n/locale'
-import { palettes } from '@ihsaanly/tailwind/tokens'
 import type { ReactElement } from 'react'
 import { Text } from 'react-native'
-import { useColors } from '../colors'
+import { useColors, usePalette } from '../colors'
 import { ChoiceRow } from '../components/choice-row'
 import { Screen } from '../components/screen'
 import { useUi } from '../provider'
@@ -14,8 +13,8 @@ export interface LanguageScreenProps {
 
 export function LanguageScreen({ language, onSelect }: LanguageScreenProps): ReactElement {
   const colors = useColors()
-  const { strings, scheme } = useUi()
-  const palette = palettes[scheme]
+  const { strings } = useUi()
+  const palette = usePalette()
 
   return (
     <Screen palette={palette} className="gap-4 p-4">

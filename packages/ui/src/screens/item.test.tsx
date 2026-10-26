@@ -135,6 +135,22 @@ describe('ItemScreen', () => {
     expect(onToggleRemind).toHaveBeenCalledWith(true)
   })
 
+  it('pins to My duas when the host keeps them, and offers no pin otherwise', async () => {
+    const onToggle = mock(() => {})
+    const { user, strings } = renderScreen(
+      <ItemScreen {...itemScreenFixture} pin={{ value: false, onToggle }} />,
+    )
+    const pin = screen.getByRole('switch', { name: strings.myDuas.pin })
+    expect(pin).toHaveAttribute('aria-checked', 'false')
+    await user.click(pin)
+    expect(onToggle).toHaveBeenCalledTimes(1)
+  })
+
+  it('has no pin without My duas', () => {
+    const { strings } = renderScreen(<ItemScreen {...itemScreenFixture} />)
+    expect(screen.queryByRole('switch', { name: strings.myDuas.pin })).toBeNull()
+  })
+
   it('hides the reminder switch when there is nothing to schedule', () => {
     const { strings } = renderScreen(<ItemScreen {...itemScreenFixture} remind={null} />)
     expect(screen.queryByRole('switch', { name: strings.item.remind })).toBeNull()
@@ -152,5 +168,88 @@ describe('ItemScreen', () => {
     expect(onShareText).toHaveBeenCalledTimes(1)
     expect(onShareImage).toHaveBeenCalledTimes(1)
     expect(navigations).toEqual(['/item/memorise/dua-eating'])
+  })
+
+  describe('reading preferences', () => {
+    const translation = itemFixture.translation as string
+    const arabic = itemFixture.arabic as string
+
+    it('puts the Arabic, then its transliteration, before the meaning, centred', () => {
+      renderScreen(<ItemScreen {...itemScreenFixture} />)
+      const said = screen.getByText(arabic)
+      const meaning = screen.getByText(translation)
+      expect(said.compareDocumentPosition(meaning)).toBe(Node.DOCUMENT_POSITION_FOLLOWING)
+      expect(said).toHaveStyle({ textAlign: 'center' })
+      expect(screen.getByText(itemFixture.transliteration as string).className).toContain(
+        'text-center',
+      )
+    })
+
+    it('puts the meaning first and aligns to the start when asked', () => {
+      renderScreen(
+        <ItemScreen {...itemScreenFixture} reading={{ arabicFirst: false, align: 'start' }} />,
+      )
+      const said = screen.getByText(arabic)
+      const meaning = screen.getByText(translation)
+      expect(meaning.compareDocumentPosition(said)).toBe(Node.DOCUMENT_POSITION_FOLLOWING)
+      expect(said).toHaveStyle({ textAlign: 'right' })
+      expect(meaning.className).toContain('text-start')
+      // A part follows the same order.
+      const part = itemFixture.parts[1]
+      const partMeaning = screen.getByText(part?.translation as string)
+      expect(partMeaning.compareDocumentPosition(screen.getByText(part?.arabic as string))).toBe(
+        Node.DOCUMENT_POSITION_FOLLOWING,
+      )
+    })
+  })
+
+  describe('brief and detailed', () => {
+    const [firstLine] = (itemFixture.why as string).split('. ')
+
+    it('shows everything when detailed, and offers brief', async () => {
+      const onDetail = mock((_detail: 'brief' | 'detailed') => {})
+      const { user, strings } = renderScreen(
+        <ItemScreen {...itemScreenFixture} onDetail={onDetail} />,
+      )
+      expect(screen.getByText(itemFixture.why as string)).toBeInTheDocument()
+      expect(screen.getByText('A narration.')).toBeInTheDocument()
+      expect(
+        screen.getByRole('button', { name: strings.item.detailed }).getAttribute('aria-pressed'),
+      ).toBe('true')
+      await user.click(screen.getByRole('button', { name: strings.item.brief }))
+      expect(onDetail.mock.calls).toEqual([['brief']])
+    })
+
+    it('shows the first sentence of the why and only the citations when brief', () => {
+      const { strings } = renderScreen(<ItemScreen {...itemScreenFixture} detail="brief" />)
+      expect(screen.getByText(`${firstLine}.`)).toBeInTheDocument()
+      expect(screen.queryByText(itemFixture.why as string)).toBeNull()
+      expect(screen.queryByText('A narration.')).toBeNull()
+      expect(screen.getAllByText(strings.item.quranReference(2, 255))).not.toHaveLength(0)
+    })
+
+    it('offers no choice when brief would leave nothing out', () => {
+      const { strings } = renderScreen(
+        <ItemScreen
+          {...itemScreenFixture}
+          item={{
+            ...itemFixture,
+            why: 'One sentence only.',
+            evidence: [{ type: 'quran', surah: 2, ayah: 255, text: {} }],
+          }}
+        />,
+      )
+      expect(screen.queryByRole('button', { name: strings.item.brief })).toBeNull()
+    })
+
+    it('offers the choice for a long why with no narrations, and for narrations alone', () => {
+      const { strings, unmount } = renderScreen(
+        <ItemScreen {...itemScreenFixture} item={{ ...itemFixture, evidence: [] }} />,
+      )
+      expect(screen.getByRole('button', { name: strings.item.brief })).toBeInTheDocument()
+      unmount()
+      renderScreen(<ItemScreen {...itemScreenFixture} item={{ ...itemFixture, why: null }} />)
+      expect(screen.getByRole('button', { name: strings.item.brief })).toBeInTheDocument()
+    })
   })
 })

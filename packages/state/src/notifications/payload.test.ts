@@ -16,6 +16,40 @@ describe('notification data', () => {
     expect(parseNotificationData({ v: 1, kind: 'check-in' })).toEqual({ v: 1, kind: 'check-in' })
   })
 
+  it('keeps the mark of an item reminder that asks, and nothing else in its place', () => {
+    const base = {
+      v: 1,
+      kind: 'item',
+      itemId: 'witr',
+      endsAt: 5,
+      reason: 'current-window',
+    } as const
+    expect(parseNotificationData({ ...base, asks: true })).toEqual({ ...base, asks: true })
+    expect(parseNotificationData({ ...base, asks: 'yes' })).toEqual(base)
+  })
+
+  it('rejects an item reminder missing its id, its end or a known reason', () => {
+    const base = { v: 1, kind: 'item', itemId: 'x', endsAt: 5, reason: 'upcoming' }
+    expect(parseNotificationData({ ...base, itemId: 7 })).toBeNull()
+    expect(parseNotificationData({ ...base, endsAt: '5' })).toBeNull()
+    expect(parseNotificationData({ ...base, reason: 'after-prayer' })).toBeNull()
+  })
+
+  it("keeps a prayer's window, and drops one that is not two instants", () => {
+    const window = { startsAt: 1, endsAt: 2 }
+    expect(parseNotificationData({ v: 1, kind: 'prayer', prayer: 'asr', window })).toEqual({
+      v: 1,
+      kind: 'prayer',
+      prayer: 'asr',
+      window,
+    })
+    for (const broken of [{ startsAt: 1 }, { startsAt: '1', endsAt: 2 }, 'soon']) {
+      expect(
+        parseNotificationData({ v: 1, kind: 'prayer', prayer: 'asr', window: broken }),
+      ).toEqual({ v: 1, kind: 'prayer', prayer: 'asr' })
+    }
+  })
+
   it('rejects junk', () => {
     expect(parseNotificationData(null)).toBeNull()
     expect(parseNotificationData({ itemId: 'x' })).toBeNull()

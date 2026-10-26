@@ -3,8 +3,9 @@ import { expect, type Page } from '@playwright/test'
 
 /**
  * Walks a first run through onboarding the way someone without a location
- * permission would: welcome → how → location (search for a city) → you →
- * reminders → start, landing on Today. `page` must be on the welcome step,
+ * permission would: welcome → how → sourced → location (search for a city) →
+ * you → start → reminders → accent → summary, landing on Today. The web has
+ * no widget step. `page` must be on the welcome step,
  * already in the language `strings` belongs to.
  */
 export async function onboardWithCity(page: Page, strings: Strings = en): Promise<void> {
@@ -15,6 +16,10 @@ export async function onboardWithCity(page: Page, strings: Strings = en): Promis
 
   await expect(page).toHaveURL(/\/onboarding\/how$/)
   await expect(page.getByText(s.howTitle)).toBeVisible()
+  await next.click()
+
+  await expect(page).toHaveURL(/\/onboarding\/sourced$/)
+  await expect(page.getByText(s.sourcedTitle)).toBeVisible()
   await next.click()
 
   await expect(page).toHaveURL(/\/onboarding\/location$/)
@@ -29,12 +34,20 @@ export async function onboardWithCity(page: Page, strings: Strings = en): Promis
   await expect(page.getByRole('radio', { name: new RegExp(`^${s.skip}`) })).toBeChecked()
   await next.click()
 
+  await expect(page).toHaveURL(/\/onboarding\/start$/)
+  await expect(page.getByRole('radio', { name: new RegExp(`^${s.essentials}`) })).toBeChecked()
+  await next.click()
+
   await expect(page).toHaveURL(/\/onboarding\/reminders$/)
   await expect(page.getByText(s.remindersStep, { exact: true })).toBeVisible()
   await page.getByRole('button', { name: s.allowNotifications }).click()
 
-  await expect(page).toHaveURL(/\/onboarding\/start$/)
-  await expect(page.getByRole('radio', { name: new RegExp(`^${s.essentials}`) })).toBeChecked()
+  await expect(page).toHaveURL(/\/onboarding\/accent$/)
+  await expect(page.getByText(s.accentStep)).toBeVisible()
+  await next.click()
+
+  await expect(page).toHaveURL(/\/onboarding\/summary$/)
+  await expect(page.getByText(s.summaryTitle)).toBeVisible()
   await page.getByRole('button', { name: s.done, exact: true }).click()
 
   await expect(page).toHaveURL(/\/today$/)

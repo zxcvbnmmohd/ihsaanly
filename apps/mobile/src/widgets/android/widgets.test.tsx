@@ -11,7 +11,7 @@ import {
   texts,
   tree,
 } from '../../../test/widgets'
-import type { WidgetLink, WidgetModel } from '../model'
+import type { WidgetItem, WidgetLink, WidgetModel, WidgetTap } from '../model'
 import { WIDGET_NAMES, type WidgetName } from '../names'
 
 installWidgetMocks()
@@ -19,6 +19,7 @@ installWidgetMocks()
 const renderFile = './render.tsx?actual'
 const { representation }: typeof import('./render') = await import(renderFile)
 const parts = await import('./parts')
+const { TAP_ACTION } = await import('./tap-action')
 
 beforeAll(() => installWidgetMocks())
 
@@ -39,16 +40,20 @@ const SHAPES = Object.keys(SIZES) as Shape[]
 
 const EXPECTED: Record<Name, Record<Shape, Drawn>> = {
   RightNowWidget: {
-    square: { texts: ['Morning', 'Morning adhkar'], uris: ['ihsaanly://item/morning-adhkar'] },
-    strip: { texts: ['Morning', 'Morning adhkar'], uris: ['ihsaanly://item/morning-adhkar'] },
+    square: {
+      texts: ['Morning', 'Morning adhkar', '✓'],
+      uris: ['ihsaanly://item/read/morning-adhkar'],
+    },
+    strip: { texts: ['Morning', 'Morning adhkar'], uris: ['ihsaanly://item/read/morning-adhkar'] },
     medium: {
       texts: [
         'Morning',
         'Morning adhkar',
         'Open for about 3 more hours',
         '12 Rabi’ ath-Thani 1448',
+        'Mark done',
       ],
-      uris: ['ihsaanly://item/morning-adhkar'],
+      uris: ['ihsaanly://item/read/morning-adhkar'],
     },
     large: {
       texts: [
@@ -56,8 +61,9 @@ const EXPECTED: Record<Name, Record<Shape, Drawn>> = {
         'Morning adhkar',
         'Open for about 3 more hours',
         '12 Rabi’ ath-Thani 1448',
+        'Mark done',
       ],
-      uris: ['ihsaanly://item/morning-adhkar'],
+      uris: ['ihsaanly://item/read/morning-adhkar'],
     },
   },
   NextPrayerWidget: {
@@ -71,7 +77,7 @@ const EXPECTED: Record<Name, Record<Shape, Drawn>> = {
         'Before · Two or four rak’ah before Dhuhr',
         'After · Tasbih after prayer',
       ],
-      uris: ['ihsaanly://item/sunnah-before-dhuhr', 'ihsaanly://item/tasbih-after-prayer'],
+      uris: ['ihsaanly://item/sunnah-before-dhuhr', 'ihsaanly://item/read/tasbih-after-prayer'],
     },
     large: {
       texts: [
@@ -84,7 +90,7 @@ const EXPECTED: Record<Name, Record<Shape, Drawn>> = {
       ],
       uris: [
         'ihsaanly://item/sunnah-before-dhuhr',
-        'ihsaanly://item/tasbih-after-prayer',
+        'ihsaanly://item/read/tasbih-after-prayer',
         'ihsaanly://item/sunnah-after-dhuhr',
       ],
     },
@@ -128,23 +134,24 @@ const EXPECTED: Record<Name, Record<Shape, Drawn>> = {
   },
   UpNextWidget: {
     square: {
-      texts: ['Up next · Dhuhr', 'Before · Two or four rak’ah before Dhuhr'],
+      texts: ['Up next · Dhuhr', 'Before · Two or four rak’ah before Dhuhr', '✓'],
       uris: ['ihsaanly://item/sunnah-before-dhuhr'],
     },
     strip: {
-      texts: ['Up next · Dhuhr', 'Before · Two or four rak’ah before Dhuhr'],
+      texts: ['Up next · Dhuhr', 'Before · Two or four rak’ah before Dhuhr', '✓'],
       uris: ['ihsaanly://item/sunnah-before-dhuhr'],
     },
     medium: {
       texts: [
         'Up next · Dhuhr',
         'Before · Two or four rak’ah before Dhuhr',
+        '✓',
         'After · Tasbih after prayer',
         'After · Two rak’ah after Dhuhr',
       ],
       uris: [
         'ihsaanly://item/sunnah-before-dhuhr',
-        'ihsaanly://item/tasbih-after-prayer',
+        'ihsaanly://item/read/tasbih-after-prayer',
         'ihsaanly://item/sunnah-after-dhuhr',
       ],
     },
@@ -152,13 +159,14 @@ const EXPECTED: Record<Name, Record<Shape, Drawn>> = {
       texts: [
         'Up next · Dhuhr',
         'Before · Two or four rak’ah before Dhuhr',
+        '✓',
         'After · Tasbih after prayer',
         'After · Two rak’ah after Dhuhr',
         'In about 3 hours',
       ],
       uris: [
         'ihsaanly://item/sunnah-before-dhuhr',
-        'ihsaanly://item/tasbih-after-prayer',
+        'ihsaanly://item/read/tasbih-after-prayer',
         'ihsaanly://item/sunnah-after-dhuhr',
       ],
     },
@@ -170,56 +178,69 @@ const EXPECTED: Record<Name, Record<Shape, Drawn>> = {
     large: { texts: ['Also today', 'Nothing asked of you right now'], uris: [] },
   },
   QuickDuasWidget: {
-    square: { texts: ['Quick duas', 'Leaving home'], uris: ['ihsaanly://item/dua-leaving-home'] },
+    square: {
+      texts: ['Quick duas', 'Leaving home', '✓'],
+      uris: ['ihsaanly://item/read/dua-leaving-home'],
+    },
     strip: {
-      texts: ['Quick duas', 'Leaving home', 'Setting out on a journey'],
-      uris: ['ihsaanly://item/dua-leaving-home', 'ihsaanly://item/dua-travel'],
+      texts: ['Quick duas', 'Leaving home', '✓', 'Setting out on a journey', '✓'],
+      uris: ['ihsaanly://item/read/dua-leaving-home', 'ihsaanly://item/read/dua-travel'],
     },
     medium: {
       texts: [
         'Quick duas',
         'Leaving home',
+        '✓',
         'Setting out on a journey',
+        '✓',
         'Shortening the prayer',
+        '✓',
         'Going up',
+        '✓',
         'Going down',
+        '✓',
       ],
       uris: [
-        'ihsaanly://item/dua-leaving-home',
-        'ihsaanly://item/dua-travel',
+        'ihsaanly://item/read/dua-leaving-home',
+        'ihsaanly://item/read/dua-travel',
         'ihsaanly://item/qasr-while-travelling',
-        'ihsaanly://item/takbir-ascending',
-        'ihsaanly://item/tasbih-descending',
+        'ihsaanly://item/read/takbir-ascending',
+        'ihsaanly://item/read/tasbih-descending',
       ],
     },
     large: {
       texts: [
         'Quick duas',
         'Leaving home',
+        '✓',
         'Setting out on a journey',
+        '✓',
         'Shortening the prayer',
+        '✓',
         'Going up',
+        '✓',
         'Going down',
+        '✓',
       ],
       uris: [
-        'ihsaanly://item/dua-leaving-home',
-        'ihsaanly://item/dua-travel',
+        'ihsaanly://item/read/dua-leaving-home',
+        'ihsaanly://item/read/dua-travel',
         'ihsaanly://item/qasr-while-travelling',
-        'ihsaanly://item/takbir-ascending',
-        'ihsaanly://item/tasbih-descending',
+        'ihsaanly://item/read/takbir-ascending',
+        'ihsaanly://item/read/tasbih-descending',
       ],
     },
   },
   DuaOfTheDayWidget: {
-    square: { texts: ['بِسْمِ اللَّهِ'], uris: ['ihsaanly://item/dua-entering-home'] },
-    strip: { texts: ['بِسْمِ اللَّهِ'], uris: ['ihsaanly://item/dua-entering-home'] },
+    square: { texts: ['بِسْمِ اللَّهِ'], uris: ['ihsaanly://item/read/dua-entering-home'] },
+    strip: { texts: ['بِسْمِ اللَّهِ'], uris: ['ihsaanly://item/read/dua-entering-home'] },
     medium: {
-      texts: ['Coming home', 'بِسْمِ اللَّهِ'],
-      uris: ['ihsaanly://item/dua-entering-home'],
+      texts: ['Coming home', 'بِسْمِ اللَّهِ', 'Said it'],
+      uris: ['ihsaanly://item/read/dua-entering-home'],
     },
     large: {
-      texts: ['Coming home', 'بِسْمِ اللَّهِ', 'In the name of Allah.'],
-      uris: ['ihsaanly://item/dua-entering-home'],
+      texts: ['Coming home', 'بِسْمِ اللَّهِ', 'In the name of Allah.', 'Said it'],
+      uris: ['ihsaanly://item/read/dua-entering-home'],
     },
   },
   MakeUpWidget: {
@@ -286,6 +307,11 @@ function uris(root: Node): (string | null)[] {
 
 function link(n: number, detail: string | null = null): WidgetLink {
   return { title: `Item ${n}`, detail, url: `ihsaanly://item/i${n}` }
+}
+
+/** A row the widget cannot mark: an id, and no `since`. */
+function asItem(entry: WidgetLink): WidgetItem {
+  return { ...entry, id: entry.url.replace('ihsaanly://item/', '') }
 }
 
 const empty: Partial<WidgetModel> = {
@@ -437,14 +463,19 @@ describe('Android widgets with a full day', () => {
     moreNow: '+5 more now',
     allDay: links,
     comingUp: links,
-    quickDuas: links.slice(0, 5),
-    next: { prayer: 'Jumu’ah', distance: 'Soon', before: links, after: links.slice(0, 2) },
+    quickDuas: links.slice(0, 5).map(asItem),
+    next: {
+      prayer: 'Jumu’ah',
+      distance: 'Soon',
+      before: links.map(asItem),
+      after: links.slice(0, 2),
+    },
     prayers: [
-      { name: 'Fajr', short: 'F', done: true, passed: true },
-      { name: 'Dhuhr', short: 'D', done: false, passed: true },
-      { name: 'Asr', short: 'A', done: false, passed: false },
-      { name: 'Maghrib', short: 'M', done: true, passed: false },
-      { name: 'Isha', short: 'I', done: false, passed: false },
+      { id: 'fajr', name: 'Fajr', short: 'F', done: true, passed: true },
+      { id: 'dhuhr', name: 'Dhuhr', short: 'D', done: false, passed: true },
+      { id: 'asr', name: 'Asr', short: 'A', done: false, passed: false },
+      { id: 'maghrib', name: 'Maghrib', short: 'M', done: true, passed: false },
+      { id: 'isha', name: 'Isha', short: 'I', done: false, passed: false },
     ],
     makeUp: {
       prayers: 3,
@@ -452,7 +483,15 @@ describe('Android widgets with a full day', () => {
       summary: '3 prayers owed · 2 fasts owed',
       url: 'ihsaanly://qada',
     },
-    duaOfTheDay: { title: 'T', arabic: 'ع', translation: null, url: 'ihsaanly://item/t' },
+    duaOfTheDay: {
+      id: 't',
+      title: 'T',
+      arabic: 'ع',
+      translation: null,
+      url: 'ihsaanly://item/t',
+      since: 0,
+      done: false,
+    },
   })
 
   it('RightNowWidget shows the detail from medium up and lists what else is open when large', () => {
@@ -532,11 +571,11 @@ describe('Android widgets with a full day', () => {
   it('QuickDuasWidget lays duas out in two columns on a wide widget and pads an odd row', () => {
     const root = light('QuickDuasWidget', busy, [300, 200])
     expect(texts(root)).toEqual(['Quick duas', 'Item 1', 'Item 2', 'Item 3', 'Item 4', 'Item 5'])
-    const rows = nodes(root).filter(
-      (n) =>
-        n.type === 'FlexWidget' &&
-        (n.props.style as { flexDirection?: string }).flexDirection === 'row',
-    )
+    // Grid rows, not the chips (rows themselves, of a title and its mark).
+    const rows = nodes(root).filter((n) => {
+      const style = n.props.style as { flexDirection?: string; backgroundColor?: string }
+      return n.type === 'FlexWidget' && style.flexDirection === 'row' && !style.backgroundColor
+    })
     expect(rows.map((row) => row.children.length)).toEqual([2, 2, 2])
   })
 
@@ -593,7 +632,65 @@ describe('Android widgets with a full day', () => {
     expect(lines('square')).toBe(2)
     expect(lines('medium')).toBe(3)
     expect(lines('large')).toBe(6)
-    expect(texts(light('DuaOfTheDayWidget', busy, 'large'))).toEqual(['T', 'ع'])
+    expect(texts(light('DuaOfTheDayWidget', busy, 'large'))).toEqual(['T', 'ع', 'Said it'])
+  })
+})
+
+describe('Android Dua of the day and the reading preference', () => {
+  const dua = {
+    id: 'd',
+    title: 'T',
+    arabic: 'ع',
+    translation: 'Meaning',
+    url: 'ihsaanly://item/d',
+    since: 0,
+    done: false,
+  }
+  const aligns = (entry: WidgetModel): Record<string, string | undefined> =>
+    Object.fromEntries(
+      nodes(light('DuaOfTheDayWidget', entry, 'large')).flatMap((n) =>
+        typeof n.props.text === 'string'
+          ? [[n.props.text, (n.props.style as { textAlign?: string } | undefined)?.textAlign]]
+          : [],
+      ),
+    )
+
+  it('centres the Arabic and its meaning, Arabic first, by default', () => {
+    const entry = model({ duaOfTheDay: dua })
+    expect(texts(light('DuaOfTheDayWidget', entry, 'large'))).toEqual([
+      'T',
+      'ع',
+      'Meaning',
+      'Said it',
+    ])
+    expect(aligns(entry)).toMatchObject({ ع: 'center', Meaning: 'center' })
+  })
+
+  it('puts the meaning first and aligns each to its start when asked', () => {
+    const entry = model({ duaOfTheDay: dua, reading: { arabicFirst: false, centred: false } })
+    expect(texts(light('DuaOfTheDayWidget', entry, 'large'))).toEqual([
+      'T',
+      'Meaning',
+      'ع',
+      'Said it',
+    ])
+    expect(aligns(entry)).toMatchObject({ ع: 'right', Meaning: 'left' })
+    const rtl = model({
+      rtl: true,
+      duaOfTheDay: dua,
+      reading: { arabicFirst: true, centred: false },
+    })
+    expect(aligns(rtl)).toMatchObject({ ع: 'right', Meaning: 'right' })
+  })
+
+  it('reads a timeline stored before the preference existed as the default', () => {
+    const entry = { ...model({ duaOfTheDay: dua }), reading: undefined } as unknown as WidgetModel
+    expect(texts(light('DuaOfTheDayWidget', entry, 'large'))).toEqual([
+      'T',
+      'ع',
+      'Meaning',
+      'Said it',
+    ])
   })
 })
 
@@ -729,5 +826,154 @@ describe('Android widget helpers', () => {
     expect(open.props.clickActionData).toBeUndefined()
     const url = tree(parts.Frame({ model: model(), paint, url: 'ihsaanly://x', label: 'x' }))
     expect(url.props.clickActionData).toEqual({ uri: 'ihsaanly://x' })
+  })
+})
+
+describe('Android widgets, marking from the widget', () => {
+  /** The marks a widget task would hear: kind and id of each TAP_ACTION click. */
+  const marks = (root: Node): { kind: unknown; id: unknown }[] =>
+    nodes(root).flatMap((node) => {
+      if (node.props.clickAction !== TAP_ACTION) return []
+      const data = node.props.clickActionData as { kind?: unknown; id?: unknown }
+      return [{ kind: data.kind, id: data.id }]
+    })
+  const opened = model().openedAt ?? 0
+  const tap = (kind: WidgetTap['kind'], id: string, at = opened + 1): WidgetTap => ({
+    kind,
+    id,
+    at,
+  })
+  const tasbih = (count: number): WidgetItem => ({
+    id: 'tasbih-after-prayer',
+    title: 'Tasbih after prayer',
+    detail: null,
+    url: 'ihsaanly://item/read/tasbih-after-prayer',
+    since: opened,
+    done: false,
+    repeat: 33,
+    count,
+  })
+
+  it('RightNowWidget marks the headline from a square up, and has no room on a strip', () => {
+    for (const shape of ['square', 'medium', 'large'] as const) {
+      expect(marks(light('RightNowWidget', model(), shape))).toEqual([
+        { kind: 'done', id: 'morning-adhkar' },
+      ])
+    }
+    expect(marks(light('RightNowWidget', model(), 'strip'))).toEqual([])
+    expect(marks(light('RightNowWidget', model(empty), 'medium'))).toEqual([])
+    const tapped = light(
+      'RightNowWidget',
+      model({ taps: [tap('done', 'morning-adhkar')] }),
+      'medium',
+    )
+    expect(marks(tapped)).toEqual([])
+    expect(texts(tapped)).toContain('✓ Marked done')
+    // An earlier occasion's tap does not count.
+    const earlier = model({ taps: [tap('done', 'morning-adhkar', opened - 1)] })
+    expect(marks(light('RightNowWidget', earlier, 'medium'))).toHaveLength(1)
+  })
+
+  it('RightNowWidget counts a counted item with +1, then shows it done at its repeat', () => {
+    const counting = model({ rightNow: tasbih(5), taps: [tap('count', 'tasbih-after-prayer')] })
+    const root = light('RightNowWidget', counting, 'medium')
+    expect(marks(root)).toEqual([{ kind: 'count', id: 'tasbih-after-prayer' }])
+    expect(texts(root)).toContain('6 of 33')
+    expect(texts(root)).toContain('+1')
+    // A square keeps the single check, which marks the whole item.
+    expect(marks(light('RightNowWidget', counting, 'square'))).toEqual([
+      { kind: 'done', id: 'tasbih-after-prayer' },
+    ])
+    const finished = model({ rightNow: tasbih(32), taps: [tap('count', 'tasbih-after-prayer')] })
+    const done = light('RightNowWidget', finished, 'large')
+    expect(marks(done)).toEqual([])
+    expect(texts(done)).toContain('✓ Marked done')
+  })
+
+  it('PrayersWidget makes an opened, unmarked prayer a mark, and shows a tap as prayed', () => {
+    const prayers = model().prayers.map((prayer) =>
+      prayer.id === 'dhuhr' ? { ...prayer, since: opened } : prayer,
+    )
+    for (const shape of SHAPES) {
+      expect(marks(light('PrayersWidget', model({ prayers }), shape))).toEqual([
+        { kind: 'prayer', id: 'dhuhr' },
+      ])
+    }
+    const prayed = light(
+      'PrayersWidget',
+      model({ prayers, taps: [tap('prayer', 'dhuhr')] }),
+      'medium',
+    )
+    expect(marks(prayed)).toEqual([])
+    const filled = nodes(prayed).filter(
+      (n) => (n.props.style as { backgroundColor?: string } | undefined)?.backgroundColor,
+    )
+    expect(filled).toHaveLength(2)
+  })
+
+  it('UpNextWidget marks a named prayer’s “before” from its row; “after” rows only open', () => {
+    for (const shape of SHAPES) {
+      const root = light('UpNextWidget', model(), shape)
+      expect(marks(root)).toEqual([{ kind: 'done', id: 'sunnah-before-dhuhr' }])
+      expect(uris(root)[0]).toBe('ihsaanly://item/sunnah-before-dhuhr')
+    }
+    const since = model().next?.before[0]?.since ?? 0
+    const tapped = model({ taps: [tap('done', 'sunnah-before-dhuhr', since)], rtl: true })
+    const root = light('UpNextWidget', tapped, 'medium')
+    expect(marks(root)).toEqual([])
+    expect(texts(root)).toContain('✓')
+  })
+
+  it('QuickDuasWidget gives each dua a check beside its title', () => {
+    const root = light('QuickDuasWidget', model(), 'large')
+    expect(marks(root)).toEqual(model().quickDuas.map((dua) => ({ kind: 'done', id: dua.id })))
+    const first = model().quickDuas[0]?.id ?? ''
+    const tapped = light('QuickDuasWidget', model({ taps: [tap('done', first)] }), 'large')
+    expect(marks(tapped)).toHaveLength(model().quickDuas.length - 1)
+  })
+
+  it('DuaOfTheDayWidget says it from medium up, then shows it marked', () => {
+    const dua = model().duaOfTheDay
+    for (const shape of ['medium', 'large'] as const) {
+      expect(marks(light('DuaOfTheDayWidget', model(), shape))).toEqual([
+        { kind: 'done', id: dua?.id },
+      ])
+    }
+    expect(marks(light('DuaOfTheDayWidget', model(), 'square'))).toEqual([])
+    const said = model({ taps: [tap('done', dua?.id ?? '', dua?.since ?? 0)] })
+    const root = light('DuaOfTheDayWidget', said, 'large')
+    expect(marks(root)).toEqual([])
+    expect(texts(root)).toContain('✓ Marked')
+  })
+
+  it('MarkButton is a labelled click until done, then a quiet check', () => {
+    const paint = parts.paintFor(model().ink.light)
+    const props = { paint, kind: 'done' as const, id: 'a', label: 'Mark done', doneLabel: 'Marked' }
+    expect(texts(tree(parts.MarkButton({ ...props, done: false })))).toEqual(['Mark done'])
+    expect(texts(tree(parts.MarkButton({ ...props, done: false, compact: true })))).toEqual(['✓'])
+    expect(texts(tree(parts.MarkButton({ ...props, done: true, compact: true })))).toEqual(['✓'])
+    const done = tree(parts.MarkButton({ ...props, done: true }))
+    expect(texts(done)).toEqual(['✓ Marked'])
+    expect(marks(done)).toEqual([])
+  })
+
+  it('standing counts only this occasion’s taps, and never past the repeat', () => {
+    const item = tasbih(30)
+    const taps = [
+      tap('count', item.id),
+      tap('count', item.id, opened - 1),
+      tap('done', 'other'),
+      tap('count', item.id),
+    ]
+    expect(parts.standing(model({ taps }), item)).toEqual({ done: false, count: 32 })
+    const over = [...taps, tap('count', item.id), tap('count', item.id)]
+    expect(parts.standing(model({ taps: over }), item)).toEqual({ done: true, count: 33 })
+    const unmarkable = { ...item, since: undefined }
+    expect(parts.standing(model({ taps }), unmarkable).count).toBe(30)
+    const legacy = model({ taps: [{ id: 'morning-adhkar', at: opened + 1 }] })
+    expect(parts.standing(legacy, { ...item, id: 'morning-adhkar', repeat: undefined })).toEqual({
+      done: true,
+      count: 0,
+    })
   })
 })

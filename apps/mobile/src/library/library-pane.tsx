@@ -1,6 +1,7 @@
 import { items, resolveText } from '@ihsaanly/core/content'
 import { groupByCategory, searchItems } from '@ihsaanly/core/content/search'
 import { useKnownItems } from '@ihsaanly/state/memorise/store'
+import { useOwnDuas, usePinnedItems } from '@ihsaanly/state/my-duas/store'
 import { useEnabledItems } from '@ihsaanly/state/plan/enabled-store'
 import { useStrings } from '@ihsaanly/state/strings'
 import { useLayout } from '@ihsaanly/ui/layout'
@@ -35,11 +36,11 @@ export function libraryPath(segments: string[], pathname: string): string[] | nu
   return pathname.split('/').filter(Boolean)
 }
 
-/** The item id open in the wide reader panel: `item/<id>` and
- * `item/memorise/<id>` both belong to the same card. */
+/** The item id open in the wide reader panel: `item/<id>`, `item/read/<id>`
+ * and `item/memorise/<id>` all belong to the same card. */
 function selectedItemId(parts: string[] | null): string | null {
   if (!parts || parts[0] !== 'item') return null
-  return (parts[1] === 'memorise' ? parts[2] : parts[1]) ?? null
+  return (parts[1] === 'memorise' || parts[1] === 'read' ? parts[2] : parts[1]) ?? null
 }
 
 /**
@@ -55,6 +56,8 @@ export function LibraryPane(): ReactElement {
   const palette = usePalette()
   const enabled = useEnabledItems()
   const known = useKnownItems()
+  const pinned = usePinnedItems()
+  const own = useOwnDuas()
   const layout = useLayout()
   const segments = useSegments()
   const pathname = usePathname()
@@ -65,7 +68,7 @@ export function LibraryPane(): ReactElement {
   const setQuery = (query: string): void => setThing((current) => ({ ...current, query }))
 
   const sections: LibrarySectionView[] = groupByCategory(
-    matching.filter((item) => passes(item, thing.filter, enabled, known)),
+    matching.filter((item) => passes(item, thing.filter, enabled, known, pinned)),
   )
     .map((section) => ({
       category: section.category,
@@ -79,6 +82,13 @@ export function LibraryPane(): ReactElement {
       })),
     }))
     .sort((left, right) => labelOf(left.category).localeCompare(labelOf(right.category)))
+
+  const needle = thing.query.trim().toLocaleLowerCase()
+  const ownMatching = own.filter((dua) =>
+    [dua.title, dua.text, dua.transliteration].some((text) =>
+      (text ?? '').toLocaleLowerCase().includes(needle),
+    ),
+  )
 
   return (
     <>
@@ -123,6 +133,16 @@ export function LibraryPane(): ReactElement {
         selectedId={
           layout === 'compact' ? undefined : selectedItemId(libraryPath(segments, pathname))
         }
+        mine={{
+          count: items.filter((item) => pinned.includes(item.id)).length + own.length,
+          own: ownMatching.map((dua) => ({
+            id: dua.id,
+            title: dua.title,
+            detail: dua.text ?? dua.transliteration,
+            href: `/item/${dua.id}`,
+          })),
+          writeHref: '/my-dua',
+        }}
       />
     </>
   )

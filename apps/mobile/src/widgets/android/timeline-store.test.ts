@@ -1,30 +1,25 @@
 import { beforeAll, beforeEach, describe, expect, it, mock } from 'bun:test'
 
+import { fileSystemModule, files } from '../../../test/file-system'
 import type { WidgetModel } from '../model'
 import sample from '../sample.json'
 
-const disk = { content: null as string | null, throwOnRead: false, name: '', dir: '' }
+const NAME = 'widget-timeline.json'
+const disk = {
+  get content(): string | null {
+    return files.contents.get(NAME) ?? null
+  },
+  set content(value: string | null) {
+    if (value === null) files.contents.delete(NAME)
+    else files.contents.set(NAME, value)
+  },
+  set throwOnRead(value: boolean) {
+    files.unreadable = value
+  },
+}
 
 function installFileSystem(): void {
-  mock.module('expo-file-system', () => ({
-    Paths: { document: 'file:///documents', cache: 'file:///cache' },
-    File: class {
-      constructor(dir: string, name: string) {
-        disk.dir = dir
-        disk.name = name
-      }
-      get exists(): boolean {
-        return disk.content !== null
-      }
-      async write(contents: string): Promise<void> {
-        disk.content = contents
-      }
-      async text(): Promise<string> {
-        if (disk.throwOnRead) throw new Error('unreadable')
-        return disk.content ?? ''
-      }
-    },
-  }))
+  mock.module('expo-file-system', fileSystemModule)
 }
 
 installFileSystem()
@@ -47,8 +42,7 @@ describe('timeline store', () => {
   it('writes the timeline as JSON in the documents directory and reads it back', async () => {
     const timeline = [entry(1), entry(2)]
     await writeTimeline(timeline)
-    expect(disk.dir).toBe('file:///documents')
-    expect(disk.name).toBe('widget-timeline.json')
+    expect(files.dir).toBe('file:///documents')
     expect(JSON.parse(disk.content ?? '')).toEqual(timeline)
     expect(await readTimeline()).toEqual(timeline)
   })

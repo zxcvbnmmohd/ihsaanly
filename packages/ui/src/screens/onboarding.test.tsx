@@ -2,6 +2,7 @@ import { describe, expect, it, mock } from 'bun:test'
 import { SUPPORTED_LANGUAGES } from '@ihsaanly/core/i18n/locale'
 import type { Place } from '@ihsaanly/core/location/place'
 import type { Strings } from '@ihsaanly/core/strings/en'
+import { ACCENTS, paletteFor } from '@ihsaanly/tailwind/tokens'
 import { screen, within } from '@testing-library/react'
 import { fireLayout, named, renderScreen } from '../../test/render'
 import { THEME_PREFERENCES } from '../types'
@@ -18,6 +19,7 @@ describe('OnboardingScreen, welcome step', () => {
     const { strings } = renderScreen(<OnboardingScreen {...welcome} />)
     expect(screen.getByText(strings.onboarding.welcomeTitle)).toBeTruthy()
     expect(screen.getByText(strings.onboarding.welcomeBody)).toBeInTheDocument()
+    expect(screen.getByText(strings.onboarding.free)).toBeInTheDocument()
   })
 
   it('moves on when Continue is pressed', async () => {
@@ -38,7 +40,18 @@ describe('OnboardingScreen, welcome step', () => {
 
 type Step = OnboardingScreenProps['step']
 
-const steps: Step[] = ['welcome', 'how', 'location', 'you', 'reminders', 'start']
+const steps: Step[] = [
+  'welcome',
+  'how',
+  'sourced',
+  'location',
+  'you',
+  'start',
+  'reminders',
+  'accent',
+  'widgets',
+  'summary',
+]
 
 function at(step: Step, change: Partial<OnboardingScreenProps> = {}): OnboardingScreenProps {
   return { ...onboardingFixture, step, stepIndex: steps.indexOf(step), ...change }
@@ -337,9 +350,13 @@ describe('OnboardingScreen, reminders step', () => {
   it('offers daily reminders, on, and turns them off or on', async () => {
     const onToggleReminders = mock((_on: boolean) => {})
     const { user, strings } = renderScreen(
-      <OnboardingScreen {...at('reminders')} onToggleReminders={onToggleReminders} />,
+      <OnboardingScreen
+        {...at('reminders', { reminderPreview: null })}
+        onToggleReminders={onToggleReminders}
+      />,
     )
     expect(screen.getByText(strings.onboarding.remindersWhy)).toBeInTheDocument()
+    expect(screen.queryByTestId('notification-preview')).toBeNull()
     const daily = screen.getByRole('switch', { name: named(strings.onboarding.dailyReminders) })
     expect(daily).toBeChecked()
     expect(screen.getByText(strings.onboarding.dailyRemindersDetail)).toBeInTheDocument()
@@ -462,13 +479,13 @@ describe('OnboardingScreen, start step', () => {
     ])
   })
 
-  it('describes each size in one line, and finishes', async () => {
+  it('describes each size in one line, and continues', async () => {
     const onNext = mock(() => {})
     const { user, strings } = renderScreen(<OnboardingScreen {...at('start')} onNext={onNext} />)
     expect(screen.getByText(strings.onboarding.startingDetail)).toBeInTheDocument()
     expect(screen.getByText(strings.onboarding.essentialsDetail)).toBeInTheDocument()
     expect(screen.getByText(strings.onboarding.everythingDetail)).toBeInTheDocument()
-    await user.click(screen.getByRole('button', { name: strings.onboarding.done }))
+    await user.click(screen.getByRole('button', { name: strings.onboarding.continue }))
     expect(onNext).toHaveBeenCalledTimes(1)
   })
 
@@ -498,5 +515,319 @@ describe('OnboardingScreen, chrome', () => {
     } finally {
       console.error = consoleError
     }
+  })
+})
+
+describe('OnboardingScreen, sourced step', () => {
+  const sourced = onboardingFixture.sourced
+
+  it('walks one real item through what you see, where it comes from and why', async () => {
+    const onSkipIntro = mock(() => {})
+    const { user, strings } = renderScreen(
+      <OnboardingScreen {...at('sourced')} onSkipIntro={onSkipIntro} />,
+    )
+    expect(screen.getByRole('heading', { name: strings.onboarding.sourcedTitle })).toBeTruthy()
+    expect(screen.getByText(strings.onboarding.sourcedSee)).toBeInTheDocument()
+    expect(screen.getByText(strings.onboarding.sourcedFrom)).toBeInTheDocument()
+    expect(screen.getByText(strings.onboarding.sourcedWhy)).toBeInTheDocument()
+    expect(screen.getByText(sourced?.reminder ?? '')).toBeInTheDocument()
+    expect(screen.getByText(sourced?.why ?? '')).toBeInTheDocument()
+    expect(
+      screen.getByText('Sunan Abi Dawud 5095 · Sahih — graded by al-Albani'),
+    ).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: strings.onboarding.skipIntro }))
+    expect(onSkipIntro).toHaveBeenCalledTimes(1)
+  })
+
+  it('leaves out a card the item has no words for', () => {
+    const { strings } = renderScreen(
+      <OnboardingScreen
+        {...at('sourced', {
+          sourced: sourced ? { ...sourced, reminder: null, why: null } : null,
+        })}
+      />,
+    )
+    expect(screen.queryByText(strings.onboarding.sourcedSee)).toBeNull()
+    expect(screen.queryByText(strings.onboarding.sourcedWhy)).toBeNull()
+    expect(screen.getByText(strings.onboarding.sourcedFrom)).toBeInTheDocument()
+  })
+
+  it('keeps the headline even without an example', () => {
+    const { strings } = renderScreen(<OnboardingScreen {...at('sourced', { sourced: null })} />)
+    expect(screen.getByText(strings.onboarding.sourcedTitle)).toBeInTheDocument()
+    expect(screen.queryByText(strings.onboarding.sourcedFrom)).toBeNull()
+  })
+})
+
+describe('OnboardingScreen, reminders step previews', () => {
+  it('draws a reminder and a prayer notification, each with its buttons', () => {
+    const { strings } = renderScreen(<OnboardingScreen {...at('reminders')} />)
+    const preview = onboardingFixture.reminderPreview
+    expect(screen.getByText(strings.onboarding.remindersTick)).toBeInTheDocument()
+    const [item, prayer] = screen.getAllByTestId('notification-preview')
+    if (!item || !prayer) throw new Error('expected two previews')
+    expect(within(item).getByText(preview?.item.title ?? '')).toBeInTheDocument()
+    expect(within(item).getByText(preview?.item.body ?? '')).toBeInTheDocument()
+    expect(within(item).getByText(strings.notifications.action.done)).toBeInTheDocument()
+    expect(within(item).getByText(strings.notifications.action.later)).toBeInTheDocument()
+    expect(within(prayer).getByText(preview?.prayer.title ?? '')).toBeInTheDocument()
+    expect(within(prayer).getByText(strings.notifications.action.prayed)).toBeInTheDocument()
+    expect(within(prayer).getByText(strings.notifications.action.notYet)).toBeInTheDocument()
+    // A picture of a notification: nothing on it is a button.
+    expect(within(item).queryByRole('button')).toBeNull()
+  })
+
+  it('turns prayer reminders on and off on their own', async () => {
+    const onTogglePrayers = mock((_on: boolean) => {})
+    const { user, strings } = renderScreen(
+      <OnboardingScreen {...at('reminders')} onTogglePrayers={onTogglePrayers} />,
+    )
+    const prayers = screen.getByRole('switch', { name: named(strings.onboarding.prayerReminders) })
+    expect(prayers).not.toBeChecked()
+    expect(screen.getByText(strings.onboarding.prayerRemindersDetail)).toBeInTheDocument()
+    await user.click(prayers)
+    expect(onTogglePrayers).toHaveBeenCalledWith(true)
+  })
+
+  it('counts prayer reminders alone as reminders to allow', () => {
+    const { strings } = renderScreen(
+      <OnboardingScreen
+        {...at('reminders', {
+          notifications: {
+            ...onboardingFixture.notifications,
+            windows: false,
+            lookAhead: false,
+            prayers: true,
+          },
+        })}
+      />,
+    )
+    expect(
+      screen.getByRole('switch', { name: named(strings.onboarding.dailyReminders) }),
+    ).not.toBeChecked()
+    expect(
+      screen.getByRole('switch', { name: named(strings.onboarding.prayerReminders) }),
+    ).toBeChecked()
+    expect(screen.getByText(strings.onboarding.reminderQuiet(22, 7))).toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: strings.onboarding.allowNotifications }),
+    ).toBeInTheDocument()
+  })
+})
+
+describe('OnboardingScreen, accent step', () => {
+  it('offers every accent, the chosen one marked, and reports a choice', async () => {
+    const onSelectAccent = mock((_accent: string) => {})
+    const { user, strings } = renderScreen(
+      <OnboardingScreen {...at('accent', { accent: 'sage' })} onSelectAccent={onSelectAccent} />,
+    )
+    expect(screen.getByText(strings.onboarding.accentStep)).toBeInTheDocument()
+    expect(screen.getByText(strings.onboarding.accentWhy)).toBeInTheDocument()
+    expect(screen.getAllByRole('radio')).toHaveLength(ACCENTS.length)
+    expect(screen.getByRole('radio', { name: strings.appearance.accents.sage })).toHaveAttribute(
+      'aria-checked',
+      'true',
+    )
+    await user.click(screen.getByRole('radio', { name: strings.appearance.accents.plum }))
+    expect(onSelectAccent).toHaveBeenCalledWith('plum')
+  })
+
+  it('recolours the flow with the accent the host provides', () => {
+    const rgb = (hex: string): string =>
+      `rgba(${[1, 3, 5].map((at) => Number.parseInt(hex.slice(at, at + 2), 16)).join(', ')}, 1.00)`
+    const { strings } = renderScreen(<OnboardingScreen {...at('welcome')} />, { accent: 'plum' })
+    expect(getComputedStyle(screen.getByText(strings.onboarding.free)).color).toBe(
+      rgb(paletteFor('light', 'plum').accent),
+    )
+  })
+})
+
+describe('OnboardingScreen, widgets step', () => {
+  it('draws a home widget, a lock screen widget and a notification from the plan', () => {
+    const { strings } = renderScreen(<OnboardingScreen {...at('widgets')} />)
+    const preview = onboardingFixture.widgetPreview
+    expect(screen.getByText(strings.onboarding.widgetsStep)).toBeInTheDocument()
+    const home = screen.getByTestId('home-widget-preview')
+    expect(home).toHaveAttribute('aria-label', strings.onboarding.widgetHome)
+    expect(within(home).getByText(preview?.home.caption ?? '')).toBeInTheDocument()
+    expect(within(home).getByText(preview?.home.detail ?? '')).toBeInTheDocument()
+    const lock = screen.getByTestId('lock-widget-preview')
+    expect(lock).toHaveAttribute('aria-label', strings.onboarding.widgetLock)
+    expect(within(lock).getByText('Maghrib')).toBeInTheDocument()
+    expect(within(lock).getByText('In about 2 hours')).toBeInTheDocument()
+    const notification = screen.getByTestId('notification-preview')
+    expect(within(notification).getByText(strings.notifications.action.done)).toBeInTheDocument()
+  })
+
+  it('leaves out a home widget detail it does not have', () => {
+    const preview = onboardingFixture.widgetPreview
+    renderScreen(
+      <OnboardingScreen
+        {...at('widgets', {
+          widgetPreview: preview ? { ...preview, home: { ...preview.home, detail: null } } : null,
+        })}
+      />,
+    )
+    expect(screen.queryByText(preview?.home.detail ?? '')).toBeNull()
+  })
+
+  it('"Show me how" and "Later"', async () => {
+    const onShowWidgets = mock(() => {})
+    const onNotNow = mock(() => {})
+    const onNext = mock(() => {})
+    const { user, strings } = renderScreen(
+      <OnboardingScreen
+        {...at('widgets')}
+        onShowWidgets={onShowWidgets}
+        onNotNow={onNotNow}
+        onNext={onNext}
+      />,
+    )
+    await user.click(screen.getByRole('button', { name: strings.onboarding.showMeHow }))
+    await user.click(screen.getByRole('button', { name: strings.onboarding.later }))
+    expect(onShowWidgets).toHaveBeenCalledTimes(1)
+    expect(onNotNow).toHaveBeenCalledTimes(1)
+    expect(onNext).not.toHaveBeenCalled()
+  })
+
+  it('shows only the headline without a preview', () => {
+    const { strings } = renderScreen(
+      <OnboardingScreen {...at('widgets', { widgetPreview: null })} />,
+    )
+    expect(screen.getByText(strings.onboarding.widgetsWhy)).toBeInTheDocument()
+    expect(screen.queryByTestId('home-widget-preview')).toBeNull()
+  })
+})
+
+describe('OnboardingScreen, summary step', () => {
+  const row = (name: string): HTMLElement => screen.getByRole('button', { name: named(name) })
+
+  it('lists every setting with where it stands, and starts', async () => {
+    const onNext = mock(() => {})
+    const { user, strings } = renderScreen(
+      <OnboardingScreen {...at('summary', { place: toronto })} onNext={onNext} />,
+    )
+    const { summary, status } = strings.onboarding
+    expect(screen.getByText(strings.onboarding.summaryTitle)).toBeInTheDocument()
+    expect(screen.getByText(strings.onboarding.summaryWhy)).toBeInTheDocument()
+    expect(row(summary.location)).toHaveAttribute('aria-label', `${summary.location}, Toronto`)
+    expect(row(summary.reminders)).toHaveAttribute(
+      'aria-label',
+      `${summary.reminders}, ${status.on}`,
+    )
+    expect(row(summary.tracking)).toHaveAttribute('aria-label', `${summary.tracking}, ${status.on}`)
+    expect(row(summary.start)).toHaveAttribute(
+      'aria-label',
+      `${summary.start}, ${strings.onboarding.essentials} · ${strings.onboarding.sunnahCount(14)}`,
+    )
+    expect(row(summary.accent)).toHaveAttribute(
+      'aria-label',
+      `${summary.accent}, ${strings.appearance.accents.terracotta}`,
+    )
+    expect(row(summary.widgets)).toHaveAttribute(
+      'aria-label',
+      `${summary.widgets}, ${status.addNow}`,
+    )
+    expect(row(summary.language)).toHaveAttribute(
+      'aria-label',
+      `${summary.language}, ${strings.language.names.en}`,
+    )
+    expect(screen.getAllByText('✓')).toHaveLength(6)
+    await user.click(screen.getByRole('button', { name: strings.onboarding.done }))
+    expect(onNext).toHaveBeenCalledTimes(1)
+  })
+
+  it('says what was left for later', () => {
+    const { strings } = renderScreen(
+      <OnboardingScreen
+        {...at('summary', {
+          place: null,
+          notifications: {
+            ...onboardingFixture.notifications,
+            windows: false,
+            lookAhead: false,
+            prayers: false,
+          },
+          trackingPaused: true,
+          preset: null,
+          enabledCount: 1,
+          widgets: 'show',
+        })}
+      />,
+    )
+    const { summary, status } = strings.onboarding
+    expect(row(summary.location)).toHaveAttribute(
+      'aria-label',
+      `${summary.location}, ${status.later}`,
+    )
+    expect(row(summary.reminders)).toHaveAttribute(
+      'aria-label',
+      `${summary.reminders}, ${status.later}`,
+    )
+    expect(row(summary.tracking)).toHaveAttribute(
+      'aria-label',
+      `${summary.tracking}, ${status.paused}`,
+    )
+    expect(row(summary.start)).toHaveAttribute(
+      'aria-label',
+      `${summary.start}, ${status.custom} · ${strings.onboarding.sunnahCount(1)}`,
+    )
+    expect(row(summary.widgets)).toHaveAttribute(
+      'aria-label',
+      `${summary.widgets}, ${status.afterStart}`,
+    )
+  })
+
+  it('has no widget row where the host has no widgets', () => {
+    const { strings } = renderScreen(<OnboardingScreen {...at('summary', { widgets: null })} />)
+    expect(
+      screen.queryByRole('button', { name: named(strings.onboarding.summary.widgets) }),
+    ).toBeNull()
+  })
+
+  it('opens the setting behind a row', async () => {
+    const onOpenSetting = mock((_row: string) => {})
+    const { user, strings } = renderScreen(
+      <OnboardingScreen {...at('summary')} onOpenSetting={onOpenSetting} />,
+    )
+    const { summary } = strings.onboarding
+    for (const name of [
+      summary.location,
+      summary.reminders,
+      summary.tracking,
+      summary.start,
+      summary.accent,
+      summary.widgets,
+      summary.language,
+    ]) {
+      await user.click(row(name))
+    }
+    expect(onOpenSetting.mock.calls.map(([id]) => id)).toEqual([
+      'location',
+      'reminders',
+      'tracking',
+      'start',
+      'accent',
+      'widgets',
+      'language',
+    ])
+  })
+
+  it('is honest about money, and leads to About', async () => {
+    const onOpenAbout = mock(() => {})
+    const { user, strings } = renderScreen(
+      <OnboardingScreen {...at('summary')} onOpenAbout={onOpenAbout} />,
+    )
+    expect(screen.getByText(strings.onboarding.freeTitle)).toBeInTheDocument()
+    expect(screen.getByText(strings.onboarding.freeBody)).toBeInTheDocument()
+    await user.click(screen.getByRole('link', { name: strings.onboarding.freeLink }))
+    expect(onOpenAbout).toHaveBeenCalledTimes(1)
+  })
+
+  it('renders in a right-to-left language', () => {
+    const { strings } = renderScreen(<OnboardingScreen {...at('summary', { language: 'ar' })} />, {
+      locale: 'ar',
+    })
+    expect(screen.getByText(strings.onboarding.summaryTitle)).toBeInTheDocument()
   })
 })

@@ -4,10 +4,9 @@ import {
   type CalculationPreferences,
   HighLatitudeRuleName,
 } from '@ihsaanly/core/prayer/calculation'
-import { palettes } from '@ihsaanly/tailwind/tokens'
 import type { ReactElement, ReactNode } from 'react'
 import { Text, View } from 'react-native'
-import { useColors } from '../colors'
+import { useColors, usePalette } from '../colors'
 import { ChoiceRow } from '../components/choice-row'
 import { Screen } from '../components/screen'
 import { useUi } from '../provider'
@@ -46,8 +45,8 @@ function Section({ title, footnote, children }: SectionProps): ReactElement {
 
 export function CalculationScreen({ preferences, onChange }: CalculationScreenProps): ReactElement {
   const colors = useColors()
-  const { strings, scheme } = useUi()
-  const palette = palettes[scheme]
+  const { strings } = useUi()
+  const palette = usePalette()
 
   return (
     <Screen palette={palette} className="gap-8 p-4">

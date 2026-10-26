@@ -98,6 +98,8 @@ export const yue: Strings = {
     quietHours: '勿擾時段',
     quietHoursDetail: (from: number, to: number): string => `${from}:00 至 ${to}:00`,
     quietHoursOff: '關閉',
+    quietHoursNote:
+      '安靜時段會喺你瞓覺嗰陣暫緩提醒。屬於夜晚嘅提醒照樣會到：晨禮、宵禮、威特爾拜同夜間提醒。每一項都可以單獨關閉。',
     perDay: '每日上限',
     permission: '權限',
     permissionGranted: '已允許',

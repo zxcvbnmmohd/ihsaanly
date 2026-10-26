@@ -104,6 +104,8 @@ export const it: Strings = {
     quietHours: 'Ore di silenzio',
     quietHoursDetail: (from: number, to: number): string => `Dalle ${from}:00 alle ${to}:00`,
     quietHoursOff: 'Disattivate',
+    quietHoursNote:
+      'Le ore di silenzio trattengono i promemoria mentre dormi. Ciò che appartiene alla notte arriva comunque: Fajr, Isha, il Witr e i promemoria della notte. Puoi disattivarli uno per uno.',
     perDay: 'Limite giornaliero',
     permission: 'Permesso',
     permissionGranted: 'Consentito',

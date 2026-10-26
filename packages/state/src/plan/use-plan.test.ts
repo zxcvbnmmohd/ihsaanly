@@ -12,6 +12,10 @@ const { setEnabledItems } = await import('./enabled-store')
 const { setKnownItems } = await import('../memorise/store')
 const { setUserState } = await import('./user-state-store')
 const { DEFAULT_USER_STATE } = await import('@ihsaanly/core/plan/user-state')
+const { DEFAULT_NOTIFICATION_PREFERENCES } = await import(
+  '@ihsaanly/core/plan/notification-preferences'
+)
+const { setNotificationPreferences } = await import('../notifications/store')
 const { usePlan, useSignals } = await import('./use-plan')
 
 const london = {
@@ -111,5 +115,24 @@ describe('usePlan', () => {
 
     expect(result.current?.today).toBeDefined()
     expect(Array.isArray(result.current?.notifications)).toBe(true)
+  })
+
+  it('keeps the night reminders through the default quiet hours', () => {
+    setPlace(london)
+    setEnabledItems(['witr', 'morning-adhkar'])
+    // The default quiet hours, 22:00 to 7:00, stay as they are; only prayers are asked for.
+    setNotificationPreferences({ ...DEFAULT_NOTIFICATION_PREFERENCES, prayers: true })
+    const { result } = renderHook(() => usePlan())
+
+    const notifications = result.current?.notifications ?? []
+    const prayers = new Set(
+      notifications.flatMap((entry) => (entry.kind === 'prayer' ? [entry.prayer] : [])),
+    )
+    // Fajr in London always opens before 7:00, inside the quiet hours.
+    expect(prayers.has('fajr')).toBe(true)
+    expect(prayers.has('dhuhr')).toBe(true)
+    expect(notifications.some((entry) => entry.kind === 'item' && entry.itemId === 'witr')).toBe(
+      true,
+    )
   })
 })

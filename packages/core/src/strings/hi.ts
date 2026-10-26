@@ -105,6 +105,8 @@ export const hi: Strings = {
     quietHours: 'ख़ामोशी के घंटे',
     quietHoursDetail: (from: number, to: number): string => `${from}:00 से ${to}:00 तक`,
     quietHoursOff: 'बंद',
+    quietHoursNote:
+      'शांत घंटे आपके सोते समय रिमाइंडर रोकते हैं। जो रात से जुड़ा है वह फिर भी आता है: फ़ज्र, इशा, वित्र और रात के रिमाइंडर। इनमें से किसी को भी अलग से बंद कर सकते हैं।',
     perDay: 'रोज़ की हद',
     permission: 'इजाज़त',
     permissionGranted: 'इजाज़त है',

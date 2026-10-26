@@ -94,6 +94,8 @@ export const en = {
     quietHours: 'Quiet hours',
     quietHoursDetail: (from: number, to: number): string => `${from}:00 to ${to}:00`,
     quietHoursOff: 'Off',
+    quietHoursNote:
+      "Quiet hours hold reminders back while you sleep. What belongs to the night still comes: Fajr, Isha, Witr and the night's own reminders. Turn any of them off on its own.",
     perDay: 'Daily limit',
     permission: 'Permission',
     permissionGranted: 'Allowed',

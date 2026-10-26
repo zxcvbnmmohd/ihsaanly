@@ -59,6 +59,8 @@ export const ar: Strings = {
     readerCount: 'انقر في أي مكان داخل الدائرة للعد. كل نقرة مرة واحدة.',
     readerDone: (done: string): string => `«${done}» يسجّله ويعيدك`,
     readerMore: (more: string): string => `«${more}» فيه فضله ومصدره`,
+    galleryChoose: 'اختر حجمًا لترى كل أداة كما ستبدو على هاتفك',
+    galleryLive: 'كل معاينة حيّة: ما تعرضه تلك الأداة الآن، وما يمكنك النقر عليه فيها',
   },
   plan: {
     rightNow: 'الآن',

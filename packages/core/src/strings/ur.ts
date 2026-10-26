@@ -56,6 +56,9 @@ export const ur: Strings = {
     readerDone: (done: string): string => `‘${done}’ اسے نشان زد کر کے آپ کو واپس لے جاتا ہے`,
     readerMore: (more: string): string =>
       `‘${more}’ میں بتایا ہے کہ یہ کیوں اہم ہے اور کہاں سے آیا ہے`,
+    galleryChoose: 'کوئی سائز چنیں اور دیکھیں کہ ہر ویجٹ آپ کے فون پر کیسا دکھے گا',
+    galleryLive:
+      'ہر پیش نظارہ لائیو ہے: وہ ویجٹ ابھی کیا دکھا رہا ہے، اور اس پر آپ کیا ٹیپ کر سکتے ہیں',
   },
   plan: {
     rightNow: 'ابھی',

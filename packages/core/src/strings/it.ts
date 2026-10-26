@@ -55,6 +55,9 @@ export const it: Strings = {
     readerCount: 'Tocca un punto qualsiasi del cerchio per contare. Ogni tocco vale uno.',
     readerDone: (done: string): string => `«${done}» lo segna e ti riporta indietro`,
     readerMore: (more: string): string => `«${more}» spiega perché conta e da dove viene`,
+    galleryChoose: 'Scegli una dimensione per vedere ogni widget come apparirà sul tuo telefono',
+    galleryLive:
+      'Ogni anteprima è dal vivo: mostra cosa indica ora quel widget e cosa puoi toccarci',
   },
   plan: {
     rightNow: 'Adesso',

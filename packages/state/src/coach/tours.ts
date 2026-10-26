@@ -5,7 +5,7 @@ import { resetTourSeen } from '../today/hints'
 
 /**
  * The first-use coach tours beyond Today's own (which lives in `todayHints`):
- * the focused reader, and the widget gallery once that screen exists. A new
+ * the focused reader and the widget gallery (More → Widgets). A new
  * surface adds its name here, reads `useCoachTourSeen`, and calls
  * `markCoachTourSeen` when its tour ends.
  */

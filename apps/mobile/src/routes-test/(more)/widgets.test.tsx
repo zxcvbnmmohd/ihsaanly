@@ -8,12 +8,20 @@ import { last, mockScreen } from '../../../test/more'
 interface Props {
   model: { ink: unknown; rightNow: { title: string } | null }
   platform: 'ios' | 'android'
+  coach: {
+    target: string
+    step: number
+    total: number
+    onNext: () => void
+    onSkip: () => void
+  } | null
 }
 const renders = mockScreen<Props>('@ihsaanly/ui/screens/widgets', 'WidgetsScreen')
 
 const { default: WidgetsRoute } = await import('../../app/(more)/widgets')
 const { setAccent } = await import('@ihsaanly/state/theme/accent-store')
 const { widgetInk } = await import('@/widgets/model')
+const tours = await import('@ihsaanly/state/coach/tours')
 
 const os = Platform.OS
 
@@ -45,5 +53,24 @@ describe('widgets route', () => {
     Object.defineProperty(Platform, 'OS', { value: 'android', configurable: true })
     render(<WidgetsRoute />)
     expect(last(renders).platform).toBe('android')
+  })
+
+  it('tours the sizes, then a live preview, on first use only', () => {
+    act(() => tours.resetCoachTours())
+    render(<WidgetsRoute />)
+    expect(last(renders).coach).toMatchObject({ target: 'choose', step: 0, total: 2 })
+    act(() => last(renders).coach?.onNext())
+    expect(last(renders).coach).toMatchObject({ target: 'preview', step: 1 })
+    act(() => last(renders).coach?.onNext())
+    expect(last(renders).coach).toBeNull()
+    render(<WidgetsRoute />)
+    expect(last(renders).coach).toBeNull()
+  })
+
+  it('ends the tour on Skip', () => {
+    act(() => tours.resetCoachTours())
+    render(<WidgetsRoute />)
+    act(() => last(renders).coach?.onSkip())
+    expect(last(renders).coach).toBeNull()
   })
 })

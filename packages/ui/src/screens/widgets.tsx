@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { Text, View } from 'react-native'
 import { useColors, usePalette } from '../colors'
 import { Chip } from '../components/chip'
+import { CoachMark } from '../components/coach-mark'
 import { Screen } from '../components/screen'
 import { Surface } from '../components/surface'
 import {
@@ -20,11 +21,26 @@ import { useUi } from '../provider'
 
 export type WidgetPlacement = 'home' | 'lock'
 
+/** What a first-use coach mark on the gallery points at: the size chips, then the first preview. */
+export type WidgetsCoachTarget = 'choose' | 'preview'
+
+/** One step of the gallery's first-use tour; the route decides the steps and keeps the place. */
+export interface WidgetsCoach {
+  target: WidgetsCoachTarget
+  /** 0-based. */
+  step: number
+  total: number
+  onNext: () => void
+  onSkip: () => void
+}
+
 export interface WidgetsScreenProps {
   /** The widgets' current timeline entry, so every preview says what the real one says now. */
   model: WidgetPreviewModel
   /** Which steps to show, and whether there is a Lock Screen to preview (iOS only). */
   platform: 'ios' | 'android'
+  /** The first-use tour's step, or null when it is not showing. */
+  coach?: WidgetsCoach | null
 }
 
 interface Thing {
@@ -38,7 +54,7 @@ interface Thing {
  * widgets show, with what each is for, what can be tapped on it and how to
  * put it on the Home Screen or Lock Screen.
  */
-export function WidgetsScreen({ model, platform }: WidgetsScreenProps): ReactElement {
+export function WidgetsScreen({ model, platform, coach = null }: WidgetsScreenProps): ReactElement {
   const [thing, setThing] = useState<Thing>({ placement: 'home', home: 'small', lock: 'circular' })
   const colors = useColors()
   const palette = usePalette()
@@ -56,6 +72,19 @@ export function WidgetsScreen({ model, platform }: WidgetsScreenProps): ReactEle
       : placement === 'lock'
         ? copy.iosLockSteps
         : copy.iosHomeSteps
+
+  // Drawn in the flow just under what it explains, as Today's tour is.
+  const coachUnder = (target: WidgetsCoachTarget): ReactElement | null =>
+    coach?.target === target ? (
+      <CoachMark
+        text={target === 'choose' ? strings.tour.galleryChoose : strings.tour.galleryLive}
+        step={coach.step}
+        total={coach.total}
+        onNext={coach.onNext}
+        onSkip={coach.onSkip}
+        arrowAt={target === 'choose' ? 40 : '50%'}
+      />
+    ) : null
 
   return (
     <Screen palette={palette} className="gap-4 p-4">
@@ -100,44 +129,48 @@ export function WidgetsScreen({ model, platform }: WidgetsScreenProps): ReactEle
               />
             ))}
       </View>
+      {coachUnder('choose')}
 
-      {widgets.map((widget) => {
+      {widgets.map((widget, index) => {
         const about = copy.widgets[widget]
         return (
-          <Surface key={widget} style={{ borderRadius: 24 }}>
-            <View className="gap-3 p-4">
-              <View className="gap-1">
-                <Text
-                  accessibilityRole="header"
-                  aria-level={2}
-                  className="font-semibold text-lg"
-                  style={{ color: colors.label, fontFamily: serif }}>
-                  {about.name}
-                </Text>
-                <Text className="text-sm" style={{ color: colors.secondaryLabel }}>
-                  {about.purpose}
-                </Text>
+          <View key={widget} className="gap-4">
+            <Surface style={{ borderRadius: 24 }}>
+              <View className="gap-3 p-4">
+                <View className="gap-1">
+                  <Text
+                    accessibilityRole="header"
+                    aria-level={2}
+                    className="font-semibold text-lg"
+                    style={{ color: colors.label, fontFamily: serif }}>
+                    {about.name}
+                  </Text>
+                  <Text className="text-sm" style={{ color: colors.secondaryLabel }}>
+                    {about.purpose}
+                  </Text>
+                </View>
+                <View className="items-center">
+                  <WidgetPreview
+                    widget={widget}
+                    family={family}
+                    model={model}
+                    label={copy.preview(about.name)}
+                  />
+                </View>
+                <View className="gap-1">
+                  <Text
+                    className="font-semibold text-xs uppercase"
+                    style={{ color: palette.accentInk }}>
+                    {copy.tap}
+                  </Text>
+                  <Text className="text-sm" style={{ color: colors.label }}>
+                    {about.taps}
+                  </Text>
+                </View>
               </View>
-              <View className="items-center">
-                <WidgetPreview
-                  widget={widget}
-                  family={family}
-                  model={model}
-                  label={copy.preview(about.name)}
-                />
-              </View>
-              <View className="gap-1">
-                <Text
-                  className="font-semibold text-xs uppercase"
-                  style={{ color: palette.accentInk }}>
-                  {copy.tap}
-                </Text>
-                <Text className="text-sm" style={{ color: colors.label }}>
-                  {about.taps}
-                </Text>
-              </View>
-            </View>
-          </Surface>
+            </Surface>
+            {index === 0 ? coachUnder('preview') : null}
+          </View>
         )
       })}
 

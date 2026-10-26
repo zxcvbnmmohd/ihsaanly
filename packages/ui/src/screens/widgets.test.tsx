@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'bun:test'
+import { describe, expect, it, mock } from 'bun:test'
 import { screen, within } from '@testing-library/react'
 import { renderScreen } from '../../test/render'
 import { GALLERY_WIDGETS } from '../components/widget-preview'
@@ -76,5 +76,24 @@ describe('the widget gallery', () => {
   it('reads in every language', () => {
     const { strings } = renderScreen(<WidgetsScreen {...widgetsFixture} />, { locale: 'ar' })
     expect(screen.getByText(strings.widgetGallery.updates)).toBeInTheDocument()
+  })
+
+  it('points a first-use coach mark at the sizes, then under the first preview', async () => {
+    const onNext = mock(() => {})
+    const onSkip = mock(() => {})
+    const coach = { step: 0, total: 2, onNext, onSkip }
+    const { user, strings, rerender } = renderScreen(
+      <WidgetsScreen {...widgetsFixture} coach={{ ...coach, target: 'choose' }} />,
+    )
+    expect(screen.getByText(strings.tour.galleryChoose)).toBeInTheDocument()
+    expect(screen.queryByText(strings.tour.galleryLive)).toBeNull()
+    await user.click(screen.getByRole('button', { name: strings.tour.next }))
+    await user.click(screen.getByRole('button', { name: strings.tour.skip }))
+    expect(onNext).toHaveBeenCalledTimes(1)
+    expect(onSkip).toHaveBeenCalledTimes(1)
+
+    rerender(<WidgetsScreen {...widgetsFixture} coach={{ ...coach, step: 1, target: 'preview' }} />)
+    expect(screen.getAllByText(strings.tour.galleryLive)).toHaveLength(1)
+    expect(screen.getByRole('button', { name: strings.tour.done })).toBeInTheDocument()
   })
 })

@@ -56,6 +56,10 @@ export const fr: Strings = {
     readerDone: (done: string): string => `« ${done} » le marque et vous ramène en arrière`,
     readerMore: (more: string): string =>
       `« ${more} » explique pourquoi c’est important et d’où cela vient`,
+    galleryChoose:
+      'Choisissez une taille pour voir chaque widget tel qu’il apparaîtra sur votre téléphone',
+    galleryLive:
+      'Chaque aperçu est en direct : ce que ce widget affiche en ce moment, et ce que vous pouvez y toucher',
   },
   plan: {
     rightNow: 'En ce moment',

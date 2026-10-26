@@ -50,6 +50,9 @@ export const ja: Strings = {
     readerCount: '円のどこをタップしても数えられます。1回のタップで1回です。',
     readerDone: (done: string): string => `「${done}」で記録して前の画面に戻ります`,
     readerMore: (more: string): string => `「${more}」に、その意味と出典があります`,
+    galleryChoose: 'サイズを選ぶと、各ウィジェットがスマートフォンでどう見えるかを確認できます',
+    galleryLive:
+      'プレビューはすべてライブです。そのウィジェットがいま表示している内容と、タップできるところがわかります',
   },
   plan: {
     rightNow: '今',

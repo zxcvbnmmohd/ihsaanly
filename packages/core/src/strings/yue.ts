@@ -46,6 +46,9 @@ export const yue: Strings = {
     skip: '略過',
     next: '下一步',
     done: '明白',
+    readerCount: '㩒圓圈入面任何位置就可以計數，㩒一下算一次。',
+    readerDone: (done: string): string => `「${done}」會標記咗佢，再帶你返去`,
+    readerMore: (more: string): string => `「${more}」講佢點解重要同出處`,
   },
   plan: {
     rightNow: '而家',

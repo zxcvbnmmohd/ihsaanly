@@ -53,6 +53,9 @@ export const hi: Strings = {
     skip: 'छोड़ें',
     next: 'आगे',
     done: 'समझ गया',
+    readerCount: 'गिनने के लिए घेरे में कहीं भी टैप करें। हर टैप एक बार है।',
+    readerDone: (done: string): string => `‘${done}’ इसे चिह्नित करके आपको वापस ले जाता है`,
+    readerMore: (more: string): string => `‘${more}’ में बताया है कि यह क्यों अहम है और कहाँ से आता है`,
   },
   plan: {
     rightNow: 'अभी',

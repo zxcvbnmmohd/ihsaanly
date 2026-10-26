@@ -47,6 +47,9 @@ export const ja: Strings = {
     skip: 'スキップ',
     next: '次へ',
     done: 'わかりました',
+    readerCount: '円のどこをタップしても数えられます。1回のタップで1回です。',
+    readerDone: (done: string): string => `「${done}」で記録して前の画面に戻ります`,
+    readerMore: (more: string): string => `「${more}」に、その意味と出典があります`,
   },
   plan: {
     rightNow: '今',

@@ -52,6 +52,9 @@ export const it: Strings = {
     skip: 'Salta',
     next: 'Avanti',
     done: 'Ho capito',
+    readerCount: 'Tocca un punto qualsiasi del cerchio per contare. Ogni tocco vale uno.',
+    readerDone: (done: string): string => `«${done}» lo segna e ti riporta indietro`,
+    readerMore: (more: string): string => `«${more}» spiega perché conta e da dove viene`,
   },
   plan: {
     rightNow: 'Adesso',

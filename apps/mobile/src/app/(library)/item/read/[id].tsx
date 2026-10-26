@@ -1,4 +1,5 @@
 import { itemById, resolveText } from '@ihsaanly/core/content'
+import { markCoachTourSeen, useCoachTourSeen } from '@ihsaanly/state/coach/tours'
 import { usePlace } from '@ihsaanly/state/location/store'
 import { useCompletedToday } from '@ihsaanly/state/plan/completions'
 import { usePlan } from '@ihsaanly/state/plan/use-plan'
@@ -12,7 +13,12 @@ import {
 import { useStrings } from '@ihsaanly/state/strings'
 import { useNow } from '@ihsaanly/state/time/use-now'
 import type { CounterState } from '@ihsaanly/ui/screens/item'
-import { type ReaderPage, ReaderScreen } from '@ihsaanly/ui/screens/reader'
+import {
+  type ReaderCoach,
+  type ReaderCoachTarget,
+  type ReaderPage,
+  ReaderScreen,
+} from '@ihsaanly/ui/screens/reader'
 import * as Haptics from 'expo-haptics'
 import { router, Stack, useLocalSearchParams } from 'expo-router'
 import { type ReactElement, useState } from 'react'
@@ -23,6 +29,9 @@ interface Thing {
   partCounts: Record<string, number>
   /** Marked done here, so the counters stay full while the plan catches up. */
   finished: boolean
+  /** The first-use tour: where it is, and whether it was finished or skipped here. */
+  coachStep: number
+  coachEnded: boolean
 }
 
 /**
@@ -31,7 +40,14 @@ interface Thing {
  * count started here carries on there and on another device.
  */
 export default function ReaderRoute(): ReactElement {
-  const [thing, setThing] = useState<Thing>({ page: 0, partCounts: {}, finished: false })
+  const [thing, setThing] = useState<Thing>({
+    page: 0,
+    partCounts: {},
+    finished: false,
+    coachStep: 0,
+    coachEnded: false,
+  })
+  const coachSeen = useCoachTourSeen('reader')
   const strings = useStrings()
   const { id } = useLocalSearchParams<{ id: string }>()
   const item = itemById(id)
@@ -80,6 +96,29 @@ export default function ReaderRoute(): ReactElement {
     return { count: done ? item.repeat : progress.count, target: item.repeat }
   })()
 
+  // First use: tap to count (when there is a count), Done, More about this.
+  const coachSteps: ReaderCoachTarget[] = counter ? ['counter', 'done', 'more'] : ['done', 'more']
+  const coachStep = Math.min(thing.coachStep, coachSteps.length - 1)
+  const coachTarget = coachSteps[coachStep]
+  const endCoach = (): void => {
+    markCoachTourSeen('reader')
+    setThing((current) => ({ ...current, coachEnded: true }))
+  }
+  const nextCoach = (): void => {
+    if (coachStep + 1 >= coachSteps.length) endCoach()
+    else setThing((current) => ({ ...current, coachStep: coachStep + 1 }))
+  }
+  const coach: ReaderCoach | null =
+    !coachSeen && !thing.coachEnded && pages.length > 0 && coachTarget
+      ? {
+          target: coachTarget,
+          step: coachStep,
+          total: coachSteps.length,
+          onNext: nextCoach,
+          onSkip: endCoach,
+        }
+      : null
+
   const finish = (): void => {
     void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
     setThing((current) => ({ ...current, finished: true }))
@@ -87,6 +126,8 @@ export default function ReaderRoute(): ReactElement {
 
   const tapCounter = (): void => {
     if (!item || !counter) return
+    // The first count is the tip taken: the tour moves on to Done.
+    if (coach?.target === 'counter') nextCoach()
     if (part) {
       const next = counter.count + 1
       setThing((current) => ({
@@ -140,6 +181,7 @@ export default function ReaderRoute(): ReactElement {
         onTapCounter={tapCounter}
         onDone={markDone}
         onMore={() => router.replace(`/item/${id}`)}
+        coach={coach}
       />
     </>
   )

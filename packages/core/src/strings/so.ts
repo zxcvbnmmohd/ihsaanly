@@ -53,6 +53,10 @@ export const so: Strings = {
     skip: 'Ka bood',
     next: 'Xiga',
     done: 'Waan fahmay',
+    readerCount: 'Taabo meel kasta oo goobada ah si aad u tiriso. Taabasho kastaa waa hal.',
+    readerDone: (done: string): string => `“${done}” ayaa calaamadiya oo dib kuu celiya`,
+    readerMore: (more: string): string =>
+      `“${more}” waxay sheegaysaa sababta ay muhiim u tahay iyo halka ay ka timid`,
   },
   plan: {
     rightNow: 'Hadda',

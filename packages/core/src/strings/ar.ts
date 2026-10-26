@@ -56,6 +56,9 @@ export const ar: Strings = {
     skip: 'تخطّي',
     next: 'التالي',
     done: 'فهمت',
+    readerCount: 'انقر في أي مكان داخل الدائرة للعد. كل نقرة مرة واحدة.',
+    readerDone: (done: string): string => `«${done}» يسجّله ويعيدك`,
+    readerMore: (more: string): string => `«${more}» فيه فضله ومصدره`,
   },
   plan: {
     rightNow: 'الآن',

@@ -87,6 +87,12 @@ export const TODAY_HINTS_KEY = 'todayHints'
  */
 export const WIDGET_TAPS_KEY = 'widgetTapsThrough'
 
+/**
+ * Which first-use coach marks beyond Today's tour have been seen here (the
+ * focused reader, the widget gallery). Per device, like `todayHints`.
+ */
+export const COACH_MARKS_KEY = 'coachMarks'
+
 /** Device bookkeeping that never belongs in an export either. */
 export const DEVICE_ONLY_KEYS: ReadonlySet<string> = new Set([
   SYNC_META_KEY,
@@ -96,4 +102,5 @@ export const DEVICE_ONLY_KEYS: ReadonlySet<string> = new Set([
   CRASH_REPORTS_KEY,
   TODAY_HINTS_KEY,
   WIDGET_TAPS_KEY,
+  COACH_MARKS_KEY,
 ])

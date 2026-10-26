@@ -52,6 +52,10 @@ export const ur: Strings = {
     skip: 'چھوڑیں',
     next: 'آگے',
     done: 'سمجھ گیا',
+    readerCount: 'گننے کے لیے دائرے میں کہیں بھی ٹیپ کریں۔ ہر ٹیپ ایک بار ہے۔',
+    readerDone: (done: string): string => `‘${done}’ اسے نشان زد کر کے آپ کو واپس لے جاتا ہے`,
+    readerMore: (more: string): string =>
+      `‘${more}’ میں بتایا ہے کہ یہ کیوں اہم ہے اور کہاں سے آیا ہے`,
   },
   plan: {
     rightNow: 'ابھی',

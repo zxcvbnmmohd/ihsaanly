@@ -52,6 +52,10 @@ export const fr: Strings = {
     skip: 'Passer',
     next: 'Suivant',
     done: 'Compris',
+    readerCount: 'Touchez n’importe où dans le cercle pour compter. Chaque toucher compte pour un.',
+    readerDone: (done: string): string => `« ${done} » le marque et vous ramène en arrière`,
+    readerMore: (more: string): string =>
+      `« ${more} » explique pourquoi c’est important et d’où cela vient`,
   },
   plan: {
     rightNow: 'En ce moment',

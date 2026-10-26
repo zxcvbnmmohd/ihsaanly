@@ -999,4 +999,14 @@ export const it: Strings = {
     copied: 'Copiato',
     unavailable: 'La condivisione non è disponibile su questo dispositivo.',
   },
+  remoteMarks: {
+    doneFromWidget: 'Segnato come fatto dal tuo widget',
+    doneFromNotification: 'Segnato come fatto da una notifica',
+    prayerFromWidget: (prayer: string): string => `${prayer} segnata dal tuo widget`,
+    prayerFromNotification: (prayer: string): string => `${prayer} segnata da una notifica`,
+    countedFromWidget: (n: number): string => `${n} contat${n === 1 ? 'o' : 'i'} dal tuo widget`,
+    manyFromWidgets: (n: number): string => `${n} segnati dai tuoi widget`,
+    manyFromNotifications: (n: number): string => `${n} segnati dalle notifiche`,
+    manyFromBoth: (n: number): string => `${n} segnati da widget e notifiche`,
+  },
 }

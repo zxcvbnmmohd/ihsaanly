@@ -944,4 +944,14 @@ export const zh: Strings = {
     copied: '已复制',
     unavailable: '此设备不支持分享。',
   },
+  remoteMarks: {
+    doneFromWidget: '已从小组件标记完成',
+    doneFromNotification: '已从通知标记完成',
+    prayerFromWidget: (prayer: string): string => `已从小组件标记${prayer}`,
+    prayerFromNotification: (prayer: string): string => `已从通知标记${prayer}`,
+    countedFromWidget: (n: number): string => `已从小组件计数 ${n} 次`,
+    manyFromWidgets: (n: number): string => `已从小组件标记 ${n} 项`,
+    manyFromNotifications: (n: number): string => `已从通知标记 ${n} 项`,
+    manyFromBoth: (n: number): string => `已从小组件和通知标记 ${n} 项`,
+  },
 }

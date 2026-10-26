@@ -981,4 +981,14 @@ export const ur: Strings = {
     copied: 'کاپی ہو گیا',
     unavailable: 'اس ڈیوائس پر شیئر کرنا دستیاب نہیں ہے۔',
   },
+  remoteMarks: {
+    doneFromWidget: 'آپ کے ویجٹ سے مکمل نشان زد',
+    doneFromNotification: 'ایک اطلاع سے مکمل نشان زد',
+    prayerFromWidget: (prayer: string): string => `${prayer} آپ کے ویجٹ سے نشان زد`,
+    prayerFromNotification: (prayer: string): string => `${prayer} ایک اطلاع سے نشان زد`,
+    countedFromWidget: (n: number): string => `آپ کے ویجٹ سے ${n} گنے گئے`,
+    manyFromWidgets: (n: number): string => `آپ کے ویجٹس سے ${n} نشان زد`,
+    manyFromNotifications: (n: number): string => `اطلاعات سے ${n} نشان زد`,
+    manyFromBoth: (n: number): string => `ویجٹس اور اطلاعات سے ${n} نشان زد`,
+  },
 }

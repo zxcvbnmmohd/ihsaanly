@@ -998,4 +998,15 @@ export const so: Strings = {
     copied: 'Waa la koobiyeeyay',
     unavailable: 'Wadaagidda lagama heli karo qalabkan.',
   },
+  remoteMarks: {
+    doneFromWidget: 'Waxaa laga calaamadeeyey widget-kaaga',
+    doneFromNotification: 'Waxaa laga calaamadeeyey ogeysiis',
+    prayerFromWidget: (prayer: string): string => `${prayer} waxaa laga calaamadeeyey widget-kaaga`,
+    prayerFromNotification: (prayer: string): string =>
+      `${prayer} waxaa laga calaamadeeyey ogeysiis`,
+    countedFromWidget: (n: number): string => `${n} ayaa laga tiriyey widget-kaaga`,
+    manyFromWidgets: (n: number): string => `${n} ayaa laga calaamadeeyey widget-yadaada`,
+    manyFromNotifications: (n: number): string => `${n} ayaa laga calaamadeeyey ogeysiisyo`,
+    manyFromBoth: (n: number): string => `${n} ayaa laga calaamadeeyey widget-yo iyo ogeysiisyo`,
+  },
 }

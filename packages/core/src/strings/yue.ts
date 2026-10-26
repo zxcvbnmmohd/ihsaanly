@@ -943,4 +943,14 @@ export const yue: Strings = {
     copied: '已複製',
     unavailable: '呢部裝置用唔到分享功能。',
   },
+  remoteMarks: {
+    doneFromWidget: '已經喺小工具標記完成',
+    doneFromNotification: '已經喺通知標記完成',
+    prayerFromWidget: (prayer: string): string => `已經喺小工具標記${prayer}`,
+    prayerFromNotification: (prayer: string): string => `已經喺通知標記${prayer}`,
+    countedFromWidget: (n: number): string => `喺小工具數咗 ${n} 次`,
+    manyFromWidgets: (n: number): string => `喺小工具標記咗 ${n} 項`,
+    manyFromNotifications: (n: number): string => `喺通知標記咗 ${n} 項`,
+    manyFromBoth: (n: number): string => `喺小工具同通知標記咗 ${n} 項`,
+  },
 }

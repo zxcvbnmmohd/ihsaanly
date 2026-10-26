@@ -726,6 +726,14 @@ platform like any iOS-only module.
   its preview too. Lock Screen previews are iOS only, per `LOCK_FAMILIES_BY_WIDGET`,
   which `names.test.ts` holds to `app.json`. The Widgets row is opt-in
   (`useMoreGroups(theme, cloud, true)`), since the web hosts have no widgets.
+- **Saying so, with Undo.** Every mark the drain files, and every mark a
+  notification's action button makes, is noted in the device-only
+  `remoteMarks` preference (`src/remote-marks/ledger.ts`) with its moment and
+  zone. While the app is in front the root layout shows them in a `Toast`
+  (`@ihsaanly/ui/components/toast`, above the tab bar): one by name ("Asr
+  marked from a notification"), several by count ("3 marked from your
+  widgets"). Undo takes back exactly those marks on the day each was filed
+  (counts only while their period is current); timing out forgets them.
 - **Android** (`src/widgets/android/`, `react-native-android-widget`): the task
   handler registered from `index.ts` (via `register.android.ts`; the library
   throws at import on iOS) reads `widget-timeline.json` from `Paths.document`

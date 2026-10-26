@@ -106,6 +106,13 @@ export const READER_KEY = 'reader'
  */
 export const COACH_MARKS_KEY = 'coachMarks'
 
+/**
+ * Marks made from a widget or a notification action that the app has not yet
+ * shown ("Marked done from your widget · Undo"). Per device: they are what
+ * this device's widgets and notifications did while the app was closed.
+ */
+export const REMOTE_MARKS_KEY = 'remoteMarks'
+
 /** Device bookkeeping that never belongs in an export either. */
 export const DEVICE_ONLY_KEYS: ReadonlySet<string> = new Set([
   SYNC_META_KEY,
@@ -116,4 +123,5 @@ export const DEVICE_ONLY_KEYS: ReadonlySet<string> = new Set([
   TODAY_HINTS_KEY,
   WIDGET_TAPS_KEY,
   COACH_MARKS_KEY,
+  REMOTE_MARKS_KEY,
 ])

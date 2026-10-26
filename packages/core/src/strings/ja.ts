@@ -978,4 +978,14 @@ export const ja: Strings = {
     copied: 'コピーしました',
     unavailable: 'このデバイスでは共有できません。',
   },
+  remoteMarks: {
+    doneFromWidget: 'ウィジェットから完了にしました',
+    doneFromNotification: '通知から完了にしました',
+    prayerFromWidget: (prayer: string): string => `ウィジェットから${prayer}を記録しました`,
+    prayerFromNotification: (prayer: string): string => `通知から${prayer}を記録しました`,
+    countedFromWidget: (n: number): string => `ウィジェットから${n}回数えました`,
+    manyFromWidgets: (n: number): string => `ウィジェットから${n}件を記録しました`,
+    manyFromNotifications: (n: number): string => `通知から${n}件を記録しました`,
+    manyFromBoth: (n: number): string => `ウィジェットと通知から${n}件を記録しました`,
+  },
 }

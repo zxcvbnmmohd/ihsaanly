@@ -962,4 +962,14 @@ export const hi: Strings = {
     copied: 'कॉपी हो गया',
     unavailable: 'इस डिवाइस पर शेयर करना उपलब्ध नहीं है।',
   },
+  remoteMarks: {
+    doneFromWidget: 'आपके विजेट से पूरा चिह्नित',
+    doneFromNotification: 'एक सूचना से पूरा चिह्नित',
+    prayerFromWidget: (prayer: string): string => `${prayer} आपके विजेट से चिह्नित`,
+    prayerFromNotification: (prayer: string): string => `${prayer} एक सूचना से चिह्नित`,
+    countedFromWidget: (n: number): string => `आपके विजेट से ${n} गिने गए`,
+    manyFromWidgets: (n: number): string => `आपके विजेट से ${n} चिह्नित`,
+    manyFromNotifications: (n: number): string => `सूचनाओं से ${n} चिह्नित`,
+    manyFromBoth: (n: number): string => `विजेट और सूचनाओं से ${n} चिह्नित`,
+  },
 }

@@ -19,6 +19,7 @@ import { markPrayer } from '@ihsaanly/state/prayer/marks'
 import { markedPrayersOn } from '@ihsaanly/state/storage/events'
 import { router } from 'expo-router'
 import { openAnnouncement } from '@/push/open'
+import { noteRemoteMarks } from '@/remote-marks/ledger'
 import { scheduleLater } from './schedule'
 
 /** The slice of a response this module reads; the full type belongs to expo-notifications. */
@@ -49,6 +50,18 @@ function markFromShade(data: PrayerData, timeZone: string): void {
     ? { startsAt: new Date(data.window.startsAt), endsAt: new Date(data.window.endsAt) }
     : undefined
   markPrayer(data.prayer, now, timeZone, window)
+  noteRemoteMarks([
+    { source: 'notification', kind: 'prayer', id: data.prayer, at: now.getTime(), timeZone },
+  ])
+}
+
+/** "Done" on a reminder: the item completed now, and noted for the toast. */
+function doneFromShade(itemId: string, timeZone: string): void {
+  const now = new Date()
+  completeItem(itemId, now, timeZone)
+  noteRemoteMarks([
+    { source: 'notification', kind: 'done', id: itemId, at: now.getTime(), timeZone },
+  ])
 }
 
 /**
@@ -93,7 +106,7 @@ export async function handleResponse(response: Response, navigate = true): Promi
 
   switch (response.actionIdentifier) {
     case 'done':
-      if (data.kind === 'item') completeItem(data.itemId, new Date(), timeZone)
+      if (data.kind === 'item') doneFromShade(data.itemId, timeZone)
       if (data.kind === 'prayer') markFromShade(data, timeZone)
       return
 

@@ -973,4 +973,14 @@ export const ar: Strings = {
     copied: 'تم النسخ',
     unavailable: 'المشاركة غير متاحة على هذا الجهاز.',
   },
+  remoteMarks: {
+    doneFromWidget: 'تم التسجيل من الأداة',
+    doneFromNotification: 'تم التسجيل من إشعار',
+    prayerFromWidget: (prayer: string): string => `تم تسجيل ${prayer} من الأداة`,
+    prayerFromNotification: (prayer: string): string => `تم تسجيل ${prayer} من إشعار`,
+    countedFromWidget: (n: number): string => `تم عدّ ${n} من الأداة`,
+    manyFromWidgets: (n: number): string => `تم تسجيل ${n} من الأدوات`,
+    manyFromNotifications: (n: number): string => `تم تسجيل ${n} من الإشعارات`,
+    manyFromBoth: (n: number): string => `تم تسجيل ${n} من الأدوات والإشعارات`,
+  },
 }

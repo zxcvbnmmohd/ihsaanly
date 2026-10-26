@@ -974,6 +974,16 @@ export const en = {
     copied: 'Copied',
     unavailable: 'Sharing is not available on this device.',
   },
+  remoteMarks: {
+    doneFromWidget: 'Marked done from your widget',
+    doneFromNotification: 'Marked done from a notification',
+    prayerFromWidget: (prayer: string): string => `${prayer} marked from your widget`,
+    prayerFromNotification: (prayer: string): string => `${prayer} marked from a notification`,
+    countedFromWidget: (count: number): string => `Counted ${count} from your widget`,
+    manyFromWidgets: (count: number): string => `${count} marked from your widgets`,
+    manyFromNotifications: (count: number): string => `${count} marked from notifications`,
+    manyFromBoth: (count: number): string => `${count} marked from widgets and notifications`,
+  },
 }
 
 export type Strings = typeof en

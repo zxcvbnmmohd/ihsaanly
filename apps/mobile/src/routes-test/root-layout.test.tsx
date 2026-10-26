@@ -81,6 +81,17 @@ mock.module('@ihsaanly/state/cloud/session', () => ({
   notifyBackground: () => session.seen.push('background'),
 }))
 
+// The remote-mark toast has its own tests; here it says one fixed thing, and
+// keeps its foreground subscription out of the one counted below.
+const realRemoteToast = { ...(await import('@/remote-marks/use-remote-mark-toast')) }
+mock.module('@/remote-marks/use-remote-mark-toast', () => ({
+  ...realRemoteToast,
+  useRemoteMarkToast: () => ({
+    toast: { id: '1', text: 'Asr marked from a notification' },
+    onDismiss: () => {},
+  }),
+}))
+
 // RNW's AppState is driven by page visibility; this records the subscription instead.
 const appState = {
   handlers: [] as ((state: string) => void)[],
@@ -119,6 +130,7 @@ const app = (): ReactElement => (
 
 afterAll(() => {
   mock.module('@/cloud', () => realCloud)
+  mock.module('@/remote-marks/use-remote-mark-toast', () => realRemoteToast)
   mock.module('@ihsaanly/state/cloud/session', () => realSession)
   mock.module('expo-router/native-tabs', () => nativeTabs)
   AppState.addEventListener = realAddEventListener
@@ -203,6 +215,11 @@ describe('root layout', () => {
       expect(onboarding).toEqual([])
       expect(tabs.names).toEqual(['(home)', '(library)', '(more)'])
       expect(tabs.labels).toEqual([strings.tabs.today, strings.tabs.library, strings.tabs.more])
+    })
+
+    it('says over the tabs what a widget or notification marked while closed', () => {
+      const view = render(app())
+      expect(view.getByRole('status')).toHaveTextContent('Asr marked from a notification')
     })
 
     it('tints the bar with the palette and leaves the background to iOS', () => {

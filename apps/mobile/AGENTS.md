@@ -157,7 +157,7 @@ bump `react`, `react-native`, `react-native-screens`, `react-native-reanimated`,
   (`ms-`/`pe-`/`start-`/`text-start`); a lint plugin rejects left/right ones.
 - **Colours and font families → `style`, from JavaScript.** Inside
   `@ihsaanly/ui` call `useColors()` (`src/colors.ts`: brand colours from
-  `palettes[scheme]` / `brand` in `@ihsaanly/tailwind/tokens`, system colours
+  `paletteFor(scheme, accent)` / `brand` in `@ihsaanly/tailwind/tokens`, system colours
   from `useUi().systemColors`) and use `serif` / `arabic` from `src/fonts.ts`
   for `fontFamily`; where a component already takes a `palette` prop, use it.
   In this app's routes use `colors` (`src/theme/colors.ts`) and
@@ -445,9 +445,22 @@ reports what each language still lacks.
 `tooling/tailwind/tokens.ts` holds the only hex values. A gradient and a brand hue
 cannot be expressed as `PlatformColor`, which has no notion of either. Use the brand
 classes (`bg-accent`, `text-ink-secondary`, `bg-surface`) wherever a className fits;
-for a raw value read `palettes[useUi().scheme]` in `@ihsaanly/ui`, or `usePalette()`
+for a raw value call `usePalette()` from `src/colors.ts` in `@ihsaanly/ui`, or `usePalette()`
 from `src/theme/store.ts` in this app, both resolving against the scheme the app is
-actually rendering in.
+actually rendering in and the chosen accent.
+
+### Accents are a second choice beside the theme
+
+Ten named accents (`ACCENTS` in `tooling/tailwind/tokens.ts`, Terracotta the default)
+recolour only `accent`, `accent-ink`, `on-accent`, `indicator` and `tint`; the wash,
+paper and ink never change. `tokens.test.ts` holds each one to WCAG AA on the wash
+in both schemes, so a new accent that fails cannot land. The choice is the `accent`
+preference (`@ihsaanly/state/theme/accent-store`), synced like `theme`. Hosts pass it
+to `UiProvider` as `accent`; never read `palettes[scheme]` directly in a screen, which
+is always terracotta. The widget timeline takes it as `WidgetInput.accent` and
+`useWidgetTimeline` republishes when it changes. On the web `WebUiProvider` writes the
+accent's `--color-*` variables inline on `<html>` so Tailwind classes follow it too.
+`AccentPicker` (`@ihsaanly/ui/components/accent-picker`) is the reusable grid.
 
 Text, separators and system surfaces still use the `system-*` colours, so light,
 dark and contrast settings remain the OS's business. Use the accent for

@@ -1,9 +1,8 @@
 import type { SightingAuthority } from '@ihsaanly/core/content/moon-sighting'
 import { type HijriDate, offsetOptions } from '@ihsaanly/core/hijri/calendar'
-import { palettes } from '@ihsaanly/tailwind/tokens'
 import type { ReactElement } from 'react'
 import { Text, View } from 'react-native'
-import { useColors } from '../colors'
+import { useColors, usePalette } from '../colors'
 import { ChoiceRow } from '../components/choice-row'
 import { Screen } from '../components/screen'
 import { useUi } from '../provider'
@@ -22,8 +21,8 @@ export function HijriScreen({
   onChange,
 }: HijriScreenProps): ReactElement {
   const colors = useColors()
-  const { strings, scheme } = useUi()
-  const palette = palettes[scheme]
+  const { strings } = useUi()
+  const palette = usePalette()
 
   return (
     <Screen palette={palette} className="gap-6 p-4">

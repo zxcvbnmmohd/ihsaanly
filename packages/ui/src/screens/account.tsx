@@ -1,5 +1,4 @@
 import type { Strings } from '@ihsaanly/core/strings/en'
-import { palettes } from '@ihsaanly/tailwind/tokens'
 import {
   type ReactElement,
   type ReactNode,
@@ -17,7 +16,7 @@ import {
   Text,
   View,
 } from 'react-native'
-import { useColors } from '../colors'
+import { useColors, usePalette } from '../colors'
 import { Button } from '../components/button'
 import { Row } from '../components/row'
 import { Screen } from '../components/screen'
@@ -315,7 +314,7 @@ export function AccountScreen({
   const [thing, setThing] = useState<Thing>({ step: 'none', origin: null })
   const colors = useColors()
   const { strings, scheme } = useUi()
-  const palette = palettes[scheme]
+  const palette = usePalette()
   const errorColor = ERROR_COLOR[scheme === 'dark' ? 'dark' : 'light']
   const copy = strings.account
   const busy = account.status === 'syncing'

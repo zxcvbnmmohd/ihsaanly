@@ -1,9 +1,8 @@
-import { palettes } from '@ihsaanly/tailwind/tokens'
 import * as Haptics from 'expo-haptics'
 import type { ReactElement } from 'react'
 import { useEffect, useRef } from 'react'
 import { Pressable, Text, View } from 'react-native'
-import { useColors } from '../colors'
+import { useColors, usePalette } from '../colors'
 import { Button } from '../components/button'
 import { Sheet } from '../components/sheet'
 import { serif } from '../fonts'
@@ -32,8 +31,8 @@ export function CounterPanel({
   onClose,
 }: CounterPanelProps): ReactElement {
   const colors = useColors()
-  const { strings, scheme } = useUi()
-  const palette = palettes[scheme]
+  const { strings } = useUi()
+  const palette = usePalette()
   const { itemId, title, count, target } = panel
   const complete = count >= target
   const done = useRef(onComplete)

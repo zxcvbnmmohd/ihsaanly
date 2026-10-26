@@ -1,8 +1,7 @@
 import type { Evidence, Ruling } from '@ihsaanly/core/content/schema'
-import { palettes } from '@ihsaanly/tailwind/tokens'
 import type { ReactElement, ReactNode } from 'react'
 import { Pressable, Text, View } from 'react-native'
-import { useColors } from '../colors'
+import { useColors, usePalette } from '../colors'
 import { ArabicText } from '../components/arabic-text'
 import { Button } from '../components/button'
 import { Counter } from '../components/counter'
@@ -151,8 +150,8 @@ export function ItemScreen({
   onShareImage,
 }: ItemScreenProps): ReactElement {
   const colors = useColors()
-  const { strings, scheme, Link } = useUi()
-  const palette = palettes[scheme]
+  const { strings, Link } = useUi()
+  const palette = usePalette()
 
   if (!item) {
     return <EmptyState message={strings.notFound.body} />

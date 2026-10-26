@@ -1,4 +1,5 @@
 import type { Strings } from '@ihsaanly/core/strings/en'
+import type { AccentName } from '@ihsaanly/tailwind/tokens'
 import { createContext, type ReactElement, type ReactNode, use } from 'react'
 import type { AccessibilityProps, ColorValue } from 'react-native'
 
@@ -37,6 +38,8 @@ export interface UiContextValue {
   scheme: 'light' | 'dark'
   Link: (props: UiLinkProps) => ReactNode
   systemColors: SystemColors
+  /** The chosen accent; terracotta, the brand's own, when the host gives none. */
+  accent?: AccentName
   /** Fixtures and tests set it to render any size without a window; see `useLayout()`. */
   layout?: Layout
 }

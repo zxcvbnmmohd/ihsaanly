@@ -2,12 +2,12 @@ import { itemById, items, resolveText } from '@ihsaanly/core/content'
 import { civilDateIn, civilDateKey } from '@ihsaanly/core/day/boundaries'
 import { dayContextFor } from '@ihsaanly/core/plan/day-context'
 import { prayerName, windowName } from '@ihsaanly/core/plan/jumuah'
-import { plan } from '@ihsaanly/core/plan/plan'
+import { beforePrayerOpensAt, plan } from '@ihsaanly/core/plan/plan'
 import type { PlannedItem, Signals } from '@ihsaanly/core/plan/signals'
 import { PRAYERS, type Prayer } from '@ihsaanly/core/prayer/qada'
-import { buildWindows, windowAt } from '@ihsaanly/core/prayer/windows'
+import { buildWindows, type PrayerWindow, windowAt } from '@ihsaanly/core/prayer/windows'
 import type { Strings } from '@ihsaanly/core/strings/en'
-import { palettes } from '@/theme/palettes'
+import { type AccentName, paletteFor } from '@ihsaanly/tailwind/tokens'
 
 /**
  * Everything every widget can show, resolved to plain strings and hex colours.
@@ -23,17 +23,40 @@ export interface WidgetLink {
   url: string
 }
 
-/** The moment's headline item: a link, plus the id a done tap is filed under. */
+/**
+ * An item a widget can act on: a link, plus the id a tap is filed under.
+ * Without `since` the widget only opens it.
+ */
 export interface WidgetItem extends WidgetLink {
   id: string
+  /**
+   * Epoch ms at which this occasion of the item opened. A tap counts for the
+   * item only from then, so a tap for an earlier occasion (the tasbih after
+   * Dhuhr, seen again after Asr) does not read as done.
+   */
+  since?: number
+  /** Done this occasion, as the app knew when it published. */
+  done?: boolean
+  /** A counted item (the tasbih): how many it takes, and how many the app had counted. */
+  repeat?: number
+  count?: number
 }
 
 /**
- * A done tap on the Right now widget, kept in the widget's own timeline (the
- * App Group) until the app takes it into its log. `at` is the tap's epoch ms,
- * from which the app files it under the right day, as any mark is.
+ * What a widget tap asks: `done` marks an item done, `prayer` marks a prayer
+ * (`id` is the prayer), `count` counts one of a counted item. A tap written
+ * before kinds existed has none and is a `done`.
+ */
+export type WidgetTapKind = 'done' | 'prayer' | 'count'
+
+/**
+ * A tap on a widget, kept where the widget can write (the App Group's
+ * timeline on iOS, a file on Android) until the app takes it into its log.
+ * `at` is the tap's epoch ms, from which the app files it under the right
+ * day and window, as any mark is.
  */
 export interface WidgetTap {
+  kind?: WidgetTapKind
   id: string
   at: number
 }
@@ -73,6 +96,11 @@ export interface WidgetModel {
     after: string
     markDone: string
     markedDone: string
+    saidIt: string
+    marked: string
+    addOne: string
+    /** `{count}` and `{total}` are filled in on the widget, which counts its own taps. */
+    countOf: string
   }
   /** "Morning", "After Maghrib"; null before the first prayer is calculable. */
   window: string | null
@@ -90,15 +118,35 @@ export interface WidgetModel {
   alsoNow: WidgetLink[]
   /** "+2 more now": what else is open beside the headline; null when nothing is. */
   moreNow: string | null
-  /** Done taps the app has not taken in yet. Always empty from the app; the widget appends. */
+  /** Taps the app has not taken in yet. Empty from the app, bar those it carries; the widget appends. */
   taps: WidgetTap[]
-  next: { prayer: string; distance: string; before: WidgetLink[]; after: WidgetLink[] } | null
-  /** Empty when tracking is paused. */
-  prayers: { name: string; short: string; done: boolean; passed: boolean }[]
+  /** Only a named prayer's "before" items can be marked ahead; "after" ones are not owed yet. */
+  next: { prayer: string; distance: string; before: WidgetItem[]; after: WidgetLink[] } | null
+  /**
+   * Empty when tracking is paused. `id` is the prayer a tap marks; `since`,
+   * once that day's window has opened and while it is unmarked, is when.
+   */
+  prayers: {
+    id: string
+    name: string
+    short: string
+    done: boolean
+    passed: boolean
+    since?: number
+  }[]
   allDay: WidgetLink[]
   comingUp: WidgetLink[]
-  quickDuas: WidgetLink[]
-  duaOfTheDay: { title: string; arabic: string; translation: string | null; url: string } | null
+  quickDuas: WidgetItem[]
+  /** `since` is the start of the civil day: today's dua is said once. */
+  duaOfTheDay: {
+    id: string
+    title: string
+    arabic: string
+    translation: string | null
+    url: string
+    since: number
+    done: boolean
+  } | null
   makeUp: { prayers: number; fasts: number; summary: string | null; url: string }
 }
 
@@ -111,6 +159,16 @@ export interface WidgetInput {
   hijriOffset: number
   qada: Partial<Record<Prayer, number>>
   fastsOwed: number
+  /** The chosen accent; widgets cannot read the app's preferences, so it is resolved here. */
+  accent?: AccentName
+  /**
+   * What the user chose for the Quick duas widget: pinned library items, then
+   * their own duas. Absent or empty, the widget offers the duas for the
+   * moments a phone cannot detect.
+   */
+  myDuas?: { pinned: string[]; own: { id: string; title: string }[] }
+  /** Counted items' progress now (the tasbih's taps so far), by item id. */
+  counts?: Partial<Record<string, number>>
 }
 
 const STEP_MS = 30 * 60_000
@@ -129,8 +187,30 @@ function link(id: string, detail: string | null = null): WidgetLink | null {
   return { title: resolveText(item.title) ?? id, detail, url: itemUrl(id) }
 }
 
-function inkFor(scheme: 'light' | 'dark'): WidgetInk {
-  const palette = palettes[scheme]
+/**
+ * What the user chose for the Quick duas widget, pinned items then their own
+ * duas, each markable like the defaults; with nothing chosen, the duas for the
+ * moments a phone cannot detect.
+ */
+function quickDuas(
+  chosen: WidgetInput['myDuas'],
+  actionable: (id: string) => WidgetItem | null,
+): WidgetItem[] {
+  const mine = [
+    ...(chosen?.pinned ?? []).flatMap((id) => actionable(id) ?? []),
+    ...(chosen?.own ?? []).map(
+      (dua) =>
+        actionable(dua.id) ?? { id: dua.id, title: dua.title, detail: null, url: itemUrl(dua.id) },
+    ),
+  ]
+  if (mine.length > 0) return mine
+  return items
+    .filter((item) => item.trigger.kind === 'event' && UNDETECTABLE.includes(item.trigger.event))
+    .flatMap((item) => actionable(item.id) ?? [])
+}
+
+function inkFor(scheme: 'light' | 'dark', accent: AccentName | undefined): WidgetInk {
+  const palette = paletteFor(scheme, accent)
   return {
     background: palette.wash[0],
     backgroundEnd: palette.wash[1],
@@ -179,18 +259,58 @@ function whenLabel(planned: PlannedItem, strings: Strings): string | null {
   return planned.daysAway === 1 ? strings.plan.tomorrow : strings.plan.inDays(planned.daysAway ?? 0)
 }
 
+/** Epoch ms of the civil midnight `at` falls after, in `timeZone`. */
+const clocks = new Map<string, Intl.DateTimeFormat>()
+
+function startOfDay(at: Date, timeZone: string): number {
+  // A formatter is costly to make and a timeline asks for one per entry.
+  const clock =
+    clocks.get(timeZone) ??
+    new Intl.DateTimeFormat('en-GB', {
+      timeZone,
+      hourCycle: 'h23',
+      hour: 'numeric',
+      minute: 'numeric',
+      second: 'numeric',
+    })
+  clocks.set(timeZone, clock)
+  const parts = clock.formatToParts(at)
+  const part = (type: Intl.DateTimeFormatPartTypes): number =>
+    Number(parts.find((entry) => entry.type === type)?.value ?? 0)
+  const elapsed = (part('hour') * 60 + part('minute')) * 60 + part('second')
+  return at.getTime() - elapsed * 1000 - at.getUTCMilliseconds()
+}
+
+/** The previous prayer window's start, from which a named prayer's "before" may be marked. */
+function upNextSince(
+  itemId: string,
+  window: PrayerWindow | null,
+  windows: PrayerWindow[],
+): number | undefined {
+  const trigger = itemById(itemId)?.trigger
+  if (!window || trigger?.kind !== 'prayer' || trigger.prayer === 'any') return undefined
+  return beforePrayerOpensAt(trigger, window, windows).getTime()
+}
+
 /** One per civil day, so the widget and a friend's phone agree on today's dua. */
-function duaOfTheDay(dayKey: string): WidgetModel['duaOfTheDay'] {
+function duaOfTheDay(
+  dayKey: string,
+  since: number,
+  doneSince: (id: string, since: number) => boolean,
+): WidgetModel['duaOfTheDay'] {
   const candidates = items.filter((item) => item.arabic !== null)
   if (candidates.length === 0) return null
   const dayNumber = Math.floor(Date.parse(`${dayKey}T00:00:00Z`) / 86_400_000)
   const item = candidates[dayNumber % candidates.length]
   if (!item?.arabic) return null
   return {
+    id: item.id,
     title: resolveText(item.title) ?? item.id,
     arabic: item.arabic,
     translation: resolveText(item.translation),
     url: itemUrl(item.id),
+    since,
+    done: doneSince(item.id, since),
   }
 }
 
@@ -238,15 +358,49 @@ function modelAt(input: WidgetInput, at: Date): WidgetModel {
 
   const hijri = planned.hijri
   const current = windowAt(at, windows)
-  const headlineLink = head ? link(head.itemId) : null
-  const headline = head && headlineLink ? { ...headlineLink, id: head.itemId } : null
+  const dayStart = startOfDay(at, timeZone)
+  const opened = current?.startsAt.getTime() ?? dayStart
+  // Progress counted in the app belongs to the moment it was published in;
+  // a later window (or day) starts the count again.
+  const nowWindow = windowAt(signals.now, windows)
+  const sameOccasion =
+    sameDay && (current?.startsAt.getTime() ?? null) === (nowWindow?.startsAt.getTime() ?? null)
+  const doneSince = (id: string, since: number): boolean =>
+    (shifted.completedToday[id]?.getTime() ?? Number.NEGATIVE_INFINITY) >= since
+  const actionable = (id: string, since: number): WidgetItem | null => {
+    const base = link(id)
+    const content = itemById(id)
+    if (!base || !content) return null
+    const counted = content.repeat > 1 && (content.parts ?? []).length === 0
+    const count = sameOccasion ? (input.counts?.[id] ?? 0) : 0
+    return {
+      ...base,
+      id,
+      since,
+      done: doneSince(id, since),
+      ...(counted ? { repeat: content.repeat, count: Math.min(content.repeat, count) } : {}),
+    }
+  }
+
+  const headline = head
+    ? actionable(
+        head.itemId,
+        head.reason === 'before-prayer'
+          ? (upNextSince(head.itemId, current, windows) ?? opened)
+          : opened,
+      )
+    : null
   const alsoNow = rest.flatMap((entry) => link(entry.itemId) ?? [])
+  const nextWindow = planned.next
+    ? (windows.find((entry) => entry.startsAt.getTime() === planned.next?.startsAt.getTime()) ??
+      null)
+    : null
 
   return {
     at: at.getTime(),
     stale: false,
     rtl: input.rtl,
-    ink: { light: inkFor('light'), dark: inkFor('dark') },
+    ink: widgetInk(input.accent),
     labels: {
       app: 'Ihsaanly',
       rightNow: strings.plan.rightNow,
@@ -265,6 +419,10 @@ function modelAt(input: WidgetInput, at: Date): WidgetModel {
       after: strings.plan.after,
       markDone: strings.widgets.markDone,
       markedDone: strings.widgets.markedDone,
+      saidIt: strings.widgets.saidIt,
+      marked: strings.widgets.marked,
+      addOne: strings.widgets.addOne,
+      countOf: strings.widgets.countOf,
     },
     window: planned.window ? windowName(strings, planned.window, planned.jumuah) : null,
     remaining: current
@@ -293,20 +451,40 @@ function modelAt(input: WidgetInput, at: Date): WidgetModel {
             (planned.next.startsAt.getTime() - at.getTime()) / 60_000,
             strings,
           ),
-          before: planned.next.before.flatMap((id) => link(id) ?? []),
+          before: planned.next.before.flatMap((id) => {
+            const since = upNextSince(id, nextWindow, windows)
+            if (since !== undefined) return actionable(id, since) ?? []
+            const base = link(id)
+            return base ? [{ ...base, id }] : []
+          }),
           after: planned.next.after.flatMap((id) => link(id) ?? []),
         }
       : null,
     prayers: signals.userState.trackingPaused
       ? []
-      : PRAYERS.map((prayer) => ({
-          // Each entry names its own day, so Friday's strip reads Jumu'ah and
-          // Saturday's, later in the same timeline, reads Dhuhr again.
-          name: prayerName(strings, prayer, planned.jumuah),
-          short: prayerName(strings, prayer, planned.jumuah).slice(0, 1),
-          done: prayed[prayer] !== undefined,
-          passed: passed(prayer),
-        })),
+      : PRAYERS.map((prayer) => {
+          const done = prayed[prayer] !== undefined
+          // A prayer can be marked from the widget once its window has opened
+          // on this entry's day, as on Today's strip.
+          const opens = windows
+            .filter(
+              (entry) =>
+                entry.name === prayer &&
+                entry.startsAt <= at &&
+                entry.startsAt.getTime() >= dayStart,
+            )
+            .at(-1)
+          return {
+            id: prayer,
+            // Each entry names its own day, so Friday's strip reads Jumu'ah and
+            // Saturday's, later in the same timeline, reads Dhuhr again.
+            name: prayerName(strings, prayer, planned.jumuah),
+            short: prayerName(strings, prayer, planned.jumuah).slice(0, 1),
+            done,
+            passed: passed(prayer),
+            ...(opens && !done ? { since: opens.startsAt.getTime() } : {}),
+          }
+        }),
     allDay: planned.comingUp
       .filter((entry) => entry.reason === 'today')
       .flatMap((entry) => link(entry.itemId) ?? []),
@@ -316,10 +494,8 @@ function modelAt(input: WidgetInput, at: Date): WidgetModel {
         (entry, index, all) => all.findIndex((other) => other.itemId === entry.itemId) === index,
       )
       .flatMap((entry) => link(entry.itemId, whenLabel(entry, strings)) ?? []),
-    quickDuas: items
-      .filter((item) => item.trigger.kind === 'event' && UNDETECTABLE.includes(item.trigger.event))
-      .flatMap((item) => link(item.id) ?? []),
-    duaOfTheDay: duaOfTheDay(dayKey),
+    quickDuas: quickDuas(input.myDuas, (id) => actionable(id, opened)),
+    duaOfTheDay: duaOfTheDay(dayKey, dayStart, doneSince),
     makeUp: {
       prayers: qadaTotal,
       fasts: input.fastsOwed,
@@ -327,6 +503,19 @@ function modelAt(input: WidgetInput, at: Date): WidgetModel {
       url: 'ihsaanly://qada',
     },
   }
+}
+
+/** Both schemes' widget colours under an accent, as every timeline entry carries them. */
+export function widgetInk(accent: AccentName | undefined): WidgetModel['ink'] {
+  return { light: inkFor('light', accent), dark: inkFor('dark', accent) }
+}
+
+/**
+ * The entry the widgets show now: the first of `widgetTimeline`, without
+ * planning the rest of the day. The widget gallery draws its previews from it.
+ */
+export function currentWidgetModel(input: WidgetInput): WidgetModel {
+  return modelAt(input, input.signals.now)
 }
 
 /**

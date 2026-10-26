@@ -1,4 +1,5 @@
 import { useStrings } from '@ihsaanly/state/strings'
+import { useAccent } from '@ihsaanly/state/theme/accent-store'
 import type { SystemColors, UiLinkProps } from '@ihsaanly/ui/provider'
 import { UiProvider } from '@ihsaanly/ui/provider'
 import { type Href, Link } from 'expo-router'
@@ -34,7 +35,8 @@ interface MobileUiProviderProps {
 
 /**
  * Feeds @ihsaanly/ui from the app: strings from the locale store, the scheme
- * the theme preference resolves to, expo-router's Link, and the OS colours.
+ * the theme preference resolves to, the chosen accent, expo-router's Link, and
+ * the OS colours.
  * Screens paint with these in `style` (useColors in @ihsaanly/ui): NativeWind 5
  * (RC) did not apply stylesheet colour variables on native, nor runtime ones
  * supplied through its VariableContextProvider.
@@ -42,6 +44,7 @@ interface MobileUiProviderProps {
 export function MobileUiProvider({ children }: MobileUiProviderProps): ReactElement {
   const strings = useStrings()
   const scheme = useEffectiveColorScheme()
+  const accent = useAccent()
   const systemColors = systemColorsFor(scheme)
 
   // NativeWind's `dark:` and prefers-color-scheme follow Appearance, which
@@ -53,6 +56,8 @@ export function MobileUiProvider({ children }: MobileUiProviderProps): ReactElem
   })
 
   return (
-    <UiProvider value={{ strings, scheme, Link: RouterLink, systemColors }}>{children}</UiProvider>
+    <UiProvider value={{ strings, scheme, accent, Link: RouterLink, systemColors }}>
+      {children}
+    </UiProvider>
   )
 }

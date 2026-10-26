@@ -1,7 +1,13 @@
 import { describe, expect, it } from 'bun:test'
 import { en } from '@ihsaanly/core/strings/en'
 import type { MoreGroup } from '../types'
-import { filterGroups, type MoreGroupsInput, moreGroups, SHOW_ME_AROUND_HREF } from './more'
+import {
+  filterGroups,
+  type MoreGroupsInput,
+  moreGroups,
+  SHOW_ME_AROUND_HREF,
+  WIDGET_GALLERY_HREF,
+} from './more'
 
 const baseInput: MoreGroupsInput = {
   strings: en,
@@ -92,5 +98,14 @@ describe('filterGroups', () => {
     expect(hrefs({ ...baseInput, accountDetail: 'Not signed in' })).toContain('/account')
     expect(hrefs(baseInput)).not.toContain('/feedback')
     expect(hrefs({ ...baseInput, accountDetail: 'Not signed in' })).toContain('/feedback')
+  })
+
+  it('lists Widgets after Reminders only for a host with widgets', () => {
+    const app = (input: MoreGroupsInput): MoreGroup['rows'] =>
+      moreGroups(input).find((group) => group.title === en.more.app)?.rows ?? []
+    expect(app(baseInput).map((row) => row.href)).not.toContain(WIDGET_GALLERY_HREF)
+    const rows = app({ ...baseInput, widgets: true })
+    expect(rows[1]).toEqual({ href: '/widgets', title: en.widgetGallery.title, detail: null })
+    expect(rows[0]?.href).toBe('/notifications')
   })
 })

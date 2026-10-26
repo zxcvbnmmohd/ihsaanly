@@ -135,6 +135,22 @@ describe('ItemScreen', () => {
     expect(onToggleRemind).toHaveBeenCalledWith(true)
   })
 
+  it('pins to My duas when the host keeps them, and offers no pin otherwise', async () => {
+    const onToggle = mock(() => {})
+    const { user, strings } = renderScreen(
+      <ItemScreen {...itemScreenFixture} pin={{ value: false, onToggle }} />,
+    )
+    const pin = screen.getByRole('switch', { name: strings.myDuas.pin })
+    expect(pin).toHaveAttribute('aria-checked', 'false')
+    await user.click(pin)
+    expect(onToggle).toHaveBeenCalledTimes(1)
+  })
+
+  it('has no pin without My duas', () => {
+    const { strings } = renderScreen(<ItemScreen {...itemScreenFixture} />)
+    expect(screen.queryByRole('switch', { name: strings.myDuas.pin })).toBeNull()
+  })
+
   it('hides the reminder switch when there is nothing to schedule', () => {
     const { strings } = renderScreen(<ItemScreen {...itemScreenFixture} remind={null} />)
     expect(screen.queryByRole('switch', { name: strings.item.remind })).toBeNull()

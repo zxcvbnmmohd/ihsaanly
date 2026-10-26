@@ -1,7 +1,6 @@
-import { palettes } from '@ihsaanly/tailwind/tokens'
 import type { ReactElement } from 'react'
 import { Text, View } from 'react-native'
-import { useColors } from '../colors'
+import { useColors, usePalette } from '../colors'
 import { Button } from '../components/button'
 import { Surface } from '../components/surface'
 import { serif } from '../fonts'
@@ -31,8 +30,8 @@ export interface CheckInCardProps {
 /** The check-in the user asked for when pausing: resume, or not yet. */
 export function CheckInCard({ checkIn }: CheckInCardProps): ReactElement {
   const colors = useColors()
-  const { strings, scheme } = useUi()
-  const palette = palettes[scheme]
+  const { strings } = useUi()
+  const palette = usePalette()
   return (
     <Surface style={{ borderRadius: 20, padding: 18 }}>
       <View className="gap-3">

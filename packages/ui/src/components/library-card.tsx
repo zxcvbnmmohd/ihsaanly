@@ -1,8 +1,7 @@
-import { palettes } from '@ihsaanly/tailwind/tokens'
 import type { ReactElement } from 'react'
 import { Pressable, Text, View } from 'react-native'
 
-import { useColors } from '../colors'
+import { useColors, usePalette } from '../colors'
 import { useUi } from '../provider'
 import type { LibraryEntry } from '../screens/library'
 import { Pill } from './pill'
@@ -27,8 +26,8 @@ export interface LibraryCardProps {
  */
 export function LibraryCard({ entry, selected = false, href }: LibraryCardProps): ReactElement {
   const colors = useColors()
-  const { scheme, strings, Link } = useUi()
-  const palette = palettes[scheme]
+  const { strings, Link } = useUi()
+  const palette = usePalette()
 
   return (
     <Link href={href ?? entry.href} asChild>

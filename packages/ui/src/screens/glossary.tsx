@@ -1,11 +1,9 @@
-import { palettes } from '@ihsaanly/tailwind/tokens'
 import type { ReactElement } from 'react'
 import { Text, View } from 'react-native'
-import { useColors } from '../colors'
+import { useColors, usePalette } from '../colors'
 import { Screen } from '../components/screen'
 import { Surface } from '../components/surface'
 import { serif } from '../fonts'
-import { useUi } from '../provider'
 
 export interface GlossaryEntry {
   id: string
@@ -22,7 +20,7 @@ export interface GlossaryScreenProps {
 /** The words the app uses, each in a sentence or two, for someone meeting them for the first time. */
 export function GlossaryScreen({ entries, highlighted }: GlossaryScreenProps): ReactElement {
   const colors = useColors()
-  const palette = palettes[useUi().scheme]
+  const palette = usePalette()
 
   const ordered = [
     ...entries.filter((entry) => entry.id === highlighted),

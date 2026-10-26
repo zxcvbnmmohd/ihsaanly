@@ -392,7 +392,7 @@ device. Mocking them would assert that the mocks work.
 - A nearby-mosque directory, which would require place data and a network dependency.
 - Watch and wearable applications.
 - The diagnostic replay tool. The bundle is designed to make it possible later; it is not built now.
-- Interactive widget controls. Widgets deep-link in this release.
+- Interactive widget controls beyond marking. **Bent 2026-10-25**: widgets mark an item done, a prayer prayed and a count +1; everything else deep-links.
 
 ## Further Notes
 

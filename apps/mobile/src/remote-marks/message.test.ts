@@ -28,6 +28,12 @@ describe('remoteMarksMessage', () => {
     expect(remoteMarksMessage([{ ...base, kind: 'count' }], en)).toBe('Counted 1 from your widget')
   })
 
+  it('throws on a kind it does not know, rather than saying nothing', () => {
+    expect(() => remoteMarksMessage([{ ...base, kind: 'moon' as never }], en)).toThrow(
+      'Unhandled case: "moon"',
+    )
+  })
+
   it('counts several, by where they came from', () => {
     expect(remoteMarksMessage([base, base, base], en)).toBe('3 marked from your widgets')
     const shade: RemoteMark = { ...base, source: 'notification' }

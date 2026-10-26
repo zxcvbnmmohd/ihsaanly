@@ -35,6 +35,18 @@ import { Row } from '../components/row'
 import { Surface } from '../components/surface'
 import { SwitchRow } from '../components/switch-row'
 import { TextField } from '../components/text-field'
+import {
+  APP_NAME,
+  AppIcon,
+  LOCK_INK,
+  LockFrame,
+  previewInkFor,
+  WIDGET_POINTS,
+  WidgetFrame,
+  type WidgetLook,
+  WidgetScene,
+  WidgetText,
+} from '../components/widget-scene'
 import { serif } from '../fonts'
 import { useUi } from '../provider'
 import type { Gender, OptIn } from '../types'
@@ -560,21 +572,6 @@ function SourcedCard({ caption, body, palette, quote = false }: SourcedCardProps
   )
 }
 
-interface AppGlyphProps {
-  palette: Palette
-}
-
-/** The app's icon as a notification header draws it: a small accent tile. */
-function AppGlyph({ palette }: AppGlyphProps): ReactElement {
-  return (
-    <View
-      className="items-center justify-center"
-      style={{ width: 20, height: 20, borderRadius: 5, backgroundColor: palette.accent }}>
-      <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: palette.onAccent }} />
-    </View>
-  )
-}
-
 interface NotificationCardProps {
   preview: NotificationPreview
   /** The two buttons the notification carries, drawn as the system would. */
@@ -595,9 +592,9 @@ function NotificationCard({ preview, actions, palette }: NotificationCardProps):
       <Surface style={{ borderRadius: 18, padding: 12 }}>
         <View className="gap-1">
           <View className="flex-row items-center gap-2">
-            <AppGlyph palette={palette} />
+            <AppIcon size={20} />
             <Text className="flex-1 text-xs uppercase" style={{ color: colors.secondaryLabel }}>
-              Ihsaanly
+              {APP_NAME}
             </Text>
             <Text className="text-xs" style={{ color: colors.secondaryLabel }}>
               {strings.onboarding.previewNow}
@@ -632,60 +629,82 @@ interface WidgetMocksProps {
   palette: Palette
 }
 
-/** The three places Ihsaanly can live outside the app, drawn from today's plan. */
+/**
+ * The three places Ihsaanly can live outside the app, drawn from today's plan
+ * as the gallery draws them: the Right now widget on a Home Screen with the
+ * app's name under it, the next prayer on a Lock Screen under the clock, and
+ * the reminder that would arrive.
+ */
 function WidgetMocks({ preview, palette }: WidgetMocksProps): ReactElement {
   const { strings } = useUi()
   const { home, lock } = preview
+  const ink = previewInkFor(palette)
   return (
     <View className="gap-3">
       <View className="flex-row gap-3">
         <View
           accessibilityLabel={strings.onboarding.widgetHome}
           testID="home-widget-preview"
-          className="flex-1 justify-between gap-2"
-          style={{
-            aspectRatio: 1,
-            maxHeight: 170,
-            borderRadius: 22,
-            padding: 14,
-            backgroundColor: palette.widgetSurface,
-          }}>
-          <Caption color={palette.accent}>{home.caption}</Caption>
-          <View className="gap-1">
-            <Text
-              numberOfLines={2}
-              className="text-base leading-tight"
-              style={{ color: palette.ink, fontFamily: serif, fontWeight: '600' }}>
-              {home.title}
-            </Text>
-            {home.detail ? (
-              <Text numberOfLines={2} className="text-xs" style={{ color: palette.inkSecondary }}>
-                {home.detail}
-              </Text>
-            ) : null}
-          </View>
+          className="flex-1 overflow-hidden"
+          style={{ borderRadius: 22 }}>
+          <WidgetScene
+            placement="home"
+            platform="ios"
+            ink={ink}
+            fit={WIDGET_POINTS.small.width}
+            appName={APP_NAME}>
+            {(scale) => {
+              const look: WidgetLook = { ink, platform: 'ios', lock: false, scale }
+              return (
+                <WidgetFrame look={look} family="small">
+                  <WidgetText
+                    look={look}
+                    text={home.caption}
+                    size="caption"
+                    tone="accent"
+                    weight="semibold"
+                  />
+                  <WidgetText look={look} text={home.title} size="headline" lines={3} />
+                  {home.detail ? (
+                    <WidgetText
+                      look={look}
+                      text={home.detail}
+                      size="caption"
+                      tone="secondary"
+                      lines={2}
+                    />
+                  ) : null}
+                </WidgetFrame>
+              )
+            }}
+          </WidgetScene>
         </View>
-        <View className="flex-1 justify-center" style={{ maxHeight: 170 }}>
-          <View
-            accessibilityLabel={strings.onboarding.widgetLock}
-            testID="lock-widget-preview"
-            className="justify-center gap-0.5"
-            style={{
-              borderRadius: 18,
-              paddingVertical: 12,
-              paddingHorizontal: 14,
-              backgroundColor: palette.accent,
-            }}>
-            <Text
-              numberOfLines={1}
-              className="font-semibold text-base"
-              style={{ color: palette.onAccent }}>
-              {lock.title}
-            </Text>
-            <Text numberOfLines={2} className="text-xs" style={{ color: palette.onAccent }}>
-              {lock.detail}
-            </Text>
-          </View>
+        <View
+          accessibilityLabel={strings.onboarding.widgetLock}
+          testID="lock-widget-preview"
+          className="flex-1 overflow-hidden"
+          style={{ borderRadius: 22 }}>
+          <WidgetScene
+            placement="lock"
+            platform="ios"
+            ink={ink}
+            fit={WIDGET_POINTS.rectangular.width}>
+            {(scale) => {
+              const look: WidgetLook = { ink: LOCK_INK, platform: 'ios', lock: true, scale }
+              return (
+                <LockFrame look={look} family="rectangular">
+                  <WidgetText look={look} text={lock.title} size="headline" />
+                  <WidgetText
+                    look={look}
+                    text={lock.detail}
+                    size="caption"
+                    tone="secondary"
+                    lines={2}
+                  />
+                </LockFrame>
+              )
+            }}
+          </WidgetScene>
         </View>
       </View>
       <NotificationCard

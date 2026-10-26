@@ -181,6 +181,27 @@ export const system = {
 export type SystemColor = keyof typeof system
 
 /**
+ * The system around a widget, for the previews that draw one on a Home or Lock
+ * Screen: not brand colours, so they never become Tailwind classes. The
+ * wallpaper itself is the accent, lit from the top corner and shaded to its
+ * foot; iOS dims it further in dark mode and behind the Lock Screen's clock.
+ */
+export const scene = {
+  /** The Lock Screen's clock and widgets and the Home Screen's labels: white, as iOS draws them. */
+  onWallpaper: '#ffffff',
+  /** Secondary text on the Lock Screen: the same white, at iOS's vibrant secondary weight. */
+  onWallpaperSecondary: 'rgba(255, 255, 255, 0.62)',
+  /** The disc behind a round Lock Screen widget (AccessoryWidgetBackground). */
+  accessory: 'rgba(255, 255, 255, 0.18)',
+  glow: 'rgba(255, 255, 255, 0.22)',
+  shade: { light: 'rgba(0, 0, 0, 0.32)', dark: 'rgba(0, 0, 0, 0.62)' },
+  /** Behind the clock iOS darkens the wallpaper so white stays legible on any accent. */
+  lockShade: 'rgba(0, 0, 0, 0.58)',
+  /** The soft shadow iOS puts under white text on a wallpaper. */
+  textShadow: 'rgba(0, 0, 0, 0.35)',
+} as const
+
+/**
  * Font stacks. Native apps take one family: `native` names a bundled or
  * platform font. The web gets the whole stack.
  */

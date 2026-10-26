@@ -22,6 +22,15 @@ describe('the widget gallery', () => {
     expect(screen.getByText(copy.updates)).toBeInTheDocument()
   })
 
+  it('opens like the system widget sheet: the real icon, the app name and what it is for', () => {
+    const { strings } = renderScreen(<WidgetsScreen {...widgetsFixture} />)
+    expect(screen.getByTestId('app-icon')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Ihsaanly', level: 1 })).toBeInTheDocument()
+    expect(screen.getByText(strings.widgetGallery.intro)).toBeInTheDocument()
+    // Every Home Screen preview carries the app's name under it, on its wallpaper.
+    expect(screen.getAllByText('Ihsaanly')).toHaveLength(GALLERY_WIDGETS.length + 1)
+  })
+
   it('previews Small Home Screen widgets and the iOS Home Screen steps first', () => {
     const { strings } = renderScreen(<WidgetsScreen {...widgetsFixture} />)
     const copy = strings.widgetGallery
@@ -71,6 +80,8 @@ describe('the widget gallery', () => {
     expect(screen.queryByRole('button', { name: copy.lockScreen })).not.toBeInTheDocument()
     expect(screen.getByRole('button', { name: copy.small })).toBeInTheDocument()
     for (const step of copy.androidSteps) expect(screen.getByText(step)).toBeInTheDocument()
+    // Android's launcher prints no name under a widget; only the header names the app.
+    expect(screen.getAllByText('Ihsaanly')).toHaveLength(1)
   })
 
   it('reads in every language', () => {

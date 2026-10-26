@@ -15,6 +15,7 @@ import {
   WidgetPreview,
   type WidgetPreviewModel,
 } from '../components/widget-preview'
+import { APP_NAME, AppIcon } from '../components/widget-scene'
 import { serif } from '../fonts'
 import { useUi } from '../provider'
 
@@ -34,9 +35,10 @@ interface Thing {
 }
 
 /**
- * More → Widgets: every widget, drawn live from the same timeline entry the
- * widgets show, with what each is for, what can be tapped on it and how to
- * put it on the Home Screen or Lock Screen.
+ * More → Widgets, laid out like the system's own widget sheet: the app's icon,
+ * name and what its widgets are for, then every widget drawn live from the
+ * timeline entry the widgets show, on a Home or Lock Screen wallpaper, with
+ * what each is for, what can be tapped on it and how to add it.
  */
 export function WidgetsScreen({ model, platform }: WidgetsScreenProps): ReactElement {
   const [thing, setThing] = useState<Thing>({ placement: 'home', home: 'small', lock: 'circular' })
@@ -59,9 +61,21 @@ export function WidgetsScreen({ model, platform }: WidgetsScreenProps): ReactEle
 
   return (
     <Screen palette={palette} className="gap-4 p-4">
-      <Text className="text-base" style={{ color: colors.label }}>
-        {copy.intro}
-      </Text>
+      <View className="flex-row items-center gap-4">
+        <AppIcon size={64} />
+        <View className="flex-1 gap-1">
+          <Text
+            accessibilityRole="header"
+            aria-level={1}
+            className="font-bold text-2xl"
+            style={{ color: colors.label }}>
+            {APP_NAME}
+          </Text>
+          <Text className="text-sm leading-snug" style={{ color: colors.secondaryLabel }}>
+            {copy.intro}
+          </Text>
+        </View>
+      </View>
       <Text className="font-semibold text-sm" style={{ color: palette.accentInk }}>
         {copy.updates}
       </Text>
@@ -104,7 +118,14 @@ export function WidgetsScreen({ model, platform }: WidgetsScreenProps): ReactEle
       {widgets.map((widget) => {
         const about = copy.widgets[widget]
         return (
-          <Surface key={widget} style={{ borderRadius: 24 }}>
+          <Surface key={widget} style={{ borderRadius: 24, overflow: 'hidden' }}>
+            <WidgetPreview
+              widget={widget}
+              family={family}
+              model={model}
+              label={copy.preview(about.name)}
+              platform={platform}
+            />
             <View className="gap-3 p-4">
               <View className="gap-1">
                 <Text
@@ -117,14 +138,6 @@ export function WidgetsScreen({ model, platform }: WidgetsScreenProps): ReactEle
                 <Text className="text-sm" style={{ color: colors.secondaryLabel }}>
                   {about.purpose}
                 </Text>
-              </View>
-              <View className="items-center">
-                <WidgetPreview
-                  widget={widget}
-                  family={family}
-                  model={model}
-                  label={copy.preview(about.name)}
-                />
               </View>
               <View className="gap-1">
                 <Text

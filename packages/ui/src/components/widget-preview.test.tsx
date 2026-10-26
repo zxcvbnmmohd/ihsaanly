@@ -8,6 +8,7 @@ import {
   HOME_FAMILIES,
   LOCK_FAMILIES,
   type PreviewFamily,
+  type PreviewPlatform,
   WidgetPreview,
   type WidgetPreviewModel,
 } from './widget-preview'
@@ -67,10 +68,23 @@ const counted: WidgetPreviewModel = {
 
 const FAMILIES: PreviewFamily[] = [...HOME_FAMILIES, ...LOCK_FAMILIES]
 
-function show(widget: GalleryWidget, family: PreviewFamily, model = full, scheme?: 'dark'): void {
-  renderScreen(<WidgetPreview widget={widget} family={family} model={model} label="Preview" />, {
-    scheme,
-  })
+function show(
+  widget: GalleryWidget,
+  family: PreviewFamily,
+  model = full,
+  scheme?: 'dark',
+  platform?: PreviewPlatform,
+): void {
+  renderScreen(
+    <WidgetPreview
+      widget={widget}
+      family={family}
+      model={model}
+      label="Preview"
+      platform={platform}
+    />,
+    { scheme },
+  )
 }
 
 describe('every widget in every family', () => {
@@ -84,6 +98,47 @@ describe('every widget in every family', () => {
       }
     }
   }
+})
+
+describe('on Android', () => {
+  for (const model of [full, done]) {
+    for (const widget of GALLERY_WIDGETS) {
+      for (const family of HOME_FAMILIES) {
+        it(`draws ${widget} ${family}`, () => {
+          show(widget, family, model, undefined, 'android')
+          expect(screen.getByRole('img', { name: 'Preview' })).toBeInTheDocument()
+        })
+      }
+    }
+  }
+
+  it("marks with the app's own text button and prints no name under the widget", () => {
+    show('rightNow', 'medium', plain, undefined, 'android')
+    expect(screen.getByLabelText('Mark done')).toBeInTheDocument()
+    expect(screen.queryByText('Ihsaanly')).not.toBeInTheDocument()
+  })
+})
+
+describe('the scene', () => {
+  it("puts the app's name under a Home Screen widget on iOS, as the system does", () => {
+    show('prayers', 'small')
+    expect(screen.getByText('Ihsaanly')).toBeInTheDocument()
+    expect(screen.getByTestId('widget-frame')).toBeInTheDocument()
+  })
+
+  it('draws a Lock Screen widget under the date and the clock', () => {
+    show('prayers', 'rectangular')
+    expect(screen.getByText('Wed 23 Sep')).toBeInTheDocument()
+    expect(screen.getByText('9:41')).toBeInTheDocument()
+    expect(screen.getByTestId('lock-widget')).toBeInTheDocument()
+  })
+
+  it('sets an inline widget on the date line beside the date', () => {
+    show('nextPrayer', 'inline')
+    const line = screen.getByText('Wed 23 Sep').parentElement
+    expect(line?.textContent).toBe('Wed 23 SepDhuhr · In about 3 hours')
+    expect(screen.queryByTestId('lock-widget')).not.toBeInTheDocument()
+  })
 })
 
 describe('right now', () => {

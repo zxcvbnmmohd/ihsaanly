@@ -113,6 +113,8 @@ export const so: Strings = {
     quietHours: 'Saacadaha aamusnaanta',
     quietHoursDetail: (from: number, to: number): string => `${from}:00 ilaa ${to}:00`,
     quietHoursOff: 'Dansan',
+    quietHoursNote:
+      'Saacadaha aamusan waxay joojiyaan xasuusiyeyaasha inta aad hurudo. Waxa habeenka iska leh wuu imanayaa: Subax, Cishe, Witir iyo xasuusiyeyaasha habeenka. Mid kasta keligiis waad dami kartaa.',
     perDay: 'Xadka maalinlaha ah',
     permission: 'Ogolaansho',
     permissionGranted: 'La oggolaaday',

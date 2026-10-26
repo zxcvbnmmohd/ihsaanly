@@ -111,6 +111,8 @@ export const ur: Strings = {
     quietHours: 'خاموش اوقات',
     quietHoursDetail: (from: number, to: number): string => `${from}:00 سے ${to}:00 تک`,
     quietHoursOff: 'بند',
+    quietHoursNote:
+      'خاموش اوقات آپ کے سوتے وقت یاد دہانیاں روکتے ہیں۔ جو رات سے متعلق ہے وہ پھر بھی آتا ہے: فجر، عشاء، وتر اور رات کی یاد دہانیاں۔ ان میں سے کسی کو بھی الگ سے بند کر سکتے ہیں۔',
     perDay: 'روزانہ کی حد',
     permission: 'اجازت',
     permissionGranted: 'اجازت ہے',

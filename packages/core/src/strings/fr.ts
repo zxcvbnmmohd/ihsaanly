@@ -112,6 +112,8 @@ export const fr: Strings = {
     quietHours: 'Heures calmes',
     quietHoursDetail: (from: number, to: number): string => `De ${from} h à ${to} h`,
     quietHoursOff: 'Désactivées',
+    quietHoursNote:
+      'Les heures calmes retiennent les rappels pendant votre sommeil. Ce qui appartient à la nuit arrive quand même : Fajr, Isha, le Witr et les rappels propres à la nuit. Désactivez-les un par un si besoin.',
     perDay: 'Limite quotidienne',
     permission: 'Autorisation',
     permissionGranted: 'Autorisés',

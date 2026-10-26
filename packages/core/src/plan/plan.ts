@@ -36,7 +36,8 @@ const LOOK_AHEAD_OFFSET_MS = 20 * 60_000
 /**
  * Witr is the one prayer item that sends a reminder. It asks whether it has
  * been prayed, so it goes out a while after Isha opens rather than as it does,
- * when the answer can already be yes. The daily budget and quiet hours apply.
+ * when the answer can already be yes. The daily budget applies; quiet hours do
+ * not, since it belongs to the night (see `isNightWorship`).
  */
 const NIGHT_PRAYER_ITEM = 'witr'
 const NIGHT_PRAYER_OFFSET_MS = 60 * 60_000
@@ -382,6 +383,31 @@ function isRemindable(item: Item, signals: Signals, category: 'windows' | 'lookA
   return override ?? notifications[category]
 }
 
+/** The prayers whose time falls in the night, either side of the usual quiet hours. */
+const NIGHT_PRAYERS: readonly Prayer[] = ['isha', 'fajr']
+
+/**
+ * Quiet hours are for sleep, but some worship belongs to the night: Fajr comes
+ * before most people's quiet hours end, Isha can begin after they start, and
+ * Witr and the night's own items (anything whose window closes at Fajr, such as
+ * the night prayer or suhur) exist only in the dark. Silencing those would
+ * defeat their point, so quiet hours never hold them back; each still answers
+ * to its own switch. Everything else waits out the quiet hours.
+ */
+export function isNightWorship(notification: ScheduledNotification): boolean {
+  switch (notification.kind) {
+    case 'prayer':
+    case 'remembrance':
+      return NIGHT_PRAYERS.includes(notification.prayer)
+    case 'item':
+      return notification.window?.closes === 'fajr'
+    case 'check-in':
+      return false
+    default:
+      return assertNever(notification)
+  }
+}
+
 function scheduleNotifications(signals: Signals, items: Item[]): ScheduledNotification[] {
   const { notifications } = signals.preferences
   const perDay = new Map<string, number>()
@@ -391,25 +417,28 @@ function scheduleNotifications(signals: Signals, items: Item[]): ScheduledNotifi
    * Item reminders spend the daily budget. Prayer reminders do not: they are a
    * separate opt-in of five a day, and letting them consume a budget of three
    * would silently switch the adhkar off the moment they were turned on.
+   * An admitted entry is scheduled.
    */
-  const admit = (at: Date, budgeted: boolean): boolean => {
-    if (isQuiet(at, signals.timeZone, notifications.quietHours)) return false
-    if (scheduled.length >= MAX_PENDING_NOTIFICATIONS) return false
-    if (!budgeted) return true
+  const admit = (entry: ScheduledNotification, budgeted: boolean): void => {
+    const quiet = isQuiet(entry.at, signals.timeZone, notifications.quietHours)
+    if (quiet && !isNightWorship(entry)) return
+    if (scheduled.length >= MAX_PENDING_NOTIFICATIONS) return
 
-    const day = civilDateIn(at, signals.timeZone)
-    const key = `${day.year}-${day.month}-${day.day}`
-    const used = perDay.get(key) ?? 0
-    if (used >= notifications.maxPerDay) return false
-    perDay.set(key, used + 1)
-    return true
+    if (budgeted) {
+      const day = civilDateIn(entry.at, signals.timeZone)
+      const key = `${day.year}-${day.month}-${day.day}`
+      const used = perDay.get(key) ?? 0
+      if (used >= notifications.maxPerDay) return
+      perDay.set(key, used + 1)
+    }
+    scheduled.push(entry)
   }
 
   // First, so the pending cap can never crowd out the one the user asked for.
   const checkIn = signals.userState.trackingPaused ? signals.userState.pauseCheckInOn : null
   if (checkIn) {
     const at = checkInAt(checkIn, signals.timeZone)
-    if (at > signals.now && admit(at, false)) scheduled.push({ kind: 'check-in', at })
+    if (at > signals.now) admit({ kind: 'check-in', at }, false)
   }
 
   // While paused, the prayer reminders the user opted into become the
@@ -422,23 +451,20 @@ function scheduleNotifications(signals: Signals, items: Item[]): ScheduledNotifi
     const prayer = PRAYER_FOR_WINDOW[window.name]
     const jumuah = isJumuahAt(window.startsAt, signals.timeZone, signals.attendsJumuah)
     const paused = signals.userState.trackingPaused
-    if (prayer && notifications.prayers && !paused && admit(window.startsAt, false)) {
-      scheduled.push({
-        kind: 'prayer',
-        prayer,
-        at: window.startsAt,
-        endsAt: window.endsAt,
-        jumuah,
-      })
+    if (prayer && notifications.prayers && !paused) {
+      admit({ kind: 'prayer', prayer, at: window.startsAt, endsAt: window.endsAt, jumuah }, false)
     }
-    if (prayer && notifications.prayers && remembrance && admit(window.startsAt, false)) {
-      scheduled.push({
-        kind: 'remembrance',
-        itemId: remembrance.id,
-        prayer,
-        at: window.startsAt,
-        endsAt: window.endsAt,
-      })
+    if (prayer && notifications.prayers && remembrance) {
+      admit(
+        {
+          kind: 'remembrance',
+          itemId: remembrance.id,
+          prayer,
+          at: window.startsAt,
+          endsAt: window.endsAt,
+        },
+        false,
+      )
     }
 
     const name = WINDOW_FOR[window.name]
@@ -453,19 +479,21 @@ function scheduleNotifications(signals: Signals, items: Item[]): ScheduledNotifi
         )
         .filter((item) => isRemindable(item, signals, 'windows'))
         .forEach((item) => {
-          if (!admit(window.startsAt, true)) return
-          scheduled.push({
-            kind: 'item',
-            itemId: item.id,
-            at: window.startsAt,
-            reason: 'current-window',
-            window: {
-              closes: WINDOW_CLOSES[name],
-              endsAt: window.endsAt,
-              // The window closes as the next one opens, on the same civil day.
-              jumuah: isJumuahAt(window.endsAt, signals.timeZone, signals.attendsJumuah),
+          admit(
+            {
+              kind: 'item',
+              itemId: item.id,
+              at: window.startsAt,
+              reason: 'current-window',
+              window: {
+                closes: WINDOW_CLOSES[name],
+                endsAt: window.endsAt,
+                // The window closes as the next one opens, on the same civil day.
+                jumuah: isJumuahAt(window.endsAt, signals.timeZone, signals.attendsJumuah),
+              },
             },
-          })
+            true,
+          )
         })
     }
 
@@ -480,14 +508,17 @@ function scheduleNotifications(signals: Signals, items: Item[]): ScheduledNotifi
           return !done || done < window.startsAt
         })
         .forEach((item) => {
-          if (at >= window.endsAt || !admit(at, true)) return
-          scheduled.push({
-            kind: 'item',
-            itemId: item.id,
-            at,
-            reason: 'after-prayer',
-            window: { closes: 'fajr', endsAt: window.endsAt, jumuah: false },
-          })
+          if (at >= window.endsAt) return
+          admit(
+            {
+              kind: 'item',
+              itemId: item.id,
+              at,
+              reason: 'after-prayer',
+              window: { closes: 'fajr', endsAt: window.endsAt, jumuah: false },
+            },
+            true,
+          )
         })
     }
 
@@ -502,8 +533,7 @@ function scheduleNotifications(signals: Signals, items: Item[]): ScheduledNotifi
       .filter((item) => item.trigger.kind === 'day' && matchesDay(item.trigger.day, tomorrow))
       .filter((item) => isRemindable(item, signals, 'lookAhead'))
       .forEach((item) => {
-        if (!admit(at, true)) return
-        scheduled.push({ kind: 'item', itemId: item.id, at, reason: 'upcoming', window: null })
+        admit({ kind: 'item', itemId: item.id, at, reason: 'upcoming', window: null }, true)
       })
   })
 

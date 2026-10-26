@@ -177,7 +177,9 @@ export function NotificationsScreen({
         </Section>
       ) : null}
 
-      <Section title={strings.notifications.quietHours}>
+      <Section
+        title={strings.notifications.quietHours}
+        detail={strings.notifications.quietHoursNote}>
         {QUIET_HOUR_PRESETS.map((preset) => (
           <ChoiceRow
             key={quietLabel(preset, strings)}

@@ -105,6 +105,8 @@ export const ja: Strings = {
     quietHours: 'おやすみ時間',
     quietHoursDetail: (from: number, to: number): string => `${from}:00〜${to}:00`,
     quietHoursOff: 'オフ',
+    quietHoursNote:
+      'おやすみ時間は、眠っている間のリマインダーを控えます。夜に属するもの（ファジュル、イシャー、ウィトル、夜のリマインダー）は届きます。どれも個別にオフにできます。',
     perDay: '1日の上限',
     permission: '通知の許可',
     permissionGranted: '許可済み',

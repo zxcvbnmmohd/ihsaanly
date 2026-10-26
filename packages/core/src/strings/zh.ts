@@ -104,6 +104,8 @@ export const zh: Strings = {
     quietHours: '免打扰时段',
     quietHoursDetail: (from: number, to: number): string => `${from}:00 至 ${to}:00`,
     quietHoursOff: '关闭',
+    quietHoursNote:
+      '安静时段会在你睡觉时暂缓提醒。属于夜间的提醒仍会送达：晨礼、宵礼、威特尔拜和夜间提醒。每一项都可以单独关闭。',
     perDay: '每日上限',
     permission: '权限',
     permissionGranted: '已允许',
